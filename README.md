@@ -1,11 +1,7 @@
-#daotian-web-v2
 
 
-#### 2016/11/23 by wangbin
+
 - 获取代码后，需要执行'./set_brand.sh daotian' 或者 './set_brand.sh habo'来生成一些文件连接。
-
-
-#### 2016/11/23 by zuoguangcheng
 
 熱更新：
 
