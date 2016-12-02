@@ -1,0 +1,26 @@
+@media print /*--This is for Print--*/ {
+  body {
+    display: inherit;
+  }
+
+  .no-print {
+    display: none;
+  }
+
+  .print {
+    display: block !important;
+  }
+
+  .canvas {
+    display: none;
+  }
+
+  .print-image {
+    display: inline-block;
+    width:128px;
+    height:128px;
+  }
+}
+
+
+
