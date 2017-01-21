@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {Radio} from 'antd'
+import React, {Component} from 'react';
+import {Radio} from 'antd';
 
-const RadioGroup = Radio.Group
-const RadioButton = Radio.Button
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 export default class CreateTime extends Component {
   render() {
@@ -18,7 +18,7 @@ export default class CreateTime extends Component {
           <RadioButton value="60">2个月</RadioButton>
         </RadioGroup>
       </div>
-    )
+    );
   }
 }
 

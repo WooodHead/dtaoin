@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
-import {message, Form, Input, Button, Checkbox, Select, Radio, DatePicker, Row, Col} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
-import validator from '../../../middleware/validator'
-import FormValidator from '../FormValidator'
-import InsuranceSelector from '../../popover/InsuranceSelector'
+import React, {Component} from 'react';
+import {message, Form, Input, Button, Select, Radio, DatePicker, Row, Col} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
+import validator from '../../../utils/validator';
+import FormValidator from '../../../utils/FormValidator';
+import InsuranceSelector from '../../popover/InsuranceSelector';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -22,7 +22,7 @@ class NewInsuranceForm extends Component {
       endDate: '',
       insurance: {},
       depositDisabled: false,
-      ciContent: ''
+      ciContent: '',
     };
     [
       'handlePrevStep',
@@ -30,12 +30,12 @@ class NewInsuranceForm extends Component {
       'handleSubmit',
       'saveInsurance',
       'handleInsuranceDate',
-      'handleCompanyChange'
+      'handleCompanyChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    this.getInsuranceDetail(this.props.customer_id, this.props.user_auto_id);
+    this.getInsuranceDetail(this.props.customer_id, this.props.auto_id);
     this.getCustomerDetail(this.props.customer_id);
     this.getInsuranceCompanies();
     this.handleInsuranceDate();
@@ -45,23 +45,23 @@ class NewInsuranceForm extends Component {
     let deliverDate = nextProps.deliverDate;
     if (deliverDate) {
       this.handleInsuranceDate(new Date(deliverDate));
-      this.setState({depositDisabled: parseInt(nextProps.payType) === 0})
+      this.setState({depositDisabled: parseInt(nextProps.payType) === 0});
     }
   }
 
-  handlePrevStep(e) {
+  handlePrevStep() {
     let {payType, prevStep} = this.props;
     if (payType === '1') {
       this.props.onSuccess({
         currentStep: prevStep - 1,
         purchaseForm: '',
-        insuranceForm: 'hide'
+        insuranceForm: 'hide',
       });
     } else {
       this.props.onSuccess({
         currentStep: prevStep,
         loanForm: '',
-        insuranceForm: 'hide'
+        insuranceForm: 'hide',
       });
     }
   }
@@ -73,7 +73,7 @@ class NewInsuranceForm extends Component {
       this.props.onSuccess({
         currentStep: this.props.nextStep,
         insuranceForm: 'hide',
-        decorationForm: ''
+        decorationForm: '',
       });
     } else {
       this.handleSubmit(e, 'NEXT');
@@ -95,36 +95,36 @@ class NewInsuranceForm extends Component {
       values.total = parseFloat(usage_tax) + parseFloat(traffic_insurance) + parseFloat(ci_total);
 
       api.ajax({
-        url: this.state.isNew ? api.addPurchaseInsurance() : api.editPurchaseInsurance(),
+        url: this.state.isNew ? api.presales.deal.addInsurance() : api.presales.deal.editInsurance(),
         type: 'POST',
-        data: values
+        data: values,
       }, function (data) {
         message.success(this.state.isNew ? '保险信息添加成功' : '保险信息修改成功');
         this.setState({
           isNew: false,
-          insurance_log_id: data.res.insurance_log_id
+          insurance_log_id: data.res.insurance_log_id,
         });
         if (action === 'NEXT') {
           this.props.onSuccess({
             currentStep: this.props.nextStep,
             insuranceForm: 'hide',
             decorationForm: '',
-            insuranceStepStatus: 'finish'
+            insuranceStepStatus: 'finish',
           });
         } else {
           this.props.cancelModal();
-          this.props.isSingle ? location.reload() : location.hash = api.getHash();
+          location.reload();
         }
       }.bind(this));
     });
   }
 
   handleInsuranceDate(start) {
-    start = start || new Date();
-    let end = new Date(start.getFullYear() + 1, start.getMonth(), start.getDate() - 1);
+    start = formatter.getMomentDate(start);
+    let end = formatter.getMomentDate(new Date(start.year() + 1, start.month(), start.date() - 1));
     this.setState({
       startDate: start,
-      endDate: end
+      endDate: end,
     });
   }
 
@@ -137,198 +137,200 @@ class NewInsuranceForm extends Component {
   }
 
   getInsuranceDetail(customerId, userAutoId) {
-    api.ajax({url: api.getPurchaseInsuranceDetail(customerId, userAutoId)}, function (data) {
+    api.ajax({url: api.presales.deal.getLoanDetail(customerId, userAutoId)}, function (data) {
       let detail = data.res.detail;
       if (detail) {
         this.setState({
           insurance: detail,
           companyRebate: detail.rebate_coefficient,
-          isNew: false
-        })
+          isNew: false,
+        });
       }
-    }.bind(this))
+    }.bind(this));
   }
 
   getCustomerDetail(customerId) {
-    api.ajax({url: api.getCustomerDetail(customerId)}, function (data) {
+    api.ajax({url: api.customer.detail(customerId)}, function (data) {
       this.setState({customerName: data.res.customer_info.name});
-    }.bind(this))
+    }.bind(this));
   }
 
   getInsuranceCompanies() {
-    api.ajax({url: api.getInsuranceCompanies()}, function (data) {
+    api.ajax({url: api.presales.deal.getInsuranceCompanies()}, function (data) {
       this.setState({insuranceCompanies: data.res.company_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   render() {
     const {formItemLayout, selectStyle, buttonLayout} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     let {
       startDate,
       endDate,
       depositDisabled,
-      ciContent
+      ciContent,
     } = this.state;
 
-    const insuranceCompanyProps = getFieldProps('insurance_company', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-    const insuranceNumProps = getFieldProps('insurance_num', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-    const usageTaxProps = getFieldProps('usage_tax', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-    const trafficInsuranceProps = getFieldProps('traffic_insurance', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
     return (
-      <Form horizontal >
-        <Input type="hidden" {...getFieldProps('_id', {initialValue: this.state.insurance_log_id})}/>
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: this.props.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('seller_user_id', {initialValue: this.props.seller_user_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: this.props.user_auto_id})}/>
-        <Input type="hidden" {...getFieldProps('auto_deal_id', {initialValue: this.props.auto_deal_id})}/>
+      <Form horizontal>
+        {getFieldDecorator('_id', {initialValue: this.state.insurance_log_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('customer_id', {initialValue: this.props.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('seller_user_id', {initialValue: this.props.seller_user_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: this.props.auto_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_deal_id', {initialValue: this.props.auto_deal_id})(
+          <Input type="hidden"/>
+        )}
 
         <FormItem label="被保人" {...formItemLayout}>
-          <Input {...getFieldProps('insured_person', {initialValue: this.state.customerName})} placeholder="请输入被保人"/>
+          {getFieldDecorator('insured_person', {initialValue: this.state.customerName})(
+            <Input placeholder="请输入被保人"/>
+          )}
         </FormItem>
 
         <FormItem label="保险公司" {...formItemLayout} required>
-          <Select
-            onSelect={this.handleCompanyChange}
-            {...insuranceCompanyProps}
-            size="large"
-            {...selectStyle}
-            placeholder="请选择保险公司">
-            {this.state.insuranceCompanies.map(company =>
-              <Option key={company.name}>{company.name}</Option>)}
-          </Select>
+          {getFieldDecorator('insurance_company', {rules: FormValidator.getRuleNotNull()})(
+            <Select
+              onSelect={this.handleCompanyChange}
+              {...selectStyle}
+              placeholder="请选择保险公司"
+            >
+              {this.state.insuranceCompanies.map(company =>
+                <Option key={company.name}>{company.name}</Option>
+              )}
+            </Select>
+          )}
         </FormItem>
 
         <FormItem label="交强险单号" {...formItemLayout} required>
-          <Input {...insuranceNumProps} placeholder="请输入交强险单号"/>
+          {getFieldDecorator('insurance_num', {
+            rules: FormValidator.getRuleNotNull(),
+            validateTrigger: 'onBlur',
+          })(
+            <Input placeholder="请输入交强险单号"/>
+          )}
         </FormItem>
 
         <Row>
-          <Col span="13">
+          <Col span={13}>
             <FormItem label="车船税" labelCol={{span: 11}} wrapperCol={{span: 11}} required>
-              <Input type="number" {...usageTaxProps} placeholder="请输入车船税"/>
+              {getFieldDecorator('usage_tax', {
+                rules: FormValidator.getRuleNotNull(),
+                validateTrigger: 'onBlur',
+              })(
+                <Input type="number" placeholder="请输入车船税"/>
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="交强险" labelCol={{span: 6}} wrapperCol={{span: 9}} required>
-              <Input type="number" {...trafficInsuranceProps} placeholder="请输入交强险"/>
+              {getFieldDecorator('traffic_insurance', {rules: FormValidator.getRuleNotNull()})(
+                <Input type="number" placeholder="请输入交强险"/>
+              )}
             </FormItem>
           </Col>
         </Row>
 
         <FormItem label="商业保险公司" {...formItemLayout}>
-          <Select
-            {...getFieldProps('ci_insurance_company')}
-            size="large" {...selectStyle}
-            placeholder="请选择保险公司">
-            {this.state.insuranceCompanies.map((company) =>
-              <Option key={company.name}>{company.name}</Option>)}
-          </Select>
+          {getFieldDecorator('ci_insurance_company')(
+            <Select{...selectStyle} placeholder="请选择保险公司">
+              {this.state.insuranceCompanies.map((company) =>
+                <Option key={company.name}>{company.name}</Option>
+              )}
+            </Select>
+          )}
         </FormItem>
 
         <FormItem label="商业险单号" {...formItemLayout}>
-          <Input {...getFieldProps('ci_insurance_num')} placeholder="请输入商业险单号"/>
+          {getFieldDecorator('ci_insurance_num')(
+            <Input placeholder="请输入商业险单号"/>
+          )}
         </FormItem>
 
         <FormItem label="商业险总额" {...formItemLayout}>
-          <Input {...getFieldProps('ci_total')} placeholder="请输入商业险总额"/>
+          {getFieldDecorator('ci_total')(
+            <Input placeholder="请输入商业险总额"/>
+          )}
         </FormItem>
 
         <FormItem label="商业险让利" {...formItemLayout}>
-          <Input {...getFieldProps('ci_discount')} placeholder="请输入商业险让利"/>
+          {getFieldDecorator('ci_discount')(
+            <Input placeholder="请输入商业险让利"/>
+          )}
         </FormItem>
 
         <Row className="mb15">
-          <Col span="14" offset="6">
+          <Col span={14} offset={6}>
             <InsuranceSelector save={this.saveInsurance}/>
           </Col>
         </Row>
 
         <FormItem label="商业险类型" {...formItemLayout}>
-          <Input
-            {...getFieldProps('ci_content', {initialValue: ciContent})}
-            rows="4"
-            type="textarea"
-            disabled
-            placeholder="请输选择商业险类型"/>
+          {getFieldDecorator('ci_content', {initialValue: ciContent})(
+            <Input rows="4" type="textarea" disabled placeholder="请输选择商业险类型"/>
+          )}
         </FormItem>
 
         <Row>
-          <Col span="13">
+          <Col span={13}>
             <FormItem label="保险押金" labelCol={{span: 11}} wrapperCol={{span: 11}}>
-              <Input
-                type="number"
-                min="0"
-                {...getFieldProps('deposit')}
-                disabled={depositDisabled}
-                placeholder="请输入保险押金"
-              />
+              {getFieldDecorator('deposit')(
+                <Input
+                  type="number"
+                  min="0"
+                  disabled={depositDisabled}
+                  placeholder="请输入保险押金"
+                />
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="将押金交给保险公司" labelCol={{span: 10}} wrapperCol={{span: 10}}>
-              <RadioGroup {...getFieldProps('is_deposit_ic', {initialValue: '0'})} disabled={depositDisabled}>
-                <Radio key="1" value="1">是</Radio>
-                <Radio key="0" value="0">否</Radio>
-              </RadioGroup>
+              {getFieldDecorator('is_deposit_ic', {initialValue: '0'})(
+                <RadioGroup disabled={depositDisabled}>
+                  <Radio key="1" value="1">是</Radio>
+                  <Radio key="0" value="0">否</Radio>
+                </RadioGroup>
+              )}
             </FormItem>
           </Col>
         </Row>
 
-        <FormItem label="保险期限" {...formItemLayout}>
-          <Row>
-            <Col span="10" className="mr15">
-              <DatePicker
-                {...getFieldProps('start_date', {initialValue: startDate})}
-                onChange={this.handleInsuranceDate}
-                placeholder="起始日期"/>
-            </Col>
-            <Col span="10">
-              <DatePicker
-                {...getFieldProps('end_date', {initialValue: endDate})}
-                placeholder="终止日期"/>
-            </Col>
-          </Row>
-        </FormItem>
+        <Row>
+          <Col span={10} className="mr15">
+            <FormItem
+              label="保险期限"
+              labelCol={{span: 14}}
+              wrapperCol={{span: 10}}
+            >
+              {getFieldDecorator('start_date', {initialValue: formatter.getMomentDate(startDate)})(
+                <DatePicker onChange={this.handleInsuranceDate} placeholder="起始日期"/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={10}>
+            <FormItem
+              labelCol={{span: 14}}
+              wrapperCol={{span: 10}}
+            >
+              {getFieldDecorator('end_date', {initialValue: formatter.getMomentDate(endDate)})(
+                <DatePicker placeholder="终止日期"/>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input {...getFieldProps('remark')} type="textarea" placeholder="请填写备注"/>
+          {getFieldDecorator('remark')(
+            <Input type="textarea" placeholder="请填写备注"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -339,9 +341,9 @@ class NewInsuranceForm extends Component {
           <Button type={this.props.isSingle ? 'primary' : 'ghost'} onClick={this.handleSubmit}>保存并退出</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewInsuranceForm = Form.create()(NewInsuranceForm);
-export default NewInsuranceForm
+export default NewInsuranceForm;

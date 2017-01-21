@@ -1,8 +1,8 @@
-import React from 'react'
-import {Modal, Steps, Icon, Button} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewCustomerForm from '../../forms/presales/NewCustomerForm'
-import NewIntentionForm from '../../forms/presales/NewIntentionForm'
+import React from 'react';
+import {Modal, Steps, Icon, Button} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewCustomerForm from '../../forms/presales/NewCustomerForm';
+import NewIntentionForm from '../../../containers/presales/potential/NewForm';
 
 export default class NewPotentialCustomerModal extends BaseModal {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class NewPotentialCustomerModal extends BaseModal {
       currentStep: 0,
       customerForm: '',
       intentionForm: 'hide',
-      customer_id: ''
+      customer_id: '',
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -26,23 +26,27 @@ export default class NewPotentialCustomerModal extends BaseModal {
     const formProps = {
       customer_id: this.state.customer_id,
       onSuccess: this.updateState,
-      cancelModal: this.hideModal
+      cancelModal: this.hideModal,
     };
+
     return (
       <span>
         <Button
           type="primary"
           onClick={this.showModal}
-          className="pull-right">
+          className="pull-right"
+        >
           新增意向
         </Button>
+
         <Modal
           title={<span><Icon type="plus"/> 新增意向</span>}
           visible={this.state.visible}
           width="680px"
           onCancel={this.hideModal}
           maskClosable={false}
-          footer={null}>
+          footer={null}
+        >
           <Steps current={this.state.currentStep}>
             <Step key="0" title="客户信息"/>
             <Step key="1" title="意向信息"/>
@@ -58,6 +62,6 @@ export default class NewPotentialCustomerModal extends BaseModal {
           </div>
         </Modal>
       </span>
-    )
+    );
   }
 }

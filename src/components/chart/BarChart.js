@@ -1,5 +1,5 @@
-import React from 'react'
-import ReactHighcharts from 'react-highcharts'
+import React from 'react';
+import ReactHighcharts from 'react-highcharts';
 
 const BarChart = React.createClass({
   render() {
@@ -14,38 +14,47 @@ const BarChart = React.createClass({
         y: 10, // 10 pixels down from the top
         style: {
           fontSize: '13px',
-          fontFamily: 'Verdana, sans-serif'
-        }
-      }
+          fontFamily: 'Verdana, sans-serif',
+        },
+      };
     });
 
     let chart = {
       chart: {
-        type: 'column'
+        type: 'column',
       },
+      colors: ['#7ab4ee', '#7dc756', '#f9a455', '#7f82ec',
+        '#ff6599', '#434348', '#c1c1c1', '#5cd1b7', '#ff5c50', '#ffd500'],
       title: {
-        text: title || ''
+        text: title || '',
+        verticalAlign: 'middle',
       },
       credits: {
-        enabled: false
+        enabled: false,
       },
       legend: {
-        enabled: series.length > 1
+        enabled: series.length > 1,
       },
       xAxis: {
-        categories: categories
+        categories: categories,
       },
       yAxis: {
         min: 0,
+        minRange: 10,
         title: {
-          text: unit || ''
-        }
+          text: unit || '',
+        },
       },
-      series: series
+      plotOptions: {
+        column: {
+          colorByPoint:true,
+        },
+      },
+      series: series,
     };
 
     return React.createElement(ReactHighcharts, {config: chart});
-  }
+  },
 });
 
 export default BarChart;

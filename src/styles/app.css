@@ -20,6 +20,10 @@
     color: #666;
 }
 
+.ant-menu-submenu-horizontal > .ant-menu {
+    z-index: 9999;
+}
+
 .ant-menu-item-selected a {
     color: #2db7f5 !important;
 }
@@ -74,6 +78,10 @@
     padding: 20px;
 }
 
+.code-cover {
+    background: rgba(255, 255, 255, .2);
+}
+
 @media screen and (max-width: 480px) {
     .center-box {
         width: 100%;
@@ -103,8 +111,7 @@
 
 .in-table-line {
     width: 100%;
-    height: 50%;
-    padding: 16px 8px;
+    padding: 10px 8px;
     border-bottom: 1px solid #e9e9e9;
 }
 
@@ -308,6 +315,23 @@ figcaption {
     text-align: right;
 }
 
+.btn-action-small {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.action-two {
+    width: 160px;
+}
+
+.action-three {
+    width: 260px;
+}
+
+.company-name {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 /*************override******************/
 .ant-upload {
     text-align: center;
@@ -319,7 +343,24 @@ form .ant-search-input .ant-search-btn {
 }
 
 .ant-table-placeholder {
-    z-index: 0!important;
+    z-index: 0 !important;
+}
+
+.ant-input-group .ant-input {
+    z-index: 0 !important;
+}
+
+.ant-row .ant-form-item {
+    margin-bottom: 12px !important;
+}
+
+.ant-menu-submenu-title {
+    padding: 0 15px !important;
+    /*font-size: 16px !important;*/
+}
+
+.ant-menu-item {
+    /*font-size: 16px !important;*/
 }
 
 /*************************/

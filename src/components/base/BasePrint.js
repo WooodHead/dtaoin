@@ -1,17 +1,15 @@
-import React from 'react'
+import React from 'react';
 
 export default class PrintThisComponent extends React.Component {
   constructor(props) {
     super(props);
-    [
-      'printThis'
-    ].map(method => this[method] = this[method].bind(this));
+    this.printThis = this.printThis.bind(this);
   }
 
   //transform canvas to img,for can't print directly
 
   setCanvasPrintImg(canvas, imgBox) {
-    imgBox.src = canvas.toDataURL("image/png");
+    imgBox.src = canvas.toDataURL('image/png');
   }
 
   /*setCanvasPrintImg(canvas) {
@@ -22,55 +20,55 @@ export default class PrintThisComponent extends React.Component {
    }*/
 
   printThis(options) {
-    var opt;
+    let opt;
     opt = $.extend({},
       {
         debug: false,           // show the iframe for debugging
         importCSS: true,        // import parent page css
         importStyle: false,     // import style tags
         printContainer: true,   // print outer container/$.selector
-        loadCSS: "",            // load an additional css file - load multiple stylesheets with an array []
-        pageTitle: "",          // add title to print page
+        loadCSS: '',            // load an additional css file - load multiple stylesheets with an array []
+        pageTitle: '',          // add title to print page
         removeInline: false,    // remove all inline styles
         printDelay: 333,        // variable print delay
         header: null,           // prefix to html
         footer: null,           // footer to html
         formValues: true,        // preserve input/form values
-        doctypeString: '<!DOCTYPE html>' // html doctype
+        doctypeString: '<!DOCTYPE html>', // html doctype
       }, options);
-    var $element = options.element;
-    //var $element = this instanceof jQuery ? this : $(this);
+    let $element = options.element;
+    //let $element = this instanceof jQuery ? this : $(this);
 
-    var strFrameName = "printThis-" + (new Date()).getTime();
+    let strFrameName = 'printThis-' + (new Date()).getTime();
 
     if (window.location.hostname !== document.domain && navigator.userAgent.match(/msie/i)) {
       // Ugly IE hacks due to IE not inheriting document.domain from parent
       // checks if document.domain is set by comparing the host name against document.domain
-      var iframeSrc = "javascript:document.write(\"<head><script>document.domain=\\\"" + document.domain + "\\\";</script></head><body></body>\")";
-      var printI = document.createElement('iframe');
-      printI.name = "printIframe";
+      let iframeSrc = 'javascript:document.write("<head><script>document.domain=\\"' + document.domain + '\\";</script></head><body></body>")';
+      let printI = document.createElement('iframe');
+      printI.name = 'printIframe';
       printI.id = strFrameName;
-      printI.className = "MSIE";
+      printI.className = 'MSIE';
       document.body.appendChild(printI);
       printI.src = iframeSrc;
 
     } else {
       // other browsers inherit document.domain, and IE works if document.domain is not explicitly set
-      var $frame = $("<iframe id='" + strFrameName + "' name='printIframe' />");
-      $frame.appendTo("body");
+      let $frame = $('<iframe id=\'' + strFrameName + '\' name=\'printIframe\' />');
+      $frame.appendTo('body');
     }
 
 
-    var $iframe = $("#" + strFrameName);
-    console.log($iframe);
+    let $iframe = $('#' + strFrameName);
+    // console.log($iframe);
     $iframe.portrait = true;
     // show frame if in debug mode
     if (!opt.debug) $iframe.css({
-      position: "absolute",
-      width: "0px",
-      height: "0px",
-      left: "-600px",
-      top: "-600px"
+      position: 'absolute',
+      width: '0px',
+      height: '0px',
+      left: '-600px',
+      top: '-600px',
     });
 
 
@@ -79,7 +77,7 @@ export default class PrintThisComponent extends React.Component {
 
       // Add doctype to fix the style difference between printing and render
       function setDocType($iframe, doctype) {
-        var win, doc;
+        let win, doc;
         win = $iframe.get(0);
         win = win.contentWindow || win.contentDocument || win;
         doc = win.document || win.contentDocument || win;
@@ -92,39 +90,40 @@ export default class PrintThisComponent extends React.Component {
         setDocType($iframe, opt.doctypeString);
       }
 
-      var $doc = $iframe.contents(),
-        $head = $doc.find("head"),
-        $body = $doc.find("body");
+      let $doc = $iframe.contents(),
+        $head = $doc.find('head'),
+        $body = $doc.find('body');
 
       // add base tag to ensure elements use the parent domain
       $head.append('<base href="' + document.location.protocol + '//' + document.location.host + '">');
 
       // import page stylesheets
-      if (opt.importCSS) $("link[rel=stylesheet]").each(function () {
-        var href = $(this).attr("href");
+      if (opt.importCSS) $('link[rel=stylesheet]').each(function () {
+        let href = $(this).attr('href');
         if (href) {
-          var media = $(this).attr("media") || "all";
-          $head.append("<link type='text/css' rel='stylesheet' href='" + href + "' media='" + media + "'>")
+          let media = $(this).attr('media') || 'all';
+          $head.append('<link type=\'text/css\' rel=\'stylesheet\' href=\'' + href + '\' media=\'' + media + '\'>');
         }
       });
 
       // import style tags
-      if (opt.importStyle) $("style").each(function () {
+      if (opt.importStyle) $('style').each(function () {
         $(this).clone().appendTo($head);
         //$head.append($(this));
       });
 
       //add title of the page
-      if (opt.pageTitle) $head.append("<title>" + opt.pageTitle + "</title>");
+      if (opt.pageTitle) $head.append('<title>' + opt.pageTitle + '</title>');
 
       // import additional stylesheet(s)
       if (opt.loadCSS) {
         if ($.isArray(opt.loadCSS)) {
-          jQuery.each(opt.loadCSS, function (index, value) {
-            $head.append("<link type='text/css' rel='stylesheet' href='" + this + "'>");
+          jQuery.each(opt.loadCSS, function () {
+            // jQuery.each(opt.loadCSS, function (index, value) {
+            $head.append('<link type=\'text/css\' rel=\'stylesheet\' href=\'' + this + '\'>');
           });
         } else {
-          $head.append("<link type='text/css' rel='stylesheet' href='" + opt.loadCSS + "'>");
+          $head.append('<link type=\'text/css\' rel=\'stylesheet\' href=\'' + opt.loadCSS + '\'>');
         }
       }
 
@@ -142,10 +141,10 @@ export default class PrintThisComponent extends React.Component {
       // capture form/field values
       if (opt.formValues) {
         // loop through inputs
-        var $input = $element.find('input');
+        let $input = $element.find('input');
         if ($input.length) {
           $input.each(function () {
-            var $this = $(this),
+            let $this = $(this),
               $name = $(this).attr('name'),
               $checker = $this.is(':checkbox') || $this.is(':radio'),
               $iframeInput = $doc.find('input[name="' + $name + '"]'),
@@ -166,10 +165,10 @@ export default class PrintThisComponent extends React.Component {
         }
 
         //loop through selects
-        var $select = $element.find('select');
+        let $select = $element.find('select');
         if ($select.length) {
           $select.each(function () {
-            var $this = $(this),
+            let $this = $(this),
               $name = $(this).attr('name'),
               $value = $this.val();
             $doc.find('select[name="' + $name + '"]').val($value);
@@ -177,10 +176,10 @@ export default class PrintThisComponent extends React.Component {
         }
 
         //loop through textareas
-        var $textarea = $element.find('textarea');
+        let $textarea = $element.find('textarea');
         if ($textarea.length) {
           $textarea.each(function () {
-            var $this = $(this),
+            let $this = $(this),
               $name = $(this).attr('name'),
               $value = $this.val();
             $doc.find('textarea[name="' + $name + '"]').val($value);
@@ -192,9 +191,9 @@ export default class PrintThisComponent extends React.Component {
       if (opt.removeInline) {
         // $.removeAttr available jQuery 1.7+
         if ($.isFunction($.removeAttr)) {
-          $doc.find("body *").removeAttr("style");
+          $doc.find('body *').removeAttr('style');
         } else {
-          $doc.find("body *").attr("style", "");
+          $doc.find('body *').attr('style', '');
         }
       }
 
@@ -202,15 +201,15 @@ export default class PrintThisComponent extends React.Component {
       if (opt.footer) $body.append(opt.footer);
 
       setTimeout(function () {
-        if ($iframe.hasClass("MSIE")) {
+        if ($iframe.hasClass('MSIE')) {
           // check if the iframe was created with the ugly hack
           // and perform another ugly hack out of neccessity
-          window.frames["printIframe"].focus();
-          $head.append("<script>  window.print(); </script>");
+          window.frames['printIframe'].focus();
+          $head.append('<script>  window.print(); </script>');
         } else {
           // proper method
-          if (document.queryCommandSupported("print")) {
-            $iframe[0].contentWindow.document.execCommand("print", false, null);
+          if (document.queryCommandSupported('print')) {
+            $iframe[0].contentWindow.document.execCommand('print', false, null);
           } else {
             $iframe[0].contentWindow.focus();
             $iframe[0].contentWindow.print();
@@ -233,12 +232,13 @@ export default class PrintThisComponent extends React.Component {
 
 
   // $.selector container
-  outer(dom) {
-    return $($("<div></div>").html(this.clone())).html()
+  outer() {
+    // outer(dom) {
+    return $($('<div></div>').html(this.clone())).html();
   }
 
   render() {
-    return <div></div>
+    return <div></div>;
   }
 
   /*
@@ -260,12 +260,12 @@ export default class PrintThisComponent extends React.Component {
 
 
 //2nd way
-/*var contents = $(printInfo).html();
- var frame1 = $('<iframe />');
+/*let contents = $(printInfo).html();
+ let frame1 = $('<iframe />');
  frame1[0].name = "frame1";
  frame1.css({"position": "absolute", "top": "-1000000px"});
  $("body").append(frame1);
- var frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
+ let frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
  frameDoc.document.open();
  //Create a new HTML document.
  frameDoc.document.write('<html><head><title>DIV Contents</title>');

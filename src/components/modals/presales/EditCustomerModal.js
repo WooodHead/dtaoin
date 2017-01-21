@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import EditCustomerForm from '../../forms/presales/EditCustomerForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import EditCustomerForm from '../../forms/presales/EditCustomerForm';
 
 export default class EditCustomerModal extends BaseModal {
   constructor(props) {
@@ -12,15 +12,19 @@ export default class EditCustomerModal extends BaseModal {
   render() {
     return (
       <span>
-        <Button type="primary"
-                onClick={this.showModal}>
+        <Button
+          type="primary"
+          onClick={this.showModal}
+        >
           编辑
         </Button>
-        <Modal title={<span><Icon type="edit"/> 编辑客户信息</span>}
-               visible={this.state.visible}
-               width="680px"
-               onCancel={this.hideModal}
-               footer={null}>
+        <Modal
+          title={<span><Icon type="edit"/> 编辑客户信息</span>}
+          visible={this.state.visible}
+          width="680px"
+          onCancel={this.hideModal}
+          footer={null}
+        >
           <EditCustomerForm
             cancelModal={this.hideModal}
             customer_id={this.props.customer_id}

@@ -39,12 +39,16 @@ module.exports = {
       config: srcPath + '/config/' + process.env.REACT_WEBPACK_ENV
     }
   },
+  eslint: {
+    // 自动修复一些格式问题
+    fix: true
+  },
   module: {
     preLoaders: [{
-        test: /\.(js|jsx)$/,
-        include: srcPath,
-        loader: 'eslint-loader'
-      }],
+      test: /\.(js|jsx)$/,
+      include: srcPath,
+      loader: 'eslint-loader'
+    }],
     loaders: [
       {
         test: /\.css$/,

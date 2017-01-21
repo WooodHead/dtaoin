@@ -1,10 +1,9 @@
-import React from 'react'
-import {Link} from 'react-router'
-import {Modal, Icon, Button, Form, Input, Row, Col, message} from 'antd'
-import api from '../../../middleware/api'
-import BaseModal from '../../base/BaseModal'
-import Layout from '../../forms/Layout'
-import QRCode from 'qrcode.react'
+import React from 'react';
+import {Modal, Icon, Button, Form, Row, Col, message} from 'antd';
+import api from '../../../middleware/api';
+import BaseModal from '../../base/BaseModal';
+import Layout from '../../../utils/FormLayout';
+import QRCode from 'qrcode.react';
 
 const FormItem = Form.Item;
 
@@ -14,7 +13,7 @@ class FNewIncomingModal extends BaseModal {
     this.state = {
       visible: false,
       id: '',
-      statement: {}
+      statement: {},
     };
   }
 
@@ -52,12 +51,12 @@ class FNewIncomingModal extends BaseModal {
     api.ajax({
       url: api.confirmIncomeStatement(),
       type: 'POST',
-      data: formData
+      data: formData,
     }, function (data) {
       if (data.code === 0) {
         message.info('对账单已经双方确认成功！');
         this.hideModal();
-        location.hash = api.getHash();
+        location.reload();
       } else if (data.code === 2302) {
         message.info(data.msg);
         this.hideModal();
@@ -71,8 +70,8 @@ class FNewIncomingModal extends BaseModal {
 
   handleRealReceiveMoney() {
     let form = this.props.form,
-      cashReceived = form.getFieldProps('cash_received').value,
-      posReceived = form.getFieldProps('pos_received').value,
+      cashReceived = form.getFieldDecorator('cash_received').value,
+      posReceived = form.getFieldDecorator('pos_received').value,
       realReceivedAmount = Number(this.state.statement.online_due);
 
     if (cashReceived) {
@@ -87,48 +86,66 @@ class FNewIncomingModal extends BaseModal {
   render() {
     const {visible, statement}=this.state;
     const {formItemLayout_1014} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
 
     return (
       <span>
-        <Button type="primary"
-                className="margin-left-20"
-                onClick={this.showModal}>
+        <Button
+          type="primary"
+          className="margin-left-20"
+          onClick={this.showModal}
+        >
           创建对账单
         </Button>
-        <Modal title={<span><Icon type="plus" className="margin-right-10"/>创建对账单</span>}
-               visible={visible}
-               width="680px"
-               onOk={this.handleSubmit.bind(this)}
-               onCancel={this.hideModal}>
-
-          <Form horizontal form={this.props.form}>
-            <input type="hidden" {...getFieldProps('_id', {initialValue: statement._id})}/>
-            <input type="hidden" {...getFieldProps('admin_user_id', {initialValue: statement.admin_user_id})}/>
+        <Modal
+          title={<span><Icon type="plus" className="margin-right-10"/>创建对账单</span>}
+          visible={visible}
+          width="680px"
+          onOk={this.handleSubmit.bind(this)}
+          onCancel={this.hideModal}
+        >
+          <Form horizontal>
+            {getFieldDecorator('_id', {initialValue: statement._id})(
+              <input type="hidden"/>
+            )}
+            {getFieldDecorator('admin_user_id', {initialValue: statement.admin_user_id})(
+              <input type="hidden"/>
+            )}
 
             <Row>
-              <Col span="14">
-                <FormItem label='现金收款(元)' {...formItemLayout_1014}>
+              <Col span={14}>
+                <FormItem label="现金收款(元)" {...formItemLayout_1014}>
                   <span>{statement.cash_due}</span>
                 </FormItem>
-                <FormItem label='银行卡收款(元)' {...formItemLayout_1014}>
+                <FormItem label="银行卡收款(元)" {...formItemLayout_1014}>
                   <span>{statement.card_due}</span>
                 </FormItem>
-                <FormItem label='微信收款(元)' {...formItemLayout_1014}>
+                <FormItem label="微信收款(元)" {...formItemLayout_1014}>
                   <span>{statement.wechat_due}</span>
                 </FormItem>
-                <FormItem label='支付宝收款(元)' {...formItemLayout_1014}>
+                <FormItem label="支付宝收款(元)" {...formItemLayout_1014}>
                   {statement.alipay_due}
                 </FormItem>
-                <FormItem label='当日实收款(元)' {...formItemLayout_1014}>
+                <FormItem label="当日实收款(元)" {...formItemLayout_1014}>
                   <span>{statement.total_due}</span>
                 </FormItem>
               </Col>
-              <Col span="10" className="center" style={{marginTop: '50px'}}>
+              <Col span={10} className="center" style={{marginTop: '50px'}}>
                 <span className="canvas no-print">
-                  <QRCode value={location.origin + `/#/maint-income-statement-check?id=${this.state.id}&type=admin`}
-                          size={128} ref="qrCode"/></span>
-                <img src='' className="print-image" ref="printImg"/>
+                  <QRCode
+                    value={JSON.stringify({
+                      authType: 'confirm-check-sheet-user',
+                      requestParams: {
+                        type: 'get',
+                        url: api.scanQRCodeToVerify(this.state.id, 'admin'),
+                        data: {},
+                      },
+                    })}
+                    size={128}
+                    ref="qrCode"
+                  />
+                </span>
+                <img src="" className="print-image" ref="printImg"/>
                 <div>请扫码确认
                   <Icon
                     type="check-circle"
@@ -145,4 +162,4 @@ class FNewIncomingModal extends BaseModal {
 }
 
 FNewIncomingModal = Form.create()(FNewIncomingModal);
-export default FNewIncomingModal
+export default FNewIncomingModal;

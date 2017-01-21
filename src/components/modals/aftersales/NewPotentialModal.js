@@ -1,10 +1,10 @@
-import React from 'react'
-import {Modal, Steps, Icon, Button} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewCustomerForm from '../../forms/aftersales/NewCustomerForm'
-import NewAutoForm from '../../forms/aftersales/NewAutoForm'
-import NewProjectForm from '../../forms/aftersales/NewProjectForm'
-import ConfirmProjectForm from '../../forms/aftersales/ConfirmProjectForm'
+import React from 'react';
+import {Modal, Steps, Icon, Button} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewCustomerForm from '../../forms/aftersales/NewCustomerForm';
+import NewAutoForm from '../../forms/aftersales/NewAutoForm';
+import NewProjectForm from '../../forms/aftersales/NewProjectForm';
+import ConfirmProjectForm from '../../forms/aftersales/ConfirmProjectForm';
 
 class NewMaintainPotentialModal extends BaseModal {
   constructor(props) {
@@ -22,7 +22,7 @@ class NewMaintainPotentialModal extends BaseModal {
       project_id: '',
       project: {},
       items: [],
-      parts: []
+      parts: [],
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -49,7 +49,7 @@ class NewMaintainPotentialModal extends BaseModal {
       project_id: '',
       project: {},
       items: [],
-      parts: []
+      parts: [],
     };
     this.updateState = this.updateState.bind(this);
     this.setState({visible: true});
@@ -60,7 +60,7 @@ class NewMaintainPotentialModal extends BaseModal {
     const formProps = {
       isNew: true,
       customer_id: this.state.customer_id,
-      user_auto_id: this.state.user_auto_id,
+      auto_id: this.state.auto_id,
       project_id: this.state.project_id,
       project: this.state.project,
       items: this.state.items,
@@ -68,7 +68,7 @@ class NewMaintainPotentialModal extends BaseModal {
       onSuccess: this.updateState,
       cancelModal: this.hideModal,
       reload: this.state.reload,
-      visible: this.state.visible
+      visible: this.state.visible,
     };
 
     return (
@@ -112,8 +112,8 @@ class NewMaintainPotentialModal extends BaseModal {
           </div>
         </Modal>
       </span>
-    )
+    );
   }
 }
 
-export default NewMaintainPotentialModal
+export default NewMaintainPotentialModal;

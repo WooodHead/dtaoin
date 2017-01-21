@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import CalculateDealForm from '../../forms/presales/CalculateDealForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import CalculateDealForm from '../../forms/presales/CalculateDealForm';
 
 export default class CalculateDealModal extends BaseModal {
   constructor(props) {

@@ -1,6 +1,6 @@
-import React from 'react'
-import {Radio} from 'antd'
-import department from '../../config/department'
+import React from 'react';
+import {Radio} from 'antd';
+import department from '../../config/department';
 
 export default class DepartmentFilter extends React.Component {
   constructor(props) {
@@ -19,6 +19,6 @@ export default class DepartmentFilter extends React.Component {
           {department.map((dept) => <RadioButton value={dept.id} key={dept.id}>{dept.name}</RadioButton>)}
         </RadioGroup>
       </div>
-    )
+    );
   }
 }

@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {Radio} from 'antd'
+import React, {Component} from 'react';
+import {Radio} from 'antd';
 
-const RadioGroup = Radio.Group
-const RadioButton = Radio.Button
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 export default class IntentionLevel extends Component {
   render() {
@@ -19,7 +19,7 @@ export default class IntentionLevel extends Component {
           <RadioButton value="E">E</RadioButton>
         </RadioGroup>
       </div>
-    )
+    );
   }
 }
 

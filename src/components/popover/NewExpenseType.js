@@ -1,16 +1,16 @@
-import React from 'react'
-import {Row, Col, Popover, Button, Icon} from 'antd'
+import React from 'react';
+import {Row, Col, Popover, Button, Icon} from 'antd';
 
 const NewExpenseType = React.createClass({
   getInitialState() {
     return {
-      visible: false
+      visible: false,
     };
   },
 
   hide() {
     this.setState({
-      visible: false
+      visible: false,
     });
   },
 
@@ -30,10 +30,10 @@ const NewExpenseType = React.createClass({
     const content = (
       <div>
         <Row>
-          <Col span="8">
-            <label className="input-label">类型名称：</label>
+          <Col span={8}>
+            <label className="input-label">项目名称：</label>
           </Col>
-          <Col span="16">
+          <Col span={16}>
             <input className="ant-input ant-input-lg" ref="newItem" placeholder="类型名称"/>
           </Col>
         </Row>
@@ -52,7 +52,7 @@ const NewExpenseType = React.createClass({
         <a href="javascript:;">新增支出类型</a>
       </Popover>
     );
-  }
+  },
 });
 
 export default NewExpenseType;

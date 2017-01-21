@@ -1,18 +1,19 @@
-import React from 'react'
-import {DatePicker} from 'antd'
+import React from 'react';
+import {DatePicker} from 'antd';
+import DateFormatter from '../../utils/DateFormatter';
 
 export default class MonthRangeFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      startMonth: props.startMonth,
-      endMonth: props.endMonth
+      startMonth: DateFormatter.month(props.startMonth),
+      endMonth: DateFormatter.month(props.endMonth),
     };
     this.disabledMonth = this.disabledMonth.bind(this);
   }
 
   disabledMonth(month) {
-    return month.getTime() > new Date().getTime();
+    return month.valueOf() > new Date().valueOf();
   }
 
   render() {
@@ -20,7 +21,7 @@ export default class MonthRangeFilter extends React.Component {
     let {
       startMonth,
       endMonth,
-      filterAction
+      filterAction,
     } = this.props;
 
     return (
@@ -28,16 +29,16 @@ export default class MonthRangeFilter extends React.Component {
         <label className="mr15">发放月份:</label>
         <MonthPicker
           disabledDate={this.disabledMonth}
-          defaultValue={startMonth}
+          defaultValue={DateFormatter.getMomentMonth(startMonth)}
           onChange={filterAction.bind(this, 'startMonth')}
         />
         <span className="ml15 mr15">至</span>
         <MonthPicker
           disabledDate={this.disabledMonth}
-          defaultValue={endMonth}
+          defaultValue={DateFormatter.getMomentMonth(endMonth)}
           onChange={this.props.filterAction.bind(this, 'endMonth')}
         />
       </div>
-    )
+    );
   }
 }

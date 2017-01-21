@@ -4,7 +4,7 @@ var path = require('path');
 var args = require('minimist')(process.argv.slice(2));
 
 // List of allowed environments
-var allowedEnvs = ['dev', 'dist', 'test'];
+var allowedEnvs = ['dev', 'test1', 'dist', 'test'];
 
 // Set the correct environment
 var env;
@@ -21,6 +21,7 @@ process.env.REACT_WEBPACK_ENV = env;
 var configs = {
   base: require(path.join(__dirname, 'cfg/base')),
   dev: require(path.join(__dirname, 'cfg/dev')),
+  test1: require(path.join(__dirname, 'cfg/test1')),
   dist: require(path.join(__dirname, 'cfg/dist')),
   test: require(path.join(__dirname, 'cfg/test'))
 };

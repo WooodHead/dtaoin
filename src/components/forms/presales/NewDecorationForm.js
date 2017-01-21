@@ -1,19 +1,22 @@
-import React from 'react'
-import {message, Form, Input, Button, DatePicker} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
+import React from 'react';
+import {message, Form, Input, Button, DatePicker} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
 
 class NewDecorationForm extends React.Component {
   constructor(props) {
     super(props);
+    [
+      'exit',
+    ].map(method=>this[method]=this[method].bind(this));
   }
 
-  handlePrevStep(e) {
+  handlePrevStep() {
     this.props.onSuccess({
       currentStep: this.props.prevStep,
       insuranceForm: '',
-      decorationForm: 'hide'
+      decorationForm: 'hide',
     });
   }
 
@@ -21,16 +24,16 @@ class NewDecorationForm extends React.Component {
     e.preventDefault();
     let formData = this.props.form.getFieldsValue();
     formData.deal_date = formatter.date(formData.deal_date);
-
     if (formData.content) {
       api.ajax({
-        url: api.addPurchaseDecoration(),
-        type: 'POST',
-        data: formData
-      }, function (data) {
-        message.success('新增装潢交易成功');
-        this.exit();
-      }.bind(this))
+          url: api.presales.deal.addDecoration(),
+          type: 'POST',
+          data: formData,
+        },
+        () => {
+          message.success('新增装潢交易成功');
+          this.exit();
+        });
     } else {
       this.exit();
     }
@@ -38,33 +41,45 @@ class NewDecorationForm extends React.Component {
 
   exit() {
     this.props.cancelModal();
-    this.props.isSingle ? location.reload() : location.hash = api.getHash();
+    location.reload();
   }
 
   render() {
     const FormItem = Form.Item;
-    const {formItemLayout, innerItemLayout, buttonLayout} = Layout;
-    let {getFieldProps} = this.props.form;
+    const {formItemLayout, buttonLayout} = Layout;
+    let {getFieldDecorator} = this.props.form;
 
     return (
-      <Form horizontal >
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: this.props.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: this.props.user_auto_id})}/>
+      <Form horizontal>
+        {getFieldDecorator('customer_id', {initialValue: this.props.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: this.props.auto_id})(
+          <Input type="hidden"/>
+        )}
 
         <FormItem label="装潢时间" {...formItemLayout}>
-          <DatePicker {...getFieldProps('deal_date', {initialValue: new Date()})} placeholder="装潢时间"/>
+          {getFieldDecorator('deal_date', {initialValue: formatter.getMomentDate()})(
+            <DatePicker placeholder="装潢时间"/>
+          )}
         </FormItem>
 
         <FormItem label="装潢内容" {...formItemLayout}>
-          <Input {...getFieldProps('content')} type="textarea"/>
+          {getFieldDecorator('content')(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem label="装潢金额" {...formItemLayout}>
-          <Input {...getFieldProps('price')} placeholder="装潢金额"/>
+          {getFieldDecorator('price')(
+            <Input placeholder="装潢金额"/>
+          )}
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input {...getFieldProps('remark')} type="textarea"/>
+          {getFieldDecorator('remark')(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -73,9 +88,9 @@ class NewDecorationForm extends React.Component {
           <Button type="primary" onClick={this.handleSubmit.bind(this)}>完成</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewDecorationForm = Form.create()(NewDecorationForm);
-export default NewDecorationForm
+export default NewDecorationForm;

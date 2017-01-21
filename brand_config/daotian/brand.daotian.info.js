@@ -1,3 +1,3 @@
 export default {
-  brand_name: '水稻汽车'
+  brand_name: '水稻汽车',
 };

@@ -1,8 +1,8 @@
-import React from 'react'
-import {Input, Select, Button, Icon, message} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
-import validator from '../../middleware/validator'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+import api from '../../middleware/api';
+import validator from '../../utils/validator';
 
 const Option = Select.Option;
 
@@ -12,11 +12,12 @@ class ProjectSearchBox extends React.Component {
     this.state = {
       data: [],
       value: '',
-      focus: false
+      focus: false,
     };
     [
       'handleChange',
-      'handleFocusBlur'
+      'handleFocus',
+      'handleBlur',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -42,34 +43,36 @@ class ProjectSearchBox extends React.Component {
   }
 
   searchCustomersByKey(key) {
-    api.ajax({url: this.props.api + key}, (data)=> {
+    api.ajax({url: this.props.api + key}, (data) => {
       let list = data.res.list;
       if (list.length > 0) {
         this.setState({data: list});
         this.props.change({
           list: list,
-          key: key
+          key: key,
         });
       } else {
         this.setState({data: [{name: '未找到匹配的工单'}]});
       }
-    })
+    });
   }
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  }
+
+  handleBlur() {
+    this.setState({focus: false});
   }
 
   render() {
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim()
+      'ant-search-btn-noempty': !!this.state.value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': this.state.focus,
     });
 
     return (
@@ -84,8 +87,9 @@ class ProjectSearchBox extends React.Component {
           showArrow={false}
           filterOption={false}
           onChange={this.handleChange}
-          onFocus={this.handleFocusBlur}
-          onBlur={this.handleFocusBlur}>
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+        >
           {this.state.data.map((item, index) =>
             <Option key={index} value={item.customer_phone}>{item.customer_name} {item.customer_phone}</Option>)
           }
@@ -99,7 +103,7 @@ class ProjectSearchBox extends React.Component {
 }
 
 ProjectSearchBox.defaultProps = {
-  placeholder: '请输入车牌号、姓名或电话搜索'
+  placeholder: '请输入车牌号、姓名或电话搜索',
 };
 
-export default ProjectSearchBox
+export default ProjectSearchBox;

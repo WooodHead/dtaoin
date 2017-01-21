@@ -1,14 +1,17 @@
-import React from 'react'
-import {Popconfirm, message, Button} from 'antd'
-import api from '../../middleware/api'
+import React from 'react';
+import {Popconfirm, message, Button} from 'antd';
+import api from '../../middleware/api';
 
 const CalculateConfirm = React.createClass({
   onConfirm(){
-    api.ajax({url: api.checkPurchaseIncome(this.props.userAutoId)}, (data) => {
-      console.log(data);
-      message.success('锁定成功');
-      location.hash = api.getHash();
-    })
+    api.ajax({
+        url: api.checkPurchaseIncome(this.props.userAutoId),
+      },
+      () => {
+        //console.log(data);
+        message.success('锁定成功');
+        location.reload();
+      });
   },
 
   render() {
@@ -24,7 +27,7 @@ const CalculateConfirm = React.createClass({
         </Button>
       </Popconfirm>
     );
-  }
+  },
 });
 
 export default CalculateConfirm;

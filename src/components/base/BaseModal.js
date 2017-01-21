@@ -1,12 +1,11 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
+import React from 'react';
 
 export default class BaseModalComponent extends React.Component {
   constructor(props) {
     super(props);
     [
       'showModal',
-      'hideModal'
+      'hideModal',
     ].map(method => this[method] = this[method].bind(this));
   }
 

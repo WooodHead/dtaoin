@@ -1,7 +1,7 @@
-import React from "react";
-import api from "../../../middleware/api";
-import BaseList from "../../../components/base/BaseList";
-import CategoryTable from "../../../components/tables/warehouse/CategoryTable";
+import React from 'react';
+import api from '../../../middleware/api';
+import BaseList from '../../../components/base/BaseList';
+import Table from './Table';
 
 export default class List extends BaseList {
   constructor(props) {
@@ -12,21 +12,13 @@ export default class List extends BaseList {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({page: nextProps.location.query.page});
-  }
-
   render() {
     return (
-      <div>
-        <h3 className="page-title">仓库-配件分类管理</h3>
-        <CategoryTable
-          updateCondition={this.updateState}
-          source={api.warehouse.getCategories(this.state)}
-          page={this.state.page}
-          pathname="/warehouse/category/list"
-        />
-      </div>
-    )
+      <Table
+        updateState={this.updateState}
+        currentPage={this.state.page}
+        source={api.warehouse.category.list(this.state)}
+      />
+    );
   }
 }

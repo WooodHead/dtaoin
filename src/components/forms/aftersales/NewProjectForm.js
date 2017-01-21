@@ -1,11 +1,11 @@
-import React from 'react'
-import {message, Form, Input, Select, Button, DatePicker, Radio, Row, Col, Icon} from 'antd'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
-import Layout from '../Layout'
-import validator from '../../../middleware/validator'
-import BaseProject from '../../base/BaseProject'
-import FormValidator from '../FormValidator'
+import React from 'react';
+import {message, Form, Input, Select, Button, DatePicker, Radio, Row, Col, Icon} from 'antd';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
+import Layout from '../../../utils/FormLayout';
+import validator from '../../../utils/validator';
+import BaseProject from '../../base/BaseProject';
+import FormValidator from '../../../utils/FormValidator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -30,12 +30,12 @@ class NewProjectForm extends BaseProject {
       deletePartSet: new Set(),
       timeFee: 0,
       materialFee: 0,
-      totalFee: 0
+      totalFee: 0,
     };
     [
       'handlePrevStep',
       'handlePreview',
-      'handleSubmit'
+      'handleSubmit',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -51,7 +51,7 @@ class NewProjectForm extends BaseProject {
     this.props.onSuccess({
       currentStep: this.props.prevStep,
       autoForm: '',
-      projectForm: 'hide'
+      projectForm: 'hide',
     });
   }
 
@@ -114,7 +114,7 @@ class NewProjectForm extends BaseProject {
       api.ajax({
         url: isNew ? api.addMaintainIntention() : api.editMaintainIntention(),
         type: 'POST',
-        data: values
+        data: values,
       }, (data) => {
         message.success(isNew ? '新增维保记录成功' : '修改维保记录成功');
         this.setState({
@@ -137,7 +137,7 @@ class NewProjectForm extends BaseProject {
             project_id: projectId,
             project: values,
             items: itemsSaved,
-            parts: partsSaved
+            parts: partsSaved,
           });
         } else {
           this.props.cancelModal();
@@ -147,74 +147,63 @@ class NewProjectForm extends BaseProject {
         console.error(error);
         this.setState({btnDisable: false});
       });
-    })
+    });
   }
 
   render() {
     const {formItemLayout, buttonLayout, selectStyle} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     let {
       isNew,
       btnDisable,
       fitterAdmins,
       itemHtml,
-      partHtml
+      partHtml,
     } = this.state;
 
     let materialFee = this.calculateTotalMaterialFee(),
       timeFee = this.calculateTotalTimeFee(),
       totalFee = this.calculateTotalFee();
 
-    const fitterAdminProps = getFieldProps('fitter_admin_id', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-    const mileageProps = getFieldProps('mileage', {
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: false, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-
     return (
-      <Form horizontal >
-        {
-          isNew ? '' :
-            <Input type="hidden" {...getFieldProps('_id', {initialValue: this.props.project_id})}/>
-        }
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: this.props.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: this.props.user_auto_id})}/>
+      <Form horizontal>
+        {isNew ? '' : getFieldDecorator('_id', {initialValue: this.props.project_id})(
+            <Input type="hidden"/>
+          )}
+        {getFieldDecorator('customer_id', {initialValue: this.props.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: this.props.auto_id})(
+          <Input type="hidden"/>
+        )}
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="维保负责人" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Select
-                {...fitterAdminProps}
-                {...selectStyle}
-                placeholder="请选择维保负责人">
-                {fitterAdmins.map(admin => <Option key={admin._id}>{admin.name}</Option>)}
-              </Select>
+              {getFieldDecorator('fitter_admin_id', {
+                rules: [{required: true, message: validator.required.notNull}, {validator: FormValidator.notNull}],
+                validateTrigger: 'onBlur',
+              })(
+                <Select
+                  {...selectStyle}
+                  placeholder="请选择维保负责人"
+                >
+                  {fitterAdmins.map(admin => <Option key={admin._id}>{admin.name}</Option>)}
+                </Select>
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="里程数" labelCol={{span: 4}} wrapperCol={{span: 11}}>
-              <Input type="number" {...getFieldProps('mileage')} min={0} addonAfter="Km"/>
+              {getFieldDecorator('mileage')(
+                <Input type="number"  min={0} addonAfter="Km"/>
+              )}
             </FormItem>
           </Col>
         </Row>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="进厂日期" labelCol={{span: 13}} wrapperCol={{span: 8}}>
               <DatePicker
                 disabledDate={this.disabledStartDate.bind(this)}
@@ -223,7 +212,7 @@ class NewProjectForm extends BaseProject {
                 placeholder="请选择进厂时间"/>
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="出厂日期" labelCol={{span: 4}} wrapperCol={{span: 11}}>
               <DatePicker
                 disabledDate={this.disabledEndDate.bind(this)}
@@ -235,10 +224,12 @@ class NewProjectForm extends BaseProject {
         </Row>
 
         <FormItem label="是否事故车" {...formItemLayout}>
-          <RadioGroup {...getFieldProps('is_accident', {initialValue: '0'})}>
-            <Radio value="0">否</Radio>
-            <Radio value="1">是</Radio>
-          </RadioGroup>
+          {getFieldDecorator('is_accident', {initialValue: '0'})(
+            <RadioGroup>
+              <Radio value="0">否</Radio>
+              <Radio value="1">是</Radio>
+            </RadioGroup>
+          )}
         </FormItem>
 
         <FormItem label="维修项目" className="form-item-container" {...formItemLayout}>
@@ -252,12 +243,12 @@ class NewProjectForm extends BaseProject {
         </FormItem>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="材料费" labelCol={{span: 13}} wrapperCol={{span: 8}}>
               <p className="ant-form-text">{materialFee}元</p>
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="工时费" labelCol={{span: 4}} wrapperCol={{span: 11}}>
               <p className="ant-form-text">{timeFee}元</p>
             </FormItem>
@@ -265,38 +256,47 @@ class NewProjectForm extends BaseProject {
         </Row>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="辅料费" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Input
-                type="number" {...getFieldProps('auxiliary_material_fee', {onChange: this.calculateTotalFee})}
-                defaultValue="0"
-                placeholder="请输入辅料费"
-                min={0}
-                addonAfter="元"/>
+              {getFieldDecorator('auxiliary_material_fee', {
+                initialValue: 0,
+                onChange: this.calculateTotalFee,
+              })(
+                <Input
+                  type="number"
+                  placeholder="请输入辅料费"
+                  min={0}
+                  addonAfter="元"
+                />
+              )}
             </FormItem>
           </Col>
         </Row>
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="优惠券优惠" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Input
-                type="number" {...getFieldProps('coupon', {onChange: this.calculateTotalFee})}
+              {getFieldDecorator('coupon', {onChange: this.calculateTotalFee})(
+                <Input
+                type="number"
                 defaultValue="0"
                 placeholder="请输入优惠券优惠金额"
                 min={0}
                 addonAfter="元"
               />
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="抹零优惠" labelCol={{span: 4}} wrapperCol={{span: 11}}>
-              <Input
-                type="number" {...getFieldProps('discount', {onChange: this.calculateTotalFee})}
+              {getFieldDecorator('discount', {onChange: this.calculateTotalFee})(
+                <Input
+                type="number"
                 defaultValue="0"
                 placeholder="请输入抹零优惠金额"
                 min={0}
                 addonAfter="元"
               />
+              )}
             </FormItem>
           </Col>
         </Row>
@@ -306,7 +306,9 @@ class NewProjectForm extends BaseProject {
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input type="textarea"{...getFieldProps('remark')}/>
+          {getFieldDecorator('remark')(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -315,9 +317,9 @@ class NewProjectForm extends BaseProject {
           <Button type="ghost" onClick={this.handleSubmit} disabled={btnDisable}>保存并退出</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewProjectForm = Form.create()(NewProjectForm);
-export default NewProjectForm
+export default NewProjectForm;

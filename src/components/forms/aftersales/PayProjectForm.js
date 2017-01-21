@@ -1,21 +1,19 @@
-import React from 'react'
-import {message, Icon, Input, Form, Select, DatePicker, Button} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
+import React from 'react';
+import {message, Form, Button} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 class PayProjectForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {project: {}}
+    this.state = {project: {}};
   }
 
   componentDidMount() {
     let {customerId, projectId} = this.props;
-    this.getProjectDetail(customerId, projectId)
+    this.getProjectDetail(customerId, projectId);
   }
 
   onAccount(e) {
@@ -26,9 +24,9 @@ class PayProjectForm extends React.Component {
       type: 'POST',
       data: {
         _id: projectId,
-        customer_id: customerId
-      }
-    }, function (data) {
+        customer_id: customerId,
+      },
+    }, function () {
       message.success('挂账成功!');
       this.props.cancelModal();
       location.reload();
@@ -44,9 +42,9 @@ class PayProjectForm extends React.Component {
       type: 'POST',
       data: {
         _id: projectId,
-        customer_id: customerId
-      }
-    }, function (data) {
+        customer_id: customerId,
+      },
+    }, function () {
       message.success('结算成功!');
       this.props.cancelModal();
       location.reload();
@@ -59,8 +57,8 @@ class PayProjectForm extends React.Component {
 
   getProjectDetail(customerId, projectId) {
     api.ajax({url: api.maintProjectByProjectId(customerId, projectId)}, function (data) {
-      this.setState({project: data.res.intention_info})
-    }.bind(this))
+      this.setState({project: data.res.intention_info});
+    }.bind(this));
   }
 
   render() {
@@ -81,9 +79,9 @@ class PayProjectForm extends React.Component {
           <Button type="primary" onClick={this.onPay.bind(this)}>付款</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 PayProjectForm = Form.create()(PayProjectForm);
-export default PayProjectForm
+export default PayProjectForm;

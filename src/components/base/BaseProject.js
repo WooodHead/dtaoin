@@ -1,10 +1,10 @@
-import React from 'react'
-import {message, Form, Select, Row, Col, Icon} from 'antd'
-import api from '../../middleware/api'
-import Layout from '../../components/forms/Layout'
-import NewOptItem from '../popover/NewOptItem'
-import MaintainItemSearchBox from '../../components/search/MaintainItemSearchBox'
-import PartSearchBox from '../../components/search/PartSearchBox'
+import React from 'react';
+import {message, Form, Select, Row, Col, Icon} from 'antd';
+import api from '../../middleware/api';
+import Layout from '../../utils/FormLayout';
+import NewOptItem from '../popover/NewOptItem';
+import MaintainItemSearchBox from '../../components/search/MaintainItemSearchBox';
+import PartSearchBox from '../../components/search/PartSearchBox';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -20,7 +20,7 @@ export default class BaseProject extends React.Component {
       'handleDateChange',
       'calculateTotalTimeFee',
       'calculateTotalMaterialFee',
-      'calculateTotalFee'
+      'calculateTotalFee',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -37,7 +37,7 @@ export default class BaseProject extends React.Component {
 
     this.setState({
       [timeFeeProp]: timeFee,
-      itemMap: itemMap
+      itemMap: itemMap,
     });
     this.calculateTotalFee();
   }
@@ -67,7 +67,7 @@ export default class BaseProject extends React.Component {
     this.setState({
       [partPriceProp]: partPrice,
       [partAmountProp]: partAmount,
-      partMap: partMap
+      partMap: partMap,
     });
 
     $('#' + partAmountProp).text(`${partAmount}元`);
@@ -75,7 +75,8 @@ export default class BaseProject extends React.Component {
   }
 
   handlePartCountChange(index, event) {
-    let part = {},
+    let
+      part = {},
       partPriceProp = 'part_price_' + index,
       partCountProp = 'part_count_' + index,
       partAmountProp = 'part_amount_' + index,
@@ -83,10 +84,10 @@ export default class BaseProject extends React.Component {
       partRemainderProp = 'part_remainder_' + index,
 
       partPrice = this.state[partPriceProp],
-      oldPartCount = this.state[partCountProp],
+      // oldPartCount = this.state[partCountProp],
       partCount = event.target.value,
       partAmount = partPrice * partCount,
-    //parseInt(oldPartCount)
+      //parseInt(oldPartCount)
       partRemainder = this.state[partTotalNumProp] - parseInt(partCount);
 
     if (partCount < 0) {
@@ -115,7 +116,7 @@ export default class BaseProject extends React.Component {
       [partCountProp]: partCount,
       [partAmountProp]: partAmount,
       // [partRemainderProp]: partRemainder, //初始化时写入,只读
-      partMap: partMap
+      partMap: partMap,
     });
 
     $('#' + partAmountProp).text(`${partAmount}元`);
@@ -183,13 +184,13 @@ export default class BaseProject extends React.Component {
         [partCountProp]: 0,
         [partTotalNumProp]: 0,
         [partAmountProp]: 0,
-        [partRemainderProp]: 0
+        [partRemainderProp]: 0,
       });
 
       $('#' + partPriceProp).val(0);
       $('#' + partCountProp).val(0);
-      $('#' + partAmountProp).text(`0元`);
-      $('#' + partRemainderProp).text(`剩余0件`);
+      $('#' + partAmountProp).text('0元');
+      $('#' + partRemainderProp).text('剩余0件');
       return;
     }
 
@@ -217,7 +218,7 @@ export default class BaseProject extends React.Component {
       [partCountProp]: partCount,
       [partTotalNumProp]: partTotalNum,
       [partAmountProp]: partAmount,
-      [partRemainderProp]: partRemainder // 初始化时写入配件剩余数量,其余地方均不写入,只读取数据
+      [partRemainderProp]: partRemainder, // 初始化时写入配件剩余数量,其余地方均不写入,只读取数据
     });
 
     $('#' + partPriceProp).val(partPrice);
@@ -235,7 +236,7 @@ export default class BaseProject extends React.Component {
       partItem.part_name = part.name;
       partItem.material_fee = part.material_fee;
     } else {
-      partItem = {_id: 0, part_id: part._id, count: 1, part_name: part.name, material_fee: 0}
+      partItem = {_id: 0, part_id: part._id, count: 1, part_name: part.name, material_fee: 0};
     }
     partMap.set(index, partItem);
 
@@ -268,7 +269,7 @@ export default class BaseProject extends React.Component {
 
     this.setState({
       itemHtml: itemHtml,
-      itemMap: itemMap
+      itemMap: itemMap,
     });
   }
 
@@ -287,7 +288,7 @@ export default class BaseProject extends React.Component {
 
     this.setState({
       partHtml: partHtml,
-      partMap: partMap
+      partMap: partMap,
     });
   }
 
@@ -319,9 +320,9 @@ export default class BaseProject extends React.Component {
 
   calculateTotalFee() {
     let form = this.props.form,
-      discount = form.getFieldProps('discount').value,
-      coupon = form.getFieldProps('coupon').value,
-      auxiliaryMaterialFee = form.getFieldProps('auxiliary_material_fee').value,
+      discount = form.getFieldDecorator('discount').value,
+      coupon = form.getFieldDecorator('coupon').value,
+      auxiliaryMaterialFee = form.getFieldDecorator('auxiliary_material_fee').value,
       timeFee = this.calculateTotalTimeFee(),
       materialFee = this.calculateTotalMaterialFee(),
       totalFee = 0;
@@ -348,8 +349,8 @@ export default class BaseProject extends React.Component {
   renderItemHtml(index) {
     const {selectStyle} = Layout;
     let label = `项目${index}：`;
-    let newItem = 'new_item_' + index,
-      newItemContainer = 'new_item_container_' + index;
+    // let newItem = 'new_item_' + index;
+    // let newItemContainer = 'new_item_container_' + index;
 
     return (
       <div key={index} className="form-card">
@@ -361,7 +362,7 @@ export default class BaseProject extends React.Component {
         </a>
 
         <Row className="mb5">
-          <Col span="14">
+          <Col span={14}>
             <FormItem label={label} className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <MaintainItemSearchBox
                 change={this.handleItemChange.bind(this, index)}
@@ -369,13 +370,13 @@ export default class BaseProject extends React.Component {
               />
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <NewOptItem save={this.addMaintainItem.bind(this, index)}/>
           </Col>
         </Row>
 
         <Row>
-          <Col span="14">
+          <Col span={14}>
             <FormItem label="维修人员：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <Select
                 multiple
@@ -387,7 +388,7 @@ export default class BaseProject extends React.Component {
               </Select>
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="工时费：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -403,23 +404,23 @@ export default class BaseProject extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 
   renderPartHtml(index) {
-    let label = `配件${index}：`,
-      partAmountProp = 'part_amount_' + index,
-      partRemainderProp = 'part_remainder_' + index,
-      price = 'part_price_' + index,
-      count = 'part_count_' + index,
-      remainder = 'part_remainder_' + index,
-      amount = 'part_amount_' + index;
+    let label = `配件${index}：`;
+    // let partAmountProp = 'part_amount_' + index;
+    // let partRemainderProp = 'part_remainder_' + index;
+    let price = 'part_price_' + index;
+    let count = 'part_count_' + index;
+    let remainder = 'part_remainder_' + index;
+    let amount = 'part_amount_' + index;
 
     return (
       <div key={index} className="form-card">
         <a href="javascript:;" className="close" onClick={this.removePart.bind(this, index)}><Icon type="cross"/></a>
         <Row className="mb5">
-          <Col span="14">
+          <Col span={14}>
             <FormItem label={label} className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <PartSearchBox
                 select={this.handlePartSelect.bind(this, index)}
@@ -427,7 +428,7 @@ export default class BaseProject extends React.Component {
               />
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="零售价：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -445,7 +446,7 @@ export default class BaseProject extends React.Component {
         </Row>
 
         <Row>
-          <Col span="14">
+          <Col span={14}>
             <FormItem label="使用数量：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -458,17 +459,17 @@ export default class BaseProject extends React.Component {
                 />
                 <span className="ant-input-group-addon">件</span>
               </span>
-              <span className="ant-form-explain" id={remainder}></span>
+              <span className="ant-form-explain" id={remainder}/>
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="小计：" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <p className="ant-form-text" id={amount}>0元</p>
             </FormItem>
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 
   setItemsTimeFee(items) {
@@ -489,7 +490,7 @@ export default class BaseProject extends React.Component {
       this.setState({
         [partPriceProp]: Number(part.material_fee) / Number(part.count),
         [partCountProp]: Number(part.count),
-        [partAmountProp]: Number(part.material_fee)
+        [partAmountProp]: Number(part.material_fee),
       });
     }
   }
@@ -528,8 +529,8 @@ export default class BaseProject extends React.Component {
 
   renderOptItem(index, itemObj) {
     const {selectStyle} = Layout;
-    let label = `项目${index}：`,
-      itemProp = 'item_' + index;
+    let label = `项目${index}：`;
+    // let itemProp = 'item_' + index;
     let {fitterUsers} = this.state;
     let fixerSelect = '';
     if (Number(itemObj.fitter_user_ids) === 0) {
@@ -566,7 +567,7 @@ export default class BaseProject extends React.Component {
           <Icon type="cross"/>
         </a>
         <Row className="mb5">
-          <Col span="14">
+          <Col span={14}>
             <FormItem label={label} className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <MaintainItemSearchBox
                 value={itemObj.item_name}
@@ -575,18 +576,18 @@ export default class BaseProject extends React.Component {
               />
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <NewOptItem save={this.addMaintainItem.bind(this, index)}/>
           </Col>
         </Row>
 
         <Row>
-          <Col span="14">
+          <Col span={14}>
             <FormItem label="维修人员：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               {fixerSelect}
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="工时费：" className="no-margin-bottom" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -603,17 +604,17 @@ export default class BaseProject extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 
   renderPartItem(index, part) {
-    let label = `配件${index}：`,
-      partAmountProp = 'part_amount_' + index,
-      partRemainderProp = 'part_remainder_' + index,
-      price = 'part_price_' + index,
-      count = 'part_count_' + index,
-      remainder = 'part_remainder_' + index,
-      amount = 'part_amount_' + index;
+    let label = `配件${index}：`;
+    // let partAmountProp = 'part_amount_' + index;
+    // let partRemainderProp = 'part_remainder_' + index;
+    let price = 'part_price_' + index;
+    let count = 'part_count_' + index;
+    let remainder = 'part_remainder_' + index;
+    let amount = 'part_amount_' + index;
     /**
      * 初始化编辑时,获取配件详情,计算配件剩余数量
      * 初始化时,不减配件数量count
@@ -629,7 +630,7 @@ export default class BaseProject extends React.Component {
         </a>
 
         <Row className="mb5">
-          <Col span="14">
+          <Col span={14}>
             <FormItem label={label} labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <PartSearchBox
                 value={part.part_name}
@@ -638,7 +639,7 @@ export default class BaseProject extends React.Component {
               />
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="零售价：" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -657,7 +658,7 @@ export default class BaseProject extends React.Component {
         </Row>
 
         <Row>
-          <Col span="14">
+          <Col span={14}>
             <FormItem label="使用数量：" labelCol={{span: 6}} wrapperCol={{span: 16}}>
               <span className="ant-input-wrapper ant-input-group">
                 <input
@@ -671,41 +672,41 @@ export default class BaseProject extends React.Component {
                 />
                 <span className="ant-input-group-addon">件</span>
               </span>
-              <span className="ant-form-explain" id={remainder}></span>
+              <span className="ant-form-explain" id={remainder}/>
             </FormItem>
           </Col>
-          <Col span="10">
+          <Col span={10}>
             <FormItem label="小计：" labelCol={{span: 6}} wrapperCol={{span: 14}}>
               <p className="ant-form-text" id={amount}>{part.material_fee}元</p>
             </FormItem>
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 
   addMaintainItem(index, typeId, name) {
     api.ajax({
       url: api.addMaintainItem(),
       type: 'POST',
-      data: {type: typeId, name: name}
-    }, function (data) {
+      data: {type: typeId, name: name},
+    }, function () {
       message.success('维保项目添加成功');
-    }.bind(this))
+    }.bind(this));
   }
 
   disabledStartDate(startDate) {
     if (!startDate || !this.state.endDate) {
       return false;
     }
-    return startDate.getTime() > this.state.endDate.getTime();
+    return startDate.valueOf() > this.state.endDate.valueOf();
   }
 
   disabledEndDate(endDate) {
     if (!endDate || !this.state.startDate) {
       return false;
     }
-    return endDate.getTime() < this.state.startDate.getTime();
+    return endDate.valueOf() < this.state.startDate.valueOf();
   }
 
   handleDateChange(field, value) {
@@ -720,15 +721,15 @@ export default class BaseProject extends React.Component {
       }
       this.setState({fitterAdmins: admins});
       if (this.state.isNew) {
-        this.props.form.setFieldsValue({fitter_admin_id: admins[0]._id})
+        this.props.form.setFieldsValue({fitter_admin_id: admins[0]._id});
       }
-    }.bind(this))
+    }.bind(this));
   }
 
   getFitterUsers(isLeader) {
     api.ajax({url: api.user.getMaintainUsers(isLeader)}, function (data) {
       this.setState({fitterUsers: data.res.user_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   getOptItems(projectId) {
@@ -759,7 +760,7 @@ export default class BaseProject extends React.Component {
       let totalNum = parseInt(partDetail.amount) - parseInt(partDetail.freeze) + usedCount;
       this.setState({
         [partTotalNumProp]: totalNum,
-        [partRemainderProp]: totalNum - usedCount // TODO 可以不记录
+        [partRemainderProp]: totalNum - usedCount, // TODO 可以不记录
       });
       $('#' + partRemainderProp).text(`剩余${totalNum - usedCount}件`);
     }.bind(this));

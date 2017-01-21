@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewLoanForm from '../../forms/presales/NewLoanForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewLoanForm from '../../forms/presales/NewLoanForm';
 
 export default class NewLoanModal extends BaseModal {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class NewLoanModal extends BaseModal {
             isSingle={this.props.isSingle}
             customer_id={this.props.customer_id}
             seller_user_id={this.props.seller_user_id}
-            user_auto_id={this.props.user_auto_id}
+            auto_id={this.props.auto_id}
           />
         </Modal>
       </span>

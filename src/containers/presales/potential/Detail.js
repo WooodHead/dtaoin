@@ -1,8 +1,8 @@
-import React from "react";
-import {Icon, Breadcrumb} from "antd";
-import api from "../../../middleware/api";
-import PotentialCustomerInfo from "../../../components/boards/presales/PotentialCustomerInfo";
-import AutoTabs from "../../../components/boards/presales/PotentialAutoTabs";
+import React from 'react';
+import {Icon, Breadcrumb} from 'antd';
+import api from '../../../middleware/api';
+import PotentialCustomerInfo from '../../../components/boards/presales/PotentialCustomerInfo';
+import AutoTabs from '../../../components/boards/customer/PotentialAutoTabs';
 
 export default class PotentialDetail extends React.Component {
   constructor(props) {
@@ -10,8 +10,8 @@ export default class PotentialDetail extends React.Component {
     this.state = {
       customerId: this.props.location.query.customer_id,
       detail: {},
-      intentions: []
-    }
+      intentions: [],
+    };
   }
 
   componentDidMount() {
@@ -21,38 +21,22 @@ export default class PotentialDetail extends React.Component {
   }
 
   getCustomerDetail(customerId) {
-    api.ajax({url: api.getCustomerDetail(customerId)}, function (data) {
+    api.ajax({url: api.customer.detail(customerId)}, function (data) {
       this.setState({detail: data.res.customer_info});
-    }.bind(this))
+    }.bind(this));
   }
 
   getCustomerIntentions(customerId) {
-    api.ajax({url: api.getCustomerIntentions(customerId)}, function (data) {
+    api.ajax({url: api.presales.intention.getListByCustomerId(customerId)}, function (data) {
       this.setState({intentions: data.res.intention_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   render() {
-    let {
-      detail,
-      intentions
-    }= this.state;
+    let {detail, intentions}= this.state;
 
     return (
       <div>
-        <div className="mb10">
-          <Breadcrumb>
-            <Breadcrumb.Item>
-              <a href="javascript:history.back();">
-                <Icon type="left"/> 潜在客户
-              </a>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>
-              <Icon type="user"/> {detail.name}
-            </Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-
         <PotentialCustomerInfo detail={detail}/>
         <AutoTabs intentions={intentions}/>
       </div>

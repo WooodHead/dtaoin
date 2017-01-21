@@ -1,10 +1,9 @@
-import React from "react";
-import CustomerSourceFilter from "../../../components/filters/CustomerSource";
-import IntentionLevelFilter from "../../../components/filters/IntentionLevel";
-import CreateTimeFilter from "../../../components/filters/CreateTime";
-import BrandIntentionFilter from "../../../components/filters/BrandIntention";
-import BudgetFilter from "../../../components/filters/Budget";
-import MortageTypeFilter from "../../../components/filters/MortageType";
+import React from 'react';
+import IntentionLevelFilter from '../../../components/filters/IntentionLevel';
+import CreateTimeFilter from '../../../components/filters/CreateTime';
+import BrandIntentionFilter from '../../../components/filters/BrandIntention';
+import BudgetFilter from '../../../components/filters/Budget';
+import MortageTypeFilter from '../../../components/filters/MortageType';
 
 const PotentialAutoCustomer = React.createClass({
   render(){
@@ -22,8 +21,8 @@ const PotentialAutoCustomer = React.createClass({
           <MortageTypeFilter filterAction={this.props.filterAction.bind(this,'','is_mortgage')}/>
         </div>
       </div>
-    )
-  }
+    );
+  },
 });
 
 PotentialAutoCustomer.defaultProps = {};

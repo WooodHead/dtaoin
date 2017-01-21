@@ -1,10 +1,10 @@
-import React, {Component} from 'react'
-import {message, Form, Input, Button, Select, Radio, DatePicker} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
-import validator from '../../../middleware/validator'
-import FormValidator from '../FormValidator'
+import React, {Component} from 'react';
+import {message, Form, Input, Button, Radio, DatePicker} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
+import validator from '../../../utils/validator';
+import FormValidator from '../../../utils/FormValidator';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -13,12 +13,12 @@ class NewLoanForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loan: {}
-    }
+      loan: {},
+    };
   }
 
   componentDidMount() {
-    this.getPurchaseLoanDetail(this.props.customer_id, this.props.user_auto_id);
+    this.getPurchaseLoanDetail(this.props.customer_id, this.props.auto_id);
   }
 
   handleSubmit(e) {
@@ -31,120 +31,139 @@ class NewLoanForm extends Component {
       values.sign_date = formatter.date(values.sign_date);
 
       api.ajax({
-        url: api.editPurchaseLoan(),
+        url: api.presales.deal.editLoan(),
         type: 'POST',
-        data: values
-      }, function (data) {
+        data: values,
+      }, function () {
         message.success('修改按揭交易成功');
         this.props.cancelModal();
         location.reload();
-      }.bind(this))
+      }.bind(this));
     });
   }
 
-  getPurchaseLoanDetail(customerId, userAutoId) {
-    api.ajax({url: api.getPurchaseLoanDetail(customerId, userAutoId)}, function (data) {
+  getPurchaseLoanDetail(customerId, autoId) {
+    api.ajax({url: api.presales.deal.getLoanDetail(customerId, autoId)}, function (data) {
       let detail = data.res.detail;
       this.setState({loan: detail});
-      this.props.form.setFieldsValue({guarantee_phone: detail.guarantee_phone})
-    }.bind(this))
+      this.props.form.setFieldsValue({guarantee_phone: detail.guarantee_phone});
+    }.bind(this));
   }
 
   render() {
     const {formItemLayout, buttonLayout} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     const {loan} = this.state;
 
-    const guaranteeCompanyProps = getFieldProps('guarantee_company', {
-      initialValue: loan.guarantee_company || '华峰申银资产管理有限公司',
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
-
-    const guaranteePhoneProps = getFieldProps('guarantee_phone', {
-      initialValue: loan.guarantee_phone,
-      validate: [{
-        rules: [{validator: FormValidator.validatePhone}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: false, message: validator.required.phone}],
-        trigger: 'onBlur'
-      }]
-    });
-
     return (
-      <Form horizontal >
-        <Input type="hidden" {...getFieldProps('_id', {initialValue: loan._id})}/>
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: loan.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('seller_user_id', {initialValue: loan.seller_user_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: loan.user_auto_id})}/>
+      <Form horizontal>
+        {getFieldDecorator('_id', {initialValue: loan._id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('customer_id', {initialValue: loan.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('seller_user_id', {initialValue: loan.seller_user_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: loan.auto_id})(
+          <Input type="hidden"/>
+        )}
 
         <FormItem label="按揭年限" {...formItemLayout}>
-          <RadioGroup {...getFieldProps('loan_years', {initialValue: loan.loan_years})}>
-            <Radio key="1" value="1">一年</Radio>
-            <Radio key="2" value="2">两年</Radio>
-            <Radio key="3" value="3">三年</Radio>
-          </RadioGroup>
+          {getFieldDecorator('loan_years', {initialValue: loan.loan_years})(
+            <RadioGroup>
+              <Radio key="1" value="1">一年</Radio>
+              <Radio key="2" value="2">两年</Radio>
+              <Radio key="3" value="3">三年</Radio>
+            </RadioGroup>
+          )}
         </FormItem>
 
         <FormItem label="按揭银行" {...formItemLayout}>
-          <Input {...getFieldProps('bank', {initialValue: loan.bank})} placeholder="请输入按揭银行"/>
+          {getFieldDecorator('bank', {initialValue: loan.bank})(
+            <Input placeholder="请输入按揭银行"/>
+          )}
         </FormItem>
 
         <FormItem label="担保公司" {...formItemLayout}>
-          <Input {...guaranteeCompanyProps} placeholder="请输入担保公司"/>
+          {getFieldDecorator('guarantee_company', {
+            initialValue: loan.guarantee_company || '华峰申银资产管理有限公司',
+            rules: FormValidator.getRuleNotNull(),
+            validateTrigger: 'onBlur',
+          })(
+            <Input placeholder="请输入担保公司"/>
+          )}
         </FormItem>
 
         <FormItem label="担保人" {...formItemLayout}>
-          <Input {...getFieldProps('guarantee_user', {initialValue: loan.guarantee_user})} placeholder="请输入担保人"/>
+          {getFieldDecorator('guarantee_user', {initialValue: loan.guarantee_user})(
+            <Input placeholder="请输入担保人"/>
+          )}
         </FormItem>
 
         <FormItem label="担保人联系方式" {...formItemLayout}>
-          <Input {...guaranteePhoneProps} placeholder="担保人联系方式"/>
+          {getFieldDecorator('guarantee_phone', {
+            initialValue: loan.guarantee_phone,
+            rules: [{required: false, message: validator.required.phone}, {validator: FormValidator.validatePhone}],
+            validateTrigger: 'onBlur',
+          })(
+            <Input placeholder="担保人联系方式"/>
+          )}
         </FormItem>
 
         <FormItem label="签单日期" {...formItemLayout}>
-          <DatePicker {...getFieldProps('sign_date', {initialValue: loan.sign_date})} placeholder="请选择签单日期"/>
+          {getFieldDecorator('sign_date', {initialValue: formatter.getMomentDate(loan.sign_date)})(
+            <DatePicker placeholder="请选择签单日期"/>
+          )}
         </FormItem>
 
         <FormItem label="首付款" {...formItemLayout}>
-          <Input {...getFieldProps('pre_payment', {initialValue: loan.pre_payment})} placeholder="请输入首付款"/>
+          {getFieldDecorator('pre_payment', {initialValue: loan.pre_payment})(
+            <Input placeholder="请输入首付款"/>
+          )}
         </FormItem>
 
         <FormItem label="贷款金额" {...formItemLayout}>
-          <Input {...getFieldProps('bank_loan', {initialValue: loan.bank_loan})} placeholder="请输入贷款金额"/>
+          {getFieldDecorator('bank_loan', {initialValue: loan.bank_loan})(
+            <Input placeholder="请输入贷款金额"/>
+          )}
         </FormItem>
 
         <FormItem label="每月还款" {...formItemLayout}>
-          <Input {...getFieldProps('month_pay', {initialValue: loan.month_pay})} placeholder="请输入每月还款"/>
+          {getFieldDecorator('month_pay', {initialValue: loan.month_pay})(
+            <Input placeholder="请输入每月还款"/>
+          )}
         </FormItem>
 
         <FormItem label="资料费" {...formItemLayout}>
-          <Input {...getFieldProps('material_fee', {initialValue: loan.material_fee})} placeholder="请输入资料费"/>
+          {getFieldDecorator('material_fee', {initialValue: loan.material_fee})(
+            <Input placeholder="请输入资料费"/>
+          )}
         </FormItem>
 
         <FormItem label="公证费" {...formItemLayout}>
-          <Input type="number" {...getFieldProps('notary_fee_in', {initialValue: loan.notary_fee_in})}
-                 placeholder="请输入公证费"/>
+          {getFieldDecorator('notary_fee_in', {initialValue: loan.notary_fee_in})(
+            <Input type="number" placeholder="请输入公证费"/>
+          )}
         </FormItem>
 
         <FormItem label="担保费" {...formItemLayout}>
-          <Input type="number" {...getFieldProps('guarantee_fee_in', {initialValue: loan.guarantee_fee_in})}
-                 placeholder="请输入担保费"/>
+          {getFieldDecorator('guarantee_fee_in', {initialValue: loan.guarantee_fee_in})(
+            <Input type="number" placeholder="请输入担保费"/>
+          )}
         </FormItem>
 
         <FormItem label="银行保证金" {...formItemLayout}>
-          <Input type="number" {...getFieldProps('bank_deposit_in', {initialValue: loan.bank_deposit_in})}
-                 placeholder="请输入银行保证金"/>
+          {getFieldDecorator('bank_deposit_in', {initialValue: loan.bank_deposit_in})(
+            <Input type="number" placeholder="请输入银行保证金"/>
+          )}
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input {...getFieldProps('remark', {initialValue: loan.remark})} type="textarea" placeholder="请输入备注"/>
+          {getFieldDecorator('remark', {initialValue: loan.remark})(
+            <Input type="textarea" placeholder="请输入备注"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -152,9 +171,9 @@ class NewLoanForm extends Component {
           <Button type="primary" onClick={this.handleSubmit.bind(this)}>保存</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewLoanForm = Form.create()(NewLoanForm);
-export default NewLoanForm
+export default NewLoanForm;

@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewCustomerAutoForm from '../../forms/aftersales/NewCustomerAutoForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewCustomerAutoForm from '../../forms/aftersales/NewCustomerAutoForm';
 
 export default class NewCustomerAutoModal extends BaseModal {
   constructor(props) {
@@ -10,8 +10,8 @@ export default class NewCustomerAutoModal extends BaseModal {
   }
 
   onSuccess(data) {
-    console.log('onSuccess');
-    console.log(data);
+    // console.log('onSuccess');
+    // console.log(data);
     this.hideModal();
     this.props.onSuccess(data);
   }
@@ -22,7 +22,7 @@ export default class NewCustomerAutoModal extends BaseModal {
         <Button
           type="primary"
           onClick={this.showModal}
-          size={this.props.size || "small"}>
+          size={this.props.size || 'small'}>
           创建客户
         </Button>
         <Modal

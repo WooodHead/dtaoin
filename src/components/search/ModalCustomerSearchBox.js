@@ -11,12 +11,13 @@ class SearchBox extends React.Component {
     this.state = {
       data: [],
       value: '',
-      focus: false
+      focus: false,
     };
     [
       'handleSearch',
       'handleSelect',
-      'handleFocusBlur'
+      'handleFocus',
+      'handleBlur',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -66,20 +67,22 @@ class SearchBox extends React.Component {
     }
   }
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  }
+
+  handleBlur() {
+    this.setState({focus: false});
   }
 
   render() {
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value
+      'ant-search-btn-noempty': !!this.state.value,
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': this.state.focus,
     });
 
     return (
@@ -96,8 +99,9 @@ class SearchBox extends React.Component {
           filterOption={false}
           onSelect={this.handleSelect}
           onSearch={this.handleSearch}
-          onFocus={this.handleFocusBlur}
-          onBlur={this.handleFocusBlur}>
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+        >
           {this.state.data.map((item, index) =>
             <Option key={index} value={item.phone}>{item.name} {item.phone} {item.plate_nums}</Option>)}
         </Select>
@@ -114,7 +118,7 @@ class SearchBox extends React.Component {
 }
 
 SearchBox.defaultProps = {
-  placeholder: '请用手机号、车牌号、或姓名搜索'
+  placeholder: '请用手机号、车牌号、或姓名搜索',
 };
 
 export default SearchBox

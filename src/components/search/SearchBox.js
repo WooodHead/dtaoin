@@ -1,13 +1,15 @@
-import React from 'react'
-import {Input, Select, Button, Icon, message} from 'antd'
-import classNames from 'classnames'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+
+const Option = Select.Option;
 
 const SearchBox = React.createClass({
   getInitialState() {
     return {
       data: [],
       value: '',
-      focus: false
+      focus: false,
     };
   },
 
@@ -20,39 +22,42 @@ const SearchBox = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     if (this.props.data && this.props.data.length != nextProps.data.length) {
-      this.setState({data: nextProps.data})
+      this.setState({data: nextProps.data});
     }
   },
 
   handleChange(key) {
-    //if (!!key) {
-      this.setState({value: key});
-      this.props.change(key);
-    //}
+    this.setState({value: key});
+    this.props.change(key);
+  },
+
+  handleSelect(itemId) {
+    this.props.onSelect(itemId);
   },
 
   handleSubmit() {
     this.props.change(this.state.value);
   },
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  },
+
+  handleBlur() {
+    this.setState({focus: false});
   },
 
   render() {
-    const Option = Select.Option;
-
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim()
+      'ant-search-btn-noempty': !!this.state.value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
       'ant-search-input-focus': this.state.focus,
-      'mb15': true
     });
+
+    let {propKey, propName} = this.props;
 
     return (
       <Input.Group className={searchCls} style={this.props.style}>
@@ -60,15 +65,22 @@ const SearchBox = React.createClass({
           size="large"
           combobox
           onChange={this.handleChange}
+          onSelect={this.handleSelect}
           value={this.state.value}
           placeholder={this.props.placeholder}
           defaultActiveFirstOption={false}
           showArrow={false}
           filterOption={false}
-          onFocus={this.handleFocusBlur}
-          onBlur={this.handleFocusBlur}>
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}>
           {this.state.data.map((item, index) =>
-            <Option key={index} value={item.name}>{item.name}</Option>)}
+            <Option
+              key={index}
+              value={propKey ? item[propKey] : item.name}
+            >
+              {propName ? item[propName] : item.name}
+            </Option>)
+          }
         </Select>
         <div className="ant-input-group-wrap">
           <Button
@@ -80,8 +92,8 @@ const SearchBox = React.createClass({
         </div>
       </Input.Group>
     );
-  }
+  },
 });
 
 SearchBox.defaultProps = {placeholder: '用关键字搜索'};
-export default SearchBox
+export default SearchBox;

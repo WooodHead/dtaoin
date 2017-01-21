@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import AddEditMaintainPartForm from '../../forms/aftersales/AddEditMaintainPartForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import AddEditMaintainPartForm from '../../forms/aftersales/AddEditMaintainPartForm';
 
 export default class EditMaintainPartModal extends BaseModal {
   constructor(props) {
@@ -20,7 +20,7 @@ export default class EditMaintainPartModal extends BaseModal {
         <Button
           type="primary"
           onClick={this.showModal}
-          size={this.props.size || "small"}>
+          size={this.props.size || 'small'}>
           编辑配件
         </Button>
         <Modal
@@ -34,6 +34,8 @@ export default class EditMaintainPartModal extends BaseModal {
             onSuccess={this.onSuccess.bind(this)}
             maintain_part={this.props.maintain_part}
             customer_id={this.props.customer_id}
+            memberDetailList={this.props.memberDetailList}
+            projectDisabled={true}
           />
         </Modal>
       </span>

@@ -1,9 +1,9 @@
-import React from 'react'
-import {message, Modal, Button} from 'antd'
-import BaseModal from '../base/BaseModal'
-import api from '../../middleware/api'
+import React from 'react';
+import {Modal, Button} from 'antd';
+import BaseModal from '../base/BaseModal';
+import api from '../../middleware/api';
 
-import imgLoadingFailed from '../../images/imgLoadingFailed.jpg'
+import imgLoadingFailed from '../../images/imgLoadingFailed.jpg';
 
 export default class ImagePreviewModal extends BaseModal {
   constructor(props) {
@@ -25,7 +25,7 @@ export default class ImagePreviewModal extends BaseModal {
     images.map((img, index) => {
       api.ajax({url: img.url}, (data) => {
         this.setState({
-          [`url${index}`]: data.res.url
+          [`url${index}`]: data.res.url,
         });
       });
 
@@ -37,8 +37,8 @@ export default class ImagePreviewModal extends BaseModal {
     //获取当前是第几张图片
     let key = e.target.title;
     e.target.src = imgLoadingFailed;
-    e.target.style.width = "60px";
-    e.target.style.height = "40px";
+    e.target.style.width = '60px';
+    e.target.style.height = '40px';
     e.target.onerror = null;
     this.setState({
       [`loadImgDisabled${key}`]: true,
@@ -70,14 +70,14 @@ export default class ImagePreviewModal extends BaseModal {
               <div key={index}>
                 <figure>
                   <figcaption>{img.title}</figcaption>
-                  {imgUrl ? <img key={index} src={imgUrl} alt={"暂未上传图片"} title={index} onError={this.handleImgError}/> : '暂未上传图片'}
+                  {imgUrl ? <img key={index} src={imgUrl} alt={'暂未上传图片'} title={index} onError={this.handleImgError}/> : '暂未上传图片'}
                 </figure>
                 <a href={imgUrl} disabled={loadImgDisabled} download={`${img.title}.jpg`}>下载</a>
               </div>
-            )
+            );
           })}
         </Modal>
       </span>
-    )
+    );
   }
 }

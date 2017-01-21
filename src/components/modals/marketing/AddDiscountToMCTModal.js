@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
-import {Form, Input, Modal, Button, Select, Checkbox, Row, Col, message} from 'antd'
-import FormModalLayout from '../../../components/forms/Layout';
+import React, {Component} from 'react';
+import {Form, Input, Modal, Button, Select, Checkbox, Row, Col, message} from 'antd';
+import FormModalLayout from '../../../utils/FormLayout';
 const FormItem = Form.Item;
 
-import HCSearchSelectBox from '../../../components/base/HCSearchSelectBox'
+import SearchSelectBox from '../../base/SearchSelectBox';
 
-import api from '../../../middleware/api'
+import api from '../../../middleware/api';
 
 export default class AddDiscountToMCTModal extends Component {
   constructor(props) {
@@ -14,11 +14,11 @@ export default class AddDiscountToMCTModal extends Component {
     this.state = {
       discountList: [],
       currentDiscount: null,
-      countCheck: false,  //不限次CheckBox是否选中
+      countCheck: true,   //不限次CheckBox是否选中
       discountType: 0,    //搜索，优惠类型，全部匹配
       discountStatus: 0,  //搜索，优惠状态，启用
       scope: '0',         //提交，适用门店
-      count: 10,          //提交，优惠使用数量
+      count: 0,           //提交，优惠使用数量
     };
 
     //自动绑定
@@ -49,7 +49,7 @@ export default class AddDiscountToMCTModal extends Component {
       }
     }, (error) => {
       failHandle(error);
-    })
+    });
   }
 
   onSearch(key, successHandle, failHandle) {
@@ -65,8 +65,10 @@ export default class AddDiscountToMCTModal extends Component {
   }
 
   onInputCount(value) {
-    if (value === '' || parseInt(value) > 0) {
+    if (parseInt(value) > 0) {
       this.setState({count: value});
+    } else if (value === '') {
+      this.setState({count: 0});
     }
   }
 
@@ -75,43 +77,47 @@ export default class AddDiscountToMCTModal extends Component {
       ?
       this.setState({countCheck: checked, count: 0})
       :
-      this.setState({countCheck: checked, count: 10});
+      this.setState({countCheck: checked});
   }
 
   onClickFinish() {
     const data = this.assembleFinishData();
     if (data) {
-      this.props.finish(data);
-      this.setState({
-        countCheck: false,  //不限次CheckBox是否选中
-        scope: '0',         //提交，适用门店
-        count: 10,          //提交，优惠使用数量
-      });
-      this.props.cancel();
-    } else {
-      message.error('请选择优惠信息！');
+      if (this.props.finish(data)) {
+        this.setState({
+          countCheck: true,   //不限次CheckBox是否选中
+          scope: '0',         //提交，适用门店
+          count: 0,           //提交，优惠使用数量
+        });
+        this.props.cancel();
+      }
     }
   }
 
   onClickFinishAndContinue() {
     const data = this.assembleFinishData();
     if (data) {
-      this.props.finish(data);
-      this.setState({
-        countCheck: false,  //不限次CheckBox是否选中
-        scope: '0',         //提交，适用门店
-        count: 10,          //提交，优惠使用数量
-      });
-    } else {
-      message.error('请选择优惠信息！');
+      if (this.props.finish(data)) {
+        this.setState({
+          countCheck: true,   //不限次CheckBox是否选中
+          scope: '0',         //提交，适用门店
+          count: 0,           //提交，优惠使用数量
+        });
+      }
     }
   }
 
   assembleFinishData() {
-    const {currentDiscount, scope, count} = this.state;
+    const {currentDiscount, countCheck, scope, count} = this.state;
 
-    if (currentDiscount && Object.keys(currentDiscount).length && count !== '') {
-      let data = {
+    if (!currentDiscount || !Object.keys(currentDiscount).length) {
+      message.error('请选择优惠信息！');
+      return null;
+    } else if (!countCheck && !count) {
+      message.error('请输入优惠的使用次数');
+      return null;
+    } else {
+      return {
         _id: currentDiscount._id,
         name: currentDiscount.name,
         type: currentDiscount.type,
@@ -119,16 +125,13 @@ export default class AddDiscountToMCTModal extends Component {
         scope: scope,
         amount: count,
       };
-      return data;
-    } else {
-      return null;
     }
 
   }
 
   render() {
     const {countCheck, scope, count} = this.state;
-    let {formItemThree} = FormModalLayout;
+    let {formItemThree, formItemLayout_1014} = FormModalLayout;
 
     return (
       <Modal
@@ -143,7 +146,7 @@ export default class AddDiscountToMCTModal extends Component {
                 type="ghost"
                 size="large"
                 style={{width: '100%'}}
-                onClick={this.onClickFinish}>完 成</Button>
+                onClick={this.onClickFinish}>提 交</Button>
             </Col>
             <Col span={4} offset={3}>
               <Button
@@ -164,12 +167,30 @@ export default class AddDiscountToMCTModal extends Component {
                 labelCol={{span: 4}}
                 wrapperCol={{span: 18}}
               >
-                <HCSearchSelectBox
-                  style={{width: 250}}
+                <SearchSelectBox
+                  style={{width: 350}}
                   placeholder={'请输入优惠名称搜索'}
                   onSearch={this.onSearch}
-                  autoSearch={false}
+                  displayPattern={(item) => {
+                    let patternStr = item.name || '';
+                    switch ('' + item.type) {
+                      case '1':
+                        patternStr += ' 计次优惠';
+                        break;
+                      case '2':
+                        patternStr += ' 折扣优惠';
+                        break;
+                      case '3':
+                        patternStr += ' 立减优惠';
+                        break;
+                      default:
+                        return '';
+                    }
+                    patternStr += item.remark ? ' ' + item.remark : '';
+                    return patternStr;
+                  }}
                   onSelectItem={this.onSelectItem}
+                  visible={this.props.visible}
                 />
               </FormItem>
             </Col>
@@ -177,8 +198,9 @@ export default class AddDiscountToMCTModal extends Component {
           <Row>
             <Col span={10}>
               <FormItem
+
                 label="适用门店"
-                {...formItemThree}
+                {...formItemLayout_1014}
                 required
               >
                 <Select
@@ -190,7 +212,6 @@ export default class AddDiscountToMCTModal extends Component {
                   <Select.Option key="0" value="0">通店</Select.Option>
                   <Select.Option key="1" value="1">售卡门店</Select.Option>
                 </Select>
-
               </FormItem>
             </Col>
             <Col span={8} offset={1}>
@@ -221,6 +242,6 @@ export default class AddDiscountToMCTModal extends Component {
           </Row>
         </Form>
       </Modal>
-    )
+    );
   }
 }

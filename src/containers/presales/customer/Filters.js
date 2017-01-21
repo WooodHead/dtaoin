@@ -1,6 +1,6 @@
-import React from "react";
-import CustomerSourceFilter from "../../../components/filters/CustomerSource";
-import CreateTimeFilter from "../../../components/filters/CreateTime";
+import React from 'react';
+// import CustomerSourceFilter from '../../../components/filters/CustomerSource';
+import CreateTimeFilter from '../../../components/filters/CreateTime';
 
 const AutoCustomerFilters = React.createClass({
   render(){
@@ -11,8 +11,8 @@ const AutoCustomerFilters = React.createClass({
         */}
         <CreateTimeFilter filterAction={this.props.filterAction.bind(this,'','create_day')}/>
       </div>
-    )
-  }
+    );
+  },
 });
 
 AutoCustomerFilters.defaultProps = {};

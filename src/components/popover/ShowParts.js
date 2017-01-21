@@ -1,17 +1,17 @@
-import React from 'react'
-import {Row, Col, Popover} from 'antd'
-import formatter from '../../middleware/formatter'
+import React from 'react';
+import {Row, Col, Popover} from 'antd';
+import formatter from '../../utils/DateFormatter';
 
 let ShowParts = React.createClass({
   getInitialState() {
     return {
-      visible: false
+      visible: false,
     };
   },
 
   hide() {
     this.setState({
-      visible: false
+      visible: false,
     });
   },
 
@@ -33,31 +33,31 @@ let ShowParts = React.createClass({
     const content = (
       <div>
         <Row type="flex">
-          <Col span="10">
+          <Col span={10}>
             <p className="text-gray">进货时间</p>
           </Col>
-          <Col span="4">
+          <Col span={4}>
             <p className="text-gray">单价(元)</p>
           </Col>
-          <Col span="4">
+          <Col span={4}>
             <p className="text-gray">进货数量</p>
           </Col>
-          <Col span="6">
+          <Col span={6}>
             <p className="text-gray">金额小计(元)</p>
           </Col>
         </Row>
         {parts.map((part, index) =>
           <Row key={index} type="flex">
-            <Col span="10">
+            <Col span={10}>
               <p className="text-gray">{formatter.hour(part.ctime)}</p>
             </Col>
-            <Col span="4">
+            <Col span={4}>
               <p className="text-gray">{part.in_price}</p>
             </Col>
-            <Col span="4">
+            <Col span={4}>
               <p className="text-gray">{part.amount}</p>
             </Col>
-            <Col span="6">
+            <Col span={6}>
               <p className="text-gray">{Number(part.in_price) * Number(part.amount)}元</p>
             </Col>
           </Row>
@@ -76,7 +76,7 @@ let ShowParts = React.createClass({
         <a href="javascript:;">详情</a>
       </Popover>
     );
-  }
+  },
 });
 
 export default ShowParts;

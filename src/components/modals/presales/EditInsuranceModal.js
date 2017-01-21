@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import EditInsuranceForm from '../../forms/presales/EditInsuranceForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import EditInsuranceForm from '../../forms/presales/EditInsuranceForm';
 
 export default class EditInsuranceModal extends BaseModal {
   constructor(props) {
@@ -26,7 +26,7 @@ export default class EditInsuranceModal extends BaseModal {
           <EditInsuranceForm
             cancelModal={this.hideModal}
             customer_id={this.props.customer_id}
-            user_auto_id={this.props.user_auto_id}
+            auto_id={this.props.auto_id}
           />
         </Modal>
       </span>

@@ -8,12 +8,12 @@ const RadioButton = Radio.Button
 const AutoCustomer = React.createClass({
   getInitialState(){
     return {
-      data: []
+      data: [],
     }
   },
   componentDidMount() {
     const that = this;
-    api.ajax({url: api.getSourceTypes(this.props.customerType)},
+    api.ajax({url: api.customer.getSourceTypes(this.props.customerType)},
       function (data) {
         that.setState({data: data.res.source_types});
       })
@@ -28,7 +28,7 @@ const AutoCustomer = React.createClass({
         </RadioGroup>
       </div>
     )
-  }
+  },
 })
 export default AutoCustomer
 

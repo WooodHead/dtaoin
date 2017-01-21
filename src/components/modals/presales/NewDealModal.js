@@ -1,11 +1,11 @@
-import React from 'react'
-import {Modal, Steps, Icon, Button} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewAutoFrom from '../../forms/presales/NewAutoForm'
-import NewPurchaseForm from '../../forms/presales/NewPurchaseForm'
-import NewInsuranceForm from '../../forms/presales/NewInsuranceForm'
-import NewLoanForm from '../../forms/presales/NewLoanForm'
-import NewDecorationForm from '../../forms/presales/NewDecorationForm'
+import React from 'react';
+import {Modal, Steps, Icon, Button} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewAutoFrom from '../../forms/presales/NewAutoForm';
+import NewPurchaseForm from '../../forms/presales/NewPurchaseForm';
+import NewInsuranceForm from '../../forms/presales/NewInsuranceForm';
+import NewLoanForm from '../../forms/presales/NewLoanForm';
+import NewDecorationForm from '../../forms/presales/NewDecorationForm';
 
 export default class NewDealModal extends BaseModal {
   constructor(props) {
@@ -19,7 +19,7 @@ export default class NewDealModal extends BaseModal {
       insuranceForm: 'hide',
       decorationForm: 'hide',
       payType: '0',
-      deliverDate: new Date()
+      deliverDate: new Date(),
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -33,12 +33,12 @@ export default class NewDealModal extends BaseModal {
     const formProps = {
       customer_id: this.props.customer_id,
       intention_id: this.props.intention_id,
-      user_auto_id: this.state.user_auto_id,
+      auto_id: this.state.auto_id,
       seller_user_id: this.state.seller_user_id,
       auto_deal_id: this.state.auto_deal_id,
       deliverDate: this.state.deliverDate,
       onSuccess: this.updateState,
-      cancelModal: this.hideModal
+      cancelModal: this.hideModal,
     };
 
     return (
@@ -90,6 +90,6 @@ export default class NewDealModal extends BaseModal {
           </div>
         </Modal>
       </span>
-    )
+    );
   }
 }

@@ -7,7 +7,7 @@ export default class ProjPartListPop extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      part_list: []
+      part_list: [],
     };
   }
 
@@ -34,12 +34,12 @@ export default class ProjPartListPop extends Component {
     if (part_list.length != 0) {
       part_list.map(function (item) {
         list.push(<Row type="flex" key={item._id}>
-          <Col span="4">{item.part_id}</Col>
-          <Col span="6">{item.part_name}</Col>
-          <Col span="3">{item.count}</Col>
-          <Col span="4">{item.sell_price}</Col>
-          <Col span="3">{Number(item.material_fee) / Number(item.count)}</Col>
-          <Col span="4">{item.material_fee}</Col>
+          <Col span={4}>{item.part_id}</Col>
+          <Col span={6}>{item.part_name}</Col>
+          <Col span={3}>{item.count}</Col>
+          <Col span={4}>{item.sell_price}</Col>
+          <Col span={3}>{Number(item.material_fee) / Number(item.count)}</Col>
+          <Col span={4}>{item.material_fee}</Col>
         </Row>)
       }.bind(this));
     } else {
@@ -49,19 +49,19 @@ export default class ProjPartListPop extends Component {
     const content = (
       <div>
         <Row type="flex">
-          <Col span="4">配件号</Col>
-          <Col span="6">配件名</Col>
-          <Col span="3">数量(个)</Col>
-          <Col span="4">参考零售价(元)</Col>
-          <Col span="3">零售价(元)</Col>
-          <Col span="4">金额小计(元)</Col>
+          <Col span={4}>配件号</Col>
+          <Col span={6}>配件名</Col>
+          <Col span={3}>数量(个)</Col>
+          <Col span={4}>参考零售价(元)</Col>
+          <Col span={3}>零售价(元)</Col>
+          <Col span={4}>金额小计(元)</Col>
         </Row>
         {list}
       </div>
     );
 
     return (
-      <Popover content={content} title="维修配件" overlayStyle={{width:"700px"}}>
+      <Popover content={content} title="维修配件" overlayStyle={{width:'700px'}}>
         <Button type="ghost" size="small">详情</Button>
       </Popover>
     )

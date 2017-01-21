@@ -7,7 +7,7 @@ export default class ProgramListPop extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      program_list: []
+      program_list: [],
     };
   }
 
@@ -33,9 +33,9 @@ export default class ProgramListPop extends Component {
       program_list.map(function (item) {
         list.push(
           <Row type="flex" key={item._id}>
-            <Col span="10">{item.item_name}</Col>
-            <Col span="6">{item.time_fee}</Col>
-            <Col span="8">{item.fitter_user_names}</Col>
+            <Col span={10}>{item.item_name}</Col>
+            <Col span={6}>{item.time_fee}</Col>
+            <Col span={8}>{item.fitter_user_names}</Col>
           </Row>)
       }.bind(this));
     } else {
@@ -45,16 +45,16 @@ export default class ProgramListPop extends Component {
     const content = (
       <div>
         <Row type="flex">
-          <Col span="10">维修项目</Col>
-          <Col span="6">工时费(元)</Col>
-          <Col span="8">维修人员</Col>
+          <Col span={10}>维修项目</Col>
+          <Col span={6}>工时费(元)</Col>
+          <Col span={8}>维修人员</Col>
         </Row>
         {list}
       </div>
     );
 
     return (
-      <Popover content={content} title="维修项目" overlayStyle={{width:"400px"}}>
+      <Popover content={content} title="维修项目" overlayStyle={{width:'400px'}}>
         <Button type="ghost" size="small">详情</Button>
       </Popover>
     )

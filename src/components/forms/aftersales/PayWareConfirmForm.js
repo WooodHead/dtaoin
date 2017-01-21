@@ -1,8 +1,8 @@
-import React from 'react'
-import {Row, Col, message, Icon, Input, Form, Select, Checkbox, DatePicker, Button} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import ShowParts from '../../popover/ShowParts'
+import React from 'react';
+import {Row, Col, message, Input, Form, Select, Checkbox, Button} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import ShowParts from '../../popover/ShowParts';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -17,13 +17,13 @@ class PayWareConfirmForm extends React.Component {
       data: [],
       payObj: {},
       amount: 0,
-      checkedSet: new Set()
+      checkedSet: new Set(),
     };
     [
       'handlePrevStep',
       'handleSubmit',
       'handlePartChecked',
-      'handleCheckAll'
+      'handleCheckAll',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -40,7 +40,7 @@ class PayWareConfirmForm extends React.Component {
           isFirst: false,
           check: check,
           data: data,
-          payObj: nextProps.payObj
+          payObj: nextProps.payObj,
         });
       }
     }
@@ -50,7 +50,7 @@ class PayWareConfirmForm extends React.Component {
     this.props.onSuccess({
       currentStep: this.props.prevStep,
       payWareForm: '',
-      payWareConfirmForm: 'hide'
+      payWareConfirmForm: 'hide',
     });
   }
 
@@ -65,8 +65,8 @@ class PayWareConfirmForm extends React.Component {
     api.ajax({
       url: api.maintPayWare(),
       type: 'POST',
-      data: formData
-    }, function (data) {
+      data: formData,
+    }, function () {
       message.success('结算成功!');
       this.props.cancelModal();
       location.reload();
@@ -99,7 +99,7 @@ class PayWareConfirmForm extends React.Component {
       check: check,
       checkAll: checkAll,
       checkedSet: checkedSet,
-      amount: amount
+      amount: amount,
     });
   }
 
@@ -123,13 +123,13 @@ class PayWareConfirmForm extends React.Component {
       amount: amount,
       check: check,
       checkAll: !checkAll,
-      checkedSet: checkedSet
+      checkedSet: checkedSet,
     });
   }
 
   render() {
     const {formItemLg, buttonLg} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     const {check, checkAll, data, payObj, amount} = this.state;
 
     if (data.length === 0) {
@@ -142,10 +142,10 @@ class PayWareConfirmForm extends React.Component {
             </small>
           </h2>
         </div>
-      )
+      );
     } else {
       return (
-        <Form horizontal >
+        <Form horizontal>
           <FormItem label="收款方" {...formItemLg}>
             <p className="ant-form-text">{payObj.supplier_company}</p>
           </FormItem>
@@ -159,10 +159,10 @@ class PayWareConfirmForm extends React.Component {
           </FormItem>
 
           <Row type="flex" justify="start" className="mb15">
-            <Col span="22" offset="2">
+            <Col span={22} offset={2}>
               {data.map((item, index) =>
                 <Row key={index} className="mb10">
-                  <Col span="6">
+                  <Col span={6}>
                     <Checkbox
                       key={index}
                       value={item.part_id}
@@ -171,16 +171,16 @@ class PayWareConfirmForm extends React.Component {
                       {item.part_name}
                     </Checkbox>
                   </Col>
-                  <Col span="5">
+                  <Col span={5}>
                     进货批次：{item.count}
                   </Col>
-                  <Col span="6">
+                  <Col span={6}>
                     进货数量：{item.amount}
                   </Col>
-                  <Col span="5">
+                  <Col span={5}>
                     小计(元)：{item.cash}
                   </Col>
-                  <Col span="2">
+                  <Col span={2}>
                     <ShowParts parts={item.list}/>
                   </Col>
                 </Row>
@@ -189,7 +189,7 @@ class PayWareConfirmForm extends React.Component {
           </Row>
 
           <Row type="flex" className="mb15">
-            <Col span="12" offset="2">
+            <Col span={12} offset={2}>
               <Checkbox checked={checkAll} onChange={this.handleCheckAll}> 全选</Checkbox>
             </Col>
           </Row>
@@ -199,17 +199,18 @@ class PayWareConfirmForm extends React.Component {
           </FormItem>
 
           <FormItem label="付款方式" {...formItemLg}>
-            <Select
-              {...getFieldProps('pay_type', {initialValue: '2'})}
-              size="large"
-              style={{width: 230}}>
-              <Option key="2">现金支付</Option>
-              <Option key="5">银行转账</Option>
-            </Select>
+            {getFieldDecorator('pay_type', {initialValue: '2'})(
+              <Select style={{width: 230}}>
+                <Option key="2">现金支付</Option>
+                <Option key="5">银行转账</Option>
+              </Select>
+            )}
           </FormItem>
 
           <FormItem label="备注" {...formItemLg}>
-            <Input type="textarea" {...getFieldProps('remark')}/>
+            {getFieldDecorator('remark')(
+              <Input type="textarea"/>
+            )}
           </FormItem>
 
           <FormItem {...buttonLg} className="mt15">
@@ -217,10 +218,10 @@ class PayWareConfirmForm extends React.Component {
             <Button type="primary" onClick={this.handleSubmit}>保存并提交</Button>
           </FormItem>
         </Form>
-      )
+      );
     }
   }
 }
 
 PayWareConfirmForm = Form.create()(PayWareConfirmForm);
-export default PayWareConfirmForm
+export default PayWareConfirmForm;

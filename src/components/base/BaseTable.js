@@ -1,6 +1,5 @@
-import React from 'react'
-import {Table} from 'antd'
-import api from '../../middleware/api'
+import React from 'react';
+import {Table} from 'antd';
 
 export default class BaseTable extends React.Component {
   constructor(props) {
@@ -8,7 +7,7 @@ export default class BaseTable extends React.Component {
   }
 
   render() {
-    const {rowSelection, columns, dataSource, pathname, page}=this.props;
+    const {rowSelection, columns, dataSource}=this.props;
 
     const pagination = {
       //onChange(current) {
@@ -27,6 +26,6 @@ export default class BaseTable extends React.Component {
           bordered
         />
       </div>
-    )
+    );
   }
 }

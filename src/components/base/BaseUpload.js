@@ -1,8 +1,8 @@
-import React from 'react'
-import {Icon} from 'antd'
-import api from '../../middleware/api'
-import text from '../../middleware/text'
-import imgLoadingFailed from '../../images/imgLoadingFailed.jpg'
+import React from 'react';
+import {Icon} from 'antd';
+import api from '../../middleware/api';
+import text from '../../config/text';
+import imgLoadingFailed from '../../images/imgLoadingFailed.jpg';
 
 
 export default class UploadComponent extends React.Component {
@@ -23,7 +23,7 @@ export default class UploadComponent extends React.Component {
 
       this.setState({
         [propToken]: response.token,
-        [propKey]: response.file_name
+        [propKey]: response.file_name,
       });
     }.bind(this));
   }
@@ -31,8 +31,8 @@ export default class UploadComponent extends React.Component {
   getImageUrl(url, fileType) {
     api.ajax({url: url}, function (data) {
       let imgUrl = fileType + '_url';
-      this.setState({[imgUrl]: data.res.url})
-    }.bind(this))
+      this.setState({[imgUrl]: data.res.url});
+    }.bind(this));
   }
 
   onUpload(...args) {
@@ -49,8 +49,8 @@ export default class UploadComponent extends React.Component {
         self.setState({[progPropName]: progress});
         if (e.percent === 100) {
           // 上传成功后,保存对应的值
-          console.info('save uploaded file key=>', self.state[keyPropName]);
-          self.props.form.setFieldsValue({[fileType]: self.state[keyPropName]})
+          // console.info('save uploaded file key=>', self.state[keyPropName]);
+          self.props.form.setFieldsValue({[fileType]: self.state[keyPropName]});
         }
       };
     });
@@ -67,8 +67,8 @@ export default class UploadComponent extends React.Component {
   handleImgError(e) {
     //获取当前是第几张图片
     e.target.src = imgLoadingFailed;
-    e.target.style.width = "100px";
-    e.target.style.height = "100px";
+    e.target.style.width = '100px';
+    e.target.style.height = '100px';
     e.target.onerror = null;
   }
 
@@ -83,7 +83,7 @@ export default class UploadComponent extends React.Component {
 
     if (files.length <= 0) {
       if (imgUrl) {
-        return <img src={imgUrl} style={{width: 100}} onError={this.handleImgError.bind(this)}/>
+        return <img src={imgUrl} style={{height: '90%', width: '90%'}} onError={this.handleImgError.bind(this)}/>;
       } else {
         return (
           <span className="ant-upload-select-picture-card">
@@ -101,12 +101,12 @@ export default class UploadComponent extends React.Component {
           let uploadProgress = progress && progress[file.preview];
 
           if (/image/.test(file.type)) {
-            preview = <img src={file.preview}/>;
+            preview = <img src={file.preview} style={{height: '90%', width: '90%'}}/>;
           }
           return <span key={i}>{preview} <span
             className="progress">{'已上传' + (uploadProgress || 0) + '%'}</span></span>;
         })}
       </div>
-    )
+    );
   }
 }

@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import EditCustomerForm from '../../forms/aftersales/EditCustomerForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import EditCustomerForm from '../../forms/aftersales/EditCustomerForm';
 
 export default class EditCustomerModal extends BaseModal {
   constructor(props) {
@@ -22,7 +22,8 @@ export default class EditCustomerModal extends BaseModal {
           visible={this.state.visible}
           width="50%"
           onCancel={this.hideModal}
-          footer={null}>
+          footer={null}
+        >
           <EditCustomerForm
             onSuccess={this.hideModal}
             customer_id={this.props.customer_id}

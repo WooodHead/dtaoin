@@ -1,8 +1,8 @@
-import React from "react";
-import {Tabs, Breadcrumb, Icon} from "antd";
-import api from "../../../middleware/api";
-import UserInfo from "../../../components/boards/personnel/UserInfo";
-import UserSalaryTable from "../../../components/tables/personnel/UserSalaryTable";
+import React from 'react';
+import {Tabs} from 'antd';
+import api from '../../../middleware/api';
+import UserInfo from '../../../components/boards/personnel/UserInfo';
+import SalaryTable from './SalaryTable';
 
 export default class Detail extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class Detail extends React.Component {
       user: {},
       userCertificates: [],
       userSalaryItems: [],
-      salaryHistory: []
+      salaryHistory: [],
     };
     this.handleTabClick = this.handleTabClick.bind(this);
   }
@@ -34,25 +34,25 @@ export default class Detail extends React.Component {
   getUserDetail(userId) {
     api.ajax({url: api.user.getDetail(userId)}, function (data) {
       this.setState({user: data.res.user_info});
-    }.bind(this))
+    }.bind(this));
   }
 
   getUserCertificates(userId){
     api.ajax({url: api.user.getCaList(userId)}, function(data){
       this.setState({userCertificates: data.res.user_ca_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   getUserSalaryItems(userId) {
     api.ajax({url: api.user.getSalaryItems(userId)}, function (data) {
       this.setState({userSalaryItems: data.res.user_salary_item_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   getSalaryHistory(userId) {
     api.ajax({url: api.user.getSalaryHistory(userId)}, function (data) {
       this.setState({salaryHistory: data.res.list});
-    }.bind(this))
+    }.bind(this));
   }
 
   render() {
@@ -61,22 +61,11 @@ export default class Detail extends React.Component {
       user,
       userCertificates,
       userSalaryItems,
-      salaryHistory
+      salaryHistory,
     } = this.state;
 
     return (
       <div>
-        <div className="mb10">
-          <Breadcrumb>
-            <Breadcrumb.Item>
-              <a href="javascript:history.back();"><Icon type="left"/> 员工管理</a>
-            </Breadcrumb.Item>
-            <Breadcrumb.Item>
-              <Icon type="user"/> {user.name}
-            </Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-
         <Tabs defaultActiveKey="user" onTabClick={this.handleTabClick}>
           <TabPane tab="员工信息" key="user">
             <UserInfo
@@ -86,10 +75,10 @@ export default class Detail extends React.Component {
             />
           </TabPane>
           <TabPane tab="工资发放历史" key="salary">
-            <UserSalaryTable salaryHistory={salaryHistory}/>
+            <SalaryTable salaryHistory={salaryHistory}/>
           </TabPane>
         </Tabs>
       </div>
-    )
+    );
   }
 }

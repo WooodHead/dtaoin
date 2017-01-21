@@ -1,13 +1,13 @@
-import React from 'react'
-import {Radio} from 'antd'
-import api from '../../middleware/api'
+import React from 'react';
+import {Radio} from 'antd';
+import api from '../../middleware/api';
 
 export default class SalaryGroupFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: []
-    }
+      data: [],
+    };
   }
 
   componentDidMount() {
@@ -25,11 +25,11 @@ export default class SalaryGroupFilter extends React.Component {
         <label className="mr15">薪资组:</label>
         <RadioGroup defaultValue="0" size="large" onChange={this.props.filterAction.bind(this, 'salaryGroup')}>
           <RadioButton value="0" key="0">全部</RadioButton>
-          {this.state.data.map((item, index) =>
+          {this.state.data.map((item) =>
             <RadioButton value={item._id} key={item._id}>{item.name}</RadioButton>)
           }
         </RadioGroup>
       </div>
-    )
+    );
   }
 }

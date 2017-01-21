@@ -1,6 +1,6 @@
-import React from 'react'
-import {Row, Col, Popover, Button, Icon, Radio} from 'antd'
-import api from '../../middleware/api'
+import React from 'react';
+import {Row, Col, Popover, Button, Icon, Radio} from 'antd';
+import api from '../../middleware/api';
 
 const RadioGroup = Radio.Group;
 
@@ -9,7 +9,7 @@ const NewOptItem = React.createClass({
     return {
       visible: false,
       types: [],
-      typeId: 0
+      typeId: 0,
     };
   },
 
@@ -18,15 +18,11 @@ const NewOptItem = React.createClass({
   },
 
   showPopover() {
-    this.setState({
-      visible: true
-    });
+    this.setState({visible: true});
   },
 
   hide() {
-    this.setState({
-      visible: false
-    });
+    this.setState({visible: false});
   },
 
   handleVisibleChange(visible) {
@@ -49,22 +45,22 @@ const NewOptItem = React.createClass({
   getItemTypes() {
     api.ajax({url: api.getMaintainItemTypes()}, function (data) {
       this.setState({types: data.res.type_list});
-    }.bind(this))
+    }.bind(this));
   },
 
   render() {
     let {
       visible,
-      types
+      types,
     } = this.state;
 
     const content = (
       <div>
         <Row className="mb15">
-          <Col span="6">
+          <Col span={6}>
             <label className="input-label">项目类型：</label>
           </Col>
-          <Col span="14">
+          <Col span={14}>
             <RadioGroup onChange={this.typeChange} defaultValue={0}>
               {types.map(type => <Radio key={type._id} value={type._id}>{type.name}</Radio>)}
             </RadioGroup>
@@ -72,10 +68,10 @@ const NewOptItem = React.createClass({
         </Row>
 
         <Row>
-          <Col span="6">
+          <Col span={6}>
             <label className="input-label">项目名称：</label>
           </Col>
-          <Col span="14">
+          <Col span={14}>
             <input className="ant-input ant-input-lg" ref="newItem" placeholder="维修项目名称"/>
           </Col>
         </Row>
@@ -98,7 +94,8 @@ const NewOptItem = React.createClass({
         <a href="javascript:;" onClick={this.showPopover}>新增维修项目</a>
       </Popover>
     );
-  }
+  },
+
 });
 
 export default NewOptItem;

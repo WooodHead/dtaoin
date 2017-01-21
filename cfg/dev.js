@@ -11,27 +11,27 @@ let BowerWebpackPlugin = require('bower-webpack-plugin');
 
 let config = _.merge({
   entry: [
-    './src/index','webpack/hot/dev-server','webpack-dev-server/client?http://localhost:9999/'
+    './src/index', 'webpack/hot/dev-server', 'webpack-dev-server/client?http://localhost:9999/'
   ],
-    output: {
-        path: path.join(__dirname, "dist/"),
-        publicPath: "http://localhost:9999/dist/",
-        filename: "app.js"
+  output: {
+    path: path.join(__dirname, "dist/"),
+    publicPath: "http://localhost:9999/dist/",
+    filename: "app.js"
+  },
+  devServer: {
+    historyApiFallback: true,
+    contentBase: "./",
+    quiet: false, //控制台中不输出打包的信息
+    noInfo: false,
+    hot: true,
+    inline: true,
+    lazy: false,
+    progress: true, //显示打包的进度
+    watchOptions: {
+      aggregateTimeout: 300
     },
-    devServer: {
-        historyApiFallback: true,
-        contentBase: "./",
-        quiet: false, //控制台中不输出打包的信息
-        noInfo: false,
-        hot: true,
-        inline: true,
-        lazy: false,
-        progress: true, //显示打包的进度
-        watchOptions: {
-            aggregateTimeout: 300
-        },
-        port: '9999'
-    },
+    port: '9999'
+  },
   cache: true,
   devtool: 'eval',
   plugins: [
@@ -49,7 +49,7 @@ config.module.loaders.push({
   loader: 'react-hot!babel-loader',
   include: [].concat(
     config.additionalPaths,
-    [ path.join(__dirname, '/../src') ]
+    [path.join(__dirname, '/../src')]
   )
 });
 

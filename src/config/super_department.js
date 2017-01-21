@@ -6,13 +6,13 @@
 
 var super_department = [{
   id: '-1',
-  name: '区域管理员'
+  name: '区域管理员',
 }, {
   id: '-2',
-  name: '总部管理员'
+  name: '总部管理员',
 }, {
   id: '-3',
-  name: '超级管理员'
+  name: '超级管理员',
 }];
 
 export default super_department;

@@ -1,9 +1,8 @@
-import React from 'react'
-import {Button} from 'antd'
-import api from '../../middleware/api'
-import BaseList from '../../components/base/BaseList'
+import React from 'react';
+import api from '../../middleware/api';
+import BaseList from '../../components/base/BaseList';
 
-import ActivityTable from '../../components/tables/activity/ActivityTable'
+import Table from './Table';
 
 export default class List extends BaseList {
   constructor(props) {
@@ -16,21 +15,18 @@ export default class List extends BaseList {
   componentWillReceiveProps(nextProps) {
     if (this.props.location.query.page !== nextProps.location.query.page) {
       this.setState({
-        page: nextProps.location.query.page
+        page: nextProps.location.query.page,
       });
     }
   }
 
   render() {
     return (
-      <div>
-        <h3 className="page-title">活动管理</h3>
-        <ActivityTable
-          source={api.activity.list(this.state)}
-          page={this.state.page}
-          pathname="/activity/list"
-        />
-      </div>
-    )
+      <Table
+        updateState={this.updateState}
+        currentPage={this.state.page}
+        source={api.activity.list(this.state)}
+      />
+    );
   }
 }

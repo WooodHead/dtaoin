@@ -1,8 +1,8 @@
-import React from 'react'
-import {Input, Select, Button, Icon} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
-import NewItem from '../modals/maintain-item/NewItem'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+import api from '../../middleware/api';
+import NewItem from '../../containers/maintain-item/New';
 
 const Option = Select.Option;
 
@@ -11,7 +11,7 @@ const MaintainItemSearchBox = React.createClass({
     return {
       data: this.props.data ? this.props.data : [],
       value: this.props.value ? this.props.value : '',
-      focus: false
+      focus: false,
     };
   },
 
@@ -24,7 +24,7 @@ const MaintainItemSearchBox = React.createClass({
   handleSelect(value, option) {
     let index = option.props.index;
     let list = this.state.data;
-    console.log(option.props.children);
+    // console.log(option.props.children);
     this.setState({value: option.props.children});
 
     this.props.select(list[index]);
@@ -41,7 +41,7 @@ const MaintainItemSearchBox = React.createClass({
         } else {
           this.setState({data: []});
         }
-      })
+      });
     } else {
       this.setState({data: []});
     }
@@ -51,20 +51,22 @@ const MaintainItemSearchBox = React.createClass({
     this.handleChange(this.state.value);
   },
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  },
+
+  handleBlur() {
+    this.setState({focus: false});
   },
 
   render() {
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim()
+      'ant-search-btn-noempty': !!this.state.value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': this.state.focus,
     });
 
     return (
@@ -78,19 +80,23 @@ const MaintainItemSearchBox = React.createClass({
             value={this.state.value}
             placeholder={this.props.placeholder}
             defaultActiveFirstOption={false}
-            notFoundCountent=''
+            notFoundCountent=""
             getPopupContainer={() => document.getElementById('maintain_item_search')}
             optionLabelProp="children"
             showArrow={false}
             filterOption={false}
             onSelect={this.handleSelect}
-            onSearch={this.handleChange}>
+            onSearch={this.handleChange}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+            disabled={this.props.disabled}
+          >
             {this.state.data.map((item, index) => <Option key={index} value={item._id}>{item.name}</Option>)}
           </Select>
         </div>
         <div className="ant-input-group-wrap">
           {
-              this.state.value.length > 0 & this.state.data.length == 0 ?
+              this.state.value.length > 0 && this.state.data.length == 0 ?
               <NewItem inputValue={this.state.value} onSuccess={this.handleOnSuccess} />
               :
               <Button
@@ -103,8 +109,8 @@ const MaintainItemSearchBox = React.createClass({
         </div>
       </Input.Group>
     );
-  }
+  },
 });
 
 MaintainItemSearchBox.defaultProps = {placeholder: '用关键字搜索维保项目'};
-export default MaintainItemSearchBox
+export default MaintainItemSearchBox;

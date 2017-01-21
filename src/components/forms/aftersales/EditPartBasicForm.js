@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Button, Form, Input, Select, message} from 'antd'
 import api from '../../../middleware/api'
-import Layout from '../Layout'
+import Layout from '../../../utils/FormLayout'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -18,7 +18,7 @@ class EditPartBasicForm extends Component {
   }
 
   getPartsDetailById(id) {
-    api.ajax({url: api.getPartsDetail(id)}, data=> {
+    api.ajax({url: api.getPartsDetail(id)}, data => {
       let detail = data.res.detail;
       this.props.form.resetFields();
       this.props.form.setFieldsValue({
@@ -50,30 +50,36 @@ class EditPartBasicForm extends Component {
   render() {
     const {formItemLayout, buttonLayout, selectStyle} = Layout;
     const {partId} =this.props;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
 
     return <Form horizontal>
-      <Input type="hidden" {...getFieldProps('part_id', {initialValue: partId})}/>
+      {getFieldDecorator('part_id', {initialValue: partId})(
+        <Input type="hidden"/>
+      )}
       <FormItem label="配件号" {...formItemLayout}>
-        <Input type="text" {...getFieldProps('part_no')}/>
+        {getFieldDecorator('part_no')(
+          <Input type="text"/>
+        )}
       </FormItem>
 
       <FormItem label="配件名" {...formItemLayout}>
-        <Input type="text" {...getFieldProps('name')}/>
+        {getFieldDecorator('name')(
+          <Input type="text"/>
+        )}
       </FormItem>
 
       <FormItem label="配件使用项目类型" {...formItemLayout}>
-        <Select
-          {...getFieldProps('type')}
-          {...selectStyle}
-          size="large"
-          placeholder="请选择使用配件的项目类型">
-          {this.state.types.map(type => <Option key={type._id}>{type.name}</Option>)}
-        </Select>
+        {getFieldDecorator('type')(
+          <Select{...selectStyle} placeholder="请选择使用配件的项目类型">
+            {this.state.types.map(type => <Option key={type._id}>{type.name}</Option>)}
+          </Select>
+        )}
       </FormItem>
 
       <FormItem label="备注" {...formItemLayout}>
-        <Input type="textarea"{...getFieldProps('remark')}/>
+        {getFieldDecorator('remark')(
+          <Input type="textarea"/>
+        )}
       </FormItem>
 
       <FormItem {...buttonLayout}>

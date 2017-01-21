@@ -1,5 +1,5 @@
-import React from 'react'
-import {Select} from 'antd'
+import React from 'react';
+import {Select} from 'antd';
 
 export default class AutoIntention extends React.Component {
   render() {
@@ -22,7 +22,7 @@ export default class AutoIntention extends React.Component {
           <Option key="5">30万以上</Option>
         </Select>
       </span>
-    )
+    );
   }
 }
 

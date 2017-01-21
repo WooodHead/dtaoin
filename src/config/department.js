@@ -6,13 +6,13 @@
 
 const department = [{
   id: '1',
-  name: '总经办'
+  name: '总经办',
 }, {
   id: '2',
-  name: '售前'
+  name: '售前',
 }, {
   id: '3',
-  name: '售后'
+  name: '售后',
 }];
 
 export default department;

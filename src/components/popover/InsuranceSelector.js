@@ -1,6 +1,6 @@
-import React from 'react'
-import {Row, Col, Popover, Button, Icon, Checkbox} from 'antd'
-import text from '../../middleware/text'
+import React from 'react';
+import {Row, Col, Popover, Button, Icon, Checkbox} from 'antd';
+import text from '../../config/text';
 
 const InsuranceSelector = React.createClass({
   getInitialState() {
@@ -19,7 +19,7 @@ const InsuranceSelector = React.createClass({
       ci_no_fault_liability_nod_disabled: true,
       ci_scratch_nod_disabled: true,
       ci_wade_nod_disabled: true,
-      checkedValues: []
+      checkedValues: [],
     };
   },
 
@@ -31,7 +31,7 @@ const InsuranceSelector = React.createClass({
 
   hide() {
     this.setState({
-      visible: false
+      visible: false,
     });
   },
 
@@ -78,7 +78,7 @@ const InsuranceSelector = React.createClass({
     checkedValues.forEach(item => {
       if (item.indexOf('_nod') === -1) {
         if (checkedValues.indexOf(item + '_nod') > -1) {
-          names.push(`${text.insuranceName[item]}-${text.insuranceName[item + '_nod']}`)
+          names.push(`${text.insuranceName[item]}-${text.insuranceName[item + '_nod']}`);
         } else {
           names.push(`${text.insuranceName[item]}`);
         }
@@ -96,105 +96,105 @@ const InsuranceSelector = React.createClass({
     const options = [
       {
         label: '车辆损失险',
-        value: 'ci_damage'
+        value: 'ci_damage',
       }, {
         label: '不计免赔',
         value: 'ci_damage_nod',
-        disabled: this.state.ci_damage_nod_disabled
+        disabled: this.state.ci_damage_nod_disabled,
       }, {
         label: '第三责任险',
-        value: 'ci_third'
+        value: 'ci_third',
       }, {
         label: '不计免赔',
         value: 'ci_third_nod',
-        disabled: this.state.ci_third_nod_disabled
+        disabled: this.state.ci_third_nod_disabled,
       }, {
         label: '车上人员责任险(驾驶员)',
-        value: 'ci_driver'
+        value: 'ci_driver',
       }, {
         label: '不计免赔',
         value: 'ci_driver_nod',
-        disabled: this.state.ci_driver_nod_disabled
+        disabled: this.state.ci_driver_nod_disabled,
       }, {
         label: '车上人员责任险(乘客)',
-        value: 'ci_passenger'
+        value: 'ci_passenger',
       }, {
         label: '不计免赔',
         value: 'ci_passenger_nod',
-        disabled: this.state.ci_passenger_nod_disabled
+        disabled: this.state.ci_passenger_nod_disabled,
       }, {
         label: '全车盗抢险',
-        value: 'ci_stolen'
+        value: 'ci_stolen',
       }, {
         label: '不计免赔',
         value: 'ci_stolen_nod',
-        disabled: this.state.ci_stolen_nod_disabled
+        disabled: this.state.ci_stolen_nod_disabled,
       }, {
         label: '车载货物掉落责任险',
-        value: 'ci_car_goods_drop'
+        value: 'ci_car_goods_drop',
       }, {
         label: '不计免赔',
         value: 'ci_car_goods_drop_nod',
-        disabled: this.state.ci_car_goods_drop_nod_disabled
+        disabled: this.state.ci_car_goods_drop_nod_disabled,
       }, {
         label: '风挡玻璃单独破碎险',
-        value: 'ci_windscreen'
+        value: 'ci_windscreen',
       }, {
         label: '不计免赔',
         value: 'ci_windscreen_nod',
-        disabled: this.state.ci_windscreen_nod_disabled
+        disabled: this.state.ci_windscreen_nod_disabled,
       }, {
         label: '车辆停驶损失险',
-        value: 'ci_traffic_free_loss_danger'
+        value: 'ci_traffic_free_loss_danger',
       }, {
         label: '不计免赔',
         value: 'ci_traffic_free_loss_danger_nod',
-        disabled: this.state.ci_traffic_free_loss_danger_nod_disabled
+        disabled: this.state.ci_traffic_free_loss_danger_nod_disabled,
       }, {
         label: '自燃损失险',
-        value: 'ci_combust'
+        value: 'ci_combust',
       }, {
         label: '不计免赔',
         value: 'ci_combust_nod',
-        disabled: this.state.ci_combust_nod_disabled
+        disabled: this.state.ci_combust_nod_disabled,
       }, {
         label: '新增加设备损失险',
-        value: 'ci_new_equipment_loss_danger'
+        value: 'ci_new_equipment_loss_danger',
       }, {
         label: '不计免赔',
         value: 'ci_new_equipment_loss_danger_nod',
-        disabled: this.state.ci_new_equipment_loss_danger_nod_disabled
+        disabled: this.state.ci_new_equipment_loss_danger_nod_disabled,
       }, {
         label: '划痕险',
-        value: 'ci_scratch'
+        value: 'ci_scratch',
       }, {
         label: '不计免赔',
         value: 'ci_scratch_nod',
-        disabled: this.state.ci_scratch_nod_disabled
+        disabled: this.state.ci_scratch_nod_disabled,
       }, {
         label: '无过错责任险',
-        value: 'ci_no_fault_liability'
+        value: 'ci_no_fault_liability',
       }, {
         label: '不计免赔',
         value: 'ci_no_fault_liability_nod',
-        disabled: this.state.ci_no_fault_liability_nod_disabled
+        disabled: this.state.ci_no_fault_liability_nod_disabled,
       }, {
         label: '涉水行驶险',
-        value: 'ci_wade'
+        value: 'ci_wade',
       }, {
         label: '不计免赔',
         value: 'ci_wade_nod',
-        disabled: this.state.ci_wade_nod_disabled
+        disabled: this.state.ci_wade_nod_disabled,
       }, {
         label: '不计免赔特约险',
-        value: 'ci_spec'
-      }
+        value: 'ci_spec',
+      },
     ];
 
     const content = (
       <div>
         <Row type="flex" justify="center" className="mb10">
-          <Col span="18">
+          <Col span={18}>
             <CheckboxGroup
               className="mb10"
               options={options}
@@ -205,10 +205,10 @@ const InsuranceSelector = React.createClass({
         </Row>
 
         <Row className="mb15">
-          <Col span="6">
+          <Col span={6}>
             <label className="input-label">其他：</label>
           </Col>
-          <Col span="18">
+          <Col span={18}>
             <input
               className="ant-input ant-input-lg"
               defaultValue={this.state.ciOther}
@@ -228,12 +228,12 @@ const InsuranceSelector = React.createClass({
     return (
       <Popover content={content} title={<span><Icon type="plus"/> 全部商业险</span>} trigger="click"
                visible={this.state.visible}
-               overlayStyle={{width: "350px"}}
+               overlayStyle={{width: '350px'}}
                onVisibleChange={this.handleVisibleChange}>
         <a href="javascript:;">选择商业保险</a>
       </Popover>
     );
-  }
+  },
 });
 
 export default InsuranceSelector;

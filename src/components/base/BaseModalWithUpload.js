@@ -1,5 +1,3 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
 import BaseUpload from './BaseUpload';
 
 export default class BaseModalWithUpload extends BaseUpload {
@@ -7,7 +5,7 @@ export default class BaseModalWithUpload extends BaseUpload {
     super(props);
     [
       'showModal',
-      'hideModal'
+      'hideModal',
     ].map(method => this[method] = this[method].bind(this));
   }
 

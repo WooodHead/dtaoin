@@ -1,8 +1,8 @@
-import React from 'react'
-import {Input, Select, Button, Icon} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
-import NewCustomerAutoModal from '../modals/aftersales/NewCustomerAutoModal'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+import api from '../../middleware/api';
+import NewCustomerAutoModal from '../modals/aftersales/NewCustomerAutoModal';
 
 const Option = Select.Option;
 
@@ -10,18 +10,19 @@ class CustomerAutoSearchBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [{'_id': 0, 'customer_name':'', 'customer_phone':'手机号、车牌号搜索', 'plate_num':''}],
+      data: [{'_id': '0', 'customer_name': '', 'customer_phone': '手机号、车牌号搜索', 'plate_num': ''}],
       value: '',
-      focus: false
+      focus: false,
     };
     [
       'handleOnSuccess',
       'handleSearch',
       'handleSelect',
-      'handleFocusBlur'
+      'handleFocus',
+      'handleBlur',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
-  
+
   handleOnSuccess(data) {
     this.setState({value: data.customer_phone, data: [data]});
     this.props.select(data);
@@ -31,7 +32,6 @@ class CustomerAutoSearchBox extends React.Component {
     let index = option.props.index;
     let list = this.state.data;
     this.setState({value: option.props.children});
-
     this.props.select(list[index]);
   }
 
@@ -47,63 +47,84 @@ class CustomerAutoSearchBox extends React.Component {
         return false;
       }
 
-      api.ajax({url: api.searchCustomerAutos(key)}, (data)=> {
+      api.ajax({url: api.searchCustomerAutos(key)}, (data) => {
         let list = data.res.list;
         if (list.length > 0) {
+          // filter data: {_id: null, ...}
+          list = list.filter(item => {
+            return item._id != null;
+          });
+
           this.setState({data: list});
         } else {
           this.setState({data: []});
         }
-      })
+      });
     }
   }
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  }
+
+  handleBlur() {
+    this.setState({focus: false});
   }
 
   render() {
+    let {focus, value, data} = this.state;
+
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value
+      'ant-search-btn-noempty': !!value,
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': focus,
     });
+
+    //新增意向中当搜索不到用户时候不显示添加用户,这里只有新增意向中会传递create属性
+    let {create} = this.props;
 
     return (
       <Input.Group className={searchCls} style={this.props.style}>
         <div id="customer_auto_search">
           <Select
-            size="large"
-            //combobox={this.state.data.length}
             combobox
-            //showSearch
             value={this.state.value}
-            placeholder={this.props.placeholder}
             defaultActiveFirstOption={false}
-            notFoundCountent=''
+            notFoundContent="暂无结果"
             getPopupContainer={() => document.getElementById('customer_auto_search')}
             optionLabelProp="children"
             showArrow={false}
             filterOption={false}
             onSelect={this.handleSelect}
-            onSearch={this.handleSearch}>
-            {this.state.data.map((item, index) =>
-              <Option key={item._id} value={item._id}>{item.customer_name} {item.customer_phone} {item.plate_num}</Option>)}
+            onSearch={this.handleSearch}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+            dropdownStyle={{maxHeight: '110px'}}
+            placeholder={this.props.placeholder}
+            size="large"
+          >
+            {this.state.data.map((item) =>
+              <Option key={item._id + ''}>
+                {item.customer_name} {item.customer_phone} {item.plate_num}
+              </Option>)
+            }
           </Select>
         </div>
+
         <div className="ant-input-group-wrap">
           {
-              this.state.value.length > 0 & this.state.data.length == 0 ?
-              <NewCustomerAutoModal inputValue={this.state.value} onSuccess={this.handleOnSuccess} size="default"/>
+            value.length > 0 && data.length == 0 && !create
+              ?
+              <NewCustomerAutoModal
+                inputValue={value}
+                onSuccess={this.handleOnSuccess}
+                size="default"
+              />
               :
-              <Button
-                className={btnCls}
-                size="large">
+              <Button className={btnCls} size="large">
                 <Icon type="search"/>
               </Button>
           }
@@ -114,7 +135,7 @@ class CustomerAutoSearchBox extends React.Component {
 }
 
 CustomerAutoSearchBox.defaultProps = {
-  placeholder: '请用手机号、车牌号、或姓名搜索'
+  placeholder: '请用手机号、车牌号搜索',
 };
 
-export default CustomerAutoSearchBox
+export default CustomerAutoSearchBox;

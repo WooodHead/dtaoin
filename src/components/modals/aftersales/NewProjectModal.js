@@ -1,9 +1,9 @@
-import React from 'react'
-import {Modal, Steps, Icon, Button} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewAutoForm from '../../forms/aftersales/NewAutoForm'
-import NewProjectForm from '../../forms/aftersales/NewProjectForm'
-import ConfirmProjectForm from '../../forms/aftersales/ConfirmProjectForm'
+import React from 'react';
+import {Modal, Steps, Icon, Button} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewAutoForm from '../../forms/aftersales/NewAutoForm';
+import NewProjectForm from '../../forms/aftersales/NewProjectForm';
+import ConfirmProjectForm from '../../forms/aftersales/ConfirmProjectForm';
 
 export default class NewMaintainPotentialModal extends BaseModal {
   constructor(props) {
@@ -18,7 +18,7 @@ export default class NewMaintainPotentialModal extends BaseModal {
       project_id: '',
       project: {},
       items: [],
-      parts: []
+      parts: [],
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -33,13 +33,13 @@ export default class NewMaintainPotentialModal extends BaseModal {
       visible: this.state.visible,
       reload: this.state.reload,
       customer_id: this.props.customer_id,
-      user_auto_id: this.state.user_auto_id,
+      auto_id: this.state.auto_id,
       project_id: this.state.project_id,
       project: this.state.project,
       items: this.state.items,
       parts: this.state.parts,
       onSuccess: this.updateState,
-      cancelModal: this.hideModal
+      cancelModal: this.hideModal,
     };
     return (
       <span>
@@ -73,6 +73,6 @@ export default class NewMaintainPotentialModal extends BaseModal {
           </div>
         </Modal>
       </span>
-    )
+    );
   }
 }

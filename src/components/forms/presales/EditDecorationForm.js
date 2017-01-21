@@ -1,20 +1,20 @@
-import React from 'react'
-import {message, Form, Input, Button, DatePicker} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
+import React from 'react';
+import {message, Form, Input, Button, DatePicker} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
 
 
 class NewDecorationForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      decoration: {}
-    }
+      decoration: {},
+    };
   }
 
   componentDidMount() {
-    this.getPurchaseDecorationDetail(this.props.customer_id, this.props.user_auto_id);
+    this.getPurchaseDecorationDetail(this.props.customer_id, this.props.auto_id);
   }
 
   handleSubmit(e) {
@@ -23,49 +23,62 @@ class NewDecorationForm extends React.Component {
     formData.deal_date = formatter.date(formData.deal_date);
 
     api.ajax({
-      url: api.editPurchaseDecoration(),
+      url: api.presales.deal.editDecoration(),
       type: 'POST',
-      data: formData
-    }, function (data) {
+      data: formData,
+    }, function () {
       message.success('修改装潢交易成功');
       this.props.cancelModal();
       location.reload();
-    }.bind(this))
+    }.bind(this));
   }
 
   getPurchaseDecorationDetail(customerId, userAutoId) {
-    api.ajax({url: api.getPurchaseDecorationDetail(customerId, userAutoId)}, function (data) {
-      this.setState({decoration: data.res.detail})
-    }.bind(this))
+    api.ajax({url: api.presales.deal.getDecorationLogDetail(customerId, userAutoId)}, function (data) {
+      this.setState({decoration: data.res.detail});
+    }.bind(this));
   }
 
   render() {
     const FormItem = Form.Item;
     const {formItemLayout, buttonLayout} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     let {decoration} = this.state;
 
     return (
-      <Form horizontal >
-        <Input type="hidden" {...getFieldProps('_id', {initialValue: decoration._id})}/>
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: decoration.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: decoration.user_auto_id})}/>
+      <Form horizontal>
+        {getFieldDecorator('_id', {initialValue: decoration._id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('customer_id', {initialValue: decoration.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: decoration.auto_id})(
+          <Input type="hidden"/>
+        )}
 
         <FormItem label="装潢时间" {...formItemLayout}>
-          <DatePicker {...getFieldProps('deal_date', {initialValue: decoration.deal_date ? decoration.deal_date : new Date()})}
-                      placeholder="装潢时间"/>
+          {getFieldDecorator('deal_date', {initialValue: decoration.deal_date ? formatter.getMomentDate(decoration.deal_date) : formatter.getMomentDate()})(
+            <DatePicker placeholder="装潢时间"/>
+          )}
         </FormItem>
 
         <FormItem label="装潢内容" {...formItemLayout}>
-          <Input {...getFieldProps('content', {initialValue: decoration.content})} type="textarea"/>
+          {getFieldDecorator('content', {initialValue: decoration.content})(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem label="装潢金额" className="form-item-container" {...formItemLayout}>
-          <Input {...getFieldProps('price', {initialValue: decoration.price})}/>
+          {getFieldDecorator('price', {initialValue: decoration.price})(
+            <Input />
+          )}
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input {...getFieldProps('remark', {initialValue: decoration.remark})} type="textarea"/>
+          {getFieldDecorator('remark', {initialValue: decoration.remark})(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -73,9 +86,9 @@ class NewDecorationForm extends React.Component {
           <Button type="primary" onClick={this.handleSubmit.bind(this)}>保存</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewDecorationForm = Form.create()(NewDecorationForm);
-export default NewDecorationForm
+export default NewDecorationForm;

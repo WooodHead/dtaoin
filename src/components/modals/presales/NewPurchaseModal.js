@@ -27,7 +27,7 @@ export default class NewPurchaseModal extends BaseModal {
             cancelModal={this.hideModal}
             isSingle={this.props.isSingle}
             customer_id={this.props.customer_id}
-            user_auto_id={this.props.user_auto_id}/>
+            auto_id={this.props.auto_id}/>
         </Modal>
       </span>
     );

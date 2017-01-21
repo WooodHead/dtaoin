@@ -1,5 +1,12 @@
 # History
 ----
+## 1.1.0 / 2016-12-28
+
+- support nested field: https://github.com/react-component/form/pull/48
+
+## 1.0.0 / 2016-08-29
+
+- support getFieldDecorator. stable.
 
 ## 0.17.0 / 2016-06-12
 

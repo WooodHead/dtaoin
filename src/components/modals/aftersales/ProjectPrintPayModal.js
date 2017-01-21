@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import ProjectPrintPay from '../../tables/aftersales/ProjectPrintPay'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import ProjectPrintPay from '../../tables/aftersales/ProjectPrintPay';
 
 export default class ProjectPrintPayModal extends BaseModal {
   constructor(props) {
@@ -33,11 +33,12 @@ export default class ProjectPrintPayModal extends BaseModal {
           <ProjectPrintPay
             project={this.props.project}
             customer={this.props.customer}
-            materialFee={this.props.materialFee} 
+            materialFee={this.props.materialFee}
             timeFee={this.props.timeFee}
             auto={this.props.auto}
             items={this.props.items}
             parts={this.props.parts}
+            realTotalFee={this.props.realTotalFee}
           />
         </Modal>
       </span>

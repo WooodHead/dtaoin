@@ -1,7 +1,7 @@
-import React from 'react'
-import {message, Form, Input, Select, Button, Row, Col, Collapse} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
+import React from 'react';
+import {message, Form, Input, Select, Button, Row, Col, Collapse} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
 
 class CalculateDealForm extends React.Component {
   constructor(props) {
@@ -31,11 +31,11 @@ class CalculateDealForm extends React.Component {
       force_rebate: 0,
       decoration_price: 0,
       decoration_cost: 0,
-      gift_cost: 0
+      gift_cost: 0,
     };
     [
       'handleSubmit',
-      'handleRebateCoefficient'
+      'handleRebateCoefficient',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -49,18 +49,20 @@ class CalculateDealForm extends React.Component {
     let formData = this.props.form.getFieldsValue();
 
     api.ajax({
-      url: api.editPurchaseIncome(this.props.userAutoId),
-      type: 'POST',
-      data: formData
-    }, function (data) {
-      message.success('销售收益更新成功');
-      this.props.cancelModal();
-      location.hash = api.getHash();
-    }.bind(this));
+        url: api.editPurchaseIncome(this.props.userAutoId),
+        type: 'POST',
+        data: formData,
+      },
+      () => {
+        // (data) => {
+        message.success('销售收益更新成功');
+        this.props.cancelModal();
+        location.reload();
+      });
   }
 
   setFieldValue(field, e) {
-    console.log(field, e.target.value);
+    // console.log(field, e.target.value);
     this.setState({[field]: e.target.value});
   }
 
@@ -70,7 +72,7 @@ class CalculateDealForm extends React.Component {
       if (company.name === companyName) {
         this.setState({
           rebate_coefficient: company.rebate_coefficient,
-          ci_rebate: ci_total * Number(company.rebate_coefficient) / 100
+          ci_rebate: ci_total * Number(company.rebate_coefficient) / 100,
         });
         break;
       }
@@ -96,7 +98,7 @@ class CalculateDealForm extends React.Component {
           buy_price: res.auto_deal_info.buy_price,
           trade_in_price: res.auto_deal_info.trade_in_price,
           license_tax_in: res.auto_deal_info.license_tax_in,
-          license_tax_out: res.auto_deal_info.license_tax_out
+          license_tax_out: res.auto_deal_info.license_tax_out,
         });
       }
 
@@ -108,7 +110,7 @@ class CalculateDealForm extends React.Component {
           bank_deposit_in: res.loan_log_info.bank_deposit_in,
           guarantee_fee_out: res.loan_log_info.guarantee_fee_out,
           notary_fee_out: res.loan_log_info.notary_fee_out,
-          bank_deposit_out: res.loan_log_info.bank_deposit_out
+          bank_deposit_out: res.loan_log_info.bank_deposit_out,
         });
       } else {
         this.setState({noLoan: true});
@@ -120,7 +122,7 @@ class CalculateDealForm extends React.Component {
           rebate_coefficient: rebate_coefficient,
           ci_total: res.insurance_log_info.ci_total,
           ci_discount: res.insurance_log_info.ci_discount,
-          force_rebate: res.insurance_log_info.force_rebate
+          force_rebate: res.insurance_log_info.force_rebate,
         });
       } else {
         this.setState({noInsurance: true});
@@ -129,25 +131,25 @@ class CalculateDealForm extends React.Component {
       if (res.decoration_log_info) {
         this.setState({
           decoration_price: res.decoration_log_info.price,
-          decoration_cost: res.decoration_log_info.cost
+          decoration_cost: res.decoration_log_info.cost,
         });
       } else {
         this.setState({noDecoration: true});
       }
-    }.bind(this))
+    }.bind(this));
   }
 
   getInsuranceCompanies() {
-    api.ajax({url: api.getInsuranceCompanies()}, function (data) {
+    api.ajax({url: api.presales.deal.getInsuranceCompanies()}, function (data) {
       this.setState({insuranceCompanies: data.res.company_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   render() {
     const FormItem = Form.Item;
     const Panel = Collapse.Panel;
     const {formItemLayout, formItemLeft, formItemRight, selectStyle} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
 
     let {
       noLoan,
@@ -174,7 +176,7 @@ class CalculateDealForm extends React.Component {
       force_rebate,
       decoration_price,
       decoration_cost,
-      gift_cost
+      gift_cost,
     } = this.state;
 
     let autoDealAmount = Number(sell_price) + Number(trade_in_price) - Number(buy_price),
@@ -191,34 +193,34 @@ class CalculateDealForm extends React.Component {
 
     let totalAmount = autoDealAmount + licenceAmount + loanAmount + insuranceAmount + decorationAmount;
     return (
-      <Form horizontal >
+      <Form horizontal>
         <Collapse defaultActiveKey={['1']}>
           <Panel
             header={<div><span>裸车销售收入</span><span className="pull-right mr32">{autoDealAmount}元</span></div>}
             key="1">
             <FormItem label="裸车价" {...formItemLayout}>
-              <Input
-                {...getFieldProps('auto_sell_price', {
-                  initialValue: sell_price,
-                  onChange: this.setFieldValue.bind(this, 'sell_price')
-                })}
-                placeholder="请输入裸车价"/>
+              {getFieldDecorator('auto_sell_price', {
+                initialValue: sell_price,
+                onChange: this.setFieldValue.bind(this, 'sell_price'),
+              })(
+                <Input placeholder="请输入裸车价"/>
+              )}
             </FormItem>
             <FormItem label="二手车置换价" {...formItemLayout}>
-              <Input
-                {...getFieldProps('trade_in_price', {
-                  initialValue: trade_in_price,
-                  onChange: this.setFieldValue.bind(this, 'trade_in_price')
-                })}
-                placeholder="请输入二手车置换差价"/>
+              {getFieldDecorator('trade_in_price', {
+                initialValue: trade_in_price,
+                onChange: this.setFieldValue.bind(this, 'trade_in_price'),
+              })(
+                <Input placeholder="请输入二手车置换差价"/>
+              )}
             </FormItem>
             <FormItem label="进价" className="text-red" {...formItemLayout}>
-              <Input
-                {...getFieldProps('auto_buy_price', {
-                  initialValue: buy_price,
-                  onChange: this.setFieldValue.bind(this, 'buy_price')
-                })}
-                placeholder="请输入4S报价"/>
+              {getFieldDecorator('auto_buy_price', {
+                initialValue: buy_price,
+                onChange: this.setFieldValue.bind(this, 'buy_price'),
+              })(
+                <Input placeholder="请输入4S报价"/>
+              )}
             </FormItem>
           </Panel>
 
@@ -226,20 +228,20 @@ class CalculateDealForm extends React.Component {
             header={<div><span>上牌收入</span> <span className="pull-right mr32">{licenceAmount}元</span></div>}
             key="2">
             <FormItem label="代理上牌费" {...formItemLayout}>
-              <Input
-                {...getFieldProps('license_tax_in', {
-                  initialValue: license_tax_in,
-                  onChange: this.setFieldValue.bind(this, 'license_tax_in')
-                })}
-                placeholder="请输入用户实付上牌费"/>
+              {getFieldDecorator('license_tax_in', {
+                initialValue: license_tax_in,
+                onChange: this.setFieldValue.bind(this, 'license_tax_in'),
+              })(
+                <Input placeholder="请输入用户实付上牌费"/>
+              )}
             </FormItem>
             <FormItem label="官方上牌费" className="text-red" {...formItemLayout}>
-              <Input
-                {...getFieldProps('license_tax_out', {
-                  initialValue: license_tax_out || 150,
-                  onChange: this.setFieldValue.bind(this, 'license_tax_out')
-                })}
-                placeholder="请输入车管所上牌费"/>
+              {getFieldDecorator('license_tax_out', {
+                initialValue: license_tax_out || 150,
+                onChange: this.setFieldValue.bind(this, 'license_tax_out'),
+              })(
+                <Input placeholder="请输入车管所上牌费"/>
+              )}
             </FormItem>
           </Panel>
 
@@ -251,83 +253,83 @@ class CalculateDealForm extends React.Component {
               noLoan ? '' :
                 <div>
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="按揭资料费" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('material_fee', {
-                            initialValue: material_fee,
-                            onChange: this.setFieldValue.bind(this, 'material_fee')
-                          })}
-                          placeholder="请输入按揭资料费"/>
+                        {getFieldDecorator('material_fee', {
+                          initialValue: material_fee,
+                          onChange: this.setFieldValue.bind(this, 'material_fee'),
+                        })(
+                          <Input placeholder="请输入按揭资料费"/>
+                        )}
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="按揭担保费" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('guarantee_fee_in', {
-                            initialValue: guarantee_fee_in,
-                            onChange: this.setFieldValue.bind(this, 'guarantee_fee_in')
-                          })}
-                          placeholder="请输入按揭担保费"/>
+                        {getFieldDecorator('guarantee_fee_in', {
+                          initialValue: guarantee_fee_in,
+                          onChange: this.setFieldValue.bind(this, 'guarantee_fee_in'),
+                        })(
+                          <Input placeholder="请输入按揭担保费"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
 
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="公证费" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('notary_fee_in', {
-                            initialValue: notary_fee_in,
-                            onChange: this.setFieldValue.bind(this, 'notary_fee_in')
-                          })}
-                          placeholder="请输入公证费"/>
+                        {getFieldDecorator('notary_fee_in', {
+                          initialValue: notary_fee_in,
+                          onChange: this.setFieldValue.bind(this, 'notary_fee_in'),
+                        })(
+                          <Input placeholder="请输入公证费"/>
+                        )}
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="银行保证金" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('bank_deposit_in', {
-                            initialValue: bank_deposit_in,
-                            onChange: this.setFieldValue.bind(this, 'bank_deposit_in')
-                          })}
-                          placeholder="请输入银行保证金"/>
+                        {getFieldDecorator('bank_deposit_in', {
+                          initialValue: bank_deposit_in,
+                          onChange: this.setFieldValue.bind(this, 'bank_deposit_in'),
+                        })(
+                          <Input placeholder="请输入银行保证金"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
 
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="担保公司担保费支出" className="text-red" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('guarantee_fee_out', {
-                            initialValue: guarantee_fee_out,
-                            onChange: this.setFieldValue.bind(this, 'guarantee_fee_out')
-                          })}
-                          placeholder="请输入担保公司担保费支出"/>
+                        {getFieldDecorator('guarantee_fee_out', {
+                          initialValue: guarantee_fee_out,
+                          onChange: this.setFieldValue.bind(this, 'guarantee_fee_out'),
+                        })(
+                          <Input placeholder="请输入担保公司担保费支出"/>
+                        )}
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="公证费支出" className="text-red" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('notary_fee_out', {
-                            initialValue: notary_fee_out,
-                            onChange: this.setFieldValue.bind(this, 'notary_fee_out')
-                          })}
-                          placeholder="请输入公证费支出"/>
+                        {getFieldDecorator('notary_fee_out', {
+                          initialValue: notary_fee_out,
+                          onChange: this.setFieldValue.bind(this, 'notary_fee_out'),
+                        })(
+                          <Input placeholder="请输入公证费支出"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
 
                   <Row>
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="银行保证金支出" className="text-red" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('bank_deposit_out', {
-                            initialValue: bank_deposit_out,
-                            onChange: this.setFieldValue.bind(this, 'bank_deposit_out')
-                          })}
-                          placeholder="请输入银行保证金支出"/>
+                        {getFieldDecorator('bank_deposit_out', {
+                          initialValue: bank_deposit_out,
+                          onChange: this.setFieldValue.bind(this, 'bank_deposit_out'),
+                        })(
+                          <Input placeholder="请输入银行保证金支出"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
@@ -343,69 +345,73 @@ class CalculateDealForm extends React.Component {
               noInsurance ? '' :
                 <div>
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="保险公司" {...formItemLeft}>
-                        <Select
-                          onSelect={this.handleRebateCoefficient}
-                          {...getFieldProps('insurance_company', {initialValue: insurance_company})}
-                          {...selectStyle}
-                          placeholder="请选择保险公司">
-                          {insuranceCompanies.map(company => <Option key={company.name}>{company.name}</Option>)}
-                        </Select>
+                        {getFieldDecorator('insurance_company', {initialValue: insurance_company})(
+                          <Select
+                            onSelect={this.handleRebateCoefficient}
+                            {...selectStyle}
+                            placeholder="请选择保险公司">
+                            {insuranceCompanies.map(company => <Option key={company.name}>{company.name}</Option>)}
+                          </Select>
+                        )}
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="返利系数" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('rebate_coefficient', {initialValue: rebate_coefficient})}
-                          placeholder="请输入返利系数"
-                        />
+                        {getFieldDecorator('rebate_coefficient', {initialValue: rebate_coefficient})(
+                          <Input placeholder="请输入返利系数"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
 
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="商业保险额" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('ci_total', {
-                            initialValue: ci_total,
-                            onChange: this.setFieldValue.bind(this, 'ci_total')
-                          })}
-                          placeholder="请输入商业保险额"/>
+                        {getFieldDecorator('ci_total', {
+                          initialValue: ci_total,
+                          onChange: this.setFieldValue.bind(this, 'ci_total'),
+                        })(
+                          <Input placeholder="请输入商业保险额"/>
+                        )}
+
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="商业险让利" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('ci_discount', {
-                            initialValue: ci_discount,
-                            onChange: this.setFieldValue.bind(this, 'ci_discount')
-                          })}
-                          placeholder="请输入银行保证金"/>
+                        {getFieldDecorator('ci_discount', {
+                          initialValue: ci_discount,
+                          onChange: this.setFieldValue.bind(this, 'ci_discount'),
+                        })(
+                          <Input placeholder="请输入银行保证金"/>
+                        )}
+
                       </FormItem>
                     </Col>
                   </Row>
 
                   <Row>
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="商业险返利" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('ci_rebate', {
-                            initialValue: ci_rebate || Number(ci_total) * Number(rebate_coefficient) / 100,
-                            onChange: this.setFieldValue.bind(this, 'ci_rebate')
-                          })}
-                          placeholder="请输入商业险返利"/>
+                        {getFieldDecorator('ci_rebate', {
+                          initialValue: ci_rebate || Number(ci_total) * Number(rebate_coefficient) / 100,
+                          onChange: this.setFieldValue.bind(this, 'ci_rebate'),
+                        })(
+                          <Input placeholder="请输入商业险返利"/>
+                        )}
+
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="交强险返利" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('force_rebate', {
-                            initialValue: force_rebate,
-                            onChange: this.setFieldValue.bind(this, 'force_rebate')
-                          })}
-                          placeholder="请输入银行保证金"/>
+                        {getFieldDecorator('force_rebate', {
+                          initialValue: force_rebate,
+                          onChange: this.setFieldValue.bind(this, 'force_rebate'),
+                        })(
+                          <Input placeholder="请输入银行保证金"/>
+                        )}
+
                       </FormItem>
                     </Col>
                   </Row>
@@ -421,33 +427,33 @@ class CalculateDealForm extends React.Component {
               noDecoration ? '' :
                 <div>
                   <FormItem label="装潢金额" {...formItemLayout}>
-                    <Input
-                      {...getFieldProps('decoration_price', {
-                        initialValue: decoration_price,
-                        onChange: this.setFieldValue.bind(this, 'decoration_price')
-                      })}
-                      placeholder="请输入用户实付装潢金额"/>
+                    {getFieldDecorator('decoration_price', {
+                      initialValue: decoration_price,
+                      onChange: this.setFieldValue.bind(this, 'decoration_price'),
+                    })(
+                      <Input placeholder="请输入用户实付装潢金额"/>
+                    )}
                   </FormItem>
 
                   <Row className="mb10">
-                    <Col span="13">
+                    <Col span={13}>
                       <FormItem label="装潢费用" className="text-red" {...formItemLeft}>
-                        <Input
-                          {...getFieldProps('decoration_cost', {
-                            initialValue: decoration_cost,
-                            onChange: this.setFieldValue.bind(this, 'decoration_cost')
-                          })}
-                          placeholder="请输入装潢费用"/>
+                        {getFieldDecorator('decoration_cost', {
+                          initialValue: decoration_cost,
+                          onChange: this.setFieldValue.bind(this, 'decoration_cost'),
+                        })(
+                          <Input placeholder="请输入装潢费用"/>
+                        )}
                       </FormItem>
                     </Col>
-                    <Col span="11">
+                    <Col span={11}>
                       <FormItem label="赠品成本" className="text-red" {...formItemRight}>
-                        <Input
-                          {...getFieldProps('gift_cost', {
-                            initialValue: gift_cost,
-                            onChange: this.setFieldValue.bind(this, 'gift_cost')
-                          })}
-                          placeholder="请输入赠品成本"/>
+                        {getFieldDecorator('gift_cost', {
+                          initialValue: gift_cost,
+                          onChange: this.setFieldValue.bind(this, 'gift_cost'),
+                        })(
+                          <Input placeholder="请输入赠品成本"/>
+                        )}
                       </FormItem>
                     </Col>
                   </Row>
@@ -461,14 +467,14 @@ class CalculateDealForm extends React.Component {
         </Collapse>
 
         <Row type="flex" justify="center" className="mt30">
-          <Col span="2">
+          <Col span={2}>
             <Button type="primary" onClick={this.handleSubmit}>保存</Button>
           </Col>
         </Row>
       </Form>
-    )
+    );
   }
 }
 
 CalculateDealForm = Form.create()(CalculateDealForm);
-export default CalculateDealForm
+export default CalculateDealForm;

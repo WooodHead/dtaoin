@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export default class BaseList extends React.Component {
   constructor(props) {
@@ -7,7 +7,7 @@ export default class BaseList extends React.Component {
       'handleConditionChange',
       'handleDateChange',
       'handleRadioChange',
-      'updateState'
+      'updateState',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -22,17 +22,17 @@ export default class BaseList extends React.Component {
    */
   handleConditionChange(type, name, event) {
     if (type === 'value') {
-      this.setState({[name]: event});
+      this.setState({[name]: event, page: 1});
     } else {
-      this.setState({[name]: name == "checkbox" ? event.state.checked : event.target.value});
+      this.setState({[name]: name == 'checkbox' ? event.state.checked : event.target.value, page: 1});
     }
   }
 
   handleDateChange(propName, value, mString) {
-    this.setState({[propName]: mString})
+    this.setState({[propName]: mString, page: 1});
   }
 
   handleRadioChange(propName, e) {
-    this.setState({[propName]: e.target.value})
+    this.setState({[propName]: e.target.value, page: 1});
   }
 }

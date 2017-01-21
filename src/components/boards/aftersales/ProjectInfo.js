@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
-import {Row, Col, Button, Table, Icon} from 'antd'
-import BasePrint from '../../base/BasePrint'
-import DetailModal from '../../../containers/aftersales/customer/MaintenanceDetailModalAndEdit'
+import React from 'react';
+import {Link} from 'react-router';
+import {Table} from 'antd';
+import BasePrint from '../../base/BasePrint';
+import text from '../../../config/text';
 
 export default class MaintProjectInfo extends BasePrint {
   constructor(props) {
@@ -20,43 +21,56 @@ export default class MaintProjectInfo extends BasePrint {
       dataIndex: 'ctime',
       key: 'ctime',
       width: '16%',
-      render(value, record) {
-        return value
-      }
-    }, {
-      title: '里程数(公里)',
-      dataIndex: 'mileage',
-      key: 'mileage',
-      width: '16%',
+      render(value) {
+        return value;
+      },
     }, {
       title: '维修项目',
       dataIndex: 'item_names',
       key: 'item_names',
-      width: '16%',
+      width: '25%',
     }, {
       title: '实收金额',
       dataIndex: 'total_fee',
       key: 'total_fee',
+      className: 'column-money',
+      width: '7%',
+    }, {
+      title: '里程数(公里)',
+      dataIndex: 'mileage',
+      key: 'mileage',
+      className: 'center',
       width: '16%',
     }, {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      className: 'center',
       width: '16%',
+      render(value) {
+        return text.maintenanceCar[value];
+      },
     }, {
       title: '操作',
       dataIndex: 'handle',
       key: 'handle',
       width: '16%',
-      render(value, record, index) {
+      className: 'center',
+      render(value, record) {
         return (
           <div>
-            <DetailModal
-              detail={detail[index]}
-            />
+            <Link
+              to={{
+                pathname: '/aftersales/project/create/',
+                query: {customer_id: record.customer_id, maintain_intention_id: record._id},
+              }}
+              target="_blank"
+            >
+              {Number(record.status || 0) >= 3 ? '详情' : '编辑'}
+            </Link>
           </div>
-        )
-      }
+        );
+      },
     }];
 
     return (
@@ -66,7 +80,8 @@ export default class MaintProjectInfo extends BasePrint {
           dataSource={dataSource}
           bordered
           pagination={false}
-          size='small'
+          size="middle"
+          rowKey={record => record._id}
         />
       </div>
     );

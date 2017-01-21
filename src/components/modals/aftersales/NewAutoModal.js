@@ -1,14 +1,14 @@
-import React from 'react'
-import {Modal, Icon, Button} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import NewAutoForm from '../../forms/aftersales/NewAutoForm'
+import React from 'react';
+import {Modal, Icon, Button} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import NewAutoForm from '../../forms/aftersales/NewAutoForm';
 
 export default class NewAutoModal extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      customer_id: this.props.customer_id
+      isDisable: !!this.props.isDisable,
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -19,28 +19,31 @@ export default class NewAutoModal extends BaseModal {
 
   render() {
     const formProps = {
-      customer_id: this.state.customer_id,
-      user_auto_id: this.state.user_auto_id,
+      customer_id: this.props.customer_id,
+      auto_id: this.state.auto_id,
       onSuccess: this.updateState,
-      cancelModal: this.hideModal
+      cancelModal: this.hideModal,
     };
 
     return (
       <span>
-        <Button type="primary"
-                onClick={this.showModal}
-                className="pull-right">
-          添加车辆
+        <Button
+          type="primary"
+          disabled={this.state.isDisable}
+          onClick={this.showModal}
+        >
+          添加
         </Button>
-        <Modal title={<span><Icon type="plus"/> 添加车辆</span>}
-               visible={this.state.visible}
-               width="50%"
-               onCancel={this.hideModal}
-               footer={null}
+        <Modal
+          title={<span><Icon type="plus"/> 添加车辆</span>}
+          visible={this.state.visible}
+          width="50%"
+          onCancel={this.hideModal}
+          footer={null}
         >
           <NewAutoForm newAuto="true" {...formProps} />
         </Modal>
       </span>
-    )
+    );
   }
 }

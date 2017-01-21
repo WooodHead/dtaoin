@@ -1,18 +1,14 @@
-import React from 'react'
-import {Row, Col, Modal, Icon, Button, Form, Input, DatePicker, Select} from 'antd'
-import api from '../../../middleware/api'
-import Layout from '../../forms/Layout'
-import BaseModal from '../../base/BaseModal'
-import TableWithPagination from '../../base/TableWithPagination'
-
-const FormItem = Form.Item;
+import React from 'react';
+import {Modal, Icon, Button, Form} from 'antd';
+import api from '../../../middleware/api';
+import BaseModal from '../../base/BaseModal';
 
 class TransferDetailModal extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
-      pay_pic: this.props.pay_pic
+      pay_pic: this.props.pay_pic,
     };
   }
 
@@ -29,24 +25,26 @@ class TransferDetailModal extends BaseModal {
   }
 
   render() {
-    const {visible, data} = this.state;
+    const {visible} = this.state;
 
     return (
       <span>
-        <Button type="primary"
-                className="margin-left-20"
-                onClick={this.showModal}>
+        <Button
+          type="primary"
+          className="margin-left-20"
+          onClick={this.showModal}
+        >
           查看回单
         </Button>
-        <Modal title={<span><Icon type="plus" className="margin-right-10"/>结算回单</span>}
-               visible={visible}
-               width="680px"
-               onOk={this.hideModal}
-               onCancel={this.hideModal}>
 
-           <div>
-             <img src={this.state.pay_pic_url}/>
-           </div>
+        <Modal
+          title={<span><Icon type="picture"/> 结算回单</span>}
+          visible={visible}
+          width="680px"
+          onOk={this.hideModal}
+          onCancel={this.hideModal}
+        >
+          <img src={this.state.pay_pic_url} className="response-img"/>
         </Modal>
       </span>
     );
@@ -54,4 +52,4 @@ class TransferDetailModal extends BaseModal {
 }
 
 TransferDetailModal = Form.create()(TransferDetailModal);
-export default TransferDetailModal
+export default TransferDetailModal;

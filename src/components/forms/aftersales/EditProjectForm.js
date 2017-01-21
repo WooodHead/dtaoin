@@ -1,11 +1,11 @@
 import React from 'react'
 import {message, Icon, Row, Col, Form, Input, Select, Radio, Button, DatePicker} from 'antd'
 import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
-import Layout from '../Layout'
-import validator from '../../../middleware/validator'
+import DateFormatter from '../../../utils/DateFormatter'
+import Layout from '../../../utils/FormLayout'
+import validator from '../../../utils/validator'
 import BaseProject from '../../base/BaseProject'
-import FormValidator from '../FormValidator'
+import FormValidator from '../../../utils/FormValidator'
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -21,8 +21,8 @@ class EditProjectForm extends BaseProject {
       isEmpty: true,
       fitterAdmins: [],
       fitterUsers: [],
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: DateFormatter.getMomentDate(),
+      endDate: DateFormatter.getMomentDate(),
       itemHtml: [],
       partHtml: [],
       itemMap: new Map(),
@@ -31,10 +31,10 @@ class EditProjectForm extends BaseProject {
       deletePartSet: new Set(),
       timeFee: 0,
       materialFee: 0,
-      totalFee: 0
+      totalFee: 0,
     };
     [
-      'handleSubmit'
+      'handleSubmit',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -64,7 +64,7 @@ class EditProjectForm extends BaseProject {
         deleteItemSet,
         deletePartSet,
         itemMap,
-        partMap
+        partMap,
       } = this.state;
 
       let itemNames = [],
@@ -101,8 +101,8 @@ class EditProjectForm extends BaseProject {
         }
       }
 
-      values.start_time = formatter.date(this.state.startDate);
-      values.end_time = formatter.date(this.state.endDate);
+      values.start_time = DateFormatter.date(this.state.startDate);
+      values.end_time = DateFormatter.date(this.state.endDate);
       values.item_names = itemNames.toString();
       values.part_names = partNames.toString();
       values.item_delete_ids = Array.from(deleteItemIds).toString();
@@ -115,7 +115,7 @@ class EditProjectForm extends BaseProject {
       api.ajax({
         url: api.editMaintainIntention(),
         type: 'POST',
-        data: values
+        data: values,
       }, (data) => {
         message.success('修改维保记录成功');
         // this.setState({btnDisable: false});
@@ -130,7 +130,7 @@ class EditProjectForm extends BaseProject {
             projectForm: 'hide',
             confirmProject: '',
             items: data.res.item_list_saved,
-            parts: data.res.part_list_saved
+            parts: data.res.part_list_saved,
           });
         } else {
           this.props.cancelModal();
@@ -150,7 +150,7 @@ class EditProjectForm extends BaseProject {
         project: project,
         startDate: new Date(project.start_time),
         endDate: new Date(project.end_time),
-        totalFee: project.total_fee
+        totalFee: project.total_fee,
       });
       this.props.form.setFieldsValue({'auxiliary_material_fee': project.auxiliary_material_fee});
       this.props.form.setFieldsValue({'discount': project.discount});
@@ -160,35 +160,25 @@ class EditProjectForm extends BaseProject {
 
   render() {
     const {formItemLayout, buttonLayout, selectStyle} = Layout;
-    const {getFieldProps} = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     const {
       btnDisable,
       fitterAdmins,
       project,
       itemHtml,
-      partHtml
+      partHtml,
     } = this.state;
 
-    const fitterAdminProps = getFieldProps('fitter_admin_id', {
-      initialValue: project.fitter_admin_id,
-      validate: [{
-        rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
-      }, {
-        rules: [{required: true, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
-    });
 
-    const mileageProps = getFieldProps('mileage', {
+    const mileageProps = getFieldDecorator('mileage', {
       initialValue: project.mileage,
       validate: [{
         rules: [{validator: FormValidator.notNull}],
-        trigger: ['onBlur']
+        trigger: ['onBlur'],
       }, {
         rules: [{required: false, message: validator.required.notNull}],
-        trigger: 'onBlur'
-      }]
+        trigger: 'onBlur',
+      }],
     });
 
     let materialFee = this.calculateTotalMaterialFee(),
@@ -197,34 +187,47 @@ class EditProjectForm extends BaseProject {
 
     return (
       <Form horizontal>
-        <Input type="hidden" {...getFieldProps('_id', {initialValue: project._id})}/>
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: project.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: project.user_auto_id})}/>
+        {getFieldDecorator('_id', {initialValue: project._id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('customer_id', {initialValue: project.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: project.auto_id})(
+          <Input type="hidden"/>
+        )}
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="维保负责人" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Select
-                {...fitterAdminProps}
-                {...selectStyle}
-                placeholder="请选择维保负责人">
-                {fitterAdmins.map(admin => <Option key={admin._id}>{admin.name}</Option>)}
-              </Select>
+              {getFieldDecorator('fitter_admin_id', {
+                initialValue: project.fitter_admin_id,
+                rules: [{required: true, message: validator.required.notNull}, {validator: FormValidator.notNull}],
+                validateTrigger: 'onBlur',
+              })(
+                <Select
+                  {...selectStyle}
+                  placeholder="请选择维保负责人">
+                  {fitterAdmins.map(admin => <Option key={admin._id}>{admin.name}</Option>)}
+                </Select>
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="里程数" labelCol={{span: 4}} wrapperCol={{span: 11}}>
-              <Input
-                type="number"{...getFieldProps('mileage', {initialValue: project.mileage})}
-                min={0}
-                addonAfter="Km"
-              />
+              {getFieldDecorator('mileage', {initialValue: project.mileage})(
+                <Input
+                  type="number"
+                  min={0}
+                  addonAfter="Km"
+                />
+              )}
             </FormItem>
           </Col>
         </Row>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="进厂日期" labelCol={{span: 13}} wrapperCol={{span: 8}}>
               <DatePicker
                 disabledDate={this.disabledStartDate.bind(this)}
@@ -233,7 +236,7 @@ class EditProjectForm extends BaseProject {
                 placeholder="请选择进厂时间"/>
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="出厂日期" labelCol={{span: 4}} wrapperCol={{span: 11}}>
               <DatePicker
                 disabledDate={this.disabledEndDate.bind(this)}
@@ -245,10 +248,12 @@ class EditProjectForm extends BaseProject {
         </Row>
 
         <FormItem label="是否事故车" {...formItemLayout}>
-          <RadioGroup {...getFieldProps('is_accident', {initialValue: project.is_accident || '0'})}>
-            <Radio value="0">否</Radio>
-            <Radio value="1">是</Radio>
-          </RadioGroup>
+          {getFieldDecorator('is_accident', {initialValue: project.is_accident || '0'})(
+            <RadioGroup>
+              <Radio value="0">否</Radio>
+              <Radio value="1">是</Radio>
+            </RadioGroup>
+          )}
         </FormItem>
 
         <FormItem label="维修项目" className="form-item-container" {...formItemLayout}>
@@ -262,12 +267,12 @@ class EditProjectForm extends BaseProject {
         </FormItem>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="材料费" labelCol={{span: 13}} wrapperCol={{span: 8}}>
               <p className="ant-form-text">{materialFee}元</p>
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="工时费" labelCol={{span: 4}} wrapperCol={{span: 11}}>
               <p className="ant-form-text">{timeFee}元</p>
             </FormItem>
@@ -275,36 +280,43 @@ class EditProjectForm extends BaseProject {
         </Row>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="辅料费" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Input
-                type="number" {...getFieldProps('auxiliary_material_fee', {onChange: this.calculateTotalFee})}
-                placeholder="请输入辅料费"
-                min={0}
-                addonAfter="元"/>
+              {getFieldDecorator('auxiliary_material_fee', {onChange: this.calculateTotalFee})(
+                <Input
+                  type="number"
+                  placeholder="请输入辅料费"
+                  min={0}
+                  addonAfter="元"
+                />
+              )}
             </FormItem>
           </Col>
         </Row>
 
         <Row>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="优惠券优惠" labelCol={{span: 13}} wrapperCol={{span: 8}}>
-              <Input
-                type="number" {...getFieldProps('coupon', {onChange: this.calculateTotalFee})}
-                placeholder="请输入优惠券优惠金额"
-                min={0}
-                addonAfter="元"
-              />
+              {getFieldDecorator('coupon', {onChange: this.calculateTotalFee})(
+                <Input
+                  type="number"
+                  placeholder="请输入优惠券优惠金额"
+                  min={0}
+                  addonAfter="元"
+                />
+              )}
             </FormItem>
           </Col>
-          <Col span="11">
+          <Col span={11}>
             <FormItem label="抹零优惠" labelCol={{span: 4}} wrapperCol={{span: 11}}>
-              <Input
-                type="number" {...getFieldProps('discount', {onChange: this.calculateTotalFee})}
-                placeholder="请输入优惠金额"
-                min={0}
-                addonAfter="元"
-              />
+              {getFieldDecorator('discount', {onChange: this.calculateTotalFee})(
+                <Input
+                  type="number"
+                  placeholder="请输入优惠金额"
+                  min={0}
+                  addonAfter="元"
+                />
+              )}
             </FormItem>
           </Col>
         </Row>
@@ -314,7 +326,9 @@ class EditProjectForm extends BaseProject {
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input type="textarea"{...getFieldProps('remark', {initialValue: project.remark})}/>
+          {getFieldDecorator('remark', {initialValue: project.remark})(
+            <Input type="textarea"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>

@@ -1,9 +1,9 @@
-import React from 'react'
-import {Row, Col, Button, Form, message} from 'antd'
-import api from '../../../middleware/api'
-import PrintThisComponent from '../../base/BasePrint'
-import Layout from '../Layout'
-import formatter from '../../../middleware/formatter'
+import React from 'react';
+import {Row, Col, Button, Form, message} from 'antd';
+import api from '../../../middleware/api';
+import PrintThisComponent from '../../base/BasePrint';
+import Layout from '../../../utils/FormLayout';
+import formatter from '../../../utils/DateFormatter';
 
 const FormItem = Form.Item;
 
@@ -11,11 +11,13 @@ export default class NewPartInfoConfirm extends PrintThisComponent {
   constructor(props) {
     super(props);
     this.state = {
-        bt_enable: true
-    }
+      bt_enable: true,
+    };
   }
 
   print() {
+    let USER_SESSION = sessionStorage.getItem('USER_SESSION');
+    USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
     let printInfo = this.refs.printInfo.getDOMNode();
     this.printThis({
       element: $(printInfo),
@@ -23,12 +25,12 @@ export default class NewPartInfoConfirm extends PrintThisComponent {
       importCSS: true,             //import page CSS
       importStyle: false,          //import style tags
       printContainer: false,        //grab outer container as well as the contents of the selector
-      loadCSS: "/app/dist/print.css",   //path to additional css file - us an array [] for multiple
-      pageTitle: App.session.brand_name,               //add title to print page
+      loadCSS: '/app/dist/print.css',   //path to additional css file - us an array [] for multiple
+      pageTitle: USER_SESSION.brand_name,               //add title to print page
       removeInline: false,         //remove all inline styles from print elements
       printDelay: 333,            // variable print delay
       header: null,               // prefix to html
-      formValues: true             //preserve input/form values
+      formValues: true,             //preserve input/form values
     });
   }
 
@@ -37,7 +39,7 @@ export default class NewPartInfoConfirm extends PrintThisComponent {
     this.props.onSuccess({
       currentStep: 0,
       visibility_form_part: '',
-      visibility_form_preview: 'hide'
+      visibility_form_preview: 'hide',
     });
   }
 
@@ -49,53 +51,53 @@ export default class NewPartInfoConfirm extends PrintThisComponent {
     api.ajax({
       url: this.props.newParts ? api.addNewParts() : api.addOldParts(),
       type: 'POST',
-      data: formData
-    }, (data) => {
+      data: formData,
+    }, () => {
       message.info('进货成功！');
       this.props.cancelModal();
       location.reload();
       this.handlePreview(e);
-    })
+    });
   }
 
   render() {
-    const { buttonLayout} = Layout;
+    const {buttonLayout} = Layout;
     const {formData, part}=this.props;
     return (
       <div className="ant-form-horizontal print" ref="printInfo">
         <Row>
-          <Col span="8" offset="8">
+          <Col span={8} offset={8}>
             <span className="info-label">配件名称</span>
             <span>{part.name}</span>
           </Col>
-          <Col span="8" offset="8">
-            <span className="info-label">设配车型</span>
+          <Col span={8} offset={8}>
+            <span className="info-label">适配车型</span>
             <span>{part.scope}</span>
           </Col>
         </Row>
         <Row>
-          <Col span="8" offset="8">
+          <Col span={8} offset={8}>
             <span className="info-label">进货数量</span>
             <span>{formData.amount}</span>
           </Col>
-          <Col span="8" offset="8">
+          <Col span={8} offset={8}>
             <span className="info-label">进货价</span>
             <span>{formData.in_price}</span>
           </Col>
         </Row>
         <Row>
-          <Col span="8" offset="8">
+          <Col span={8} offset={8}>
             <span className="info-label">小计</span>
             <span>{(formData.amount * formData.in_price).toFixed(2) || 0}</span>
           </Col>
         </Row>
-        <p className="ant-form-item center" style={{color:'#999'}}>入库后，库存数及进价将无法直接更改</p>
+        <p className="ant-form-item center" style={{color: '#999'}}>入库后，库存数及进价将无法直接更改</p>
 
         <FormItem {...buttonLayout} className="no-print">
           <Button type="ghost" className="mr15" onClick={this.handlePreview.bind(this)}>返回编辑</Button>
           <Button type="primary" onClick={this.submit.bind(this)} disabled={!this.state.bt_enable}>确认并提交</Button>
         </FormItem>
       </div>
-    )
+    );
   }
 }

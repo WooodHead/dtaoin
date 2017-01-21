@@ -1,8 +1,8 @@
-import React from 'react'
-import {Input, Select, Button, Icon, message} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
-import validator from '../../middleware/validator'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+import api from '../../middleware/api';
+import validator from '../../utils/validator';
 
 const Option = Select.Option;
 
@@ -12,13 +12,14 @@ class PartsNoSearchBox extends React.Component {
     this.state = {
       data: [],
       value: '',
-      focus: false
+      focus: false,
     };
     [
       'handleChange',
       'handleSelect',
       'searchCustomersByKey',
-      'handleFocusBlur'
+      'handleFocus',
+      'handleBlur',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
@@ -55,34 +56,36 @@ class PartsNoSearchBox extends React.Component {
   }
 
   searchCustomersByKey(key) {
-    api.ajax({url: this.props.api(key)}, (data)=> {
+    api.ajax({url: this.props.api(key)}, (data) => {
       let list = data.res.list;
       if (list.length > 0) {
         this.setState({data: list});
         this.props.change({
           key: key,
-          list: list
+          list: list,
         });
       } else {
         this.setState({data: [{name: '未找到配件', part_no: ''}]});
       }
-    })
+    });
   }
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
+  }
+
+  handleBlur() {
+    this.setState({focus: false});
   }
 
   render() {
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim()
+      'ant-search-btn-noempty': !!this.state.value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': this.state.focus,
     });
 
     return (
@@ -98,10 +101,12 @@ class PartsNoSearchBox extends React.Component {
           filterOption={false}
           onSearch={this.handleChange}
           onSelect={this.handleSelect}
-          onFocus={this.handleFocusBlur}
-          onBlur={this.handleFocusBlur}>
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
+        >
           {this.state.data.map((item, index) =>
-            <Option key={index} vlaue={item._id}>{item.name} {item.part_no}</Option>)}
+            <Option key={index} vlaue={item._id}>{item.name} {item.part_no}</Option>)
+          }
         </Select>
         <div className="ant-input-group-wrap">
           <Button className={btnCls} size="large"><Icon type="search"/></Button>
@@ -112,7 +117,7 @@ class PartsNoSearchBox extends React.Component {
 }
 
 PartsNoSearchBox.defaultProps = {
-  placeholder: '请输入配件号或配件名搜索'
+  placeholder: '请输入配件号或配件名搜索',
 };
 
-export default PartsNoSearchBox
+export default PartsNoSearchBox;

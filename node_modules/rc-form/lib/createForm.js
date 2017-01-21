@@ -20,6 +20,7 @@ var mixin = exports.mixin = {
       setFieldsValue: this.setFieldsValue,
       setFields: this.setFields,
       setFieldsInitialValue: this.setFieldsInitialValue,
+      getFieldDecorator: this.getFieldDecorator,
       getFieldProps: this.getFieldProps,
       getFieldError: this.getFieldError,
       isFieldValidating: this.isFieldValidating,

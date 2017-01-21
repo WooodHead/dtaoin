@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import EditDecorationForm from '../../forms/presales/EditDecorationForm'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import EditDecorationForm from '../../forms/presales/EditDecorationForm';
 
 export default class EditDecorationModal extends BaseModal {
   constructor(props) {
@@ -31,7 +31,7 @@ export default class EditDecorationModal extends BaseModal {
             cancelModal={this.updateState}
             cancelModal={this.hideModal}
             customer_id={this.props.customer_id}
-            user_auto_id={this.props.user_auto_id}
+            auto_id={this.props.auto_id}
           />
         </Modal>
       </span>

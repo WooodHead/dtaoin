@@ -1,7 +1,7 @@
-import React from 'react'
-import {Modal, Button, Icon} from 'antd'
-import BaseModal from '../../base/BaseModal'
-import ProjectPrintDispatch from '../../tables/aftersales/ProjectPrintDispatch'
+import React from 'react';
+import {Modal, Button, Icon} from 'antd';
+import BaseModal from '../../base/BaseModal';
+import ProjectPrintDispatch from '../../tables/aftersales/ProjectPrintDispatch';
 
 export default class ProjectPrintDispatchModal extends BaseModal {
   constructor(props) {

@@ -12,10 +12,10 @@ export default class EditProjectModal extends BaseModal {
       currentStep: 0,
       projectForm: '',
       confirmProject: 'hide',
-      user_auto_id: '',
+      auto_id: '',
       project: {},
       items: [],
-      parts: []
+      parts: [],
     };
     this.updateState = this.updateState.bind(this);
   }
@@ -34,7 +34,7 @@ export default class EditProjectModal extends BaseModal {
       items: this.state.items,
       parts: this.state.parts,
       onSuccess: this.updateState,
-      cancelModal: this.hideModal
+      cancelModal: this.hideModal,
     };
 
     return (
@@ -44,14 +44,14 @@ export default class EditProjectModal extends BaseModal {
           onClick={this.showModal}
           disabled={this.props.ifDisabled}
           className="mr5"
-          size={this.props.size || "small"}>
+          size={this.props.size || 'small'}>
           编辑
         </Button>
 
         <Modal
           title={<span><Icon type="edit"/> 编辑维保单</span>}
           visible={this.state.visible}
-          width='900px'
+          width="900px"
           onCancel={this.hideModal}
           maskClosable={false}
           data-time={this.state.time}

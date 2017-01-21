@@ -1,5 +1,5 @@
-import UploadComponent from './BaseUpload'
-import api from '../../middleware/api'
+import UploadComponent from './BaseUpload';
+import api from '../../middleware/api';
 
 export default class BaseAutoComponent extends UploadComponent {
   constructor(props) {
@@ -7,7 +7,7 @@ export default class BaseAutoComponent extends UploadComponent {
     [
       'handleBrandSelect',
       'handleSeriesSelect',
-      'handleTypeSelect'
+      'handleTypeSelect',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -16,29 +16,46 @@ export default class BaseAutoComponent extends UploadComponent {
     this.resetSeriesSelect();
     this.resetTypesSelect();
     this.concatName('brands', brandId);
+    this.setState({
+      autoTypeNameDisable: false,
+    });
   }
 
   handleSeriesSelect(seriesId) {
     this.getAutoTypes(seriesId);
     this.resetTypesSelect();
     this.concatName('series', seriesId);
+    this.setState({
+      autoTypeNameDisable: false,
+    });
   }
 
   handleTypeSelect(typeId) {
+    if(Number(typeId) > 0) {
+      this.props.form.setFieldsValue({auto_type_name: ''});
+      this.setState({
+        autoTypeNameDisable: true,
+      });
+    }else {
+      this.setState({
+        autoTypeNameDisable: false,
+      });
+    }
     this.concatName('types', typeId);
   }
 
   resetSeriesSelect() {
-    this.props.form.setFieldsValue({auto_series_id: '不限'})
+    this.props.form.setFieldsValue({auto_series_id: '不限'});
     let arrNameProp = 'series_name';
-    this.setState({[arrNameProp]: ''});
+    this.setState({[arrNameProp]: ' '});
   }
 
   resetTypesSelect() {
-    this.props.form.setFieldsValue({auto_type_id: '不限'})
+    this.props.form.setFieldsValue({auto_type_id: '不限'});
     let arrNameProp = 'types_name';
-    this.setState({[arrNameProp]: ''});
+    this.setState({[arrNameProp]: ' '});
   }
+
 
   concatName(arrName, id) {
     let arr = this.state[arrName];
@@ -54,31 +71,31 @@ export default class BaseAutoComponent extends UploadComponent {
   }
 
   getAutoBrands() {
-    api.ajax({url: api.getAutoBrands()}, function (data) {
-      this.setState({brands: data.res.auto_brand_list})
-    }.bind(this))
+    api.ajax({url: api.auto.getBrands()}, function (data) {
+      this.setState({brands: data.res.auto_brand_list});
+    }.bind(this));
   }
 
   getAutoSeries(brandId) {
-    api.ajax({url: api.getAutoSeriesByBrand(brandId)}, function (data) {
+    api.ajax({url: api.auto.getSeriesByBrand(brandId)}, function (data) {
       this.setState({series: data.res.series});
-    }.bind(this))
+    }.bind(this));
   }
 
   getAutoTypes(seriesId) {
-    api.ajax({url: api.getAutoTypesBySeries(seriesId)}, function (data) {
+    api.ajax({url: api.auto.getTypesBySeries(seriesId)}, function (data) {
       let types = data.res.type, fistItem = types[0];
       this.setState({
         types: types,
-        auto_factory_id: fistItem.auto_factory_id
+        auto_factory_id: fistItem ? fistItem.auto_factory_id : 0,
       });
       this.getOutColors(seriesId);
     }.bind(this));
   }
 
   getOutColors(seriesId) {
-    api.ajax({url: api.getAutoOutColorBySeries(seriesId)}, function (data) {
+    api.ajax({url: api.auto.getOutColorBySeries(seriesId)}, function (data) {
       this.setState({outColor: data.res.out_colors});
-    }.bind(this))
+    }.bind(this));
   }
 }

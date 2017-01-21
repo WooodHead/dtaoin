@@ -1,8 +1,8 @@
-import React from 'react'
-import {message, Modal, Form, Button, Icon, Select} from 'antd'
-import api from '../../../middleware/api'
-import Layout from '../../forms/Layout'
-import BaseModal from '../../base/BaseModal'
+import React from 'react';
+import {message, Modal, Form, Button, Icon, Select} from 'antd';
+import api from '../../../middleware/api';
+import Layout from '../../../utils/FormLayout';
+import BaseModal from '../../base/BaseModal';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -25,7 +25,7 @@ export default class ProjectDispatchModal extends BaseModal {
   getFitterUsers() {
     api.ajax({url: api.user.getMaintainUsers(0)}, function (data) {
       this.setState({fitterUsers: data.res.user_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   handleFixerChange(value) {
@@ -62,7 +62,7 @@ export default class ProjectDispatchModal extends BaseModal {
           type="primary"
           disabled={this.props.disabled}
           onClick={this.showModal}
-          size={this.props.size || "small"}>
+          size={this.props.size || 'small'}>
           派工
         </Button>
         <Modal
@@ -76,7 +76,7 @@ export default class ProjectDispatchModal extends BaseModal {
               <Select
                 multiple
                 onChange={this.handleFixerChange.bind(this)}
-                {...selectStyle}                                                                 
+                {...selectStyle}
                 className="no-margin-bottom"
                 placeholder="请选择维修人员">
                 {this.state.fitterUsers.map(user => <Option key={user._id}>{user.name}</Option>)}

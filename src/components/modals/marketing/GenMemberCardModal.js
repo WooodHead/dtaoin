@@ -1,7 +1,8 @@
-import React, {Component} from 'react'
-import {Form, Input, Button, Select, Row, Col, Modal, message} from 'antd'
-import api from '../../../middleware/api'
-import FormModalLayout from '../../../components/forms/Layout';
+import React, {Component} from 'react';
+import {Form, Input, Button, Row, Col, Modal, message} from 'antd';
+import api from '../../../middleware/api';
+import FormModalLayout from '../../../utils/FormLayout';
+import SearchSelectBox from '../../../components/base/SearchSelectBox';
 const FormItem = Form.Item;
 
 
@@ -20,8 +21,19 @@ export default class GenMemberCardModal extends Component {
       'onInputChange',
       'onFinish',
       'onFinishAndExport',
+      'onSelectKey',
+      'onSearch',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.visible) {
+      this.setState({
+        currentIndex: '',
+      });
+    }
+  }
+
 
   componentDidMount() {
     this.requireData();
@@ -30,7 +42,7 @@ export default class GenMemberCardModal extends Component {
   requireData() {
     const successHandler = function () {
     };
-    const failHandler = function () {
+    const failHandler = function (error) {
       message.error(error);
     };
     let url = api.company.list();
@@ -43,7 +55,7 @@ export default class GenMemberCardModal extends Component {
       }
     }, (error) => {
       failHandler(error);
-    })
+    });
   }
 
 
@@ -60,19 +72,39 @@ export default class GenMemberCardModal extends Component {
 
     if (key == 'total_count' && value < free_count) {
       this.setState({
-        total_count: value || 0,
-        free_count: 0,
+        total_count: '' + (value || 0),
+        free_count: '' + (0),
       });
-    } else if (key == 'free_count' && value > total_count){
+    } else if (key == 'free_count' && value > total_count) {
       this.setState({
-        total_count: value || 0,
-        free_count: value || 0,
+        total_count: '' + (value || 0),
+        free_count: '' + (value || 0),
       });
     } else {
       this.setState({
-        [key]: value || 0,
+        [key]: '' + (value || 0),
       });
     }
+  }
+
+  onSearch(key, successHandle, failHandle) {
+    let url = api.company.keyList(key);
+    api.ajax({url}, (data) => {
+      if (data.code === 0) {
+        this.setState({companyList: data.res.company_list});
+        successHandle(data.res.company_list);
+      } else {
+        failHandle(data.msg);
+      }
+    }, (error) => {
+      failHandle(error);
+    });
+  }
+
+  onSelectKey(index) {
+    this.setState({
+      currentIndex: index,
+    });
   }
 
   submitData(successHandler = null) {
@@ -93,7 +125,7 @@ export default class GenMemberCardModal extends Component {
       member_card_type_id: memberCardTypeId,
       company_id: companyId,
       count: total_count,
-      free_count: free_count
+      free_count: free_count,
     };
     api.ajax({url, data, type: 'POST'}, (data) => {
       if (data.code === 0) {
@@ -111,8 +143,6 @@ export default class GenMemberCardModal extends Component {
     }, (error) => {
       message.error(error);
     });
-
-
   }
 
   exportData(logDetail) {
@@ -128,24 +158,40 @@ export default class GenMemberCardModal extends Component {
 
   //完成
   onFinish() {
-    this.submitData();
+    //提交数据
+    this.submitData((logDetail) => {
+      const {companyList, currentIndex} = this.state;
+      const company = companyList[currentIndex];
+      logDetail['status'] = '0';
+      logDetail['company_name'] = company.name || '';
+
+      this.props.finish(logDetail);
+    });
   }
 
   //完成并导出
   onFinishAndExport() {
     //提交数据, 提交数据成功后，导出
-    this.submitData(this.exportData);
+    this.submitData((logDetail) => {
+      const {companyList, currentIndex} = this.state;
+      const company = companyList[currentIndex];
+      logDetail['status'] = '0';
+      logDetail['company_name'] = company.name || '';
+
+      this.exportData(logDetail);
+      this.props.finish(logDetail);
+    });
   }
 
   render() {
-    let {formItemTwo} = FormModalLayout;
-    let {companyList, currentIndex, total_count, free_count} = this.state;
+    let {formItemTwo, formItemLayout_1014} = FormModalLayout;
+    let {total_count, free_count} = this.state;
 
     return (
       <Modal
         title="发卡"
         visible={this.props.visible}
-        onCancel={this.props.hidden}
+        onCancel={this.props.cancel}
         footer={
           <Row>
             <Col span={6} offset={4}>
@@ -181,48 +227,39 @@ export default class GenMemberCardModal extends Component {
                 labelCol={{span: 4}}
                 wrapperCol={{span: 18}}
               >
-                <Select
-                  showSearch
-                  size="large"
-                  placeholder="选择一家门店"
-                  defaultValue={currentIndex}
-                  optionFilterProp="children"
-                  onChange={(value) => {
-                    this.onSelectChange(value)
-                  }}
-                >
-                  {companyList.map((item, index) =>
-                    <Select.Option key={index} value={'' + index}>{item.name}</Select.Option>
-                  )}
-                </Select>
+                <SearchSelectBox
+                  style={{width: 250, float: 'left'}}
+                  placeholder={'请输入搜索门店名称'}
+                  onSearch={this.onSearch}
+                  onSelectKey={this.onSelectKey}
+                />
               </FormItem>
             </Col>
           </Row>
           <Row>
-            <Col span={10} offset={1}>
+            <Col span={10}>
               <FormItem
                 label="发放总数"
-                {...formItemTwo}
+                {...formItemLayout_1014}
                 required
               >
                 <Input
                   type="number"
                   placeholder="请输入总数量"
-                  value={total_count || ''}
+                  value={total_count !== 0 ? total_count : ''}
                   onChange={(e) => this.onInputChange('total_count', e.target.value)}
                 />
               </FormItem>
             </Col>
-            <Col span={10} offset={1}>
+            <Col span={10} offset={2}>
               <FormItem
                 label="免费数量"
                 {...formItemTwo}
-                required
               >
                 <Input
                   type="number"
                   placeholder="请输入免费数量"
-                  value={free_count || ''}
+                  value={free_count !== 0 ? free_count : ''}
                   onChange={(e) => this.onInputChange('free_count', e.target.value)}
                 />
               </FormItem>
@@ -230,7 +267,7 @@ export default class GenMemberCardModal extends Component {
           </Row>
         </Form>
       </Modal>
-    )
+    );
   }
 }
 

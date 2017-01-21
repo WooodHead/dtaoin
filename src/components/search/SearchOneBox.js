@@ -1,7 +1,6 @@
-import React from 'react'
-import {Input, Select, Button, Icon} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
 const Option = Select.Option;
 
 const SearchOneBox = React.createClass({
@@ -9,7 +8,7 @@ const SearchOneBox = React.createClass({
     return {
       data: [],
       value: '',
-      focus: false
+      focus: false,
     };
   },
 
@@ -39,20 +38,23 @@ const SearchOneBox = React.createClass({
     this.props.change(this.state.value);
   },
 
-  handleFocusBlur(e) {
-    this.setState({
-      focus: e.target === document.activeElement
-    });
+  handleFocus() {
+    this.setState({focus: true});
   },
+
+  handleBlur() {
+    this.setState({focus: false});
+  },
+
 
   render() {
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim()
+      'ant-search-btn-noempty': !!this.state.value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus
+      'ant-search-input-focus': this.state.focus,
     });
 
     let {style, placeholder} = this.props;
@@ -71,8 +73,8 @@ const SearchOneBox = React.createClass({
           filterOption={false}
           onSelect={this.handleSelect}
           onSearch={this.handleSearch}
-          onFocus={this.handleFocusBlur}
-          onBlur={this.handleFocusBlur}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
         >
 
           {this.props.data.map((item, index) =>
@@ -88,8 +90,8 @@ const SearchOneBox = React.createClass({
         </div>
       </Input.Group>
     );
-  }
+  },
 });
 
 SearchOneBox.defaultProps = {placeholder: '用关键字搜索'};
-export default SearchOneBox
+export default SearchOneBox;

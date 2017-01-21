@@ -1,8 +1,8 @@
-import React, {Component} from 'react'
-import {message, Form, Input, Button, Radio, Select, DatePicker} from 'antd'
-import Layout from '../Layout'
-import api from '../../../middleware/api'
-import formatter from '../../../middleware/formatter'
+import React, {Component} from 'react';
+import {Alert, message, Form, Input, Button, Radio, Select, DatePicker} from 'antd';
+import Layout from '../../../utils/FormLayout';
+import api from '../../../middleware/api';
+import formatter from '../../../utils/DateFormatter';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -13,13 +13,13 @@ class NewPurchaseForm extends Component {
     super(props);
     this.state = {
       purchase: {},
-      users: []
-    }
+      users: [],
+    };
   }
 
   componentDidMount() {
-    this.getDepartmentUsers(1, 300);
-    this.getPurchaseDealDetail(this.props.customer_id, this.props.user_auto_id);
+    this.getPurchaseUsers(0);
+    this.getPurchaseDealDetail(this.props.customer_id, this.props.auto_id);
   }
 
   handleSubmit(e) {
@@ -29,97 +29,129 @@ class NewPurchaseForm extends Component {
     formData.deliver_date = formatter.day(formData.deliver_date);
 
     api.ajax({
-      url: api.editPurchaseAutoDeal(),
+      url: api.presales.deal.editAuto(),
       type: 'POST',
-      data: formData
-    }, function (data) {
+      data: formData,
+    }, function () {
       message.success('修改交易成功');
       this.props.cancelModal();
       location.reload();
-    }.bind(this))
+    }.bind(this));
   }
 
-  getPurchaseDealDetail(customerId, userAutoId) {
-    api.ajax({url: api.getPurchaseDealDetail(customerId, userAutoId)}, function (data) {
-      this.setState({purchase: data.res.detail})
-    }.bind(this))
+  getPurchaseDealDetail(customerId, autoId) {
+    api.ajax({url: api.presales.deal.detail(customerId, autoId)}, function (data) {
+      let {detail} = data.res;
+      this.setState({purchase: detail});
+      this.props.form.setFieldsValue({'seller_user_id': detail.seller_user_id});
+    }.bind(this));
   }
 
-  getDepartmentUsers(departmentId, role) {
-    api.ajax({url: api.getDepartmentUsers(departmentId, role)}, function (data) {
+  getPurchaseUsers(isLeader) {
+    api.ajax({url: api.user.getPurchaseUsers(isLeader)}, function (data) {
       this.setState({users: data.res.user_list});
-    }.bind(this))
+    }.bind(this));
   }
 
   render() {
     const {formItemLayout, buttonLayout, selectStyle} = Layout;
-    const {getFieldProps} = this.props.form;
-    const {purchase} = this.state;
+    const {getFieldDecorator} = this.props.form;
+    const {purchase, users} = this.state;
+
+    let selectSellerUser = users.filter(user => user._id === purchase.seller_user_id);
 
     return (
-      <Form horizontal >
-        <Input type="hidden" {...getFieldProps('_id', {initialValue: purchase._id})}/>
-        <Input type="hidden" {...getFieldProps('customer_id', {initialValue: purchase.customer_id})}/>
-        <Input type="hidden" {...getFieldProps('user_auto_id', {initialValue: purchase.user_auto_id})}/>
+      <Form horizontal>
+        {getFieldDecorator('_id', {initialValue: purchase._id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('customer_id', {initialValue: purchase.customer_id})(
+          <Input type="hidden"/>
+        )}
+        {getFieldDecorator('auto_id', {initialValue: purchase.auto_id})(
+          <Input type="hidden"/>
+        )}
+
+        {!selectSellerUser ? null : <FormItem><Alert message="销售负责人不存在，请重新选择！" banner closable/></FormItem>}
 
         <FormItem label="销售负责人" {...formItemLayout}>
-          <Select
-            {...getFieldProps('seller_user_id', {initialValue: purchase.seller_user_id})}
-            size="large"
-            {...selectStyle}
-            placeholder="请选择销售负责人">
-            {this.state.users.map(user => <Option key={user._id}>{user.name}</Option>)}
-          </Select>
+          {getFieldDecorator('seller_user_id', {initialValue: purchase.seller_user_id})(
+            <Select{...selectStyle} onSelect={this.handleSellerChange} placeholder="请选择销售负责人">
+              {users.map(user => <Option key={user._id}>{user.name}</Option>)}
+            </Select>
+          )}
         </FormItem>
 
         <FormItem label="交易类型" {...formItemLayout}>
-          <RadioGroup {...getFieldProps('car_type', {initialValue: purchase.car_type})}>
-            <Radio key="1" value="1">现车</Radio>
-            <Radio key="0" value="0">定车</Radio>
-          </RadioGroup>
+          {getFieldDecorator('car_type', {initialValue: purchase.car_type})(
+            <RadioGroup>
+              <Radio key="1" value="1">现车</Radio>
+              <Radio key="0" value="0">定车</Radio>
+            </RadioGroup>
+          )}
         </FormItem>
 
         <FormItem label="付款方式" {...formItemLayout}>
-          <RadioGroup {...getFieldProps('pay_type', {initialValue: purchase.pay_type})}>
-            <Radio key="1" value="1">按揭</Radio>
-            <Radio key="0" value="0">全款</Radio>
-          </RadioGroup>
+          {getFieldDecorator('pay_type', {initialValue: purchase.pay_type})(
+            <RadioGroup>
+              <Radio key="1" value="1">按揭</Radio>
+              <Radio key="0" value="0">全款</Radio>
+            </RadioGroup>
+          )}
         </FormItem>
 
         <FormItem label="成交时间" {...formItemLayout}>
-          <DatePicker {...getFieldProps('order_date', {initialValue: purchase.order_date})} placeholder="请选择成交时间"/>
+          {getFieldDecorator('order_date', {initialValue: formatter.getMomentDate(purchase.order_date)})(
+            <DatePicker placeholder="请选择成交时间"/>
+          )}
         </FormItem>
 
         <FormItem label="交车时间" {...formItemLayout}>
-          <DatePicker {...getFieldProps('deliver_date', {initialValue: purchase.deliver_date})} placeholder="请选择交车时间"/>
+          {getFieldDecorator('deliver_date', {initialValue: formatter.getMomentDate(purchase.deliver_date)})(
+            <DatePicker placeholder="请选择交车时间"/>
+          )}
         </FormItem>
 
         <FormItem label="车辆售价" {...formItemLayout}>
-          <Input {...getFieldProps('sell_price', {initialValue: purchase.sell_price})} placeholder="请输入车辆售价"/>
+          {getFieldDecorator('sell_price', {initialValue: purchase.sell_price})(
+            <Input placeholder="请输入车辆售价"/>
+          )}
         </FormItem>
 
         <FormItem label="置换旧车价" {...formItemLayout}>
-          <Input {...getFieldProps('trade_in_price', {initialValue: purchase.trade_in_price})} placeholder="请输入置换旧车价"/>
+          {getFieldDecorator('trade_in_price', {initialValue: purchase.trade_in_price})(
+            <Input placeholder="请输入置换旧车价"/>
+          )}
         </FormItem>
 
         <FormItem label="订金" {...formItemLayout}>
-          <Input {...getFieldProps('deposit', {initialValue: purchase.deposit})} placeholder="请输入订金"/>
+          {getFieldDecorator('deposit', {initialValue: purchase.deposit})(
+            <Input placeholder="请输入订金"/>
+          )}
         </FormItem>
 
         <FormItem label="上牌费" {...formItemLayout}>
-          <Input {...getFieldProps('license_tax_in', {initialValue: purchase.license_tax_in})} placeholder="请输入上牌费"/>
+          {getFieldDecorator('license_tax_in', {initialValue: purchase.license_tax_in})(
+            <Input placeholder="请输入上牌费"/>
+          )}
         </FormItem>
 
         <FormItem label="购置税" {...formItemLayout}>
-          <Input {...getFieldProps('purchase_tax', {initialValue: purchase.purchase_tax})} placeholder="请输入购置税"/>
+          {getFieldDecorator('purchase_tax', {initialValue: purchase.purchase_tax})(
+            <Input placeholder="请输入购置税"/>
+          )}
         </FormItem>
 
         <FormItem label="赠品内容" {...formItemLayout}>
-          <Input {...getFieldProps('gift', {initialValue: purchase.gift})} type="textarea" placeholder="请输入赠品内容"/>
+          {getFieldDecorator('gift', {initialValue: purchase.gift})(
+            <Input type="textarea" placeholder="请输入赠品内容"/>
+          )}
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          <Input {...getFieldProps('remark', {initialValue: purchase.remark})} type="textarea" placeholder="请输入备注"/>
+          {getFieldDecorator('remark', {initialValue: purchase.remark})(
+            <Input type="textarea" placeholder="请输入备注"/>
+          )}
         </FormItem>
 
         <FormItem {...buttonLayout}>
@@ -127,9 +159,9 @@ class NewPurchaseForm extends Component {
           <Button type="primary" onClick={this.handleSubmit.bind(this)}>保存</Button>
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 
 NewPurchaseForm = Form.create()(NewPurchaseForm);
-export default NewPurchaseForm
+export default NewPurchaseForm;

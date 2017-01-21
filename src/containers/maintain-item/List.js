@@ -1,9 +1,8 @@
-import React from 'react'
-import {Button} from 'antd'
-import api from '../../middleware/api'
-import BaseList from '../../components/base/BaseList'
+import React from 'react';
+import api from '../../middleware/api';
+import BaseList from '../../components/base/BaseList';
 
-import MaintainItemTable from '../../components/tables/maintain-item/MaintainItemTable'
+import Table from './Table';
 
 export default class List extends BaseList {
   constructor(props) {
@@ -14,25 +13,13 @@ export default class List extends BaseList {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.location.query.page !== nextProps.location.query.page) {
-      this.setState({
-        page: nextProps.location.query.page
-      });
-    }
-  }
-
   render() {
     return (
-      <div>
-        <h3 className="page-title">项目管理</h3>
-        <MaintainItemTable
-          updateCondition={this.updateState}
-          source={api.maintain.getItems(this.state)}
-          page={this.state.page}
-          pathname="/maintain/item"
-        />
-      </div>
-    )
+      <Table
+        updateState={this.updateState}
+        currentPage={this.state.page}
+        source={api.maintainItem.list(this.state)}
+      />
+    );
   }
 }
