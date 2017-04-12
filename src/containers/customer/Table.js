@@ -1,11 +1,13 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Button, Row, Col} from 'antd';
+import {Row, Col} from 'antd';
+
 import api from '../../middleware/api';
 import text from '../../config/text';
-import SearchSelectBox from '../../components/base/SearchSelectBox';
-import TableWithPagination from '../../components/base/TableWithPagination';
-import CreateRemind from '../../components/modals/aftersales/CreateRemind';
+
+import SearchSelectBox from '../../components/widget/SearchSelectBox';
+import TableWithPagination from '../../components/widget/TableWithPagination';
+import CreateRemind from '../../components/widget/CreateRemind';
 
 export default class Table extends React.Component {
   constructor(props) {
@@ -64,7 +66,7 @@ export default class Table extends React.Component {
   }
 
   searchMaintainCustomers(key, page, successHandle, failHandle) {
-    let url = api.searchMaintainCustomerList({key, page});
+    let url = api.aftersales.searchMaintainCustomerList({key, page});
     api.ajax({url}, (data) => {
       successHandle && successHandle(data.res.list);
       let {list, total} = data.res;
@@ -98,7 +100,7 @@ export default class Table extends React.Component {
         width: '7%',
         render(item, record){
           return <Link
-            to={{pathname: '/customer/detail/', query: {customer_id: record.customer_id}}}>{item}</Link>;
+            to={{pathname: '/customer/detail', query: {customerId: record.customer_id}}}>{item}</Link>;
         },
       }, {
         title: '性别',
@@ -135,25 +137,26 @@ export default class Table extends React.Component {
         title: '创建时间',
         key: 'ctime',
         dataIndex: 'ctime',
-        width: '10%',
+        width: '12%',
       }, {
         title: '操作',
         dataIndex: '_id',
         key: 'intention_info',
         className: 'center',
-        width: '15%',
+        width: '12%',
         render (value, record) {
           return (
             <span>
-              <CreateRemind customer_id={record.customer_id}/>
+              <CreateRemind customer_id={record.customer_id} size="small"/>
+              <span className="ant-divider"/>
               <Link
                 to={{
-                  pathname: '/aftersales/project/create/',
+                  pathname: '/aftersales/project/new',
                   query: {customer_id: record.customer_id, auto_id: record._id},
                 }}
                 target="_blank"
               >
-                  <Button type="primary" className="margin-left-10">添加工单</Button>
+                  添加工单
                 </Link>
             </span>
           );
@@ -167,7 +170,7 @@ export default class Table extends React.Component {
           <Col span={8}>
             <SearchSelectBox
               style={{width: 250}}
-              placeholder={'请输入车牌号、姓名或电话搜索'}
+              placeholder={'请输入车牌号、电话搜索'}
               displayPattern={this.searchDisplayPattern}
               onSearch={this.handleSearch}
               autoSearchLength={3}

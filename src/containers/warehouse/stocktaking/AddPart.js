@@ -2,8 +2,8 @@ import React from 'react';
 import {message, Modal, Icon, Row, Col, Button, Input} from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
-import SearchBox from '../../../components/search/PartSearchBox';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import PartSearchBox from '../../../components/search/PartSearchBox';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 import api from '../../../middleware/api';
 
@@ -116,10 +116,6 @@ export default class AddPart extends BaseModal {
     let self = this;
     let columns = [
       {
-        title: '配件分类',
-        dataIndex: 'part_type_name',
-        key: 'part_type_name',
-      }, {
         title: '配件名',
         dataIndex: 'name',
         key: 'name',
@@ -127,6 +123,10 @@ export default class AddPart extends BaseModal {
         title: '配件号',
         dataIndex: 'part_no',
         key: 'part_no',
+      }, {
+        title: '规格',
+        className: 'text-right',
+        render: (value, record) => `${record.spec || ''}${record.unit || ''}`,
       }, {
         title: '适用车型',
         dataIndex: 'scope',
@@ -173,8 +173,8 @@ export default class AddPart extends BaseModal {
         >
           <Row type={'flex'} className="mb10">
             <Col span={12}>
-              <SearchBox
-                api={api.searchParts}
+              <PartSearchBox
+                api={api.warehouse.part.searchByTypeId}
                 select={this.handleSearchSelect}
                 style={{width: 250}}
               />

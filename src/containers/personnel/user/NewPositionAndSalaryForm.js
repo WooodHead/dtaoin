@@ -18,10 +18,12 @@ class NewPositionAndSalaryForm extends React.Component {
       salaryGroups: [],
       subItems: [],
     };
+
     [
       'handlePrevStep',
       'handleSubmit',
       'handleDepartmentChange',
+      'handlePositionChange',
       'handleSalaryGroupChange',
     ].map(method => this[method] = this[method].bind(this));
   }
@@ -44,27 +46,28 @@ class NewPositionAndSalaryForm extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
-        message.error(validator.hasError);
+        message.error(validator.text.hasError);
         return;
       }
       values.hire_date = formatter.day(values.hire_date);
-      values = this.translateBooleanValue(values);
-      values.salary_group_items = JSON.stringify(this.assembleShareObjects(values));
 
       api.ajax({
         url: api.user.updateSalaryInfo(),
         type: 'POST',
         data: values,
-      }, function () {
+      }, () => {
         message.success('更新成功!');
-        this.props.cancelModal();
-        location.reload();
-      }.bind(this));
+        this.props.onSuccess();
+      });
     });
   }
 
   handleDepartmentChange(departmentId) {
     this.getDepartmentRoles(departmentId);
+  }
+
+  handlePositionChange(roleId) {
+    this.props.updateState({roleId});
   }
 
   handleCheckboxChange(type, e) {
@@ -110,26 +113,28 @@ class NewPositionAndSalaryForm extends React.Component {
   }
 
   getSalaryGroups() {
-    api.ajax({url: api.user.getSalaryGroups()}, function (data) {
+    api.ajax({url: api.user.getSalaryGroups()}, (data) => {
       this.setState({salaryGroups: data.res.salary_groups});
-    }.bind(this));
+    });
   }
 
   getDepartmentRoles(departmentId) {
-    api.ajax({url: api.user.getDepartmentRoles(departmentId)}, function (data) {
-      let roles = data.res.roles;
+    api.ajax({url: api.user.getDepartmentRoles(departmentId)}, (data) => {
+      let {roles} = data.res;
       this.setState({roles: roles});
       if (roles.length > 0) {
-        this.props.form.setFieldsValue({role: roles[0]._id.toString()});
+        let firstRoleId = String(roles[0]._id);
+        this.props.form.setFieldsValue({role: firstRoleId});
+        this.props.updateState({roleId: firstRoleId});
       }
-    }.bind(this));
+    });
   }
 
   render() {
     const FormItem = Form.Item;
     const Option = Select.Option;
     const Panel = Collapse.Panel;
-    const {formItemThree, formItemFour, formNoLabel, selectStyle} = Layout;
+    const {formItemThree, formItemFour, formNoLabel, formItem8_15, selectStyle} = Layout;
     const {getFieldDecorator} = this.props.form;
 
     let {
@@ -141,39 +146,41 @@ class NewPositionAndSalaryForm extends React.Component {
     } = this.state;
 
     return (
-      <Form horizontal>
+      <Form className="form-collapse">
         {getFieldDecorator('user_id', {initialValue: this.props.userId})(
           <Input type="hidden"/>
         )}
 
         <Collapse defaultActiveKey={['1', '2']}>
-          <Panel header="岗位信息" key="1">
-            <Row type="flex">
-              <Col span={8}>
-                <FormItem label="入职时间" {...formItemThree} required>
+          <Panel header="岗位及薪资信息" key="1">
+            <Row>
+              <Col span={12}>
+                <FormItem label="入职时间" {...formItem8_15} required>
                   {getFieldDecorator('hire_date', {initialValue: formatter.getMomentDate()})(
-                    <DatePicker/>
+                    <DatePicker allowClear={false}/>
                   )}
                 </FormItem>
               </Col>
-              <Col span={8}>
-                <FormItem label="入职确认人" {...formItemThree} required>
+              <Col span={12}>
+                <FormItem label="入职确认人" {...formItem8_15}>
                   {getFieldDecorator('hire_person', {
-                    validate: [{
-                      rules: [{validator: FormValidator.validateName}],
-                      trigger: ['onBlur'],
-                    }, {
-                      rules: [{required: true, message: validator.required.notNull}],
-                      trigger: 'onBlur',
-                    }],
+                    rules: FormValidator.getRuleNotNull(),
+                    validatorTrigger: 'onBlur',
                   })(
                     <Input placeholder="入职确认人"/>
                   )}
                 </FormItem>
               </Col>
-              <Col span={8}>
-                <FormItem label="部门" {...formItemThree} required>
-                  {getFieldDecorator('department', {initialValue: '1'})(
+            </Row>
+
+            <Row>
+              <Col span={12}>
+                <FormItem label="部门" {...formItem8_15}>
+                  {getFieldDecorator('department', {
+                    initialValue: '1',
+                    rules: FormValidator.getRuleNotNull(),
+                    validatorTrigger: 'onBlur',
+                  })(
                     <Select
                       onSelect={this.handleDepartmentChange}
                       {...selectStyle}>
@@ -182,51 +189,49 @@ class NewPositionAndSalaryForm extends React.Component {
                   )}
                 </FormItem>
               </Col>
-            </Row>
-
-            <Row type="flex">
-              <Col span={8}>
-                <FormItem label="职位" {...formItemThree}>
+              <Col span={12}>
+                <FormItem label="职位" {...formItem8_15}>
                   {getFieldDecorator('role')(
-                    <Select
-                      {...selectStyle}
-                      placeholder="请选择职位">
-                      {roles.map(role => <Option key={`${role._id}`}>{role.name}</Option>)}
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label="职位等级" {...formItemThree}>
-                  {getFieldDecorator('level', {initialValue: '1'})(
-                    <Select
-                      {...selectStyle}
-                      disabled={true}>
-                      <Option key="1">T1</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label="提成类型" {...formItemThree}>
-                  {getFieldDecorator('salary_type', {initialValue: '1'})(
-                    <Select
-                      {...selectStyle}
-                      disabled={true}>
-                      <Option key="1">销售提成</Option>
+                    <Select {...selectStyle} onChange={this.handlePositionChange} placeholder="请选择职位">
+                      {roles.map(role => <Option key={role._id}>{role.name}</Option>)}
                     </Select>
                   )}
                 </FormItem>
               </Col>
             </Row>
-          </Panel>
 
-          <Panel header="薪资信息" key="2">
+            {false && (
+              <Row>
+                <Col span={8}>
+                  <FormItem label="职位等级" {...formItemThree}>
+                    {getFieldDecorator('level', {initialValue: '1'})(
+                      <Select
+                        {...selectStyle}
+                        disabled={true}>
+                        <Option key="1">T1</Option>
+                      </Select>
+                    )}
+                  </FormItem>
+                </Col>
+                <Col span={8}>
+                  <FormItem label="提成类型" {...formItemThree}>
+                    {getFieldDecorator('salary_type', {initialValue: '1'})(
+                      <Select
+                        {...selectStyle}
+                        disabled={true}>
+                        <Option key="1">销售提成</Option>
+                      </Select>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+            )}
+
             <Row>
-              <Col span={8}>
-                <FormItem label="固定工资" {...formItemThree} required>
+              <Col span={12}>
+                <FormItem label="固定工资" {...formItem8_15}>
                   {getFieldDecorator('base_salary', {
-                    rules: [{required: true, message: validator.required.notNull}, {validator: FormValidator.notNull}],
+                    rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
                     <Input addonAfter="元" placeholder="请输入固定工资"/>
@@ -234,107 +239,125 @@ class NewPositionAndSalaryForm extends React.Component {
                 </FormItem>
               </Col>
             </Row>
-
-            <Row type="flex">
-              <Col span={4} offset={2}>
-                <FormItem label={null} {...formNoLabel}>
-                  {getFieldDecorator('is_tax')(
-                    <Checkbox>缴税</Checkbox>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label={null} {...formNoLabel}>
-                  {getFieldDecorator('is_social_security', {
-                    initialValue: isSocialSecurity,
-                    onChange: this.handleCheckboxChange.bind(this, 'isSocialSecurity'),
-                  })(
-                    <Checkbox>
-                      缴纳社保
-                    </Checkbox>
-                  )}
-                  {getFieldDecorator('social_security_base')(
-                    <Input
-                      className={isSocialSecurity ? '' : 'hide'}
-                      placeholder="请填写缴纳基数"
-                    />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label={null} {...formNoLabel}>
-                  {getFieldDecorator('is_provident_fund', {
-                    initialValue: isProvidentFund,
-                    onChange: this.handleCheckboxChange.bind(this, 'isProvidentFund'),
-                  })(
-                    <Checkbox>
-                      公积金
-                    </Checkbox>
-                  )}
-                  {getFieldDecorator('provident_fund_base')(
-                    <Input
-                      className={isProvidentFund ? '' : 'hide'}
-                      placeholder="请填写缴纳基数"
-                    />
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-
-            <Row type="flex">
-              <Col span={8}>
-                <FormItem label="薪资组" {...formItemThree} required>
-                  {getFieldDecorator('salary_group', {
-                    validate: [{
-                      rules: [{validator: FormValidator.notNull}],
-                      trigger: ['onBlur'],
-                    }, {
-                      rules: [{required: true, message: validator.required.notNull}],
-                      trigger: 'onBlur',
-                    }],
-                  })(
-                    <Select
-                      onSelect={this.handleSalaryGroupChange}
-                      {...selectStyle}
-                      placeholder="请选择薪资组">
-                      {salaryGroups.map(group => <Option key={group._id}>{group.name}</Option>)}
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-
-            {
-              subItems.map((item, index) => {
-                return (
-                  <Row type="flex" key={item._id}>
-                    <Col span={8}>
-                      <FormItem label={`提成项目${index + 1}`} {...formItemFour}>
-                        {getFieldDecorator(`share_${index}_id`, {initialValue: item._id})(
-                          <p className="ant-form-text">
-                            {item.name}
-                          </p>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem label="提成占比" {...formItemFour}>
-                        {getFieldDecorator(`share_${index}`, {initialValue: 0})(
-                          <Input placeholder="提成占比"/>
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                );
-              })
-            }
           </Panel>
+
+          {/*v2 暂不提供一下信息*/}
+          {false && (
+            <Panel header="薪资信息" key="2">
+              <Row>
+                <Col span={8}>
+                  <FormItem label="固定工资" {...formItemThree} required>
+                    {getFieldDecorator('base_salary', {
+                      rules: FormValidator.getRuleNotNull(),
+                      validateTrigger: 'onBlur',
+                    })(
+                      <Input addonAfter="元" placeholder="请输入固定工资"/>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+
+              <Row type="flex">
+                <Col span={4} offset={2}>
+                  <FormItem label={null} {...formNoLabel}>
+                    {getFieldDecorator('is_tax')(
+                      <Checkbox>缴税</Checkbox>
+                    )}
+                  </FormItem>
+                </Col>
+                <Col span={8}>
+                  <FormItem label={null} {...formNoLabel}>
+                    {getFieldDecorator('is_social_security', {
+                      initialValue: isSocialSecurity,
+                      onChange: this.handleCheckboxChange.bind(this, 'isSocialSecurity'),
+                    })(
+                      <Checkbox>
+                        缴纳社保
+                      </Checkbox>
+                    )}
+                    {getFieldDecorator('social_security_base')(
+                      <Input
+                        className={isSocialSecurity ? '' : 'hide'}
+                        placeholder="请填写缴纳基数"
+                      />
+                    )}
+                  </FormItem>
+                </Col>
+                <Col span={8}>
+                  <FormItem label={null} {...formNoLabel}>
+                    {getFieldDecorator('is_provident_fund', {
+                      initialValue: isProvidentFund,
+                      onChange: this.handleCheckboxChange.bind(this, 'isProvidentFund'),
+                    })(
+                      <Checkbox>
+                        公积金
+                      </Checkbox>
+                    )}
+                    {getFieldDecorator('provident_fund_base')(
+                      <Input
+                        className={isProvidentFund ? '' : 'hide'}
+                        placeholder="请填写缴纳基数"
+                      />
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+
+              <Row type="flex">
+                <Col span={8}>
+                  <FormItem label="薪资组" {...formItemThree} required>
+                    {getFieldDecorator('salary_group', {
+                      validate: [{
+                        rules: [{validator: FormValidator.notNull}],
+                        trigger: ['onBlur'],
+                      }, {
+                        rules: [{required: true, message: validator.required.notNull}],
+                        trigger: 'onBlur',
+                      }],
+                    })(
+                      <Select
+                        onSelect={this.handleSalaryGroupChange}
+                        {...selectStyle}
+                        placeholder="请选择薪资组">
+                        {salaryGroups.map(group => <Option key={group._id}>{group.name}</Option>)}
+                      </Select>
+                    )}
+                  </FormItem>
+                </Col>
+              </Row>
+
+              {
+                subItems.map((item, index) => {
+                  return (
+                    <Row type="flex" key={item._id}>
+                      <Col span={8}>
+                        <FormItem label={`提成项目${index + 1}`} {...formItemFour}>
+                          {getFieldDecorator(`share_${index}_id`, {initialValue: item._id})(
+                            <p className="ant-form-text">
+                              {item.name}
+                            </p>
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={6}>
+                        <FormItem label="提成占比" {...formItemFour}>
+                          {getFieldDecorator(`share_${index}`, {initialValue: 0})(
+                            <Input placeholder="提成占比"/>
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  );
+                })
+              }
+            </Panel>
+          )}
         </Collapse>
 
-        <FormItem className="center mt30 mb14">
-          <Button type="ghost" className="mr15" onClick={this.handlePrevStep}>上一步</Button>
-          <Button type="primary" onClick={this.handleSubmit}>提交</Button>
-        </FormItem>
+        <div className="form-action-container">
+          <Button size="large" type="primary" className="mr10" onClick={this.handleSubmit}>提交</Button>
+          <Button size="large" type="ghost" onClick={this.props.cancelModal}>取消</Button>
+        </div>
       </Form>
     );
   }

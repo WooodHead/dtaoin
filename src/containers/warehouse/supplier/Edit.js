@@ -1,8 +1,10 @@
 import React from 'react';
-import {message, Modal, Icon, Row, Col, Button, Form, Input} from 'antd';
+import {message, Modal, Icon, Row, Col, Form, Input} from 'antd';
+
+import BaseModal from '../../../components/base/BaseModal';
+
 import api from '../../../middleware/api';
 import validator from '../../../utils/validator';
-import BaseModal from '../../../components/base/BaseModal';
 import FormValidator from '../../../utils/FormValidator';
 import Layout from '../../../utils/FormLayout';
 
@@ -35,10 +37,10 @@ class Edit extends BaseModal {
         type: 'POST',
         data: values,
       }, () => {
-        message.info('修改成功！');
+        message.success('修改成功！');
         this.hideModal();
         this.props.form.resetFields();
-        location.reload();
+        this.props.onSuccess();
       });
     });
   }
@@ -46,26 +48,20 @@ class Edit extends BaseModal {
   render() {
     const {visible}=this.state;
     const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {supplier} = this.props;
+    const {supplier, form} = this.props;
+    const {getFieldDecorator} = form;
 
     return (
       <span>
-        <Button
-          size="small"
-          className="btn-action-small"
-          onClick={this.showModal}
-        >
-          编辑
-        </Button>
+        <a href="javascript:" onClick={this.showModal}>编辑</a>
 
         <Modal
-          title={<span><Icon type="edit"/> 编辑进货商</span>}
+          title={<span><Icon type="edit"/> 编辑供应商</span>}
           visible={visible}
           onCancel={this.closeModal}
           onOk={this.handleSubmit}
         >
-          <Form horizontal>
+          <Form>
             {getFieldDecorator('_id', {initialValue: supplier._id})(
               <Input type="hidden"/>
             )}
@@ -132,15 +128,15 @@ class Edit extends BaseModal {
               )}
             </FormItem>
 
-            <FormItem label="开户银行" {...formItemLayout}>
+            <FormItem label="开户行" {...formItemLayout}>
               {getFieldDecorator('bank', {initialValue: supplier.bank})(
-                <Input placeholder="请输入开户银行"/>
+                <Input placeholder="请输入开户行"/>
               )}
             </FormItem>
 
-            <FormItem label="单位帐号" {...formItemLayout}>
+            <FormItem label="银行账号" {...formItemLayout}>
               {getFieldDecorator('bank_account', {initialValue: supplier.bank_account})(
-                <Input placeholder="请输入单位帐号"/>
+                <Input placeholder="请输入银行账号"/>
               )}
             </FormItem>
           </Form>

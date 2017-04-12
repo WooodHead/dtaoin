@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {Row, Col, Card} from 'antd';
+
+import api from '../../../middleware/api';
 import fetch from 'isomorphic-fetch';
 import api from '../../middleware/api';
 import NewCompanyModal from './New';
-import SwitchCompany from '../../components/popover/SwitchCompany';
+import SwitchCompany from './SwitchCompany';
 
 export default class Board extends Component {
   constructor(props) {
@@ -14,11 +16,9 @@ export default class Board extends Component {
   }
 
   componentWillMount() {
-    let USER_SESSION = sessionStorage.getItem('USER_SESSION');
-    USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
-    const department = USER_SESSION ? USER_SESSION.department : undefined;
+    let userInfo = api.getLoginUser();
 
-    if (department < 0) {
+    if (userInfo.department < 0) {
       this.getCompanies();
     }
   }
@@ -27,17 +27,15 @@ export default class Board extends Component {
     fetch(api.company.list(), {mode: 'cors', credentials: 'include'})
       .then(response => response.json())
       .then(data => {
-        this.setState({companies: data.res.company_list});
+        this.setState({companies: data.res.list});
       });
   }
 
   render() {
-    let USER_SESSION = sessionStorage.getItem('USER_SESSION');
-    USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
-    const department = USER_SESSION ? USER_SESSION.department : undefined;
+    let userInfo = api.getLoginUser();
     const {companies} = this.state;
 
-    if (department > 0) {
+    if (userInfo.department > 0) {
       return '';
     }
 

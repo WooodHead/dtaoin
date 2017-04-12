@@ -2,7 +2,7 @@ import React from 'react';
 import {message, Modal, Icon, Button, Form, Input, Select} from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
-import SearchSelectBox from '../../../components/base/SearchSelectBox';
+import SearchSelectBox from '../../../components/widget/SearchSelectBox';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -16,11 +16,10 @@ class Edit extends BaseModal {
     super(props);
     this.state = {
       visible: false,
-      part_type: this.props.part.part_type,
-      part_type_name: this.props.part.part_type_name,
       types: [],
       partCategories: [],
     };
+
     [
       'editPart',
       'handleSubmit',
@@ -30,34 +29,51 @@ class Edit extends BaseModal {
   }
 
   editPart() {
+    let {part} = this.props;
+
     this.getMaintainItemTypes();
-    this.showModal();
+    this.setState({
+      visible: true,
+      part,
+      part_type: part.part_type,
+      part_type_name: part.part_type_name,
+    });
   }
 
   handleSubmit() {
-    let formData = this.props.form.getFieldsValue();
-    formData.part_type = this.state.part_type;
+    this.props.form.validateFieldsAndScroll((errors, values) => {
+      if (!!errors) {
+        message.warning('请完善表单信息');
+        return;
+      }
 
-    api.ajax({
-      url: api.warehouse.part.edit(),
-      type: 'POST',
-      data: formData,
-    }, () => {
-      message.info('编辑成功！');
-      this.hideModal();
-      location.reload();
+      values.part_type = this.state.part_type;
+
+      api.ajax({
+        url: api.warehouse.part.edit(),
+        type: 'POST',
+        data: values,
+      }, () => {
+        message.success('编辑成功！');
+        this.hideModal();
+        this.props.onSuccess();
+      });
     });
   }
 
   handleSearch(key, successHandle, failHandle) {
-    let url = api.warehouse.category.search(key);
-    api.ajax({url}, (data) => {
-      successHandle(data.res.list);
-      this.setState({partCategories: data.res.list});
-    }, (error) => {
-      failHandle(error);
-      this.setState({partCategories: []});
-    });
+    if (!!key) {
+      let url = api.warehouse.category.search(key);
+      api.ajax({url}, (data) => {
+        successHandle(data.res.list);
+        this.setState({partCategories: data.res.list});
+      }, (error) => {
+        failHandle(error);
+        this.setState({partCategories: []});
+      });
+    } else {
+      // failHandle('请输入搜索内容');
+    }
   }
 
   handleSearchSelect(data) {
@@ -65,7 +81,7 @@ class Edit extends BaseModal {
   }
 
   getMaintainItemTypes() {
-    api.ajax({url: api.getMaintainItemTypes()}, data => {
+    api.ajax({url: api.aftersales.getMaintainItemTypes()}, data => {
       this.setState({types: data.res.type_list});
     });
   }
@@ -74,17 +90,14 @@ class Edit extends BaseModal {
     const {visible, part_type_name}=this.state;
     const {formItemLayout, selectStyle} = Layout;
     const {getFieldDecorator} = this.props.form;
-    const {part} = this.props;
+    const {part, type} = this.props;
 
     return (
       <span>
-        <Button
-          size={this.props.size ? this.props.size : 'default'}
-          className="btn-action-small"
-          onClick={this.editPart}
-        >
-          编辑
-        </Button>
+        {type ?
+          <Button type="primary" onClick={this.editPart}>编辑</Button> :
+          <a href="javascript:;" onClick={this.editPart}>编辑</a>
+        }
 
         <Modal
           title={<span><Icon type="edit"/> 编辑配件</span>}
@@ -92,7 +105,7 @@ class Edit extends BaseModal {
           onCancel={this.hideModal}
           onOk={this.handleSubmit}
         >
-          <Form horizontal>
+          <Form>
             {getFieldDecorator('_id', {initialValue: part._id})(
               <Input type="hidden"/>
             )}
@@ -158,6 +171,7 @@ class Edit extends BaseModal {
                       <Option value="件">件</Option>
                       <Option value="副">副</Option>
                       <Option value="根">根</Option>
+                      <Option value="条">条</Option>
                     </Select>
                   )
                 } placeholder="请输入规格"/>

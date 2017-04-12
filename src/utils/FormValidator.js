@@ -26,6 +26,25 @@ export default class FormValidator {
    * @param isRequired 是否必填
    * @return {[{
       required: isRequired,
+      message: validator.required.notNull,
+    }, {
+      validator: FormValidator.notNull,
+    }]}
+   */
+  static getnotNullGreateZero(isRequired = true) {
+    return [{
+      required: isRequired,
+      message: validator.required.notNullGreateZero,
+    }, {
+      validator: FormValidator.notNullGreateZero,
+    }];
+  }
+
+  /**
+   * 表单非空校验规则
+   * @param isRequired 是否必填
+   * @return {[{
+      required: isRequired,
       message: validator.required.phone,
     }, {
       validator: FormValidator.validatePhone,
@@ -60,6 +79,25 @@ export default class FormValidator {
   }
 
   /**
+   * 表单非空校验规则
+   * @param isRequired 是否必填
+   * @return {[{
+      required: isRequired,
+      message: validator.required.phone,
+    }, {
+      validator: FormValidator.validatePhone,
+    }]}
+   */
+  static getRuleIDCard(isRequired = false) {
+    return [{
+      required: isRequired,
+      message: validator.required.idCard,
+    }, {
+      validator: FormValidator.validateIdCard,
+    }];
+  }
+
+  /**
    * 表单URL校验规则
    * @param isRequired 是否必填
    * @return {[{
@@ -75,6 +113,25 @@ export default class FormValidator {
       message: validator.required.url,
     }, {
       validator: FormValidator.validateUrl,
+    }];
+  }
+
+  /**
+   * 车牌号校验规则
+   * @param isRequired 是否必填
+   * @return {[{
+      required: isRequired,
+      message: validator.required.plateNumber,
+    }, {
+      validator: FormValidator.validatePlateNumber,
+    }]}
+   */
+  static getRulePlateNumber(isRequired = false) {
+    return [{
+      required: isRequired,
+      message: validator.required.plateNumber,
+    }, {
+      validator: FormValidator.validatePlateNumber,
     }];
   }
 
@@ -167,6 +224,24 @@ export default class FormValidator {
     } else {
       if (!validator.notNull(value)) {
         callback([new Error(validator.text.notNull)]);
+      } else {
+        callback();
+      }
+    }
+  }
+
+  /**
+   * 非空校验并且数值大于零
+   * @param rule
+   * @param value 任意值
+   * @param callback
+   */
+  static notNullGreateZero(rule, value, callback) {
+    if (!value) {
+      callback();
+    } else {
+      if (!validator.notNullGreateZero(value)) {
+        callback([new Error(validator.text.notNullGreateZero)]);
       } else {
         callback();
       }

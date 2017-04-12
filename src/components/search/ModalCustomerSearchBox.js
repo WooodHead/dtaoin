@@ -1,7 +1,7 @@
-import React from 'react'
-import {Input, Select, Button, Icon} from 'antd'
-import classNames from 'classnames'
-import api from '../../middleware/api'
+import React from 'react';
+import {Input, Select, Button, Icon} from 'antd';
+import classNames from 'classnames';
+import api from '../../middleware/api';
 
 const Option = Select.Option;
 
@@ -61,7 +61,7 @@ class SearchBox extends React.Component {
         } else {
           this.setState({data: [{name: '未找到匹配客户'}]});
         }
-      })
+      });
     } else {
       this.setState({data: []});
     }
@@ -121,4 +121,4 @@ SearchBox.defaultProps = {
   placeholder: '请用手机号、车牌号、或姓名搜索',
 };
 
-export default SearchBox
+export default SearchBox;

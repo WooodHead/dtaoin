@@ -3,7 +3,7 @@ import {message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePic
 import UploadComponent from '../../components/base/BaseUpload';
 import Layout from '../../utils/FormLayout';
 import api from '../../middleware/api';
-import Qiniu from '../../components/UploadQiniu';
+import Qiniu from '../../components/widget/UploadQiniu';
 import validator from '../../utils/validator';
 import formatter from '../../utils/DateFormatter';
 import FormValidator from '../../utils/FormValidator';
@@ -77,9 +77,9 @@ class NewForm extends UploadComponent {
         type: 'POST',
         data: values,
       }, () => {
-        message.success('门店添加成功');
+        message.success('添加成功');
+        this.props.onSuccess();
         this.props.cancelModal();
-        location.reload();
       });
     });
   }
@@ -232,7 +232,7 @@ class NewForm extends UploadComponent {
     ];
 
     return (
-      <Form horizontal>
+      <Form>
         <Row type="flex">
           <Col span={16}>
             <FormItem label="门店名称" {...formItem12}>
@@ -435,7 +435,7 @@ class NewForm extends UploadComponent {
 
         {introducePics}
 
-        <FormItem className="center mt30 mb14">
+        <FormItem className="center mt30 mb15">
           <Button type="ghost" className="mr15" onClick={this.props.cancelModal}>取消</Button>
           <Button type="primary" onClick={this.handleSubmit}>创建</Button>
         </FormItem>

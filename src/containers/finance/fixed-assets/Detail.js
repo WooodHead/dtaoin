@@ -12,17 +12,17 @@ class EditStatus extends BaseModal {
 
   render() {
     let {visible} = this.state;
-    let {detail} = this.props;
+    let {detail, size} = this.props;
 
     return (
       <span>
-        <Button
-          size="small"
-          className="btn-action-small"
-          onClick={this.showModal}
-        >
-          资产详情
-        </Button>
+        {
+          size === 'small'
+            ?
+            <a href="javascript:;" onClick={this.showModal}>资产详情</a>
+            :
+            <Button onClick={this.showModal}>资产详情</Button>
+        }
         <Modal
           title={<span><Icon type="file-text" className="mr10"/>资产详情</span>}
           visible={visible}

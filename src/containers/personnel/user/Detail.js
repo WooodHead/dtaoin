@@ -1,8 +1,8 @@
 import React from 'react';
 import {Tabs} from 'antd';
 import api from '../../../middleware/api';
-import UserInfo from '../../../components/boards/personnel/UserInfo';
-import SalaryTable from './SalaryTable';
+import UserInfo from './UserInfo';
+// import SalaryTable from './SalaryTable';
 
 export default class Detail extends React.Component {
   constructor(props) {
@@ -61,7 +61,7 @@ export default class Detail extends React.Component {
       user,
       userCertificates,
       userSalaryItems,
-      salaryHistory,
+      // salaryHistory,
     } = this.state;
 
     return (
@@ -74,9 +74,9 @@ export default class Detail extends React.Component {
               salaryItems={userSalaryItems}
             />
           </TabPane>
-          <TabPane tab="工资发放历史" key="salary">
+          {/*<TabPane tab="工资发放历史" key="salary">
             <SalaryTable salaryHistory={salaryHistory}/>
-          </TabPane>
+          </TabPane>*/}
         </Tabs>
       </div>
     );

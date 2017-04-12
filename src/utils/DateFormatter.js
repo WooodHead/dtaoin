@@ -67,6 +67,10 @@ export default class DateFormatter {
     return moment(month, DateFormatter.pattern.month);
   }
 
+  static getMoumentDay(day = new Date()) {
+    return moment(day, DateFormatter.pattern.day);
+  }
+
   static getMomentHHmm(HHmm = new Date()) {
     return moment(HHmm, DateFormatter.pattern.HHmm);
   }

@@ -12,8 +12,8 @@ module.exports = {
   debug: true,
   output: {
     path: path.join(__dirname, '/../dist'),
-    filename: 'app.js',
-    publicPath: publicPath
+    publicPath: publicPath,
+    filename: 'app.min.js'
   },
   devServer: {
     contentBase: './src/',
@@ -60,7 +60,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif|woff|woff2)$/,
-        loader: 'url-loader?limit=81920'
+        loader: 'url-loader?limit=999999999'
       }
     ]
   },

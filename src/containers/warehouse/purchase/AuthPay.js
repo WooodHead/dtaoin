@@ -1,11 +1,11 @@
 import React from 'react';
 import {message, Modal, Icon, Row, Col, Form, Button, Select, Input} from 'antd';
-import classNames from 'classnames';
-
-import BaseModal from '../../../components/base/BaseModal';
 import QRCode from 'qrcode.react';
 
+import BaseModal from '../../../components/base/BaseModal';
+
 import api from '../../../middleware/api';
+import path from '../../../config/path';
 import FormLayout from '../../../utils/FormLayout';
 
 const FormItem = Form.Item;
@@ -15,31 +15,75 @@ class AuthPay extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
+      visible: false,
+      hasPermission: false,
       detail: props.detail || {},
       unPayWorth: parseFloat(props.detail.unpay_worth),
     };
 
     this.handleShow = this.handleShow.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handlePay = this.handlePay.bind(this);
   }
 
   static defaultProps = {
     size: 'default',
   };
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   handleShow() {
-    let {id, detail} = this.props;
+    let {detail} = this.props;
+
     if (String(detail.status) !== '1') {
       message.error('请先入库采购单，再结算');
       return;
     }
-    this.interval = setInterval(this.getPurchaseDetail.bind(this, id), 2000);
+    this.setState({
+      detail,
+      unPayWorth: parseFloat(detail.unpay_worth),
+    });
+
+    this.checkPermission(path.warehouse.purchase.pay);
+    // this.interval = setInterval(this.getPurchaseDetail.bind(this, id), 2000);
     this.showModal();
   }
 
   handleCancel() {
     clearInterval(this.interval);
     this.hideModal();
+  }
+
+  handlePay(e) {
+    e.preventDefault();
+    let values = this.props.form.getFieldsValue();
+
+    values.purchase_id = this.props.id;
+
+    api.ajax({
+      url: api.warehouse.purchase.pay(),
+      type: 'post',
+      data: values,
+    }, () => {
+      message.success('支付成功');
+      setTimeout(() => {
+        location.href = '/warehouse/purchase/index';
+      }, 500);
+    }, error => {
+      message.error(error);
+    });
+  }
+
+  async checkPermission(path) {
+    let hasPermission = await api.checkPermission(path);
+    if (hasPermission) {
+      this.getPurchaseDetail(this.props.id);
+    } else {
+      this.interval = setInterval(this.getPurchaseDetail.bind(this, this.props.id), 2000);
+    }
+    this.setState({hasPermission});
   }
 
   getPurchaseDetail(id) {
@@ -50,28 +94,20 @@ class AuthPay extends BaseModal {
 
       let payStatus = String(detail.pay_status);
       if (payStatus === '2' || (payStatus === '1' && parseFloat(detail.unpay_worth) !== this.state.unPayWorth)) {
-        message.success('结算成功');
+        message.success('支付成功');
         clearInterval(this.interval);
         location.href = '/warehouse/purchase/index';
       }
     });
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   render() {
-    let {visible, detail, unPayWorth}=this.state;
+    const {formItemTwo, selectStyle} = FormLayout;
+    let {visible, hasPermission, detail, unPayWorth}=this.state;
     let {id, disabled, form, size}=this.props;
     let {getFieldDecorator, getFieldValue} = form;
-    let {formItemTwo, selectStyle} = FormLayout;
 
     let payStatus = String(detail.pay_status);
-
-    const codeClass = classNames({
-      'code-cover': !getFieldValue('pay_worth'),
-    });
 
     return (
       <span>
@@ -81,17 +117,22 @@ class AuthPay extends BaseModal {
         }
 
         <Modal
-          title={<span><Icon type="eye"/> 进货单结算</span>}
+          title={<span><Icon type="eye"/> 采购单结算</span>}
           visible={visible}
           maskClosable={false}
           onCancel={this.handleCancel}
-          footer={null}
+          footer={hasPermission ?
+            <span>
+              <Button size="large" className="mr5" onClick={this.handleCancel}>取消</Button>
+              <Button size="large" type="primary" onClick={this.handlePay}>结算</Button>
+            </span> :
+            null}
         >
           <Row type="flex" align="middle">
             <Col span={12}>
-              <Form horizontal>
+              <Form>
                 <FormItem label="供应商" {...formItemTwo}>
-                  <p>{detail.supplier_name}</p>
+                  <p>{detail.supplier_company}</p>
                 </FormItem>
                 <FormItem label="应付金额" {...formItemTwo}>
                   <p>{detail.unpay_worth}元</p>
@@ -108,17 +149,16 @@ class AuthPay extends BaseModal {
                 <FormItem label="支付方式" {...formItemTwo}>
                   {getFieldDecorator('pay_type', {initialValue: '2'})(
                     <Select {...selectStyle}>
+                      <Option key="1">银行转账</Option>
                       <Option key="2">现金支付</Option>
-                      <Option key="5">银行转账</Option>
                     </Select>
                   )}
                 </FormItem>
               </Form>
             </Col>
 
-            <Col span={12}>
-              <div className="center">
-                <div className={codeClass}></div>
+            <Col span={12} className={hasPermission ? 'hide' : null}>
+              <div className={getFieldValue('pay_worth') ? 'center' : 'hide'}>
                 <QRCode
                   value={JSON.stringify({
                     authType: 'purchase_pay',

@@ -1,6 +1,6 @@
 import React from 'react';
 import api from '../../../middleware/api';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 export default class IncomeTable extends React.Component {
   constructor(props) {

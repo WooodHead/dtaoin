@@ -1,14 +1,17 @@
 import React from 'react';
+import {Link} from 'react-router';
 import {message, Popover, Button, Icon} from 'antd';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
+import path from '../../../config/path';
 
 export default class AuthPopover extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      hasPermission: false,
       detail: {},
     };
 
@@ -20,6 +23,10 @@ export default class AuthPopover extends React.Component {
     text: '审核',
   };
 
+  componentDidMount() {
+    this.checkPermission(path.warehouse.stocktaking.auth);
+  }
+
   handleAuthPrepare(visible) {
     if (visible) {
       this.interval = setInterval(this.getStocktakingDetail.bind(this, this.props.id), 2000);
@@ -27,6 +34,11 @@ export default class AuthPopover extends React.Component {
       clearInterval(this.interval);
     }
     this.setState({visible});
+  }
+
+  async checkPermission(path) {
+    let hasPermission = await api.checkPermission(path);
+    this.setState({hasPermission});
   }
 
   getStocktakingDetail(id) {
@@ -52,8 +64,9 @@ export default class AuthPopover extends React.Component {
   }
 
   render() {
-    let {id, type} = this.props;
-    let authorizeUserId = this.state.detail.authorize_user_id;
+    let {id, type, size, text} = this.props;
+    let {hasPermission, detail} = this.state;
+    let authorizeUserId = detail.authorize_user_id;
 
     const content = (
       <div className="center">
@@ -81,20 +94,26 @@ export default class AuthPopover extends React.Component {
     );
 
     return (
-      <Popover
-        content={content}
-        title=""
-        trigger="click"
-        visible={this.state.visible}
-        onVisibleChange={this.handleAuthPrepare}
-      >
-        <Button
-          className="btn-action-small"
-          size={this.props.size}
+      hasPermission ?
+        <span>
+          {size === 'default' ?
+            <Button type="danger" size={size}><Link
+              to={{pathname: '/warehouse/stocktaking/auth', query: {id}}}>{text}</Link></Button> :
+            <Link to={{pathname: '/warehouse/stocktaking/auth', query: {id}}}>{text}</Link>
+          }
+        </span> :
+        <Popover
+          content={content}
+          title=""
+          trigger="click"
+          visible={this.state.visible}
+          onVisibleChange={this.handleAuthPrepare}
         >
-          {this.props.text}
-        </Button>
-      </Popover>
+          {size === 'default' ?
+            <Button type="danger" size={size}>{text}</Button> :
+            <a href="javascript:;">{text}</a>
+          }
+        </Popover>
     );
   }
 }

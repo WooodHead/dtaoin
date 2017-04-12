@@ -1,8 +1,8 @@
 import React from 'react';
 import api from '../../../middleware/api';
-import TransferDetailModal from '../../../components/modals/finance/TransferDetailModal';
-import TransferIncomeListModal from '../../../components/modals/finance/TransferIncomeListModal';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import TransferDetailModal from './TransferDetail';
+import TransferIncomeListModal from './TransferIncomeList';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 export default class IncomeTransferTable extends React.Component {
   constructor(props) {
@@ -71,10 +71,13 @@ export default class IncomeTransferTable extends React.Component {
         title: '操作',
         dataIndex: 'operate',
         key: 'operate',
+        width: '10%',
+        className: 'center',
         render: (value, record) => (
           <span>
-            <TransferDetailModal pay_pic={record.pay_pic} transfer_id={record._id}/>
-            <TransferIncomeListModal transfer_id={record._id}/>
+            <TransferDetailModal size="small" pay_pic={record.pay_pic} transfer_id={record._id}/>
+            <span className="ant-divider"/>
+            <TransferIncomeListModal size="small" transfer_id={record._id}/>
           </span>
         ),
       },

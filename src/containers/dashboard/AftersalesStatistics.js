@@ -2,7 +2,7 @@ import React from 'react';
 import {Row, Col} from 'antd';
 import formatter from '../../utils/DateFormatter';
 import api from '../../middleware/api';
-import CurrentDateRangeSelector from '../../components/CurrentDateRangeSelector';
+import CurrentDateRangeSelector from '../../components/widget/CurrentDateRangeSelector';
 import text from '../../config/text';
 import AftersalesSummary from './AftersalesSummary';
 import AftersalesIncomeOfProject from './AftersalesIncomeOfProject';
@@ -154,7 +154,7 @@ export default class AftersalesStatistics extends React.Component {
 
       this.setState({
         chartTitle: '客单价',
-        chartSubtitle: '非洗车项目营业额/非洗车进厂台次',
+        chartSubtitle: '',
         chartUnit: '产值(元)',
         categories: categories,
         series: series,
@@ -220,7 +220,7 @@ export default class AftersalesStatistics extends React.Component {
 
       this.setState({
         chartTitle: '营业额',
-        chartSubtitle: '各类型营业额-整单优惠',
+        chartSubtitle: '',
         chartUnit: '产值(元)',
         categories: categories,
         series: series,
@@ -246,7 +246,7 @@ export default class AftersalesStatistics extends React.Component {
 
       this.setState({
         chartTitle: '毛利润',
-        chartSubtitle: '各类型营业额-各类型配件成本-整单优惠',
+        chartSubtitle: '',
         chartUnit: '产值(元)',
         categories: categories,
         series: series,

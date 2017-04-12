@@ -2,14 +2,14 @@ import React from 'react';
 import {Link} from 'react-router';
 import {Row, Col, Button, Select, DatePicker} from 'antd';
 
-import BaseList from '../../../components/base/BaseList';
-
 import api from '../../../middleware/api';
 import DateFormatter from '../../../utils/DateFormatter';
 
+import BaseList from '../../../components/base/BaseList';
+
 import Table from './Table';
 
-const RangePicker = DatePicker.RangePicker;
+let lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
 
 export default class List extends BaseList {
   constructor(props) {
@@ -17,21 +17,26 @@ export default class List extends BaseList {
     this.state = {
       page: 1,
       suppliers: [],
-      supplierId: '',
+      supplierId: props.params.id || '',
       startDate: DateFormatter.date(DateFormatter.getLatestMonthStart()),
       endDate: DateFormatter.date(new Date()),
       type: '-1',
       status: '-2',
       payStatus: '-1',
+      endOpen: false,
     };
 
     [
-      'handleDateRangeChange',
       'handleSearchChange',
       'handleSearchSelect',
       'handleTypeSelect',
       'handleStatusSelect',
       'handlePayStatusSelect',
+      'handleStartTimeChange',
+      'handleEndTimeChange',
+      'handleStartOpenChange',
+      'handleEndOpenChange',
+      'disabledEndDate',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -50,9 +55,13 @@ export default class List extends BaseList {
     this.setState({supplierId});
   }
 
-  handleDateRangeChange(value, dateString) {
-    let startDate = dateString[0], endDate = dateString[1];
-    this.setState({startDate, endDate});
+
+  handleStartTimeChange(value) {
+    this.setState({startDate: DateFormatter.day(value)});
+  }
+
+  handleEndTimeChange(value) {
+    this.setState({endDate: DateFormatter.day(value)});
   }
 
   handleTypeSelect(type) {
@@ -73,6 +82,25 @@ export default class List extends BaseList {
     });
   }
 
+  handleStartOpenChange(open) {
+    if (!open) {
+      this.setState({endOpen: true});
+    }
+  }
+
+  handleEndOpenChange(open) {
+    this.setState({endOpen: open});
+  }
+
+  disabledStartDate(current) {
+    return current && current.valueOf() >= lastDate;
+  }
+
+  disabledEndDate(current) {
+    let {startDate} = this.state;
+    return current && (current.valueOf() >= lastDate || current.valueOf() <= new Date(startDate));
+  }
+
   render() {
     let {
       page,
@@ -82,44 +110,48 @@ export default class List extends BaseList {
       status,
       payStatus,
       suppliers,
+      endOpen,
     } = this.state;
 
     return (
       <div>
-        <Row className="mb10">
-          <Col span={4}>
-            {/*<SearchBox*/}
-            {/*data={suppliers}*/}
-            {/*change={this.handleSearchChange}*/}
-            {/*onSelect={this.handleSearchSelect}*/}
-            {/*style={{width: 200}}*/}
-            {/*propKey="supplier_id"*/}
-            {/*propName="supplier_company"*/}
-            {/*placeholder="按供货商搜索"*/}
-            {/*/>*/}
+        <Row className="head-action-bar">
+          <Col span={24}>
             <label>供应商：</label>
             <Select
+              size="large"
+              style={{width: 200}}
               defaultValue=""
               showSearch
               optionFilterProp="children"
               onSelect={this.handleSearchSelect}
-              style={{width: 200}}
-              size="large"
-              placeholder="选择供应商">
+              placeholder="选择供应商筛选"
+            >
               <Option value="">全部</Option>
               {suppliers.map(supplier => <Option key={supplier._id}>{supplier.supplier_company}</Option>)}
             </Select>
-          </Col>
-          <Col span={20}>
-            <label>开单日期：</label>
-            <RangePicker
-              size="large"
+
+            <label className="ml20">开单日期：</label>
+            <DatePicker
+              disabledDate={this.disabledStartDate}
               format={DateFormatter.pattern.day}
-              defaultValue={[DateFormatter.getMomentDate(startDate), DateFormatter.getMomentDate(endDate)]}
-              onChange={this.handleDateRangeChange}
+              defaultValue={DateFormatter.getMomentDate(startDate)}
+              onChange={this.handleStartTimeChange.bind(this)}
+              onOpenChange={this.handleStartOpenChange.bind(this)}
+              allowClear={false}
+            />
+            -
+            <DatePicker
+              disabledDate={this.disabledEndDate}
+              format={DateFormatter.pattern.day}
+              defaultValue={DateFormatter.getMomentDate(endDate)}
+              onChange={this.handleEndTimeChange.bind(this)}
+              open={endOpen}
+              onOpenChange={this.handleEndOpenChange.bind(this)}
+              allowClear={false}
             />
 
-            <label className="ml15">类型：</label>
+            <label className="ml20">类型：</label>
             <Select
               size="large"
               style={{width: 100}}
@@ -127,11 +159,11 @@ export default class List extends BaseList {
               onSelect={this.handleTypeSelect}
             >
               <Option value="-1">全部</Option>
-              <Option value="0">采购单</Option>
-              <Option value="1">退货单</Option>
+              <Option value="0">常规采购</Option>
+              <Option value="1">临时采购</Option>
             </Select>
 
-            <label className="ml15">状态：</label>
+            <label className="ml20">状态：</label>
             <Select
               size="large"
               style={{width: 100}}
@@ -140,11 +172,11 @@ export default class List extends BaseList {
             >
               <Option value="-2">全部</Option>
               <Option value="0">未入库</Option>
-              <Option value="-1">去取消</Option>
+              <Option value="-1">已取消</Option>
               <Option value="1">已入库</Option>
             </Select>
 
-            <label className="ml15">结算状态：</label>
+            <label className="ml20">结算状态：</label>
             <Select
               size="large"
               style={{width: 100}}
@@ -153,13 +185,13 @@ export default class List extends BaseList {
             >
               <Option value="-1">全部</Option>
               <Option value="0">未结算</Option>
-              <Option value="1">挂账</Option>
+              <Option value="1">未结清</Option>
               <Option value="2">已结算</Option>
             </Select>
 
             <div className="pull-right">
               <Button type="primary">
-                <Link to={{pathname: '/warehouse/purchase/new'}}>采购开单</Link>
+                <Link to={{pathname: '/warehouse/purchase/new'}} target="_blank">采购开单</Link>
               </Button>
             </div>
           </Col>

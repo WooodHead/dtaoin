@@ -2,7 +2,7 @@ import React from 'react';
 import {Input, Select, Button, Icon} from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
-import NewItem from '../../containers/maintain-item/New';
+import NewItem from '../../containers/maintain-item/EditNew';
 
 const Option = Select.Option;
 
@@ -12,19 +12,19 @@ const MaintainItemSearchBox = React.createClass({
       data: this.props.data ? this.props.data : [],
       value: this.props.value ? this.props.value : '',
       focus: false,
+      style: this.props.style,
     };
   },
 
   handleOnSuccess(data) {
     this.setState({value: data.name, data: [data]});
-
+    this.setState({style: {width: '100%'}});
     this.props.select(data);
   },
 
   handleSelect(value, option) {
     let index = option.props.index;
     let list = this.state.data;
-    // console.log(option.props.children);
     this.setState({value: option.props.children});
 
     this.props.select(list[index]);
@@ -33,9 +33,21 @@ const MaintainItemSearchBox = React.createClass({
   handleChange(key) {
     this.setState({value: key});
 
+    if (key.length < 2) {
+      this.setState({style: {width: '100%'}});
+    }
+
     if (!!key && key.length >= 2) {
-      api.ajax({url: api.searchMaintainItems(key)}, (data)=> {
+      api.ajax({url: api.aftersales.searchMaintainItems(key)}, (data) => {
         let list = data.res.item_list;
+
+        //搜索框的长度要根据搜出来的结果变化
+        if (key.length > 1 && list.length == 0) {
+          this.setState({style: {width: '110px'}});
+        } else {
+          this.setState({style: {width: '100%'}});
+        }
+
         if (list.length > 0) {
           this.setState({data: list});
         } else {
@@ -43,6 +55,9 @@ const MaintainItemSearchBox = React.createClass({
         }
       });
     } else {
+      if (key.length > 1) {
+        this.setState({style: {width: '150px'}});
+      }
       this.setState({data: []});
     }
   },
@@ -70,7 +85,7 @@ const MaintainItemSearchBox = React.createClass({
     });
 
     return (
-      <Input.Group className={searchCls} style={this.props.style}>
+      <Input.Group className={searchCls} style={this.state.style}>
         <div id="maintain_item_search">
           <Select
             size="large"
@@ -91,14 +106,13 @@ const MaintainItemSearchBox = React.createClass({
             onBlur={this.handleBlur}
             disabled={this.props.disabled}
           >
-            {this.state.data.map((item, index) => <Option key={index} value={item._id}>{item.name}</Option>)}
+            {this.state.data.map((item) => <Option key={item._id}>{item.name}</Option>)}
           </Select>
         </div>
         <div className="ant-input-group-wrap">
           {
-              this.state.value.length > 0 && this.state.data.length == 0 ?
-              <NewItem inputValue={this.state.value} onSuccess={this.handleOnSuccess} />
-              :
+            this.state.value.length > 1 && this.state.data.length == 0 ?
+              <NewItem inputValue={this.state.value} onSuccess={this.handleOnSuccess}/> :
               <Button
                 className={btnCls}
                 onClick={this.handleSubmit}

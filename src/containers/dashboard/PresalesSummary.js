@@ -38,19 +38,19 @@ export default class PresalesSummary extends React.Component {
           <Col span={4}>
             <Card style={{height: '450px'}} bodyStyle={{ padding: 0 }} bordered={false}>
               <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getIncomesDaysData')}>
-                <p>收入(元)</p>
+                <p className="font-size-14">收入(元)</p>
                 <h1>{Number(purchaseIncomeTotal).toFixed(2)}</h1>
               </Card>
               <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getNewDealDaysData')}>
-                <p>成交台次</p>
+                <p className="font-size-14">成交台次</p>
                 <h1>{dealAutos}</h1>
               </Card>
               <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getNewPotentialAndIntentionDaysData')}>
-                <p>新增客户/意向</p>
+                <p className="font-size-14">新增客户/意向</p>
                 <h1>{intentionCustomerCount + '/'}{intentionIntentionCount}</h1>
               </Card>
               <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getPurchaseFailDays')}>
-                <p>流失客户/意向</p>
+                <p className="font-size-14">流失客户/意向</p>
                 <h1>{failCustomerCount + '/'}{failIntentionCount}</h1>
               </Card>
             </Card>

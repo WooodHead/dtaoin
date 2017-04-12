@@ -31,6 +31,12 @@ export default class AftersalesIncomeOfAnalysis extends Component {
           y: Number(maintainSummary.maintain_incomes.coupon_fee),
         });
       }
+      if (Number(maintainSummary.maintain_incomes.part_sell_fee) > 0) {
+        source.push({
+          name: '配件销售',
+          y: Number(maintainSummary.maintain_incomes.part_sell_fee),
+        });
+      }
     }
 
     return (

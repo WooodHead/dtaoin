@@ -22,7 +22,7 @@ class EditStatus extends BaseModal {
   }
 
   getUseLogs(fixedAssetsId) {
-    api.ajax({url: api.fixedAssets.useLogs(fixedAssetsId)}, data => {
+    api.ajax({url: api.finance.fixedAssets.useLogs(fixedAssetsId)}, data => {
       this.setState({
         visible: true,
         logs: data.res.list,
@@ -66,17 +66,17 @@ class EditStatus extends BaseModal {
   render() {
     const {visible} = this.state;
     let {logs} = this.state;
-    let {detail} = this.props;
+    let {detail, size} = this.props;
 
     return (
       <span>
-        <Button
-          size="small"
-          className="btn-action-small"
-          onClick={this.showUseLog}
-        >
-          修改记录
-        </Button>
+         {
+           size === 'small'
+             ?
+             <a href="javascript:;" onClick={this.showUseLog}>修改记录</a>
+             :
+             <Button onClick={this.showUseLog}>修改记录</Button>
+         }
         <Modal
           title={<span><Icon type="file-text" className="mr10"/>修改记录</span>}
           visible={visible}

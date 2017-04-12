@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Card, Row, Col, Popover} from 'antd';
 import {Link} from 'react-router';
-import QRCode from 'qrcode.react';
+import {Card, Row, Col, Popover} from 'antd';
 
+import QRCode from 'qrcode.react';
 import api from '../middleware/api';
 
+require('../styles/home.css');
 let arrowpng = require('../images/home/arrow.png');
 let icon1png = require('../images/home/icon1.png');
 let icon2png = require('../images/home/icon2.png');
@@ -13,9 +14,10 @@ let icon4png = require('../images/home/icon4.png');
 let icon5png = require('../images/home/icon5.png');
 let icon6png = require('../images/home/icon6.png');
 let icon7png = require('../images/home/icon7.png');
-let icon8png = require('../images/home/icon8.png');
+// let icon8png = require('../images/home/icon8.png');
+let icon9png = require('../images/home/icon9.png');
 
-export default class HomePage extends Component {
+export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,10 +38,7 @@ export default class HomePage extends Component {
   componentDidMount() {
     this.getTaskSummary();
     let documentHeight = document.documentElement.clientHeight || window.innerHeight;
-    // let documentHeight = window.innerHeight;
-    this.setState({
-      documentHeight: documentHeight * 0.85,
-    });
+    this.setState({documentHeight: documentHeight * 0.85});
   }
 
   handleVisibleChangeStaff(visible) {
@@ -50,7 +49,6 @@ export default class HomePage extends Component {
     this.setState({visibleCustomer: visible});
 
   }
-
 
   getTaskSummary() {
     api.ajax({
@@ -99,274 +97,275 @@ export default class HomePage extends Component {
   }
 
   render() {
+    const {
+      insuranceTask,
+      inspectionTask,
+      commonTask,
+    } = this.state;
 
-    let styleShortcut = {
-      height: '130px',
-      textAlign: 'center',
-    };
+    let userInfo = api.getLoginUser();
 
-    let styleImg = {
-      height: '40px',
-    };
-    let styleFont = {
-      color: '#333',
-      fontWeight: 'bold',
-    };
-
-    const {insuranceTask, inspectionTask, commonTask} = this.state;
     let contentRenewalTask = (
       <p>
-        <span className="font-size-13" style={styleFont}>续保任务</span>
-        <span style={{float: 'right'}}>
-          <img src={arrowpng} alt="增长" style={{width: '7px', height: '4px', marginRight: '5px', marginBottom: '2px'}}/>
-          <span className="font-size-13 margin-right-8">{insuranceTask.newly}</span>
-          <span className="font-size-12" style={{color: '#999'}}>今日新增</span>
+        <span className="font-size-14 font">续保任务</span>
+        <span className="pull-right">
+          <img src={arrowpng} alt="增长" className="img-tip"/>
+          <span className="font-size-14 mr8">{insuranceTask.newly}</span>
+          <span className="font-size-14 font-color-one">今日新增</span>
         </span>
       </p>
     );
     let contentYearlyInspectionTask = (
       <p>
-        <span className="font-size-13" style={styleFont}>年检任务</span>
-        <span style={{float: 'right'}}>
-          <img src={arrowpng} alt="增长" style={{width: '7px', height: '4px', marginRight: '5px', marginBottom: '2px'}}/>
-          <span className="font-size-13 margin-right-8">{inspectionTask.newly}</span>
-          <span className="font-size-12" style={{color: '#999'}}>今日新增</span>
+        <span className="font-size-14 font">年检任务</span>
+        <span className="pull-right">
+          <img src={arrowpng} alt="增长" className="img-tip"/>
+          <span className="font-size-14 mr8">{inspectionTask.newly}</span>
+          <span className="font-size-14 font-color-one">今日新增</span>
         </span>
       </p>
     );
     let contentCustomertask = (
       <p>
-        <span className="font-size-13" style={styleFont}>客户任务</span>
-        <span style={{float: 'right'}}>
-          <img src={arrowpng} alt="增长" style={{width: '7px', height: '4px', marginRight: '5px', marginBottom: '2px'}}/>
-          <span className="font-size-13 margin-right-8">{commonTask.newly}</span>
-          <span className="font-size-12" style={{color: '#999'}}>今日新增</span>
+        <span className="font-size-14 font">客户任务</span>
+        <span className="pull-right">
+          <img src={arrowpng} alt="增长" className="img-tip"/>
+          <span className="font-size-14 mr8">{commonTask.newly}</span>
+          <span className="font-size-14 font-color-one">今日新增</span>
         </span>
       </p>
     );
 
     return (
-      <div>
-        <Row>
-          <Col span={17}>
-            <Card style={{height: this.state.documentHeight}}>
-              <p className="font-size-16 margin-bottom-20 padding-top-30" style={styleFont}>快捷方式</p>
-              <Row gutter={20} style={{marginTop: '20px'}}>
-                <Col span={6}>
-                  <Link to={{pathname: '/aftersales/project/create'}} target="_blank">
-                    <Card style={styleShortcut}>
-                      <p><img src={icon1png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>创建工单</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/aftersales/project/index'}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon2png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>工单管理</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 1, expenseShow: 0}}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon3png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>新增收入</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 0, expenseShow: 1}}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon4png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>新增支出</p>
-                    </Card>
-                  </Link>
-                </Col>
-              </Row>
-
-              <Row gutter={20} style={{marginTop: '20px'}}>
-                <Col span={6}>
-                  <Link to={{pathname: '/marketing/membercard/sale'}} target="_blank">
-                    <Card style={styleShortcut}>
-                      <p><img src={icon5png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>办理会员</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/warehouse/purchase/new'}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon6png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>采购开单</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/aftersales/consumptive_material'}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon7png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>耗材领用</p>
-                    </Card>
-                  </Link>
-                </Col>
-
-                <Col span={6}>
-                  <Link to={{pathname: '/finance/monthly_report'}}>
-                    <Card style={styleShortcut}>
-                      <p><img src={icon8png} alt="" style={styleImg}/></p>
-                      <p className="font-size-18 margin-top-10" style={styleFont}>月报汇总</p>
-                    </Card>
-                  </Link>
-                </Col>
-              </Row>
-
-              <p className="font-size-18 margin-top-25 margin-bottom-20" style={styleFont}>任务管理</p>
-              <Row type="flex" justify="space-around">
-                <Col span={7}>
-                  <Card title={contentCustomertask}>
-                    <Row>
-                      <Link to={{pathname: '/task/customertask', query: {status: 0}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', fontSize: '12px'}}>未跟进(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{commonTask.unfollow}</p>
-                        </Col>
-                      </Link>
-                      <Link to={{pathname: '/task/customertask', query: {status: 1}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', fontSize: '12px'}}>进行中(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{commonTask.conducting}</p>
-                        </Col>
-                      </Link>
-                    </Row>
-                    <Row>
-                      <Link to={{pathname: '/task/customertask', query: {status: 0}}}>
-                        <Col span={24} style={{textAlign: 'center'}}>
-                          <p>详情></p>
-                        </Col>
-                      </Link>
-                    </Row>
+      <Row>
+        <Col span={17}>
+          <div>
+            <p className="font-size-16 mb20 font">快捷方式</p>
+            <Row gutter={20} className="mt20">
+              <Col span={6}>
+                <Link to={{pathname: '/aftersales/project/new'}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon1png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">创建工单</p>
                   </Card>
-                </Col>
+                </Link>
+              </Col>
 
-                <Col span={7}>
-                  <Card title={contentRenewalTask}>
-
-                    <Row>
-                      <Link to={{pathname: '/task/renewaltask', query: {status: 0}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', fontSize: '12px'}}>未跟进(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{insuranceTask.unfollow}</p>
-                        </Col>
-                      </Link>
-                      <Link to={{pathname: '/task/renewaltask', query: {status: 1}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', fontSize: '12px'}}>进行中(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{insuranceTask.conducting}</p>
-                        </Col>
-                      </Link>
-                    </Row>
-                    <Row>
-                      <Link to={{pathname: '/task/renewaltask', query: {status: 0}}}>
-                        <Col span={24} style={{textAlign: 'center'}}>
-                          <p>详情></p>
-                        </Col>
-                      </Link>
-                    </Row>
+              <Col span={6}>
+                <Link to={{pathname: '/aftersales/project/index'}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon2png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">工单管理</p>
                   </Card>
-                </Col>
-                <Col span={7}>
-                  <Card title={contentYearlyInspectionTask}>
+                </Link>
+              </Col>
 
-                    <Row>
-                      <Link to={{pathname: '/task/yearlyinspectiontask', query: {status: 0}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', fontSize: '12px'}}>未跟进(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{inspectionTask.unfollow}</p>
-                        </Col>
-                      </Link>
-                      <Link to={{pathname: '/task/yearlyinspectiontask', query: {status: 1}}}>
-                        <Col span={12} style={{textAlign: 'center'}}>
-                          <p style={{color: '#999', sfontSize: '12px'}}>进行中(人)</p>
-                          <p style={{color: '#333', fontSize: '36px'}}>{inspectionTask.conducting}</p>
-                        </Col>
-                      </Link>
-                    </Row>
-                    <Row>
-                      <Link to={{pathname: '/task/yearlyinspectiontask', query: {status: 0}}}>
-                        <Col span={24} style={{textAlign: 'center'}}>
-                          <p>详情></p>
-                        </Col>
-                      </Link>
-                    </Row>
+              <Col span={6}>
+                <Link to={{pathname: '/marketing/membercard/sale'}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon5png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">办理会员</p>
                   </Card>
-                </Col>
+                </Link>
+              </Col>
 
-              </Row>
+              <Col span={6}>
+                <Link to={{pathname: '/warehouse/purchase/new'}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon6png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">采购开单</p>
+                  </Card>
+                </Link>
+              </Col>
+            </Row>
+
+            <Row gutter={20} className="mt20">
+              <Col span={6}>
+                <Link to={{pathname: '/aftersales/part-sale/new'}}
+                      target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon9png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">配件销售</p>
+                  </Card>
+                </Link>
+              </Col>
+
+              <Col span={6}>
+                <Link to={{pathname: '/aftersales/consumptive-material', query: {consumptiveShow: true}}}
+                      target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon7png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">耗材领用</p>
+                  </Card>
+                </Link>
+              </Col>
+
+              {/*<Col span={6}>
+               <Link to={{pathname: '/finance/monthly_report'}} target="_blank">
+               <Card className="shortcut">
+               <p><img src={icon8png} alt="" className="img"/></p>
+               <p className="font-size-18 mt10 font">月报汇总</p>
+               </Card>
+               </Link>
+               </Col>*/}
+              <Col span={6}>
+                <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 1, expenseShow: 0}}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon3png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">新增收入</p>
+                  </Card>
+                </Link>
+              </Col>
+
+              <Col span={6}>
+                <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 0, expenseShow: 1}}} target="_blank">
+                  <Card className="shortcut">
+                    <p><img src={icon4png} alt="" className="img"/></p>
+                    <p className="font-size-18 mt10 font">新增支出</p>
+                  </Card>
+                </Link>
+              </Col>
+            </Row>
+
+            <p className="font-size-16 mt20 mb20 font">任务管理</p>
+            <Row gutter={20} className="margin-bottom-10">
+              <Col span={8}>
+                <Card title={contentCustomertask}>
+                  <Row>
+                    <Link to={{pathname: '/task/list-customer', query: {status: 0}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">未跟进(人)</p>
+                        <p className="task-state-num">{commonTask.unfollow}</p>
+                      </Col>
+                    </Link>
+                    <Link to={{pathname: '/task/list-customer', query: {status: 1}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">进行中(人)</p>
+                        <p className="task-state-num">{commonTask.conducting}</p>
+                      </Col>
+                    </Link>
+                  </Row>
+                  <Row>
+                    <Link to={{pathname: '/task/list-customer', query: {status: 0}}} target="_blank">
+                      <Col span={24} className="center">
+                        <p className="font-size-14">详情></p>
+                      </Col>
+                    </Link>
+                  </Row>
+                </Card>
+              </Col>
+
+              <Col span={8}>
+                <Card title={contentRenewalTask}>
+
+                  <Row>
+                    <Link to={{pathname: '/task/list-renewal', query: {status: 0}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">未跟进(人)</p>
+                        <p className="task-state-num">{insuranceTask.unfollow}</p>
+                      </Col>
+                    </Link>
+                    <Link to={{pathname: '/task/list-renewal', query: {status: 1}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">进行中(人)</p>
+                        <p className="task-state-num">{insuranceTask.conducting}</p>
+                      </Col>
+                    </Link>
+                  </Row>
+                  <Row>
+                    <Link to={{pathname: '/task/list-renewal', query: {status: 0}}} target="_blank">
+                      <Col span={24} className="center">
+                        <p className="font-size-14">详情></p>
+                      </Col>
+                    </Link>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title={contentYearlyInspectionTask}>
+                  <Row>
+                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 0}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">未跟进(人)</p>
+                        <p className="task-state-num">{inspectionTask.unfollow}</p>
+                      </Col>
+                    </Link>
+                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 1}}} target="_blank">
+                      <Col span={12} className="center">
+                        <p className="task-state">进行中(人)</p>
+                        <p className="task-state-num">{inspectionTask.conducting}</p>
+                      </Col>
+                    </Link>
+                  </Row>
+                  <Row>
+                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 0}}} target="_blank">
+                      <Col span={24} className="center">
+                        <p className="font-size-14">详情></p>
+                      </Col>
+                    </Link>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+
+        <Col span={6} offset={1}>
+          <div style={{marginTop: '43px'}}>
+            <Card title={<span className="right-font">门店信息</span>}>
+              <p className="font-color-one font-size-14">门店名称
+                <span className="ml10 font-color-two">{userInfo.companyName}</span>
+              </p>
+              <p className="mt10 font-color-one font-size-14">门店编号
+                <span className="ml10 font-color-two">{userInfo.companyNum}</span>
+              </p>
+              <p className="mt10 font-color-one font-size-14">合作类型
+                <span className="ml10 font-color-two">{userInfo.cooperationTypeName}</span>
+              </p>
             </Card>
-          </Col>
 
-          <Col span={6} offset={1}>
-            <Card style={{height: this.state.documentHeight}}>
-              <Card title={<span style={{fontWeight: 'bold', fontSize: '16px', color: '#333'}}>门店信息</span>}>
-                <p style={{color: '#999'}}>门店名称<span className="margin-left-10"
-                                                     style={{color: '#333'}}>{JSON.parse(window.sessionStorage.USER_SESSION).company_name}</span>
-                </p>
-                <p className="margin-top-10" style={{color: '#999'}}>门店编号<span className="margin-left-10"
-                                                                               style={{color: '#333'}}>{JSON.parse(window.sessionStorage.USER_SESSION).company_num}</span>
-                </p>
-              </Card>
-
-              <Card style={{marginTop: '20px'}}
-                    title={<span style={{fontWeight: 'bold', fontSize: '16px', color: '#333'}}>下载中心</span>}>
-
-                <p style={{color: '#333'}}>水稻汽车-员工版：
-                  <Popover
-                    content={
-                      <span className="canvas no-print">
+            <Card
+              className="mt20"
+              title={<span className="right-font">下载中心</span>}>
+              <p className="font-color-two font-size-14">水稻汽车-员工版：
+                <Popover
+                  content={
+                    <span className="canvas no-print">
                         <QRCode
                           value={location.origin + '/app-download-tob.html'}
                           size={128} ref="qrCode"
                         />
                       </span>
-                    }
-                    trigger="click"
-                    visible={this.state.visibleStaff}
-                    onVisibleChange={this.handleVisibleChangeStaff}
-                  >
-                    <a href="javascript:">点击扫码下载</a>
-                  </Popover>
-                </p>
+                  }
+                  trigger="click"
+                  visible={this.state.visibleStaff}
+                  onVisibleChange={this.handleVisibleChangeStaff}
+                >
+                  <a href="javascript:">点击扫码下载</a>
+                </Popover>
+              </p>
 
-                <p className="margin-top-10" style={{color: '#333'}}>水稻汽车-客户版：
-                  <Popover
-                    content={
-                      <span className="canvas no-print">
+              <p className="mt10 font-color-two font-size-14">水稻汽车-客户版：
+                <Popover
+                  content={
+                    <span className="canvas no-print">
                         <QRCode
                           value={location.origin + '/app-download-toc.html'}
                           size={128} ref="qrCode"
                         />
                       </span>
-                    }
-                    trigger="click"
-                    visible={this.state.visibleCustomer}
-                    onVisibleChange={this.handleVisibleChangeCustomer}
-                  >
-                    <a href="javascript:">点击扫码下载</a>
-                  </Popover>
-                </p>
-
-              </Card>
+                  }
+                  trigger="click"
+                  visible={this.state.visibleCustomer}
+                  onVisibleChange={this.handleVisibleChangeCustomer}
+                >
+                  <a href="javascript:">点击扫码下载</a>
+                </Popover>
+              </p>
             </Card>
-          </Col>
-        </Row>
-      </div>
+          </div>
+        </Col>
+      </Row>
     );
   }
 }

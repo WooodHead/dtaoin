@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Button, Input} from 'antd';
 
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 import Base from './Base';
 import AddPart from './AddPart';
@@ -37,6 +37,7 @@ export default class Edit extends Base {
 
   render() {
     let {isFetching, parts, page, total, id, detail} = this.state;
+    console.log('parts', parts);
 
     let self = this;
     let columns = [
@@ -52,6 +53,10 @@ export default class Edit extends Base {
         title: '配件分类',
         dataIndex: 'auto_part.part_type_name',
         key: 'part_type_name',
+      }, {
+        title: '规格',
+        className: 'text-right',
+        render: (value, record) => record.auto_part.spec + record.auto_part.unit,
       }, {
         title: '配件名',
         dataIndex: 'auto_part.name',
@@ -98,8 +103,14 @@ export default class Edit extends Base {
         <Row className={String(detail.status) === '0' ? 'mb15' : 'hide'}>
           <Col span={24}>
             <div className="pull-right">
-              <AuthPopover size="default" id={id}/>
-              <Print id={id}/>
+              <span className="mr10">
+                <AuthPopover size="default" id={id}/>
+              </span>
+
+              <span className="mr10">
+                <Print id={id}/>
+              </span>
+
               <Button type="primary" onClick={this.handleComplete}>完成</Button>
             </div>
           </Col>

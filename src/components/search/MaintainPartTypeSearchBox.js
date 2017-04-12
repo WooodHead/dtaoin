@@ -2,7 +2,7 @@ import React from 'react';
 import {Input, Select, Button, Icon} from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
-import NewCategory from '../../containers/warehouse/category/New';
+// import NewCategory from '../../containers/warehouse/category/New';
 
 const Option = Select.Option;
 
@@ -34,7 +34,7 @@ const MaintainPartTypeSearchBox = React.createClass({
     this.setState({value: key});
 
     if (!!key && key.length >= 2) {
-      api.ajax({url: api.searchPartTypes(key)}, (data)=> {
+      api.ajax({url: api.warehouse.part.searchPartTypes(key)}, (data) => {
         let list = data.res.list;
         if (list.length > 0) {
           this.setState({data: list});
@@ -95,17 +95,23 @@ const MaintainPartTypeSearchBox = React.createClass({
           </Select>
         </div>
         <div className="ant-input-group-wrap">
-          {
-              this.state.value.length > 0 && this.state.data.length == 0 ?
-              <NewCategory inputValue={this.state.value} onSuccess={this.handleOnSuccess} />
-              :
-              <Button
-                className={btnCls}
-                onClick={this.handleSubmit}
-                size="large">
-                <Icon type="search"/>
-              </Button>
-          }
+          <Button
+            className={btnCls}
+            onClick={this.handleSubmit}
+            size="large">
+            <Icon type="search"/>
+          </Button>
+          {/* {
+           this.state.value.length > 0 && this.state.data.length == 0 ?
+           <NewCategory inputValue={this.state.value} onSuccess={this.handleOnSuccess} />
+           :
+           <Button
+           className={btnCls}
+           onClick={this.handleSubmit}
+           size="large">
+           <Icon type="search"/>
+           </Button>
+           }*/}
         </div>
       </Input.Group>
     );

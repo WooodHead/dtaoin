@@ -1,6 +1,10 @@
 // 表单布局
 
 const FormModalLayout = {
+  formItem8_15: {
+    labelCol: {span: 8},
+    wrapperCol: {span: 15},
+  },
   formNoLabel: {
     labelCol: {span: 1},
     wrapperCol: {span: 20},
@@ -8,6 +12,14 @@ const FormModalLayout = {
   formItem12: {
     labelCol: {span: 4},
     wrapperCol: {span: 20},
+  },
+  formItem_814: {
+    labelCol: {span: 8},
+    wrapperCol: {span: 14},
+  },
+  formItem_814Half: {
+    labelCol: {span: 4},
+    wrapperCol: {span: 19},
   },
   formItemTwo: {
     labelCol: {span: 8},
@@ -32,6 +44,14 @@ const FormModalLayout = {
     labelCol: {span: 6},
     wrapperCol: {span: 14},
   },
+  formItem_618: {
+    labelCol: {span: 6},
+    wrapperCol: {span: 18},
+  },
+  formItemLayoutHalf: {
+    labelCol: {span: 3},
+    wrapperCol: {span: 19},
+  },
   formItemLeft: {
     labelCol: {span: 11},
     wrapperCol: {span: 10},
@@ -54,7 +74,11 @@ const FormModalLayout = {
   },
 
   buttonLayout: {
-    wrapperCol: {span: 14, offset: 6},
+    wrapperCol: {span: 14, offset: 8},
+  },
+
+  buttonLayout16_4: {
+    wrapperCol: {span: 16, offset: 4},
   },
 
   selectStyle: {

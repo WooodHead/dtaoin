@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {Button} from 'antd';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 import api from '../../../middleware/api';
 
@@ -84,11 +84,11 @@ export default class IncomeTable extends React.Component {
             return (
               <Link
                 to={{
-                  pathname: '/aftersales/project/create/',
+                  pathname: '/aftersales/project/new',
                   query: {
+                    id: record.from_id,
                     customer_id: record.customer_id,
                     auto_id: record.auto_id,
-                    maintain_intention_id: record.from_id,
                   },
                 }} target="_blank">
                 <Button type="primary" size="small">查看工单</Button>
@@ -98,9 +98,9 @@ export default class IncomeTable extends React.Component {
             return (
               <Link
                 to={{
-                  pathname: '/customer/detail/',
+                  pathname: '/customer/detail',
                   query: {
-                    customer_id: record.customer_id,
+                    customerId: record.customer_id,
                   },
                 }} target="_blank">
                 <Button type="primary" size="small">查看详情</Button>

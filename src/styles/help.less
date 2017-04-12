@@ -1,0 +1,110 @@
+.help-content {
+  position: fixed;
+  z-index: 9999;
+  height: 152px;
+  right: 0;
+  bottom: 150px;
+}
+
+.help {
+  margin-top: -8px;
+  .help-pic {
+    background: url("../images/help/phone.png") no-repeat;
+    background-size: contain;
+    width: 50px;
+    height: 50px;
+    border: none;
+    margin: 15px auto 0 auto;
+  }
+  p {
+    text-align: center;
+    &:nth-of-type(1) {
+      margin-top: 10px;
+    }
+
+    &:nth-of-type(1), &:nth-of-type(2) {
+      font-weight: bold;
+      font-size: 16px
+    }
+    &:nth-of-type(3) {
+      font-weight: 400;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+
+.help-link {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  font-size: 13px;
+}
+
+.link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  font-weight: 400;
+  color: #666;
+  border: 1px solid #cccccc;
+  text-align: center;
+  border-top-left-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  .service {
+    color: black;
+    background-color: #FFD500;
+    padding-top: 4px;
+    width: 40px;
+    height: 40px;
+    border-top-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    p {
+      line-height: 16px;
+    }
+  }
+  .person {
+    width: 24px;
+    height: 24px;
+    background: url("../images/help/help.png") no-repeat;
+    background-size: contain;
+  }
+}
+
+.returnWord {
+  color: black;
+  background-color: #FFD500;
+  padding-top: 4px;
+  width: 40px;
+  height: 40px;
+  border-bottom-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  p {
+    line-height: 16px;
+  }
+}
+
+.return-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #cccccc;
+  border-top: none;
+  text-align: center;
+  border-bottom-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+}
+
+.return {
+  width: 24px;
+  height: 24px;
+  background: url("../images/help/back.png") no-repeat;
+  background-size: contain;
+}

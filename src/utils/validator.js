@@ -15,11 +15,13 @@ const validator = {
     plateNumber: /^[\u4e00-\u9fa5]{1}[A-Za-z]{1}[A-Za-z0-9]{5}$/,
     partName: /^[\u4e00-\u9fa5a-zA-Z0-9-()]*$/,
     partTypeName: /^[\u4e00-\u9fa5a-zA-Z0-9]*$/,
-    partNo: /^[a-zA-Z0-9-/()]*$/,
+    partNo: /^[a-zA-Z0-9-/()=]*$/,
     itemName: /^[^+\/、,，]*$/,
+    base64: /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
   },
   text: {
     notNull: '请输入必填项目',
+    notNullGreateZero: '请输入大于0数字项',
     name: '请输入正确的姓名',
     phone: '手机号码错误',
     phoneOrTel: '电话号码错误',
@@ -30,17 +32,21 @@ const validator = {
     itemName: '项目名称不能包含/+、等符号',
     partTypeName: '配件分类只能包含数字、字母和中文',
     partName: '配件名称只能包含数字、字母、中文、-、()',
-    partNo: '配件号只能包含数字、字母、-、/、()',
+    partNo: '配件号只能包含数字、字母、-、/、()、=',
     hasError: '填写的表单内容有误,请检查必填信息或数据格式',
   },
   required: {
     notNull: '必填项',
+    notNullGreateZero: '请输入大于0数字项',
     name: '请输入姓名',
     phone: '请填写手机号码',
     phoneAndTel: '请填写手机或固话号码',
     idCard: '请填写身份证号码',
     email: '请填写邮箱地址',
-    plateNumber: '请填写车牌号',
+    plateNumber: '请填写正确车牌号',
+    partTypeName: '请填写配件分类名称',
+    partName: '请填写配件名称',
+    itemName: '请输入项目名称',
   },
   validate: function (val, reg) {
     if (!reg) {
@@ -51,6 +57,9 @@ const validator = {
 
   notNull (val) {
     return val.length > 0;
+  },
+  notNullGreateZero(val) {
+    return val.length > 0 && Number(val) > 0;
   },
   name (val) {
     return val.length > 1 && val.length < 5 && !this.validate(val, this.pattern.number);
@@ -72,6 +81,9 @@ const validator = {
   },
   enNum (val) {
     return this.validate(val, this.pattern.enStringNum);
+  },
+  cnString(val) {
+    return !this.validate(val, this.pattern.enString);
   },
   url (val) {
     return this.validate(val, this.pattern.url);

@@ -39,13 +39,14 @@ class New extends BaseModal {
       values.buy_date = DateFormatter.date(values.buy_date);
 
       api.ajax({
-        url: api.fixedAssets.add(),
+        url: api.finance.fixedAssets.add(),
         type: 'POST',
         data: values,
       }, () => {
+        message.success('添加成功');
         this.hideModal();
         this.props.form.resetFields();
-        location.reload();
+        this.props.onSuccess();
       });
     });
   }
@@ -70,6 +71,7 @@ class New extends BaseModal {
         >
           添加固定资产
         </Button>
+
         <Modal
           title={<span><Icon type="plus" className="mr10"/>添加固定资产</span>}
           visible={visible}
@@ -78,7 +80,7 @@ class New extends BaseModal {
           onCancel={this.hideModal}
         >
 
-          <Form horizontal>
+          <Form>
             <Row type={'flex'}>
               <Col span={8}>
                 <FormItem label="资产名称" {...formItemThree}>
@@ -125,7 +127,7 @@ class New extends BaseModal {
                   {getFieldDecorator('buy_date', {
                     initialValue: DateFormatter.getMomentDate(),
                   })(
-                    <DatePicker placeholder="请选择购入日期"/>
+                    <DatePicker placeholder="请选择购入日期" allowClear={false}/>
                   )}
                 </FormItem>
               </Col>

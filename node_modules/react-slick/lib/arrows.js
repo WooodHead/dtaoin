@@ -45,10 +45,14 @@ var PrevArrow = exports.PrevArrow = _react2.default.createClass({
       style: { display: 'block' },
       onClick: prevHandler
     };
+    var customProps = {
+      currentSlide: this.props.currentSlide,
+      slideCount: this.props.slideCount
+    };
     var prevArrow;
 
     if (this.props.prevArrow) {
-      prevArrow = _react2.default.cloneElement(this.props.prevArrow, prevArrowProps);
+      prevArrow = _react2.default.cloneElement(this.props.prevArrow, _extends({}, prevArrowProps, customProps));
     } else {
       prevArrow = _react2.default.createElement(
         'button',
@@ -86,11 +90,14 @@ var NextArrow = exports.NextArrow = _react2.default.createClass({
       style: { display: 'block' },
       onClick: nextHandler
     };
-
+    var customProps = {
+      currentSlide: this.props.currentSlide,
+      slideCount: this.props.slideCount
+    };
     var nextArrow;
 
     if (this.props.nextArrow) {
-      nextArrow = _react2.default.cloneElement(this.props.nextArrow, nextArrowProps);
+      nextArrow = _react2.default.cloneElement(this.props.nextArrow, _extends({}, nextArrowProps, customProps));
     } else {
       nextArrow = _react2.default.createElement(
         'button',

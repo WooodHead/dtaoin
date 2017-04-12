@@ -8,7 +8,7 @@ import IncomeTable from './IncomeTable';
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
 
-const RangePicker = DatePicker.RangePicker;
+let lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
 
 export default class PresalesIncomeList extends BaseList {
   constructor(props) {
@@ -23,11 +23,16 @@ export default class PresalesIncomeList extends BaseList {
       plate_num: '',
       from_type: '0',
       status: '0',
+      endOpen: false,
     };
     [
       'handleSearchChange',
-      'handleDateRange',
       'onChangeTime',
+      'handleStartTimeChange',
+      'handleStartOpenChange',
+      'handleEndTimeChange',
+      'handleEndOpenChange',
+      'disabledEndDate',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -37,11 +42,22 @@ export default class PresalesIncomeList extends BaseList {
     }
   }
 
-  handleDateRange(value, dateString) {
-    this.setState({
-      start_date: dateString[0],
-      end_date: dateString[1],
-    });
+  handleStartTimeChange(value) {
+    this.setState({start_date: formatter.day(value)});
+  }
+
+  handleEndTimeChange(value) {
+    this.setState({end_date: formatter.day(value)});
+  }
+
+  handleStartOpenChange(open) {
+    if (!open) {
+      this.setState({endOpen: true});
+    }
+  }
+
+  handleEndOpenChange(open) {
+    this.setState({endOpen: open});
   }
 
   onChangeTime(value, dateString) {
@@ -51,10 +67,20 @@ export default class PresalesIncomeList extends BaseList {
     });
   }
 
+  disabledStartDate(current) {
+    return current && current.valueOf() >= lastDate;
+  }
+
+  disabledEndDate(current) {
+    let {start_date} = this.state;
+    return current && (current.valueOf() >= lastDate || current.valueOf() <= new Date(start_date));
+  }
+
   render() {
     let {
       start_date,
       end_date,
+      endOpen,
     } = this.state;
 
     return (
@@ -68,11 +94,23 @@ export default class PresalesIncomeList extends BaseList {
           </Col>
           <Col span={18}>
             <label className="mr5">交易时间:</label>
-            <RangePicker
-              showTime
-              format={formatter.pattern.date}
-              defaultValue={[formatter.getMomentDate(start_date), formatter.getMomentDate(end_date)]}
-              onChange={this.handleDateRange}
+            <DatePicker
+              disabledDate={this.disabledStartDate}
+              format={formatter.pattern.day}
+              defaultValue={formatter.getMomentDate(start_date)}
+              onChange={this.handleStartTimeChange}
+              onOpenChange={this.handleStartOpenChange}
+              allowClear={false}
+            />
+            -
+            <DatePicker
+              disabledDate={this.disabledEndDate}
+              format={formatter.pattern.day}
+              defaultValue={formatter.getMomentDate(end_date)}
+              onChange={this.handleEndTimeChange}
+              open={endOpen}
+              onOpenChange={this.handleEndOpenChange}
+              allowClear={false}
             />
           </Col>
         </Row>
@@ -80,7 +118,7 @@ export default class PresalesIncomeList extends BaseList {
         <IncomeTable
           updateState={this.updateState}
           currentPage={this.state.page}
-          source={api.getPresalesIncomeList(this.state)}
+          source={api.finance.getPresalesIncomeList(this.state)}
         />
       </div>
     );

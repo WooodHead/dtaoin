@@ -34,11 +34,11 @@ class New extends BaseModal {
         url: api.warehouse.supplier.add(),
         type: 'POST',
         data: values,
-      }, () => {
-        message.info('添加成功！');
+      }, (data) => {
+        message.success('添加成功！');
         this.hideModal();
         this.props.form.resetFields();
-        location.reload();
+        this.props.onSuccess(data.res.supplier_id);
       });
     });
   }
@@ -50,24 +50,15 @@ class New extends BaseModal {
 
     return (
       <span>
-        <Button
-          type="primary"
-          onClick={this.showModal}>
-          添加进货商
-        </Button>
+        <Button type="primary" onClick={this.showModal}>新增供应商</Button>
 
         <Modal
-          title={<span><Icon type="plus"/> 添加进货商</span>}
+          title={<span><Icon type="plus"/> 新增供应商</span>}
           visible={visible}
           onCancel={this.closeModal}
           onOk={this.handleSubmit}
         >
-          <Form horizontal>
-            <Row>
-              <Col span={18} offset={6}>
-                <h6 className="form-module-title">供应商信息</h6>
-              </Col>
-            </Row>
+          <Form>
 
             <FormItem label="单位名称" {...formItemLayout}>
               {getFieldDecorator('supplier_company', {
@@ -120,15 +111,15 @@ class New extends BaseModal {
               )}
             </FormItem>
 
-            <FormItem label="开户银行" {...formItemLayout}>
+            <FormItem label="开户行" {...formItemLayout}>
               {getFieldDecorator('bank')(
-                <Input placeholder="请输入开户银行"/>
+                <Input placeholder="请输入开户行"/>
               )}
             </FormItem>
 
-            <FormItem label="单位帐号" {...formItemLayout}>
+            <FormItem label="银行账号" {...formItemLayout}>
               {getFieldDecorator('bank_account')(
-                <Input placeholder="请输入单位帐号"/>
+                <Input placeholder="请输入银行账号"/>
               )}
             </FormItem>
           </Form>

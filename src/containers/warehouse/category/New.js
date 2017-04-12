@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Row, Col, Modal, Icon, Button, Form, Input, Radio} from 'antd';
+import {message, Row, Col, Modal, Icon, Button, Form, Input, Switch} from 'antd';
 import classNames from 'classnames';
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -7,7 +7,6 @@ import BaseModal from '../../../components/base/BaseModal';
 import FormValidator from '../../../utils/FormValidator';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
 
 let levelIndex = 0;
 
@@ -21,7 +20,7 @@ class New extends BaseModal {
     [
       'addItemLevel',
       'handleSubmit',
-      'handleRadioChange',
+      'handleQuoteTypeChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -52,23 +51,24 @@ class New extends BaseModal {
         return;
       }
 
+      values.quote_type = values.quote_type ? '1' : '0';
       let params = this.assembleFormData(values);
 
       api.ajax({
         url: api.warehouse.category.add(),
         type: 'POST',
         data: params,
-      }, data => {
-        this.props.onSuccess && this.props.onSuccess(data.res.part_type);
+      }, () => {
+        message.success('添加成功');
         this.props.form.resetFields();
+        this.props.onSuccess();
         this.hideModal();
-        location.reload();
       });
     });
   }
 
-  handleRadioChange(e) {
-    this.setState({quoteType: e.target.value});
+  handleQuoteTypeChange(isUse) {
+    this.setState({quoteType: isUse ? '1' : '0'});
   }
 
   assembleFormData(values) {
@@ -97,7 +97,7 @@ class New extends BaseModal {
   }
 
   render() {
-    const {formItemLayout} = Layout;
+    const {formItemLayout, formItemLayout_1014} = Layout;
     const {getFieldDecorator, getFieldValue} = this.props.form;
     const {visible, quoteType} = this.state;
 
@@ -149,20 +149,20 @@ class New extends BaseModal {
       <span>
         <Button
           type="primary"
-          className="margin-left-20"
+          className="ml20"
           onClick={this.showModal}
         >
           新增分类
         </Button>
 
         <Modal
-          title={<span><Icon type="plus" className="margin-right-10"/>新增分类</span>}
+          title={<span><Icon type="plus" className="mr10"/>新增分类</span>}
           visible={visible}
           width="680px"
           onOk={this.handleSubmit}
           onCancel={this.hideModal}
         >
-          <Form horizontal>
+          <Form>
             <FormItem label="配件分类名称" {...formItemLayout}>
               {getFieldDecorator('name', {
                 initialValue: this.props.inputValue ? this.props.inputValue : '',
@@ -174,16 +174,14 @@ class New extends BaseModal {
             </FormItem>
 
             <Row>
-              <Col span={13} offset={1}>
-                <FormItem label="报价方式" {...formItemLayout}>
+              <Col span={14}>
+                <FormItem label="预设报价" {...formItemLayout_1014}>
                   {getFieldDecorator('quote_type', {
-                    initialValue: 0,
-                    onChange: this.handleRadioChange,
+                    valuePropName: 'checked',
+                    initialValue: false, // quote_type === '0'
+                    onChange: this.handleQuoteTypeChange,
                   })(
-                    <RadioGroup>
-                      <Radio key="0" value={0}>现场报价</Radio>
-                      <Radio key="1" value={1}>预设报价</Radio>
-                    </RadioGroup>
+                    <Switch checkedChildren={'启用'} unCheckedChildren={'停用'}/>
                   )}
                 </FormItem>
               </Col>

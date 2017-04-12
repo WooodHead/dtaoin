@@ -48,16 +48,16 @@ export default class AftersalesIncomeOfProject extends React.Component {
 
 
     //总额减去整单优惠
-    incomeTotal -= couponFee;
-    profitTotal -= couponFee;
+    incomeTotal = (Number(incomeTotal) - Number(couponFee)).toFixed(2);
+    profitTotal = (Number(profitTotal) - Number(couponFee)).toFixed(2);
     return (
-      <Row gutter={20} className="mb15 margin-top-20">
+      <Row gutter={20} className="mb15 mt20">
         <Col span={8}>
           <Card title={<span><Icon type="pie-chart"/> 项目数量</span>}>
             <Row>
               <Col span={10}>
-                <span className="font-size-30 margin-right-20 margin-left-20">{countAccident || 0}</span>
-                <span>事故单数</span>
+                <span className="font-size-30 mr20 ml20">{countAccident || 0}</span>
+                <span className="font-size-14">事故单数</span>
               </Col>
 
             </Row>
@@ -75,12 +75,12 @@ export default class AftersalesIncomeOfProject extends React.Component {
           <Card title={<span><Icon type="pie-chart"/> 营业额(元)</span>}>
             <Row>
               <Col span={12}>
-                <span className="font-size-30 margin-right-20 margin-left-20">{Number(incomeAccident).toFixed(2) || '0.00'}</span>
-                <span>事故单</span>
+                <span className="font-size-30 mr20 ml20">{Number(incomeAccident).toFixed(2) || '0.00'}</span>
+                <span className="font-size-14">事故单</span>
               </Col>
               <Col span={12}>
-                <span className="font-size-30 margin-right-20 margin-left-20">{Number(couponFee).toFixed(2) || '0.00'}</span>
-                <span>整单优惠</span>
+                <span className="font-size-30 mr20 ml20">{Number(couponFee).toFixed(2) || '0.00'}</span>
+                <span className="font-size-14">整单优惠</span>
               </Col>
             </Row>
             <PieChart
@@ -91,19 +91,19 @@ export default class AftersalesIncomeOfProject extends React.Component {
               data={incomeSeries}
               element="元"
             />
-            <p>*营业额=各类型营业额-整单优惠</p>
+            <p className="font-size-14">*营业额=各类型营业额-整单优惠</p>
           </Card>
         </Col>
         <Col span={8}>
           <Card title={<span><Icon type="pie-chart"/> 毛利润(元)</span>}>
             <Row>
               <Col span={12}>
-                <span className="font-size-30 margin-right-20 margin-left-20">{Number(profitAccident).toFixed(2) || '0.00'}</span>
-                <span>事故单</span>
+                <span className="font-size-30 mr20 ml20">{Number(profitAccident).toFixed(2) || '0.00'}</span>
+                <span className="font-size-14">事故单</span>
               </Col>
               <Col span={12}>
-                <span className="font-size-30 margin-right-20 margin-left-20">{Number(couponFee).toFixed(2) || '0.00'}</span>
-                <span>整单优惠</span>
+                <span className="font-size-30 mr20 ml20">{Number(couponFee).toFixed(2) || '0.00'}</span>
+                <span className="font-size-14">整单优惠</span>
               </Col>
             </Row>
             <PieChart
@@ -114,7 +114,7 @@ export default class AftersalesIncomeOfProject extends React.Component {
               data={profitSeries}
               element="元"
             />
-            <p>*毛利润=各类型毛利润-整单优惠</p>
+            <p className="font-size-14">*毛利润=各类型毛利润-整单优惠</p>
           </Card>
         </Col>
       </Row>

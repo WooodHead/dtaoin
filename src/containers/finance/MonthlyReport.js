@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 import {Card, Row, Col, DatePicker, Spin} from 'antd';
+
+import formatter from '../../utils/DateFormatter';
 import api from '../../middleware/api';
+
+const MonthPicker = DatePicker.MonthPicker;
+
+require('../../styles/monthlyReport.css');
 let icon_1 = require('../../images/monthly_report/yuebao_icon_1.png');
 let icon_2 = require('../../images/monthly_report/yuebao_icon_2.png');
 let icon_3 = require('../../images/monthly_report/yuebao_icon_3.png');
@@ -10,16 +16,12 @@ let icon_6 = require('../../images/monthly_report/yuebao_icon_6.png');
 let icon_7 = require('../../images/monthly_report/yuebao_icon_7.png');
 let icon_8 = require('../../images/monthly_report/yuebao_icon_8.png');
 
-
-import formatter from '../../utils/DateFormatter';
-const MonthPicker = DatePicker.MonthPicker;
 export default class MonthlyReport extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      month: formatter.month(new Date(new Date().getFullYear(), new Date().getMonth())),
+      month: formatter.month(new Date(new Date().getFullYear(), new Date().getMonth() - 1)),
       detail: {},
-      payType: '',
       isFetching: false,
     };
     [
@@ -34,20 +36,8 @@ export default class MonthlyReport extends Component {
 
   getList() {
     this.setState({isFetching: true});
-    api.ajax({url: api.getFinancialSummary(this.state.month)}, (data) => {
-      let payType = [];
-      if (data.res.in.pay_types) {
-        data.res.in.pay_types.map(item => {
-          if (item.pay_type == 2) {
-            payType[0] = item;
-          } else if (item.pay_type == 3) {
-            payType[1] = item;
-          } else {
-            payType[2] = item;
-          }
-        });
-      }
-      this.setState({detail: data.res, payType, isFetching: false});
+    api.ajax({url: api.finance.getFinancialSummary(this.state.month)}, (data) => {
+      this.setState({detail: data.res, isFetching: false});
     }, () => {
     });
   }
@@ -60,20 +50,15 @@ export default class MonthlyReport extends Component {
 
   disabledDate(current) {
     // can not select days after today and today and before 2017.
-    return current && (current.valueOf() >= new Date() || current.valueOf() <= new Date(new Date().getFullYear(), new Date().getMonth() - 1));
+    let today = new Date();
+    let earliestTime = new Date(new Date('2017-01-01 00:00:00'));
+    return current && (current.valueOf() >= today || current.valueOf() < earliestTime);
   }
 
   render() {
     let {detail} = this.state;
-    let inventory = (detail.godown && Number(detail.godown.panying) >= 0)
-      ? {img: icon_7, word: '盘盈金额'} : {img: icon_6, word: '盘亏金额'};
-
-    let cardStyle = {textAlign: 'center', height: '103px'};
-    let imgStyle = {width: '55px', height: '55px'};
-    let explainWordStyle = {fontSize: '12px', color: '#999'};
-    let numberStyle = {fontSize: '27px', color: '#333'};
-    let smallNumberStyle = {fontSize: '18px', color: '#333', marginTop: '5px'};
-    let divStyle = {display: 'inline-block', marginLeft: '40px', textAlign: 'left', verticalAlign: 'top'};
+    let inventory = (detail.godown && Number(detail.godown.panying) >= 0) ?
+      {img: icon_7, word: '盘差金额'} : {img: icon_6, word: '盘差金额'};
 
     return (
       <div style={{marginLeft: '25px', marginRight: '90px'}}>
@@ -84,205 +69,217 @@ export default class MonthlyReport extends Component {
             value={formatter.getMomentDate(this.state.month)}
             onChange={this.handleDateRangeChange}
             disabledDate={this.disabledDate}
+            allowClear={false}
           />
         </Row>
 
         <Spin tip="加载中..." spinning={this.state.isFetching}>
-          <Row gutter={16} className="margin-top-20 margin-bottom-10">
+          <Row gutter={16} className="mt20 mb10">
             <Col span={6}>
-              <Card style={cardStyle}>
+              <Card className="card">
                 <Col span={5} offset={2}>
-                  <img src={icon_1} alt="" style={imgStyle}/>
+                  <img src={icon_1} alt="" className="img-report"/>
                 </Col>
                 <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>总毛利</p>
-                    <p style={numberStyle}>{detail.total && Number(detail.total.maoli).toFixed(2) || '0.00'}</p>
-                  </div>
-                </Col>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card style={cardStyle}>
-                <Col span={5} offset={2}>
-                  <img src={icon_2} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>总毛利率</p>
-                    <p
-                      style={numberStyle}>{detail.total && (Number(detail.total.maolilv).toFixed(2) + '%') || '0.00%'}</p>
-                  </div>
-                </Col>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card style={cardStyle}>
-                <Col span={5} offset={2}>
-                  <img src={icon_1} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>总净利</p>
-                    <p style={numberStyle}>{detail.total && Number(detail.total.jingli).toFixed(2) || '0.00'}</p>
-                  </div>
-                </Col>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card style={cardStyle}>
-                <Col span={5} offset={2}>
-                  <img src={icon_2} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>总净利率</p>
-                    <p
-                      style={numberStyle}>{detail.total && (Number(detail.total.jinglilv).toFixed(2) + '%') || '0.00%'}</p>
-                  </div>
-                </Col>
-              </Card>
-            </Col>
-          </Row>
-
-          <Row className="margin-bottom-10">
-            <Card style={{height: '103px'}}>
-              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
-                <Col span={5} offset={2}>
-                  <img src={icon_3} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>营业额汇总(元)</p>
-                    <p style={numberStyle}>{detail.in && Number(detail.in.total).toFixed(2) || '0.00'}</p>
-                  </div>
-                </Col>
-              </Col>
-              <div style={{
-                width: '0px',
-                height: '60px',
-                borderRight: '1px solid #ccc',
-                position: 'absolute',
-                left: '25%',
-              }}></div>
-              <Col span={3} offset={2}>
-                <p style={explainWordStyle}>现金支付</p>
-                <p style={smallNumberStyle}>{this.state.payType && this.state.payType[0].data}</p>
-              </Col>
-              <Col span={3}>
-                <p style={explainWordStyle}>微信支付</p>
-                <p style={smallNumberStyle}>{this.state.payType && this.state.payType[1].data}</p>
-              </Col>
-              <Col span={3}>
-                <p style={explainWordStyle}>支付宝支付</p>
-                <p style={smallNumberStyle}>{this.state.payType && this.state.payType[2].data}</p>
-              </Col>
-              {/*<Col span={3}>
-               <p style={explainWordStyle}>POS机刷卡</p>
-               <p style={smallNumberStyle}>{'1111111'}</p>
-               </Col>
-               <Col span={3}>
-               <p style={explainWordStyle}>银行转账</p>
-               <p style={smallNumberStyle}>{'1111111'}</p>
-               </Col>*/}
-            </Card>
-          </Row>
-
-
-          <Row className="margin-bottom-10">
-            <Card style={{height: '103px'}}>
-              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
-                <Col span={5} offset={2}>
-                  <img src={icon_4} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>支出汇总</p>
-                    <p style={numberStyle}>{detail.out && Number(detail.out.total).toFixed(2) || '0.00'}</p>
-                  </div>
-                </Col>
-              </Col>
-              <div style={{
-                width: '0px',
-                height: '60px',
-                borderRight: '0.5px solid #ccc',
-                position: 'absolute',
-                left: '25%',
-              }}></div>
-              <Col span={3} offset={2}>
-                <p style={explainWordStyle}>耗材领用</p>
-                <p style={smallNumberStyle}>{detail.out && Number(detail.out.haocai).toFixed(2) || '0.00'}</p>
-              </Col>
-              <Col span={3}>
-                <p style={explainWordStyle}>其它支出</p>
-                <p style={smallNumberStyle}>{detail.out && Number(detail.out.other).toFixed(2) || '0.00'}</p>
-              </Col>
-              <Col span={3}>
-                <p style={explainWordStyle}>人力成本</p>
-                <p style={smallNumberStyle}>{detail.out && Number(detail.out.gongzi).toFixed(2) || '0.00'}</p>
-              </Col>
-              <Col span={3}>
-                <p style={explainWordStyle}>工单配件成本</p>
-                <p style={smallNumberStyle}>{detail.out && Number(detail.out.gongdan).toFixed(2) || '0.00'}</p>
-              </Col>
-            </Card>
-          </Row>
-
-
-          <Row gutter={16} className="margin-bottom-10">
-            <Col span={6} style={cardStyle}>
-              <Card style={cardStyle}>
-                <Col span={5} offset={2}>
-                  <img src={icon_5} alt="" style={imgStyle}/>
-                </Col>
-                <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>仓库期末金额</p>
-                    <p
-                      style={numberStyle}>{detail.godown && Number(detail.godown.last_godown_total).toFixed(2) || '0.00'}
+                  <div className="first-div">
+                    <p className="explain-word">总毛利</p>
+                    <p className="number">
+                      {detail.total && detail.total.maoli && Number(detail.total.maoli).toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </Col>
               </Card>
             </Col>
             <Col span={6}>
-              <Card style={cardStyle}>
+              <Card className="card">
                 <Col span={5} offset={2}>
-                  <img src={icon_5} alt="" style={imgStyle}/>
+                  <img src={icon_2} alt="" className="img-report"/>
                 </Col>
                 <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>仓库期初金额</p>
-                    <p
-                      style={numberStyle}>{detail.godown && Number(detail.godown.godown_total).toFixed(2) || '0.00'}
+                  <div className="first-div">
+                    <p className="explain-word">总毛利率</p>
+                    <p className="number">
+                      {detail.total && detail.total.maolilv && (Number(detail.total.maolilv).toFixed(2) + '%') || '0.00%'}
                     </p>
                   </div>
                 </Col>
               </Card>
             </Col>
             <Col span={6}>
-              <Card style={cardStyle}>
+              <Card className="card">
                 <Col span={5} offset={2}>
-                  <img src={inventory.img} alt="" style={imgStyle}/>
+                  <img src={icon_1} alt="" className="img-report"/>
                 </Col>
                 <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>{inventory.word}</p>
-                    <p style={numberStyle}>{detail.godown && Number(detail.godown.panying).toFixed(2) || '0.00'}</p>
+                  <div className="first-div">
+                    <p className="explain-word">总净利</p>
+                    <p className="number">
+                      {detail.total && detail.total.jingli && Number(detail.total.jingli).toFixed(2) || '0.00'}
+                    </p>
                   </div>
                 </Col>
               </Card>
             </Col>
             <Col span={6}>
-              <Card style={cardStyle}>
+              <Card className="card">
                 <Col span={5} offset={2}>
-                  <img src={icon_8} alt="" style={imgStyle}/>
+                  <img src={icon_2} alt="" className="img-report"/>
                 </Col>
                 <Col span={10}>
-                  <div style={divStyle}>
-                    <p style={explainWordStyle}>固定资产</p>
-                    <p
-                      style={numberStyle}>{detail.godown && Number(detail.godown.fixed_assets_total).toFixed(2) || '0.00'}
+                  <div className="first-div">
+                    <p className="explain-word">总净利率</p>
+                    <p className="number">
+                      {detail.total && detail.total.jinglilv && (Number(detail.total.jinglilv).toFixed(2) + '%') || '0.00%'}
+                    </p>
+                  </div>
+                </Col>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row className="mb10">
+            <Card style={{height: '103px'}}>
+              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
+                <Col span={5} offset={2}>
+                  <img src={icon_3} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">营业额汇总(元)</p>
+                    <p className="number">
+                      {detail.in && detail.in.total && Number(detail.in.total).toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                </Col>
+              </Col>
+              <div className="vertical-line"></div>
+              <Col span={3} offset={2}>
+                <p className="explain-word">现金支付</p>
+                <p className="small-number">
+                  {detail.in && detail.in.现金支付 && Number(detail.in.现金支付).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">微信支付</p>
+                <p className="small-number">
+                  {detail.in && detail.in.微信支付 && Number(detail.in.微信支付).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">支付宝支付</p>
+                <p className="small-number">
+                  {detail.in && detail.in.支付宝支付 && Number(detail.in.支付宝支付).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">银行卡支付</p>
+                <p className="small-number">
+                  {detail.in && detail.in.银行卡支付 && Number(detail.in.银行卡支付).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+            </Card>
+          </Row>
+
+
+          <Row className="mb10">
+            <Card style={{height: '103px'}}>
+              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
+                <Col span={5} offset={2}>
+                  <img src={icon_4} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">支出汇总</p>
+                    <p className="number">
+                      {detail.out && detail.out.total && Number(detail.out.total).toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                </Col>
+              </Col>
+              <div className="vertical-line"></div>
+              <Col span={3} offset={2}>
+                <p className="explain-word">耗材领用</p>
+                <p className="small-number">
+                  {detail.out && detail.out.haocai && Number(detail.out.haocai).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">其它支出</p>
+                <p className="small-number">
+                  {detail.out && detail.out.other && Number(detail.out.other).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">人力成本</p>
+                <p className="small-number">
+                  {detail.out && detail.out.gongzi && Number(detail.out.gongzi).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+              <Col span={3}>
+                <p className="explain-word">工单配件成本</p>
+                <p className="small-number">
+                  {detail.out && detail.out.gongdan && Number(detail.out.gongdan).toFixed(2) || '0.00'}
+                </p>
+              </Col>
+            </Card>
+          </Row>
+
+          <Row gutter={16} className="mb10">
+            <Col span={6} className="card">
+              <Card className="card">
+                <Col span={5} offset={2}>
+                  <img src={icon_5} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">仓库期末金额</p>
+                    <p className="number">
+                      {detail.godown && detail.godown.godown_total && Number(detail.godown.godown_total).toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                </Col>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card className="card">
+                <Col span={5} offset={2}>
+                  <img src={icon_5} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">仓库期初金额</p>
+                    <p className="number">
+                      {detail.godown && detail.godown.last_godown_total && Number(detail.godown.last_godown_total).toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                </Col>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card className="card">
+                <Col span={5} offset={2}>
+                  <img src={inventory.img} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">{inventory.word}</p>
+                    <p className="number">
+                      {detail.godown && detail.godown.panying && Number(detail.godown.panying).toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                </Col>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card className="card">
+                <Col span={5} offset={2}>
+                  <img src={icon_8} alt="" className="img-report"/>
+                </Col>
+                <Col span={10}>
+                  <div className="first-div">
+                    <p className="explain-word">固定资产</p>
+                    <p className="number">
+                      {detail.godown && detail.godown.fixed_assets_total && Number(detail.godown.fixed_assets_total).toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </Col>
@@ -293,6 +290,4 @@ export default class MonthlyReport extends Component {
       </div>
     );
   }
-
-
 }

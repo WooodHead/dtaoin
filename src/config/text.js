@@ -1,8 +1,44 @@
 const CommonText = {
-  applicableStore: {
-    0: '通店',
-    //通过window.sessionStorage.USER_SESSION获取当前门店信息
-    1: window.sessionStorage.USER_SESSION ? JSON.parse(window.sessionStorage.USER_SESSION).company_name : '',
+  routeType: {
+    0: '路由',
+    1: '模态框',
+    2: '授权',
+  },
+
+  memberCardStatus: {
+    0: '启用中',
+    1: '未启用',
+  },
+  companyType: {
+    0: '未知',
+    1: '社区店',
+    2: '综合售后店',
+    3: '销售服务店',
+    4: '综合服务店',
+  },
+  systemType: {
+    0: '未知',
+    1: '基础版',
+    2: '标准版',
+    3: '高级版',
+    4: 'MC版',
+    5: '销售版',
+    6: '基础版+销售版',
+    7: '标准版+销售版',
+    8: '高级版+销售版',
+    9: 'MC版+销售版',
+  },
+  cooperationType: {
+    0: '未知',
+    1: 'FC友情合作店',
+    2: 'MC重要合作店',
+    3: 'AP高级合伙店',
+    4: 'TP顶级合伙店',
+  },
+  technicianStatus: {
+    '-1': '已封禁',
+    0: '待审核',
+    1: '审核通过',
   },
   taskDetails: {
     0: '开始',
@@ -10,6 +46,7 @@ const CommonText = {
     2: '详情',
   },
   dueData: {
+    '-1': '',
     0: '0-15',
     1: '15-30',
   },
@@ -48,12 +85,9 @@ const CommonText = {
     6: '周六',
   },
   maintenanceCar: {
+    '-1': '已作废',
     0: '服务中',
-    1: '服务中',
-    2: '待付款',
-    3: '已结算',
-    4: '待付款',
-    5: '已评论',
+    1: '已完工',
   },
   gender: {
     1: '男士',
@@ -110,22 +144,16 @@ const CommonText = {
     1: '柴油',
     2: '新能源',
   },
-
-  warehouse: {
-    purchaseType: {
-      0: '常规采购',
-      1: '临时采购',
-    },
-    purchaseStatus: {
-      '-1': '全部',
-      0: '待入库',
-      1: '已入库',
-      2: '已取消',
+  project: {
+    status: {
+      '-1': '已作废',
+      0: '服务中',
+      1: '已完工',
     },
     payStatus: {
-      1: '未结算',
+      0: '待付款',
+      1: '挂账',
       2: '已结算',
-      3: '挂账',
     },
   },
 
@@ -247,34 +275,22 @@ const CommonText = {
     '涉水行驶险': 'ci_wade',
     '不计免赔特约险': 'ci_spec',
   },
-  route: {
-    'dashboard': '面板',
-    'presales': '售前',
-    'list': '列表',
-    'detail': '详情',
-    'potential': '潜在客户',
-    'customer': '客户',
-    'aftersales': '售后',
-    'project': '工单',
-    'warehouse': '仓库',
-    'finance': '财务',
-    'expense': '支出',
-    'income': '收入',
-    'personnel': '人事',
-    'user': '员工',
-    'salary': '工资',
-    'company': '公司',
+
+  question: {
+    '-1': '已屏蔽',
+    '0': '正常',
   },
 
-  fixedAssetsType: {
-    1: '维修',
-    2: '维修完毕',
-    3: '出借',
-    4: '归还',
-    5: '丢失',
-    6: '找回',
-    7: '报废',
+  settings: {
+    account: {
+      userType: {
+        '1': '连锁店管理员',
+        '2': '区域管理员',
+        '3': '总公司管理员',
+      },
+    },
   },
+
 };
 
 export default CommonText;

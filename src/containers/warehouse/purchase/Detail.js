@@ -1,10 +1,13 @@
 import React from 'react';
+import {Link} from 'react-router';
 import {Row, Col, Form} from 'antd';
-
-import TableWithPagination from '../../../components/base/TableWithPagination';
 
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
+
+import TableWithPagination from '../../../components/widget/TableWithPagination';
+
+import AuthPay from './AuthPay';
 
 const FormItem = Form.Item;
 
@@ -25,12 +28,12 @@ class Detail extends React.Component {
     let {id, page}= this.state;
 
     this.getPurchaseDetail(id);
-    this.getPurchaseParts(id, page);
+    this.getPurchaseItems(id, page);
   }
 
   handlePageChange(page) {
     this.setState({page});
-    this.getPurchaseParts(this.state.id, page);
+    this.getPurchaseItems(this.state.id, page);
   }
 
   getPurchaseDetail(id) {
@@ -40,8 +43,8 @@ class Detail extends React.Component {
     });
   }
 
-  getPurchaseParts(id, page) {
-    api.ajax({url: api.warehouse.purchase.parts(id, page)}, data => {
+  getPurchaseItems(id, page) {
+    api.ajax({url: api.warehouse.purchase.items(id, page)}, data => {
       let {list, total} = data.res;
       this.setState({list, total: parseInt(total)});
     });
@@ -64,8 +67,8 @@ class Detail extends React.Component {
         key: 'part_type_name',
       }, {
         title: '配件名',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'part_name',
+        key: 'part_name',
       }, {
         title: '配件号',
         dataIndex: 'part_no',
@@ -112,11 +115,24 @@ class Detail extends React.Component {
 
         <Row>
           <Col span={16}>
-            <Form horizontal>
+            <Form>
+              <Row className={String(detail.intention_id) === '0' ? 'hide' : null}>
+                <Col span={16}>
+                  <FormItem label="工单号" {...formItem12}>
+                    <Link to={{
+                      pathname: '/aftersales/project/new',
+                      query: {id: detail.intention_id},
+                    }}>
+                      {detail.intention_id}
+                    </Link>
+                  </FormItem>
+                </Col>
+              </Row>
+
               <Row>
                 <Col span={8}>
                   <FormItem label="供应商" {...formItemThree}>
-                    <p>{detail.supplier_name}</p>
+                    <p>{detail.supplier_company}</p>
                   </FormItem>
                 </Col>
                 <Col span={8}>
@@ -150,13 +166,21 @@ class Detail extends React.Component {
               </Row>
 
               <Row>
-                <Col span={12}>
+                <Col span={16}>
                   <FormItem label="备注" {...formItem12}>
                     <p>{detail.remark}</p>
                   </FormItem>
                 </Col>
               </Row>
             </Form>
+          </Col>
+
+          <Col span={8}>
+            {Object.keys(detail).length === 0 || String(detail.status) === '-1' || String(detail.pay_status) === '2' ? null :
+              <div className="pull-right">
+                <AuthPay id={detail._id} detail={detail}/>
+              </div>
+            }
           </Col>
         </Row>
 

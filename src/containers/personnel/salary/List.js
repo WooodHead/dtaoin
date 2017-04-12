@@ -5,9 +5,9 @@ import formatter from '../../../utils/DateFormatter';
 import BaseList from '../../../components/base/BaseList';
 
 import SalaryTable from './Table';
-import SalaryGroupFilter from '../../../components/filters/SalaryGroupFilter';
-import DepartmentFilter from '../../../components/filters/DepartmentFilter';
-import MonthRangeFilter from '../../../components/filters/MonthRangeFilter';
+import SalaryGroupFilter from '../SalaryGroupFilter';
+import DepartmentFilter from '../DepartmentFilter';
+import MonthRangeFilter from './MonthRangeFilter';
 
 let now = new Date();
 

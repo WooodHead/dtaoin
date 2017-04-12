@@ -33,6 +33,10 @@ const LineChart = React.createClass({
       yAxis: {
         title: {
           text: unit || '',
+          style: {
+            fontSize: '14px',
+            color: '#333',
+          },
         },
         allowDecimals: allowDecimals || true,
       },

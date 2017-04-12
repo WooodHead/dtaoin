@@ -65,7 +65,7 @@ export default class IntentionStatisticsCard extends React.Component {
 
     return (
       <div>
-        <Row gutter={20} className="mb15 margin-top-20">
+        <Row gutter={20} className="mb15 mt20">
           <Col span={8}>
             <Card title={<span><Icon type="pie-chart"/> 意向级别</span>}>
               <PieChart

@@ -6,9 +6,6 @@ let _ = require('lodash');
 
 let baseConfig = require('./base');
 
-// Add needed plugins here
-let BowerWebpackPlugin = require('bower-webpack-plugin');
-
 let config = _.merge({
   entry: [
     './src/index', 'webpack/hot/dev-server', 'webpack-dev-server/client?http://localhost:9999/'
@@ -16,7 +13,7 @@ let config = _.merge({
   output: {
     path: path.join(__dirname, "dist/"),
     publicPath: "http://localhost:9999/dist/",
-    filename: "app.js"
+    filename: "app.min.js"
   },
   devServer: {
     historyApiFallback: true,
@@ -37,9 +34,6 @@ let config = _.merge({
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
-    new BowerWebpackPlugin({
-      searchResolveModulesDirectories: false
-    })
   ]
 }, baseConfig);
 

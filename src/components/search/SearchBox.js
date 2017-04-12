@@ -48,13 +48,15 @@ const SearchBox = React.createClass({
   },
 
   render() {
+    let {value, focus} = this.state;
+
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value.trim(),
+      'ant-search-btn-noempty': !!value.trim(),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus,
+      'ant-search-input-focus': focus,
     });
 
     let {propKey, propName} = this.props;
@@ -74,10 +76,7 @@ const SearchBox = React.createClass({
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}>
           {this.state.data.map((item, index) =>
-            <Option
-              key={index}
-              value={propKey ? item[propKey] : item.name}
-            >
+            <Option key={index} value={propKey ? item[propKey] : item.name}>
               {propName ? item[propName] : item.name}
             </Option>)
           }

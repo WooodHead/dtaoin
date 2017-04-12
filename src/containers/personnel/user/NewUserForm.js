@@ -3,7 +3,7 @@ import {message, Form, Row, Col, Input, Select, Radio, Button, Collapse} from 'a
 import UploadComponent from '../../../components/base/BaseUpload';
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
-import Qiniu from '../../../components/UploadQiniu';
+import Qiniu from '../../../components/widget/UploadQiniu';
 import validator from '../../../utils/validator';
 import FormValidator from '../../../utils/FormValidator';
 
@@ -46,49 +46,30 @@ class NewUserForm extends UploadComponent {
     };
 
     [
-      'handleNextStep',
       'handleSubmit',
       'renderImage',
     ].map(method => this[method] = this[method].bind(this));
   }
 
-  componentDidMount() {
-    this.getNewUserId();
-    this.getNewCaId(0);
-  }
-
-  handleNextStep(e) {
-    e.preventDefault();
-    this.handleSubmit(e, 'NEXT');
-  }
-
-  handleSubmit(e, action) {
+  handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
-        message.error(validator.hasError);
+        message.error(validator.text.hasError);
         return;
       }
+
       values.user_ca_info = JSON.stringify(this.assembleCertificates(values));
 
       api.ajax({
         url: this.state.isNew ? api.user.add() : api.user.edit(),
         type: 'POST',
         data: values,
-      }, function () {
+      }, (data) => {
         message.success(this.state.isNew ? '员工信息添加成功!' : '员工信息修改成功!');
-        if (action === 'NEXT') {
-          this.setState({isNew: false});
-          this.props.onSuccess({
-            currentStep: this.props.nextStep,
-            basicInfoForm: 'hide',
-            positionAndSalaryForm: '',
-          });
-        } else {
-          this.props.cancelModal();
-          location.reload();
-        }
-      }.bind(this));
+        this.props.updateState({userId: data.res.user_id});
+        this.props.onSuccess();
+      });
     });
   }
 
@@ -108,7 +89,7 @@ class NewUserForm extends UploadComponent {
       }
 
       let caObj = {
-        _id: this.state[caIdProp],
+        _id: this.state[caIdProp] || 0,
         name: formData[caNameProp],
         user_certificate_pic: this.state[caPicKeyProp],
       };
@@ -122,7 +103,6 @@ class NewUserForm extends UploadComponent {
 
   addCertificate() {
     certificateIndex++;
-    this.getNewCaId(certificateIndex);
 
     const {form} = this.props;
 
@@ -166,36 +146,19 @@ class NewUserForm extends UploadComponent {
     });
   }
 
-  getNewUserId() {
-    api.ajax({url: api.user.genNewId()}, function (data) {
-      let userId = data.res.user_id;
-      this.setState({userId: userId});
-      this.props.onSuccess({userId: userId});
-    }.bind(this));
-  }
-
-  getNewCaId(index) {
-    api.ajax({url: api.user.genCaNewId()}, function (data) {
-      let caIdProp = `user_ca_id_${index}`;
-      this.setState({[caIdProp]: data.res.user_ca_id});
-    }.bind(this));
-  }
-
   render() {
     const FormItem = Form.Item;
     const Option = Select.Option;
     const RadioGroup = Radio.Group;
     const Panel = Collapse.Panel;
-    const {formItem12, formItemFour, selectStyle} = Layout;
+    const {formItemFour, selectStyle, formItemLayout_1014} = Layout;
 
     const {getFieldDecorator, getFieldValue} = this.props.form;
     getFieldDecorator('keys', {
       initialValue: [0],
     });
 
-    let {
-      userId,
-    } = this.state;
+    let {userId} = this.state;
 
     const certificateItems = getFieldValue('keys').map((k) => {
       let userCaIdProp = `user_ca_id_${k}`,
@@ -211,11 +174,13 @@ class NewUserForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="证件照" {...formItemFour}>
-              <Qiniu prefix={`user_certificate_pic_${k}`}
-                     saveKey={this.handleKey.bind(this)}
-                     source={api.user.getCaUploadToken(this.state[userCaIdProp], 'user_certificate_pic')}
-                     onDrop={this.onDrop.bind(this, `user_certificate_pic_${k}`)}
-                     onUpload={this.onUpload.bind(this, `user_certificate_pic_${k}`)}>
+              <Qiniu
+                prefix={`user_certificate_pic_${k}`}
+                saveKey={this.handleKey.bind(this)}
+                source={api.system.getPrivatePicUploadToken(this.state[userCaIdProp], 'user_certificate_pic')}
+                onDrop={this.onDrop.bind(this, `user_certificate_pic_${k}`)}
+                onUpload={this.onUpload.bind(this, `user_certificate_pic_${k}`)}
+              >
                 {this.renderImage(`user_certificate_pic_${k}`)}
               </Qiniu>
             </FormItem>
@@ -236,25 +201,8 @@ class NewUserForm extends UploadComponent {
       );
     });
 
-    const emergencyPhone = getFieldDecorator('emergency_phone', {
-      validate: [{
-        rules: [{validator: FormValidator.validatePhone}],
-        trigger: ['onBlur'],
-      }, {
-        rules: [{required: false, message: validator.required.phone}],
-        trigger: 'onBlur',
-      }],
-    });
-
-    const emailProps = getFieldDecorator('email', {
-      validate: [{
-        rules: [{type: 'email', message: validator.text.email}],
-        trigger: ['onBlur', 'onChange'],
-      }],
-    });
-
     return (
-      <Form horizontal>
+      <Form className="form-collapse">
         {getFieldDecorator('_id', {initialValue: userId})(
           <Input type="hidden"/>
         )}
@@ -263,12 +211,9 @@ class NewUserForm extends UploadComponent {
           <Panel header="员工信息" key="1">
             <Row type="flex">
               <Col span={6}>
-                <FormItem label="姓名" {...formItemFour} required>
+                <FormItem label="姓名" {...formItemLayout_1014}>
                   {getFieldDecorator('name', {
-                    rules: [{
-                      required: true,
-                      message: validator.required.name,
-                    }, {validator: FormValidator.validateName}],
+                    rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
                     <Input placeholder="请输入姓名"/>
@@ -276,8 +221,12 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="性别" {...formItemFour} required>
-                  {getFieldDecorator('gender', {initialValue: '1'})(
+                <FormItem label="性别" {...formItemLayout_1014}>
+                  {getFieldDecorator('gender', {
+                    initialValue: '1',
+                    rules: FormValidator.getRuleNotNull(),
+                    validateTrigger: 'onBlur',
+                  })(
                     <RadioGroup>
                       <Radio key="1" value="1">男士</Radio>
                       <Radio key="0" value="0">女士</Radio>
@@ -286,25 +235,19 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="手机" {...formItemFour} required>
+                <FormItem label="手机" {...formItemLayout_1014}>
                   {getFieldDecorator('phone', {
-                    rules: [{
-                      required: true,
-                      message: validator.required.phone,
-                    }, {validator: FormValidator.validatePhone}],
+                    rules: FormValidator.getRulePhoneNumber(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input type="number" placeholder="请输入手机号"/>
+                    <Input placeholder="请输入手机号"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="身份证号" {...formItemFour} required>
+                <FormItem label="身份证号" {...formItemLayout_1014}>
                   {getFieldDecorator('id_card', {
-                    rules: [{
-                      required: true,
-                      message: validator.required.idCard,
-                    }, {validator: FormValidator.validateIdCard}],
+                    rules: FormValidator.getRuleIDCard(),
                     validateTrigger: 'onBlur',
                   })(
                     <Input placeholder="请输入身份证号"/>
@@ -315,21 +258,21 @@ class NewUserForm extends UploadComponent {
 
             <Row type="flex">
               <Col span={6}>
-                <FormItem label="民族" {...formItemFour}>
+                <FormItem label="民族" {...formItemLayout_1014}>
                   {getFieldDecorator('nation')(
                     <Input placeholder="请输入民族"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="籍贯" {...formItemFour}>
+                <FormItem label="籍贯" {...formItemLayout_1014}>
                   {getFieldDecorator('native_place')(
                     <Input placeholder="请输入籍贯"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={12}>
-                <FormItem label="通讯地址" {...formItem12}>
+                <FormItem label="通讯地址" labelCol={{span: 5}} wrapperCol={{span: 19}}>
                   {getFieldDecorator('address')(
                     <Input placeholder="请输入其他介绍人"/>
                   )}
@@ -339,7 +282,7 @@ class NewUserForm extends UploadComponent {
 
             <Row type="flex">
               <Col span={6}>
-                <FormItem label="学历" {...formItemFour}>
+                <FormItem label="学历" {...formItemLayout_1014}>
                   {getFieldDecorator('degree', {initialValue: '本科'})(
                     <Select
                       {...selectStyle}>
@@ -350,37 +293,44 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="学校" {...formItemFour}>
+                <FormItem label="学校" {...formItemLayout_1014}>
                   {getFieldDecorator('school')(
                     <Input placeholder="请输入学校"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="专业" {...formItemFour}>
+                <FormItem label="专业" {...formItemLayout_1014}>
                   {getFieldDecorator('major')(
                     <Input placeholder="请输入专业"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="邮箱" {...formItemFour}>
-                  <Input {...emailProps} placeholder="请输入邮箱"/>
+                <FormItem label="邮箱" {...formItemLayout_1014}>
+                  {getFieldDecorator('email')(
+                    <Input type="email" placeholder="请输入邮箱"/>
+                  )}
                 </FormItem>
               </Col>
             </Row>
 
             <Row type="flex">
               <Col span={6}>
-                <FormItem label="紧急联系人" {...formItemFour}>
+                <FormItem label="紧急联系人" {...formItemLayout_1014}>
                   {getFieldDecorator('emergency_contact')(
                     <Input placeholder="请输入紧急联系人"/>
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="联系人电话" {...formItemFour}>
-                  <Input {...emergencyPhone} placeholder="请输入联系人电话"/>
+                <FormItem label="联系人电话" {...formItemLayout_1014}>
+                  {getFieldDecorator('emergency_phone', {
+                    rules: FormValidator.getRulePhoneNumber(false),
+                    validatorTrigger: 'onBlur',
+                  })(
+                    <Input placeholder="请输入联系人电话"/>
+                  )}
                 </FormItem>
               </Col>
             </Row>
@@ -397,11 +347,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('id_card_front_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="id_card_front_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'id_card_front_pic')}
-                         onDrop={this.onDrop.bind(this, 'id_card_front_pic')}
-                         onUpload={this.onUpload.bind(this, 'id_card_front_pic')}>
+                  <Qiniu
+                    prefix="id_card_front_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('id_card_front_pic')}
+                    onDrop={this.onDrop.bind(this, 'id_card_front_pic')}
+                    onUpload={this.onUpload.bind(this, 'id_card_front_pic')}
+                  >
                     {this.renderImage('id_card_front_pic')}
                   </Qiniu>
                 </FormItem>
@@ -411,11 +363,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('id_card_back_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="id_card_back_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'id_card_back_pic')}
-                         onDrop={this.onDrop.bind(this, 'id_card_back_pic')}
-                         onUpload={this.onUpload.bind(this, 'id_card_back_pic')}>
+                  <Qiniu
+                    prefix="id_card_back_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('id_card_back_pic')}
+                    onDrop={this.onDrop.bind(this, 'id_card_back_pic')}
+                    onUpload={this.onUpload.bind(this, 'id_card_back_pic')}
+                  >
                     {this.renderImage('id_card_back_pic')}
                   </Qiniu>
                 </FormItem>
@@ -428,11 +382,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('registry_form_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="registry_form_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'registry_form_pic')}
-                         onDrop={this.onDrop.bind(this, 'registry_form_pic')}
-                         onUpload={this.onUpload.bind(this, 'registry_form_pic')}>
+                  <Qiniu
+                    prefix="registry_form_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('registry_form_pic')}
+                    onDrop={this.onDrop.bind(this, 'registry_form_pic')}
+                    onUpload={this.onUpload.bind(this, 'registry_form_pic')}
+                  >
                     {this.renderImage('registry_form_pic')}
                   </Qiniu>
                 </FormItem>
@@ -442,11 +398,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('id_photo_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="id_photo_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'id_photo_pic')}
-                         onDrop={this.onDrop.bind(this, 'id_photo_pic')}
-                         onUpload={this.onUpload.bind(this, 'id_photo_pic')}>
+                  <Qiniu
+                    prefix="id_photo_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('id_photo_pic')}
+                    onDrop={this.onDrop.bind(this, 'id_photo_pic')}
+                    onUpload={this.onUpload.bind(this, 'id_photo_pic')}
+                  >
                     {this.renderImage('id_photo_pic')}
                   </Qiniu>
                 </FormItem>
@@ -456,11 +414,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('health_form_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="health_form_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'health_form_pic')}
-                         onDrop={this.onDrop.bind(this, 'health_form_pic')}
-                         onUpload={this.onUpload.bind(this, 'health_form_pic')}>
+                  <Qiniu
+                    prefix="health_form_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('health_form_pic')}
+                    onDrop={this.onDrop.bind(this, 'health_form_pic')}
+                    onUpload={this.onUpload.bind(this, 'health_form_pic')}
+                  >
                     {this.renderImage('health_form_pic')}
                   </Qiniu>
                 </FormItem>
@@ -473,11 +433,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('labor_contract_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="labor_contract_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'labor_contract_pic')}
-                         onDrop={this.onDrop.bind(this, 'labor_contract_pic')}
-                         onUpload={this.onUpload.bind(this, 'labor_contract_pic')}>
+                  <Qiniu
+                    prefix="labor_contract_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('labor_contract_pic')}
+                    onDrop={this.onDrop.bind(this, 'labor_contract_pic')}
+                    onUpload={this.onUpload.bind(this, 'labor_contract_pic')}
+                  >
                     {this.renderImage('labor_contract_pic')}
                   </Qiniu>
                 </FormItem>
@@ -487,11 +449,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('leaving_certificate_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="leaving_certificate_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'leaving_certificate_pic')}
-                         onDrop={this.onDrop.bind(this, 'leaving_certificate_pic')}
-                         onUpload={this.onUpload.bind(this, 'leaving_certificate_pic')}>
+                  <Qiniu
+                    prefix="leaving_certificate_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('leaving_certificate_pic')}
+                    onDrop={this.onDrop.bind(this, 'leaving_certificate_pic')}
+                    onUpload={this.onUpload.bind(this, 'leaving_certificate_pic')}
+                  >
                     {this.renderImage('leaving_certificate_pic')}
                   </Qiniu>
                 </FormItem>
@@ -501,11 +465,13 @@ class NewUserForm extends UploadComponent {
                   {getFieldDecorator('pay_card_pic')(
                     <Input type="hidden"/>
                   )}
-                  <Qiniu prefix="pay_card_pic"
-                         saveKey={this.handleKey.bind(this)}
-                         source={api.user.getUploadToken(userId, 'pay_card_pic')}
-                         onDrop={this.onDrop.bind(this, 'pay_card_pic')}
-                         onUpload={this.onUpload.bind(this, 'pay_card_pic')}>
+                  <Qiniu
+                    prefix="pay_card_pic"
+                    saveKey={this.handleKey.bind(this)}
+                    source={api.system.getPrivatePicUploadToken('pay_card_pic')}
+                    onDrop={this.onDrop.bind(this, 'pay_card_pic')}
+                    onUpload={this.onUpload.bind(this, 'pay_card_pic')}
+                  >
                     {this.renderImage('pay_card_pic')}
                   </Qiniu>
                 </FormItem>
@@ -514,10 +480,10 @@ class NewUserForm extends UploadComponent {
           </Panel>
         </Collapse>
 
-        <FormItem className="center mt30 mb14">
-          <Button type="primary" className="mr15" onClick={this.handleNextStep}>下一步</Button>
-          <Button type="ghost" onClick={this.handleSubmit}>保存退出</Button>
-        </FormItem>
+        <div className="form-action-container">
+          <Button size="large" type="primary" className="mr10" onClick={this.handleSubmit}>提交</Button>
+          <Button size="large" type="ghost" onClick={this.props.cancelModal}>取消</Button>
+        </div>
       </Form>
     );
   }

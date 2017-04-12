@@ -21,7 +21,7 @@ class FireUserModal extends BaseModal {
       data: formData,
     }, () => {
       this.hideModal();
-      location.reload();
+      this.props.onSuccess();
     });
   }
 
@@ -29,18 +29,15 @@ class FireUserModal extends BaseModal {
     const FormItem = Form.Item;
     let {formItemLayout} = Layout;
     let {getFieldDecorator} = this.props.form;
-    let {user} = this.props;
+    let {user, size, disabled} = this.props;
 
     return (
       <span>
-        <Button
-          type="ghost"
-          onClick={this.showModal}
-          size="small"
-          className="mr15"
-          disabled={this.props.disabled}>
-          离职
-        </Button>
+        {size === 'small' ?
+          <a href="javascript:;" onClick={this.showModal} disabled={disabled}>离职</a> :
+          <Button onClick={this.showModal} disabled={disabled}>离职</Button>
+        }
+
         <Modal
           title={<span><Icon type="plus"/> 离职</span>}
           visible={this.state.visible}
@@ -48,7 +45,7 @@ class FireUserModal extends BaseModal {
           onCancel={this.hideModal}
           maskClosable={false}>
 
-          <Form horizontal>
+          <Form>
             <FormItem label="姓名" {...formItemLayout}>
               {getFieldDecorator('name', {initialValue: user.name})(
                 <Input placeholder="请输入姓名" disabled/>
@@ -63,7 +60,7 @@ class FireUserModal extends BaseModal {
 
             <FormItem label="离职时间" {...formItemLayout}>
               {getFieldDecorator('fire_date', {initialValue: formatter.getMomentDate()})(
-                <DatePicker />
+                <DatePicker allowClear={false}/>
               )}
             </FormItem>
           </Form>

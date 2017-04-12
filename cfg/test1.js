@@ -6,20 +6,12 @@ let _ = require('lodash');
 
 let baseConfig = require('./base');
 
-// Add needed plugins here
-let BowerWebpackPlugin = require('bower-webpack-plugin');
-
 let config = _.merge({
   entry: [
     './src/index'
   ],
   cache: true,
   devtool: 'sourcemap',
-  plugins: [
-    new BowerWebpackPlugin({
-      searchResolveModulesDirectories: false
-    })
-  ]
 }, baseConfig);
 
 // Add needed loaders

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {Modal, Button, Table} from 'antd';
+import {Modal, Table} from 'antd';
+
+import api from '../../middleware/api';
 import text from '../../config/text';
 
 export default class MemberDetailModal extends Component {
@@ -8,6 +10,7 @@ export default class MemberDetailModal extends Component {
     this.state = {
       visible: false,
     };
+
     [
       'checkDetails',
       'showModal',
@@ -39,17 +42,11 @@ export default class MemberDetailModal extends Component {
   }
 
   render() {
-    // let {detail} = this.props;
-    // let {content} = this.props;
-    // console.log('------detail', detail);
-    // let ifDisabled = Number(detail.status) === 3;
+    let userInfo = api.getLoginUser();
     let {memberDetail} = this.props;
-
-    //console.log('------------memberDetail', memberDetail);
 
     const columns = [{
       title: '序号',
-      width: '5%',
       dataIndex: 'id',
       key: 'id',
       render(value, record, index) {
@@ -57,31 +54,26 @@ export default class MemberDetailModal extends Component {
       },
     }, {
       title: '优惠名称',
-      width: '15%',
       dataIndex: 'coupon_item_name',
       key: 'coupon_item_name',
     }, {
       title: '适用门店',
-      width: '20%',
       dataIndex: 'scope',
       key: 'scope',
       render(value) {
-        return text.applicableStore[Number(value)];
+        return Number(value) === 0 ? '通店' : userInfo.companyName;
       },
     }, {
       title: '描述',
-      width: '20%',
       dataIndex: 'coupon_item_remark',
       key: 'coupon_item_remark',
     }, {
       title: '优惠类型',
-      width: '10%',
       render(value, record) {
         return text.couponType[record.coupon_item_info.type] + '优惠';
       },
     }, {
       title: '剩余数量',
-      width: '5%',
       dataIndex: 'amount',
       key: 'amount',
       render(value, record) {
@@ -95,7 +87,6 @@ export default class MemberDetailModal extends Component {
       },
     }, {
       title: '总数',
-      width: '5%',
       dataIndex: 'total',
       key: 'total',
       render(value, record) {
@@ -109,18 +100,17 @@ export default class MemberDetailModal extends Component {
       },
     }];
 
-
     return (
-      <div className="margin-left-20" style={{display: 'inline-block'}}>
-        <Button type="dashed" size="small" onClick={this.checkDetails}>查看详情</Button>
+      <div className="ml20" style={{display: 'inline-block'}}>
+        <a href="javascript:;" onClick={this.checkDetails}>预览</a>
         <Modal
-          width={800}
           title="详情信息"
           visible={this.state.visible}
+          width={1000}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Table dataSource={memberDetail} columns={columns} pagination={false}/>
+          <Table dataSource={memberDetail} columns={columns} pagination={false} size="small"/>
         </Modal>
       </div>
     );

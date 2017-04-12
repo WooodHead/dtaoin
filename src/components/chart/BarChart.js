@@ -43,6 +43,10 @@ const BarChart = React.createClass({
         minRange: 10,
         title: {
           text: unit || '',
+          style: {
+            fontSize: '14px',
+            color: '#333',
+          },
         },
       },
       plotOptions: {

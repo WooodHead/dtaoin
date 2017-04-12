@@ -1,17 +1,17 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {message, Row, Col, Form, Input, Select, Button} from 'antd';
-
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import {message, Row, Col, Form, Input, Select, Button, Alert} from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
 import FormValidator from '../../../utils/FormValidator';
 
+import TableWithPagination from '../../../components/widget/TableWithPagination';
+
 import AddPart from './AddPart';
 import EditPart from './EditPart';
 import AuthPay from './AuthPay';
 import AuthImport from './AuthImport';
+import NewSupplier from '../supplier/New';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,16 +19,17 @@ const Option = Select.Option;
 class New extends React.Component {
   constructor(props) {
     super(props);
-    let id = props.location.query.id;
 
+    let {id} = props.location.query;
     this.state = {
       isNew: !id,
       id: id || 0,
       page: 1,
+      intentionValid: !!id || false,
       suppliers: [],
       oldItemIdSet: new Set(),
       delItemIdSet: new Set(),
-      partSet: new Set(), // 新增或编辑时的配件集合
+      itemSet: new Set(), // 新增或编辑时的配件集合
       detail: {},
       total: 0,
     };
@@ -37,7 +38,9 @@ class New extends React.Component {
       'handlePartAdd',
       'handlePartDelete',
       'handlePageChange',
+      'handleCheckIntention',
       'handleSubmit',
+      'handleAddSupplierSuccess',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -47,48 +50,79 @@ class New extends React.Component {
     this.getSuppliers();
     if (id) {
       this.getPurchaseDetail(id);
-      this.getPurchaseParts(id, page);
+      this.getPurchaseItems(id, page);
     }
   }
 
   handlePartAdd(part) {
-    let {partSet} = this.state;
+    let {itemSet} = this.state;
 
-    partSet.forEach(ps => {
+    itemSet.forEach(ps => {
       if (ps.part_id === part.part_id) {
-        partSet.delete(ps);
+        itemSet.delete(ps);
       }
     });
-    partSet.add(part);
+    itemSet.add(part);
 
-    this.setState({partSet});
+    this.setState({itemSet});
   }
 
   handlePartDelete(id) {
-    let {delItemIdSet, partSet} = this.state;
-    partSet.forEach(ps => {
+    let {delItemIdSet, itemSet} = this.state;
+    itemSet.forEach(ps => {
       if (ps._id === id) {
         delItemIdSet.add(id);
-        partSet.delete(ps);
+        itemSet.delete(ps);
       }
     });
-    this.setState({delItemIdSet, partSet});
+    this.setState({delItemIdSet, itemSet});
   }
 
   handlePageChange(page) {
     let {id, total} = this.state;
     this.setState({page});
     if (total) {
-      this.getPurchaseParts(id, page);
+      this.getPurchaseItems(id, page);
     }
   }
 
+  handleCheckIntention(e) {
+    let intentionId = e.target.value;
+
+    if (!intentionId) {
+      return;
+    }
+
+    api.ajax({
+      url: api.aftersales.maintProjectByProjectId(intentionId),
+    }, (data) => {
+      let detail = data.res.intention_info;
+      if (detail || Object.keys(detail).length > 0) {
+        if (String(detail.status) === '-1') {
+          this.setState({intentionValid: false});
+        } else {
+          this.setState({intentionValid: true});
+        }
+      }
+    }, () => {
+      this.setState({intentionValid: false});
+    });
+  }
+
+  handleAddSupplierSuccess(id) {
+    api.ajax({url: api.warehouse.supplier.getAll()}, data => {
+      this.setState({suppliers: data.res.list}, () => {
+        this.props.form.setFieldsValue({supplier_id: id});
+      });
+    });
+  }
+
   handleSubmit() {
-    let {id, isNew, partSet, oldItemIdSet, delItemIdSet} = this.state;
+    let {id, isNew, itemSet, oldItemIdSet, delItemIdSet} = this.state;
     let formData = this.props.form.getFieldsValue();
 
     let partArr = [];
-    Array.from(partSet).forEach(item => {
+    Array.from(itemSet).forEach(item => {
       partArr.push({
         _id: item._id.length === 17 ? item._id : '0', // TODO 如何判断是已经保存的配件，还是新添加的？
         part_id: item.part_id,
@@ -125,7 +159,7 @@ class New extends React.Component {
       data: formData,
     }, data => {
       message.success('进货单保存成功');
-      this.setState({detail: data.res.detail});
+      location.href = `/warehouse/purchase/edit?id=${data.res.detail._id}`;
     });
   }
 
@@ -146,21 +180,21 @@ class New extends React.Component {
     });
   }
 
-  getPurchaseParts(id, page) {
-    api.ajax({url: api.warehouse.purchase.parts(id, page)}, data => {
+  getPurchaseItems(id, page) {
+    api.ajax({url: api.warehouse.purchase.items(id, page)}, data => {
       let {list, total} = data.res;
 
       let oldItemIdSet = new Set();
-      let partSet = new Set();
+      let itemSet = new Set();
 
       list.map(item => {
         oldItemIdSet.add(item._id);
-        partSet.add(item);
+        itemSet.add(item);
       });
 
       this.setState({
         oldItemIdSet,
-        partSet,
+        itemSet,
         total: parseInt(total),
       });
     });
@@ -174,11 +208,18 @@ class New extends React.Component {
 
   render() {
     const {formItemThree, selectStyle} = Layout;
-    const {getFieldDecorator, getFieldValue} = this.props.form;
+    let {getFieldDecorator, getFieldValue} = this.props.form;
+    let {
+      isNew,
+      intentionValid,
+      page,
+      total,
+      itemSet,
+      detail,
+      suppliers,
+    } = this.state;
 
-    let {page, total, partSet, detail, suppliers} = this.state;
-
-    let parts = Array.from(partSet);
+    let parts = Array.from(itemSet);
 
     let self = this;
     let columns = [
@@ -208,6 +249,10 @@ class New extends React.Component {
         dataIndex: 'brand',
         key: 'brand',
       }, {
+        title: '规格',
+        key: 'spec',
+        render: (value, record) => `${record.spec || ''}${record.unit || ''}`,
+      },{
         title: '库存数量',
         dataIndex: 'remain_amount',
         key: 'remain_amount',
@@ -258,18 +303,22 @@ class New extends React.Component {
 
     return (
       <div>
+        {getFieldValue('type') === '1' && getFieldValue('intention_id') && !intentionValid ?
+          <Alert type="error" message="维保记录不存在，请检查工单号" showIcon/> : null
+        }
+
         <Row className="mb15">
-          <Col span={18}>
+          <Col span={20}>
             <h4 className="mb10">基本信息</h4>
 
-            <Form horizontal>
+            <Form>
               <Row>
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7} lg={7} sm={12}>
                   <FormItem label="采购类型" {...formItemThree}>
                     {getFieldDecorator('type', {
                       initialValue: detail.type || '0',
                     })(
-                      <Select {...selectStyle}>
+                      <Select {...selectStyle} disabled={!isNew}>
                         <Option value="0">常规采购</Option>
                         <Option value="1">临时采购</Option>
                       </Select>
@@ -278,28 +327,21 @@ class New extends React.Component {
                 </Col>
 
                 {getFieldValue('type') === '1' ?
-                  <Col span={8} lg={8} sm={12}>
+                  <Col span={7} lg={7} sm={12}>
                     <FormItem label="工单号" {...formItemThree}>
                       {getFieldDecorator('intention_id', {
                         initialValue: detail.intention_id,
                         rules: FormValidator.getRuleNotNull(),
                         validateTrigger: 'onBlur',
+                        onChange: this.handleCheckIntention,
                       })(
-                        <Input style={{width: '80%'}} placeholder="填写工单号"/>
+                        <Input placeholder="填写工单号" disabled={!isNew}/>
                       )}
-                      <span className="ml15">
-                        <Link to={{
-                          pathname: '/aftersales/project/detail',
-                          query: {id: detail.intention_id || getFieldValue('intention_id')},
-                        }} target="_blank">
-                          查看
-                        </Link>
-                      </span>
                     </FormItem>
                   </Col> : null
                 }
 
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7} lg={7} sm={12}>
                   <FormItem label="供应商" {...formItemThree}>
                     {getFieldDecorator('supplier_id', {
                       initialValue: detail.supplier_id,
@@ -308,28 +350,36 @@ class New extends React.Component {
                         showSearch
                         optionFilterProp="children"
                         {...selectStyle}
-                        placeholder="选择供应商">
+                        placeholder="选择供应商"
+                        notFoundContent="未找到"
+                      >
                         {suppliers.map(supplier => <Option key={supplier._id}>{supplier.supplier_company}</Option>)}
                       </Select>
                     )}
                   </FormItem>
                 </Col>
+
+                <Col span={3} lg={3} sm={12}>
+                  <span className="ml20">
+                    <NewSupplier onSuccess={this.handleAddSupplierSuccess}/>
+                  </span>
+                </Col>
               </Row>
 
               <Row>
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7} lg={7} sm={12}>
                   <FormItem label="运费" {...formItemThree}>
                     {getFieldDecorator('freight', {
-                      initialValue: detail.freight,
+                      initialValue: detail.freight || '',
                     })(
                       <Input addonAfter="元" placeholder="输入运费"/>
                     )}
                   </FormItem>
                 </Col>
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7} lg={7} sm={12}>
                   <FormItem label="物流公司" {...formItemThree}>
                     {getFieldDecorator('logistics', {
-                      initialValue: detail.logistics,
+                      initialValue: detail.logistics || '',
                     })(
                       <Input placeholder="输入物流公司"/>
                     )}
@@ -338,7 +388,7 @@ class New extends React.Component {
               </Row>
 
               <Row>
-                <Col span={8} lg={8}>
+                <Col span={7} lg={7}>
                   <FormItem label="备注" {...formItemThree}>
                     {getFieldDecorator('remark', {
                       initialValue: detail.remark,
@@ -351,7 +401,7 @@ class New extends React.Component {
             </Form>
           </Col>
 
-          <Col span={6}>
+          <Col span={4}>
             <div className="pull-right">
               <span className="mr5">
                 <AuthPay
@@ -372,7 +422,7 @@ class New extends React.Component {
               <Button
                 type="primary"
                 onClick={this.handleSubmit}
-                disabled={parts.length === 0}
+                disabled={parts.length === 0 || getFieldValue('type') === '1' && !intentionValid}
               >
                 保存
               </Button>

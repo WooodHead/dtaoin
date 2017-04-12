@@ -193,7 +193,7 @@ class AdjustmentRateModal extends BaseModal {
           onCancel={this.hideModal}
           onOk={this.handleSubmit}
           maskClosable={false}>
-          <Form horizontal>
+          <Form>
             <Collapse defaultActiveKey={['1', '2']}>
               <Panel header="分成比例(%)" key="1">
                 <Row>

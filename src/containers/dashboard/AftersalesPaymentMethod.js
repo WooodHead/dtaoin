@@ -32,7 +32,7 @@ export default class AftersalesPaymentMethod extends Component {
           data={payment}
           element="元"
         />
-        <p>*实收金额=营业额+会员销售-挂账金额</p>
+        <p className="font-size-14">*实收金额=营业额+会员销售-挂账金额</p>
       </Card>
     );
   }

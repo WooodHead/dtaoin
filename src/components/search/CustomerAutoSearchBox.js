@@ -2,7 +2,8 @@ import React from 'react';
 import {Input, Select, Button, Icon} from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
-import NewCustomerAutoModal from '../modals/aftersales/NewCustomerAutoModal';
+
+import NewCustomerAutoModal from '../../containers/auto/NewCustomerAutoModal';
 
 const Option = Select.Option;
 
@@ -47,14 +48,10 @@ class CustomerAutoSearchBox extends React.Component {
         return false;
       }
 
-      api.ajax({url: api.searchCustomerAutos(key)}, (data) => {
+      api.ajax({url: api.presales.searchCustomerAutos(key)}, (data) => {
         let list = data.res.list;
         if (list.length > 0) {
-          // filter data: {_id: null, ...}
-          list = list.filter(item => {
-            return item._id != null;
-          });
-
+          list = list.filter(item => item._id != null);
           this.setState({data: list});
         } else {
           this.setState({data: []});
@@ -106,7 +103,7 @@ class CustomerAutoSearchBox extends React.Component {
             placeholder={this.props.placeholder}
             size="large"
           >
-            {this.state.data.map((item) =>
+            {data.map((item) =>
               <Option key={item._id + ''}>
                 {item.customer_name} {item.customer_phone} {item.plate_num}
               </Option>)
@@ -122,6 +119,7 @@ class CustomerAutoSearchBox extends React.Component {
                 inputValue={value}
                 onSuccess={this.handleOnSuccess}
                 size="default"
+                required={true}
               />
               :
               <Button className={btnCls} size="large">

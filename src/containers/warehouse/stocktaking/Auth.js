@@ -4,8 +4,8 @@ import {Row, Col, Input, Badge} from 'antd';
 import AuthImport from './AuthImport';
 
 import api from '../../../middleware/api';
-import DateFormatter from '../../../utils/DateFormatter';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import path from '../../../config/path';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 export default class Auth extends React.Component {
   constructor(props) {
@@ -16,6 +16,7 @@ export default class Auth extends React.Component {
       detail: {},
       parts: [],
       total: 0,
+      hasPermission: false,
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
@@ -27,6 +28,12 @@ export default class Auth extends React.Component {
 
     this.getStocktakingDetail(id);
     this.getStockTakingParts(id, page);
+    this.checkPermission(path.warehouse.stocktaking.auth);
+  }
+
+  async checkPermission(path) {
+    let hasPermission = await api.checkPermission(path);
+    this.setState({hasPermission});
   }
 
   handlePageChange(page) {
@@ -58,7 +65,7 @@ export default class Auth extends React.Component {
   }
 
   render() {
-    let {page, total, parts, detail, remark} = this.state;
+    let {page, total, parts, detail, remark, hasPermission} = this.state;
 
     let columns = [
       {
@@ -127,7 +134,7 @@ export default class Auth extends React.Component {
         className: 'text-right',
       }];
 
-    if (String(detail.authorize_user_id) === '0') {
+    if (!hasPermission && String(detail.authorize_user_id) === '0') {
       return <h5 className="center text-red">您无权限查看，请先授权</h5>;
     }
 
@@ -148,38 +155,38 @@ export default class Auth extends React.Component {
         <Row type="flex" gutter={16}>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘点时间：</span>
-            <span>{DateFormatter.day(detail.authorize_time)}</span>
+            <span className="line-height32-middle">{detail.stocktaking_time}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘点人：</span>
-            <span>{detail.stocktaking_user_name}</span>
+            <span className="line-height32-middle">{detail.stocktaking_user_name}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘亏数：</span>
-            <span>{detail.pankui_amount}</span>
+            <span className="line-height32-middle">{detail.pankui_amount}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘亏金额：</span>
-            <span>{detail.pankui_worth}</span>
+            <span className="line-height32-middle">{detail.pankui_worth}</span>
           </Col>
         </Row>
 
         <Row type="flex" gutter={16}>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘盈数：</span>
-            <span>{detail.panying_amount}</span>
+            <span className="line-height32-middle">{detail.panying_amount}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘盈金额：</span>
-            <span>{detail.panying_worth}</span>
+            <span className="line-height32-middle">{detail.panying_worth}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘前总值：</span>
-            <span>{detail.panqian_worth}</span>
+            <span className="line-height32-middle">{detail.panqian_worth}</span>
           </Col>
           <Col span={6}>
             <span className="ant-form-item-label width-80">盘后总值：</span>
-            <span>{detail.panhou_worth}</span>
+            <span className="line-height32-middle">{detail.panhou_worth}</span>
           </Col>
         </Row>
 

@@ -16,7 +16,7 @@ export default class UploadComponent extends React.Component {
   }
 
   getToken(url, fileType) {
-    api.ajax({url: url}, function (data) {
+    api.ajax({url: url}, (data) => {
       let propToken = fileType + '_token',
         propKey = fileType + '_key',
         response = data.res;
@@ -25,14 +25,36 @@ export default class UploadComponent extends React.Component {
         [propToken]: response.token,
         [propKey]: response.file_name,
       });
-    }.bind(this));
+    });
+  }
+
+  getPrivateToken(fileType) {
+    api.ajax({
+      url: api.system.getPrivatePicUploadToken(fileType),
+    }, (data) => {
+      let propToken = fileType + '_token',
+        propKey = fileType + '_key',
+        response = data.res;
+
+      this.setState({
+        [propToken]: response.token,
+        [propKey]: response.file_name,
+      });
+    });
   }
 
   getImageUrl(url, fileType) {
-    api.ajax({url: url}, function (data) {
+    api.ajax({url: url}, (data) => {
       let imgUrl = fileType + '_url';
       this.setState({[imgUrl]: data.res.url});
-    }.bind(this));
+    });
+  }
+
+  getPrivateImageUrl(fileType, fileKey) {
+    api.ajax({url: api.system.getPrivatePicUrl(fileKey)}, (data) => {
+      let imgUrl = fileType + '_url';
+      this.setState({[imgUrl]: data.res.url});
+    });
   }
 
   onUpload(...args) {
@@ -44,7 +66,7 @@ export default class UploadComponent extends React.Component {
       self = this;
 
     files.map(function (file) {
-      file.onprogress = function (e) {
+      file.onprogress = (e) => {
         progress[file.preview] = e.percent;
         self.setState({[progPropName]: progress});
         if (e.percent === 100) {
@@ -67,8 +89,8 @@ export default class UploadComponent extends React.Component {
   handleImgError(e) {
     //获取当前是第几张图片
     e.target.src = imgLoadingFailed;
-    e.target.style.width = '100px';
-    e.target.style.height = '100px';
+    e.target.style.width = '80px';
+    e.target.style.height = '80px';
     e.target.onerror = null;
   }
 
@@ -98,7 +120,7 @@ export default class UploadComponent extends React.Component {
       <div className="center">
         {[].map.call(files, function (file, i) {
           let preview = '';
-          let uploadProgress = progress && progress[file.preview];
+          let uploadProgress = Math.round(progress && progress[file.preview]);
 
           if (/image/.test(file.type)) {
             preview = <img src={file.preview} style={{height: '90%', width: '90%'}}/>;

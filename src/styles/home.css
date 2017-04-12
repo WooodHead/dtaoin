@@ -1,0 +1,44 @@
+.shortcut {
+  height: 130px;
+  text-align: center
+}
+
+.img {
+  height: 40px;
+}
+
+.img-tip {
+  width: 7px;
+  height: 4px;
+  margin-right: 5px;
+  margin-bottom: 2px;
+}
+
+.font {
+  color: #333;
+  font-weight: bold;
+}
+
+.task-state {
+  color: #666;
+  font-size: 14px;
+}
+
+.task-state-num {
+  color: #333;
+  font-size: 36px;
+}
+
+.font-color-one {
+  color: #666;
+}
+
+.font-color-two {
+  color: #333;
+}
+
+.right-font {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}

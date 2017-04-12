@@ -1,41 +1,14 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Badge, Popconfirm} from 'antd';
+import {Badge, Popconfirm, message} from 'antd';
 
-import TableWithPagination from '../../../components/base/TableWithPagination';
 import api from '../../../middleware/api';
+
+import BaseTable from '../../../components/base/BaseTable';
 
 import AuthPay from './AuthPay';
 
-export default class Table extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: [],
-      total: 0,
-      isFetching: false,
-    };
-
-    [
-      'handlePageChange',
-      'handleCancel',
-      'getList',
-    ].map(method => this[method] = this[method].bind(this));
-  }
-
-  componentDidMount() {
-    this.getList(this.props.source);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.source != nextProps.source) {
-      this.getList(nextProps.source);
-    }
-  }
-
-  handlePageChange(page) {
-    this.props.updateState({page});
-  }
+export default class Table extends BaseTable {
 
   handleCancel(id) {
     api.ajax({
@@ -43,27 +16,15 @@ export default class Table extends React.Component {
       url: api.warehouse.purchase.cancel(),
       data: {purchase_id: id},
     }, () => {
-    });
-  }
-
-  getList(source) {
-    this.setState({isFetching: true});
-    api.ajax({url: source}, (data) => {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total), isFetching: false});
+      message.success('取消成功');
+      location.href = '/warehouse/purchase/index';
     });
   }
 
   render() {
-    let {list, total, isFetching} = this.state;
-
     let self = this;
     const columns = [
       {
-        title: '单号',
-        dataIndex: '_id',
-        key: '_id',
-      }, {
         title: '开单时间',
         dataIndex: 'ctime',
         key: 'ctime',
@@ -124,7 +85,7 @@ export default class Table extends React.Component {
         dataIndex: 'arrival_time',
         key: 'arrival_time',
         className: 'center',
-        render: value => value.indexOf('0000') > -1 ? null : value,
+        render: value => value.indexOf('0000') > -1 ? '--' : value,
       }, {
         title: '结算状态',
         dataIndex: 'pay_status_name',
@@ -145,7 +106,7 @@ export default class Table extends React.Component {
         dataIndex: 'pay_time',
         key: 'pay_time',
         className: 'center',
-        render: value => value.indexOf('0000') > -1 ? null : value,
+        render: value => value.indexOf('0000') > -1 ? '--' : value,
       }, {
         title: '操作',
         dataIndex: '_id',
@@ -158,9 +119,10 @@ export default class Table extends React.Component {
             case '0': // 未入库
               return (
                 <span>
-                  <span className="mr10">
-                    <Link to={{pathname: '/warehouse/purchase/edit', query: {id}}}>编辑</Link>
-                  </span>
+                  <Link to={{pathname: '/warehouse/purchase/edit', query: {id}}}>编辑</Link>
+
+                  <span className="ant-divider"/>
+
                   <Popconfirm
                     placement="topRight"
                     title="你确定要取消该进货单吗，取消后不可恢复"
@@ -173,32 +135,23 @@ export default class Table extends React.Component {
             case '1': // 已入库
               return (
                 <span>
-                  <span className="mr10">
-                    <Link to={{pathname: '/warehouse/purchase/detail', query: {id}}}>查看</Link>
-                  </span>
+                  <Link to={{pathname: '/warehouse/purchase/detail', query: {id}}}>查看</Link>
 
-                  {payStatus === '2' ? null : <AuthPay id={id} detail={record} size="small"/>}
+                  {payStatus === '2' ? null :
+                    <span>
+                      <span className="ant-divider"/>
+                      <AuthPay id={id} detail={record} size="small"/>
+                    </span>
+                  }
                 </span>
               );
             default: // -1 已取消
-              return (
-                <span className="mr10">
-                  <Link to={{pathname: '/warehouse/purchase/detail', query: {id}}}>查看</Link>
-                </span>
-              );
+              return <Link to={{pathname: '/warehouse/purchase/detail', query: {id}}}>查看</Link>;
           }
         },
       },
     ];
-    return (
-      <TableWithPagination
-        isLoading={isFetching}
-        columns={columns}
-        dataSource={list}
-        total={total}
-        currentPage={this.props.page}
-        onPageChange={this.handlePageChange}
-      />
-    );
+
+    return this.renderTable(columns);
   }
 }

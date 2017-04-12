@@ -16,7 +16,7 @@ export default class CustomerList extends BaseList {
       <Table
         updateState={this.updateState}
         currentPage={this.state.page}
-        source={api.maintCustomerList(this.state)}
+        source={api.aftersales.maintCustomerList(this.state)}
       />
     );
   }

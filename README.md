@@ -23,7 +23,7 @@ location / {
 
 // prod 环境
 location / {
-    try_files $uri /index.dist.html
+    try_files $uri /dist/index.html // 使用处理过的HTML文件
 }
 ```
 

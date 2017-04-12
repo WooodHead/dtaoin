@@ -1,12 +1,12 @@
 import React from 'react';
 import {message, Modal, Icon, Button, Form, Input, Select} from 'antd';
 
-import BaseModal from '../../../components/base/BaseModal';
-import SearchSelectBox from '../../../components/base/SearchSelectBox';
-
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
 import FormValidator from '../../../utils/FormValidator';
+
+import BaseModal from '../../../components/base/BaseModal';
+import SearchSelectBox from '../../../components/widget/SearchSelectBox';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,17 +19,36 @@ class NewPart extends BaseModal {
       types: [],
       partCategories: [],
     };
+
     [
       'handleNewPart',
-      'handleSubmit',
       'handleSearch',
       'handleSearchSelect',
+      'handleSubmit',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   handleNewPart() {
     this.getMaintainItemTypes();
     this.showModal();
+  }
+
+  handleSearch(key, successHandle, failHandle) {
+    if (!!key) {
+      api.ajax({url: api.warehouse.category.search(key)}, data => {
+        successHandle(data.res.list);
+        this.setState({partCategories: data.res.list});
+      }, (error) => {
+        failHandle(error);
+        this.setState({partCategories: []});
+      });
+    }else {
+      // failHandle('请输入搜索内容');
+    }
+  }
+
+  handleSearchSelect(data) {
+    this.setState({part_type: data._id});
   }
 
   handleSubmit() {
@@ -52,7 +71,7 @@ class NewPart extends BaseModal {
         type: 'POST',
         data: values,
       }, () => {
-        message.info('添加成功！');
+        message.success('添加成功！');
         this.props.onSuccess();
         this.props.form.resetFields();
         this.hideModal();
@@ -60,49 +79,27 @@ class NewPart extends BaseModal {
     });
   }
 
-  handleSearch(key, successHandle, failHandle) {
-    let url = api.warehouse.category.search(key);
-    api.ajax({url}, (data) => {
-      successHandle(data.res.list);
-      this.setState({partCategories: data.res.list});
-    }, (error) => {
-      failHandle(error);
-      this.setState({partCategories: []});
-    });
-  }
-
-  handleSearchSelect(data) {
-    this.setState({part_type: data._id});
-  }
-
   getMaintainItemTypes() {
-    api.ajax({url: api.getMaintainItemTypes()}, data => {
+    api.ajax({url: api.aftersales.getMaintainItemTypes()}, data => {
       this.setState({types: data.res.type_list});
     });
   }
 
   render() {
-    const {visible}=this.state;
     const {formItemLayout, selectStyle} = Layout;
     const {getFieldDecorator} = this.props.form;
+    const {visible, types}=this.state;
 
     return (
       <span>
-        <Button
-          type="primary"
-          className="mr15"
-          onClick={this.handleNewPart}
-        >
-          添加配件
-        </Button>
-
+        <Button type="primary" onClick={this.handleNewPart}>添加配件</Button>
         <Modal
           title={<span><Icon type="plus"/> 添加配件</span>}
           visible={visible}
           onCancel={this.hideModal}
           onOk={this.handleSubmit}
         >
-          <Form horizontal>
+          <Form>
             <FormItem label="配件名称" {...formItemLayout}>
               {getFieldDecorator('name', {
                 initialValue: this.props.inputValue,
@@ -140,7 +137,7 @@ class NewPart extends BaseModal {
                 validateTrigger: 'onBlur',
               })(
                 <Select{...selectStyle} placeholder="请选择产值类型">
-                  {this.state.types.map(type => <Option key={type._id}>{type.name}</Option>)}
+                  {types.map(type => <Option key={type._id}>{type.name}</Option>)}
                 </Select>
               )}
             </FormItem>
@@ -165,6 +162,7 @@ class NewPart extends BaseModal {
                       <Option value="件">件</Option>
                       <Option value="副">副</Option>
                       <Option value="根">根</Option>
+                      <Option value="条">条</Option>
                     </Select>
                   )
                 } placeholder="请输入规格"/>

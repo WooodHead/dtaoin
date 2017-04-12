@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button, Form, Input, Radio} from 'antd';
+import {message, Row, Col, Modal, Icon, Button, Form, Input, Switch} from 'antd';
 import classNames from 'classnames';
 
 import BaseModal from '../../../components/base/BaseModal';
@@ -9,7 +9,6 @@ import Layout from '../../../utils/FormLayout';
 import FormValidator from '../../../utils/FormValidator';
 
 const FormItem = Form.Item;
-const RadioGroup = Radio.Group;
 
 class Edit extends BaseModal {
   constructor(props) {
@@ -22,7 +21,7 @@ class Edit extends BaseModal {
     [
       'addItemLevel',
       'handleSubmit',
-      'handleRadioChange',
+      'handleQuoteTypeChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -51,6 +50,9 @@ class Edit extends BaseModal {
 
   handleSubmit() {
     let formData = this.props.form.getFieldsValue();
+
+    formData.quote_type = formData.quote_type ? '1' : '0';
+
     if (this.state.quoteType == 1) {
       let levels = [];
       for (let i = 0; i <= this.state.itemLevelIndex; i++) {
@@ -77,21 +79,22 @@ class Edit extends BaseModal {
       type: 'POST',
       data: formData,
     }, () => {
-      this.hideModal();
+      message.success('编辑成功');
       this.props.form.resetFields();
-      location.reload();
+      this.props.onSuccess();
+      this.hideModal();
     });
   }
 
-  handleRadioChange(e) {
-    this.setState({quoteType: e.target.value});
+  handleQuoteTypeChange(isUse) {
+    this.setState({quoteType: isUse ? '1' : '0'});
   }
 
   render() {
-    const {formItemLayout} = Layout;
+    const {formItemLayout, formItemLayout_1014} = Layout;
     const {getFieldDecorator, getFieldValue} = this.props.form;
     const {visible} = this.state;
-    const {category} = this.props;
+    const {category, disabled} = this.props;
     let categoryLevels;
     try {
       categoryLevels = JSON.parse(category.levels);
@@ -150,25 +153,17 @@ class Edit extends BaseModal {
 
     return (
       <span>
-        <Button
-          type="primary"
-          size="small"
-          disabled={this.props.disabled}
-          className="margin-left-20"
-          onClick={this.showModal}
-        >
-          编辑
-        </Button>
+        {disabled ? <span>编辑</span> : <a href="javascript:;" onClick={this.showModal}>编辑</a>}
 
         <Modal
-          title={<span><Icon type="plus" className="margin-right-10"/>编辑分类</span>}
+          title={<span><Icon type="plus" className="mr10"/>编辑分类</span>}
           visible={visible}
           width="680px"
           onOk={this.handleSubmit}
           onCancel={this.hideModal}
         >
 
-          <Form horizontal>
+          <Form>
             {getFieldDecorator('_id', {initialValue: category._id})(
               <Input type="hidden"/>
             )}
@@ -183,16 +178,14 @@ class Edit extends BaseModal {
               )}
             </FormItem>
             <Row>
-              <Col span={13} offset={1}>
-                <FormItem label="报价方式" {...formItemLayout}>
+              <Col span={14}>
+                <FormItem label="预设报价" {...formItemLayout_1014}>
                   {getFieldDecorator('quote_type', {
-                    initialValue: parseInt(category.quote_type) || 0,
-                    onChange: this.handleRadioChange,
+                    valuePropName: 'checked',
+                    initialValue: category.quote_type === '1' || false,
+                    onChange: this.handleQuoteTypeChange,
                   })(
-                    <RadioGroup>
-                      <Radio key="0" value={0}>现场报价</Radio>
-                      <Radio key="1" value={1}>预设报价</Radio>
-                    </RadioGroup>
+                    <Switch checkedChildren={'启用'} unCheckedChildren={'停用'}/>
                   )}
                 </FormItem>
               </Col>

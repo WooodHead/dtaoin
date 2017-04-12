@@ -46,21 +46,21 @@ export default class PresalesIntentionLost extends React.Component {
 
     return (
       <Card title={<span><Icon type="bar-chart"/> 流失原因</span>}>
-        <Row className="margin-bottom-20">
+        <Row className="mb20">
           <Col span={4}>
-            <span className="font-size-30 margin-right-12 margin-left-20">{carSourceCount}</span> <span>车源问题</span>
+            <span className="font-size-30 mr10 ml20">{carSourceCount}</span> <span className="font-size-14">车源问题</span>
           </Col>
 
           <Col span={4}>
-            <span className="font-size-30 margin-right-12">{priceCount}</span> <span>价格问题</span>
+            <span className="font-size-30 mr10">{priceCount}</span> <span className="font-size-14">价格问题</span>
           </Col>
 
           <Col span={4}>
-            <span className="font-size-30 margin-right-12">{mortgageCount}</span> <span>按揭问题</span>
+            <span className="font-size-30 mr10">{mortgageCount}</span> <span className="font-size-14">按揭问题</span>
           </Col>
 
           <Col span={4}>
-            <span className="font-size-30 margin-right-12">{otherCount}</span> <span>其它</span>
+            <span className="font-size-30 mr10">{otherCount}</span> <span className="font-size-14">其它</span>
           </Col>
         </Row>
         <BarChart

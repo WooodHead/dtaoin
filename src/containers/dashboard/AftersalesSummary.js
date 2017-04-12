@@ -34,19 +34,19 @@ export default class AftersalesSummary extends React.Component {
         <Col span={4}>
           <Card style={{height: '450px'}} bodyStyle={{padding: 0}} bordered={false}>
             <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getMaintainIncomeDaysData')}>
-              <p>营业额</p>
+              <p className="font-size-14">营业额</p>
               <h1>{Number(maintainIncome).toFixed(2)}</h1>
             </Card>
             <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getMaintainProfitDaysDate')}>
-              <p>毛利润</p>
+              <p className="font-size-14">毛利润</p>
               <h1>{Number(maintainProfit).toFixed(2)}</h1>
             </Card>
             <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getMaintainCountDaysData')}>
-              <p>工单数/洗车项目</p>
+              <p className="font-size-14">工单数/洗车项目</p>
               <h1>{maintainCount} / {washAndDecorationCount}</h1>
             </Card>
             <Card style={{height: '112.5px'}} onClick={this.handleChartData.bind(this, 'getPerTicketSalesDate')}>
-              <p>客单价</p>
+              <p className="font-size-14">客单价</p>
               <h1>{Number(salePerIntention).toFixed(2)}</h1>
             </Card>
           </Card>

@@ -5,12 +5,14 @@ import BaseModal from '../../../components/base/BaseModal';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
+import path from '../../../config/path';
 
 export default class AuthImport extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
+      hasPermission: false,
       detail: {},
     };
 
@@ -23,10 +25,23 @@ export default class AuthImport extends BaseModal {
     size: 'small',
   };
 
+  componentDidMount() {
+    this.checkPermission(path.warehouse.stocktaking.import);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   showAuthModal() {
     let {id} = this.props;
     this.interval = setInterval(this.getStocktakingDetail.bind(this, id), 2000);
     this.showModal();
+  }
+
+  async checkPermission(path) {
+    let hasPermission = await api.checkPermission(path);
+    this.setState({hasPermission});
   }
 
   handleCancel() {
@@ -36,9 +51,9 @@ export default class AuthImport extends BaseModal {
 
   handleImport() {
     let {id, remark} = this.props;
-    let {detail} = this.state;
+    let {hasPermission, detail} = this.state;
 
-    if (detail.authorize_user_id.toString() === '0') {
+    if (!hasPermission && String(detail.authorize_user_id) === '0') {
       message.warning('还未授权，请先授权');
       return;
     }
@@ -69,20 +84,15 @@ export default class AuthImport extends BaseModal {
     });
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   render() {
-    let {visible, detail}=this.state;
+    let {visible, hasPermission, detail}=this.state;
     let {id, type}=this.props;
     let authUserId = detail.authorize_user_id;
 
     return (
       <span>
         <Button
-          type="primary"
-          className="ant-btn-danger"
+          type="danger"
           onClick={this.showAuthModal}
         >
           审核入库
@@ -122,7 +132,7 @@ export default class AuthImport extends BaseModal {
                 <span>{detail.panhou_worth}</span>
               </div>
             </Col>
-            <Col span={12}>
+            <Col span={12} className={hasPermission ? 'hide' : null}>
               <div className="center">
                 <QRCode
                   value={JSON.stringify({

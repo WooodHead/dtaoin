@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
-import {Row, Col} from 'antd';
 
-import TableWithPagination from '../../../components/base/TableWithPagination';
-import PartBasicInfo from '../../../components/boards/aftersales/PartBasicInfo';
-import StockPartModal from './StockPartModal';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
+import PartBasicInfo from './BasicInfo';
 
 import api from '../../../middleware/api';
 
@@ -22,25 +20,25 @@ export default class Detail extends Component {
   componentDidMount() {
     let {id, page} = this.state;
     this.getPartDetail(id);
-    this.getPartEntryList(id, page);
+    this.getStockLogs(id, page);
   }
 
   handlePageChange(page) {
     this.setState({page});
-    this.getPartEntryList(this.state.id, page);
+    this.getStockLogs(this.state.id, page);
   }
 
   getPartDetail(id) {
-    api.ajax({url: api.getPartsDetail(id)}, function (data) {
+    api.ajax({url: api.warehouse.part.detail(id)}, (data) => {
       this.setState({detail: data.res.detail});
-    }.bind(this));
+    });
   }
 
-  getPartEntryList(id, page) {
-    api.ajax({url: api.getPartsEntryList(id, page)}, function (data) {
+  getStockLogs(id, page) {
+    api.ajax({url: api.warehouse.part.stockLogs(id, page)}, (data) => {
       let {list, total} = data.res;
       this.setState({list, total: parseInt(total)});
-    }.bind(this));
+    });
   }
 
   render() {
@@ -48,36 +46,32 @@ export default class Detail extends Component {
 
     const columns = [
       {
-        title: '单号',
-        dataIndex: '_id',
-        key: '_id',
-      }, {
         title: '单据',
-        dataIndex: 'action_type',
-        key: 'action_type',
+        dataIndex: 'from_type_desc',
+        key: 'from_type_desc',
       }, {
         title: '类型',
-        dataIndex: 'entry_type',
-        key: 'entry_type',
+        dataIndex: 'type_desc',
+        key: 'type_desc',
       }, {
         title: '数量',
         dataIndex: 'amount',
         key: 'amount',
       }, {
         title: '单价',
-        dataIndex: 'in_price',
-        key: 'in_price',
+        dataIndex: 'unit_price',
+        key: 'unit_price',
+        className: 'text-right',
       }, {
         title: '金额',
-        dataIndex: 'total',
-        key: 'total',
-        render(value, record) {
-          return parseFloat(record.in_price) * parseInt(record.amount);
-        },
+        dataIndex: 'total_price',
+        key: 'total_price',
+        className: 'text-right',
       }, {
-        title: '出入库日期',
-        dataIndex: 'ctime',
-        key: 'ctime',
+        title: '出入库时间',
+        dataIndex: 'mtime',
+        key: 'mtime',
+        className: 'center',
       },
     ];
 
@@ -85,19 +79,7 @@ export default class Detail extends Component {
       <div>
         <PartBasicInfo detail={detail}/>
 
-        <Row className="mt15 mb10">
-          <Col span={12}>
-            <h3>进货信息</h3>
-          </Col>
-          <Col span={12}>
-            <div className="pull-right">
-              <StockPartModal
-                isNew={false}
-                part={detail}
-              />
-            </div>
-          </Col>
-        </Row>
+        <h3 className="mt15 mb10">出入库记录</h3>
 
         <TableWithPagination
           columns={columns}

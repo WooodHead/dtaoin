@@ -1,66 +1,24 @@
-import React, {Component} from 'react';
-import {Row, Col} from 'antd';
+import React from 'react';
+
 import api from '../../middleware/api';
-import TableWithPagination from '../../components/base/TableWithPagination';
-import SearchBox from '../../components/search/SearchBox';
+import BaseTable from '../../components/base/BaseTable';
 
-import NewItem from './New';
-import EditItem from './Edit';
+import Edit from './EditNew';
 
-export default class Table extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: [],
-      isFetching: false,
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-  }
-
-  componentWillMount() {
-    this.getListData(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.getListData(nextProps);
-  }
-
-  handleSearchChange(name) {
-    this.props.updateState({name, page: 1});
-  }
-
-  handlePageChange(page) {
-    this.props.updateState({page});
-  }
-
-  refreshData() {
-    this.getListData(this.props);
-  }
-
-  getListData(props) {
-    this.setState({isFetching: true});
-    api.ajax({url: props.source}, function (data) {
-      let {item_list, total} = data.res;
-      this.setState({list: item_list, total: parseInt(total), isFetching: false});
-    }.bind(this));
-  }
-
+export default class Table extends BaseTable {
   render() {
-    let {list, total, isFetching} = this.state;
-    let USER_SESSION = sessionStorage.getItem('USER_SESSION');
-    USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
-
+    let userInfo = api.getLoginUser();
+    let self = this;
     const columns = [{
       title: '排序',
       dataIndex: 'order',
       key: 'order',
     }, {
-      title: '名称',
+      title: '项目名称',
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '类型',
+      title: '产值类型',
       dataIndex: 'type_name',
       key: 'type_name',
     }, {
@@ -71,9 +29,7 @@ export default class Table extends Component {
       render (value) {
         let ele = [];
         if (value.length > 0) {
-          value.map(function (item) {
-            ele.push(item.name);
-          });
+          value.map(item => ele.push(item.name));
         }
         return ele.join(',');
       },
@@ -87,10 +43,7 @@ export default class Table extends Component {
           let levels = JSON.parse(record.levels);
           levels.map(function (item, index) {
             ele.push(
-              <div
-                className="in-table-line"
-                key={record._id + '-' + index}
-              >
+              <div className="in-table-line" key={record._id + '-' + index}>
                 {item.name}
               </div>
             );
@@ -108,10 +61,7 @@ export default class Table extends Component {
           let levels = JSON.parse(record.levels);
           levels.map(function (item, index) {
             ele.push(
-              <div
-                className="in-table-line column-money"
-                key={record._id + '-' + index}
-              >
+              <div className="in-table-line column-money" key={record._id + '-' + index}>
                 {Number(item.price).toFixed(2)}
               </div>);
           });
@@ -122,41 +72,19 @@ export default class Table extends Component {
       title: '操作',
       key: 'option',
       className: 'center',
+      width: '5%',
       render (value, record) {
         return (
-          <div>
-            <EditItem item={record} disabled={USER_SESSION.company_id != record.company_id}/>
-          </div>
+          <Edit
+            item={record}
+            disabled={userInfo.companyId != record.company_id}
+            onSuccess={self.props.onSuccess}
+            size="small"
+          />
         );
       },
     }];
 
-    return (
-      <div>
-        <Row className="mb10">
-          <Col span={12}>
-            <SearchBox
-              change={this.handleSearchChange}
-              placeholder="请输入名称搜索"
-              style={{width: 200}}
-            />
-          </Col>
-          <Col span={12}>
-            <span className="pull-right">
-              <NewItem onSuccess={this.refreshData.bind(this)}/>
-            </span>
-          </Col>
-        </Row>
-
-        <TableWithPagination
-          isLoading={isFetching}
-          columns={columns}
-          dataSource={list}
-          total={total}
-          currentPage={this.props.currentPage}
-          onPageChange={this.handlePageChange}
-        />
-      </div>
-    );
+    return this.renderTable(columns);
   }
 }

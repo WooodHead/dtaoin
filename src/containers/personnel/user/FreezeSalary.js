@@ -36,19 +36,19 @@ export default class FreezeSalaryModal extends BaseModal {
 
   render() {
     let {size, disabled} = this.props;
+    let {visible} = this.state;
     return (
       <span>
-        <Button
-          type="ghost"
-          onClick={this.handleClick}
-          size={size || 'default'}
-          disabled={disabled}
-          className="mr15">
-          冻结工资
-        </Button>
+        {
+          size === 'small'
+            ?
+            <a href="javascript:;" onClick={this.handleClick} disabled={disabled}>冻结工资</a>
+            :
+            <Button onClick={this.handleClick} disabled={disabled}>冻结工资</Button>
+        }
         <Modal
           title={<span><Icon type="lock"/> 冻结工资</span>}
-          visible={this.state.visible}
+          visible={visible}
           onOk={this.handleSubmit}
           onCancel={this.hideModal}>
           <span>确定要冻结工资吗</span>

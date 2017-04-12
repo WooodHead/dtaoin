@@ -1,5 +1,6 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import {Input, Select, Button, Icon, message} from 'antd';
+
 import classNames from 'classnames';
 import api from '../../middleware/api';
 
@@ -9,44 +10,70 @@ class SearchBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      value: '',
+      isFetching: false,
+      isAdd: false,
       focus: false,
+      value: '',
+      data: [],
     };
+
     [
       'handleChange',
+      'handleSelect',
+      'handleAdd',
       'handleFocus',
       'handleBlur',
     ].forEach((method) => this[method] = this[method].bind(this));
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value !== this.props.value) {
+      this.setState({value: nextProps.value});
+    }
+  }
+
   handleChange(key) {
-    this.setState({value: key});
-    if (!!key) {
-      let keyType = Number(key);
-      if (isNaN(keyType) && key.length < 2) {
+    let selectValue = key;
+    if (key.indexOf('-') > -1) {
+      selectValue = key.split('-')[1];
+    }
+    this.setState({value: selectValue});
+    if (!!selectValue) {
+      let keyType = Number(selectValue);
+      if (isNaN(keyType) && selectValue.length < 2) {
         return false;
       }
       // phone number
-      if (!isNaN(keyType) && key.length < 3) {
+      if (!isNaN(keyType) && selectValue.length < 3) {
         return false;
       }
 
-      api.ajax({url: this.props.api + key}, (data) => {
-        let list = data.res.list;
+      this.setState({isFetching: true});
+      api.ajax({url: api.customer.searchCustomer(selectValue)}, (data) => {
+        let {list} = data.res;
         if (list.length > 0) {
-          this.setState({data: list});
-          this.props.change({
-            key: key,
-            list: list,
-          });
+          this.setState({isFetching: false, data: list, isAdd: false});
         } else {
-          this.setState({data: [{name: '未找到匹配客户'}]});
+          this.setState({data: [], isAdd: true});
+          this.props.onChange(selectValue);
         }
+      }, (data) => {
+        this.setState({data: [], isAdd: true});
+        message.error(data);
       });
     } else {
       this.setState({data: []});
     }
+  }
+
+  handleSelect(value) {
+    let values = value.split('-');
+    this.setState({value: values[1]});
+    this.props.onSelect(values[0]);
+  }
+
+  handleAdd() {
+    this.props.onAdd && this.props.onAdd();
   }
 
   handleFocus() {
@@ -58,13 +85,15 @@ class SearchBox extends React.Component {
   }
 
   render() {
+    let {isAdd, value, focus, data} = this.state;
+
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!(this.state.value && this.state.value.trim()),
+      'ant-search-btn-noempty': !!(value && value.trim()),
     });
     const searchCls = classNames({
       'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus,
+      'ant-search-input-focus': focus,
     });
 
     return (
@@ -72,29 +101,41 @@ class SearchBox extends React.Component {
         <Select
           size="large"
           combobox
-          value={this.state.value}
-          placeholder={this.props.placeholder}
+          value={value}
           notFoundContent="暂无信息"
-          defaultActiveFirstOption={false}
+          defaultActiveFirstOption={true}
           showArrow={false}
           filterOption={false}
           onChange={this.handleChange}
+          onSelect={this.handleSelect}
           onFocus={this.handleFocus}
-          onBlur={this.handleBlur}>
-          {
-            this.state.data.map((item, index) =>
-              <Option key={index} value={item.phone || item.customer_phone || ''}>
-                {item.name || item.customer_name} {item.phone || item.customer_phone} {item.plate_nums || item.plate_num}
-              </Option>
-            )
-          }
+          onBlur={this.handleBlur}
+          placeholder={this.props.placeholder}
+        >
+          {data.map(
+            item => <Option key={item._id} value={item._id + '-' + item.phone}>{item.name} {item.phone}</Option>
+          )}
         </Select>
         <div className="ant-input-group-wrap">
-          <Button
-            className={btnCls}
-            size="large">
-            <Icon type="search"/>
-          </Button>
+          {/*<Button className={btnCls} size="large" onClick={isAdd ? this.handleAdd : this.handleSearch}>
+           <Icon type={data.length == 0 && value.length > 1 ? 'plus' : 'search'}/>
+           </Button>*/}
+          {
+            isAdd ?
+              <Button
+                className={btnCls}
+                onClick={this.handleAdd}
+                size="large">
+                <Icon type="plus"/>
+              </Button>
+              :
+              <Button
+                className={btnCls}
+                onClick={this.handleSearch}
+                size="large">
+                <Icon type="search"/>
+              </Button>
+          }
         </div>
       </Input.Group>
     );
@@ -102,7 +143,7 @@ class SearchBox extends React.Component {
 }
 
 SearchBox.defaultProps = {
-  placeholder: '请输入车牌号、姓名或电话搜索',
+  placeholder: '请输入车牌号、电话搜索',
 };
 
 export default SearchBox;

@@ -60,10 +60,11 @@ export default class AddPart extends BaseModal {
   }
 
   render() {
+    const {formItemThree} = Layout;
+
     let {visible, price, count}=this.state;
     let {part} = this.props;
-
-    const {formItemThree} = Layout;
+    console.log('part', part);
 
     return (
       <span>
@@ -106,8 +107,8 @@ export default class AddPart extends BaseModal {
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label="产值类型" {...formItemThree}>
-              <p>{part.maintain_type_name}</p>
+            <FormItem label="规格" {...formItemThree}>
+              <p>{!!part.spec ? part.spec + part.unit : ''}</p>
             </FormItem>
           </Col>
         </Row>

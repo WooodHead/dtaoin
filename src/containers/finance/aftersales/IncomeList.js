@@ -4,7 +4,7 @@ import api from '../../../middleware/api';
 import text from '../../../config/text';
 import formatter from '../../../utils/DateFormatter';
 import BaseList from '../../../components/base/BaseList';
-import NewIncomeStatementModal from '../../../components/modals/finance/NewIncomeStatementModal';
+import NewIncomeStatementModal from './NewIncome';
 import IncomeTable from './IncomeTable';
 
 const RangePicker = DatePicker.RangePicker;
@@ -56,16 +56,17 @@ export default class MaintIncomeList extends BaseList {
       <div>
         <Row className="mb15">
           <Col span={9}>
-            <label className="margin-right-20">交易时间:</label>
+            <label className="mr20">交易时间:</label>
             <RangePicker
               showTime
               format={formatter.pattern.date}
               defaultValue={[formatter.getMomentDate(start_time), formatter.getMomentDate(end_time)]}
               onChange={this.handleTimeChange}
+              allowClear={false}
             />
           </Col>
           <Col span={9}>
-            <label className="margin-right-20">收款类型:</label>
+            <label className="mr20">收款类型:</label>
             <RadioGroup
               defaultValue={-1}
               size="large"
@@ -81,7 +82,7 @@ export default class MaintIncomeList extends BaseList {
 
         <Row className="mb15">
           <Col span={9}>
-            <label className="margin-right-20">对账状态:</label>
+            <label className="mr20">对账状态:</label>
             <RadioGroup
               defaultValue={0}
               size="large"
@@ -94,7 +95,7 @@ export default class MaintIncomeList extends BaseList {
             </RadioGroup>
           </Col>
           <Col span={9}>
-            <label className="margin-right-20">门店间结算状态:</label>
+            <label className="mr20">门店间结算状态:</label>
             <RadioGroup
               defaultValue={0} size="large"
               onChange={this.handleConditionChange.bind(this, '', 'transfer_status')}
@@ -115,7 +116,7 @@ export default class MaintIncomeList extends BaseList {
         <IncomeTable
           updateState={this.updateState}
           currentPage={this.state.page}
-          source={api.getIncomeList(this.state)}
+          source={api.finance.getIncomeList(this.state)}
         />
       </div>
     );

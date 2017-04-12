@@ -2,7 +2,7 @@ import React from 'react';
 import {Row, Col} from 'antd';
 import formatter from '../../utils/DateFormatter';
 import api from '../../middleware/api';
-import CurrentDateRangeSelector from '../../components/CurrentDateRangeSelector';
+import CurrentDateRangeSelector from '../../components/widget/CurrentDateRangeSelector';
 import text from '../../config/text';
 import PresalesSummary from './PresalesSummary';
 import PresalesIntention from './PresalesIntention';

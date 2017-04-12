@@ -2,7 +2,7 @@ import React from 'react';
 import {message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePicker} from 'antd';
 
 import UploadComponent from '../../components/base/BaseUpload';
-import Qiniu from '../../components/UploadQiniu';
+import Qiniu from '../../components/widget/UploadQiniu';
 
 import api from '../../middleware/api';
 import Layout from '../../utils/FormLayout';
@@ -79,7 +79,7 @@ class EditForm extends UploadComponent {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
-        message.error(validator.hasError);
+        message.error(validator.text.hasError);
         return;
       }
 
@@ -98,9 +98,9 @@ class EditForm extends UploadComponent {
         type: 'POST',
         data: values,
       }, function () {
-        message.success('门店添加成功');
+        message.success('编辑成功');
+        this.props.onSuccess();
         this.props.cancelModal();
-        location.reload();
       }.bind(this));
     });
   }
@@ -290,7 +290,7 @@ class EditForm extends UploadComponent {
     ];
 
     return (
-      <Form horizontal>
+      <Form>
         {getFieldDecorator('company_id', {initialValue: company._id})(
           <Input type="hidden"/>
         )}
@@ -532,7 +532,7 @@ class EditForm extends UploadComponent {
 
         {introducePics}
 
-        <FormItem className="center mt30 mb14">
+        <FormItem className="center mt30 mb15">
           <Button type="ghost" className="mr15" onClick={this.props.cancelModal}>取消</Button>
           <Button type="primary" onClick={this.handleSubmit}>提交</Button>
         </FormItem>

@@ -42,7 +42,7 @@ export default class Print extends BasePrint {
       importCSS: true,
       importStyle: true,
       printContainer: false,
-      loadCSS: '/app/dist/print.css',
+      loadCSS: '/dist/print.css',
       pageTitle: '仓库盘点单',
       removeInline: false,
       printDelay: 300,
@@ -104,13 +104,7 @@ export default class Print extends BasePrint {
 
     return (
       <span>
-        <Button
-          type="ghost"
-          className="mr5"
-          onClick={this.showPrintModal}
-        >
-          打印盘点单
-        </Button>
+        <Button type="ghost" onClick={this.showPrintModal}>打印盘点单</Button>
 
         <Modal
           title={<span><Icon type="file-text"/> 打印盘点单</span>}

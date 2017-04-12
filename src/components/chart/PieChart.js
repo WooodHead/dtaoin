@@ -41,6 +41,9 @@ const PieChart = React.createClass({
         verticalAlign: 'middle',
         x: -115,
         y: 20,
+        style: {
+          fontSize: '14px',
+        },
       },
       credits: {
         enabled: false,
@@ -71,7 +74,7 @@ const PieChart = React.createClass({
           } else {
             return this.z
               ?
-              `<table width=200px">
+              `<table width=200px" className="font-size-14">
                 <tr>
                   <td width="50px">${this.options.name}</td>
                   <td width="50px">${Number(this.percentage).toFixed(2) + '%'}</td>

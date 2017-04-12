@@ -1,10 +1,12 @@
 import React from 'react';
 import {Row, Col, Form} from 'antd';
 
-import TableWithPagination from '../../../components/base/TableWithPagination';
-
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
+
+import TableWithPagination from '../../../components/widget/TableWithPagination';
+
+import AuthPay from './AuthPay';
 
 const FormItem = Form.Item;
 
@@ -24,39 +26,43 @@ class Detail extends React.Component {
   componentDidMount() {
     let {id, page}= this.state;
 
-    this.getPurchaseDetail(id);
-    this.getPurchaseParts(id, page);
+    this.getRejectDetail(id);
+    this.getRejectItems(id, page);
   }
 
   handlePageChange(page) {
     this.setState({page});
-    this.getPurchaseParts(this.state.id, page);
+    this.getRejectItems(this.state.id, page);
   }
 
-  getPurchaseDetail(id) {
-    api.ajax({url: api.warehouse.purchase.detail(id)}, data => {
+  getRejectDetail(id) {
+    api.ajax({url: api.warehouse.reject.detail(id)}, data => {
       let {detail} = data.res;
       this.setState({detail});
     });
   }
 
-  getPurchaseParts(id, page) {
-    api.ajax({url: api.warehouse.purchase.parts(id, page)}, data => {
+  getRejectItems(id, page) {
+    api.ajax({url: api.warehouse.reject.items(id, page)}, data => {
       let {list, total} = data.res;
       this.setState({list, total: parseInt(total)});
     });
   }
 
   render() {
-    const {formItemThree, formItem12} = Layout;
-
-    let {detail, page, list, total} = this.state;
+    let {formItemThree, formItem12} = Layout;
+    let {
+      page,
+      detail,
+      list,
+      total,
+    } = this.state;
 
     let columns = [
       {
         title: '序号',
         dataIndex: '_id',
-        key: 'index',
+        key: '_id',
         render: (value, record, index) => index + 1,
       }, {
         title: '配件分类',
@@ -64,8 +70,8 @@ class Detail extends React.Component {
         key: 'part_type_name',
       }, {
         title: '配件名',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'part_name',
+        key: 'part_name',
       }, {
         title: '配件号',
         dataIndex: 'part_no',
@@ -79,31 +85,32 @@ class Detail extends React.Component {
         dataIndex: 'brand',
         key: 'brand',
       }, {
-        title: '库存数量',
-        dataIndex: 'remain_amount',
-        key: 'remain_amount',
-        className: 'center',
-      }, {
-        title: '采购数量',
+        title: '退货数量',
         dataIndex: 'amount',
         key: 'amount',
         className: 'center',
       }, {
-        title: '历史最低进价(元)',
-        dataIndex: 'min_in_price',
-        key: 'min_in_price',
-        className: 'center',
-      }, {
-        title: '本次采购单价(元)',
-        dataIndex: 'in_price',
-        key: 'in_price',
-        className: 'center',
-      }, {
-        title: '金额(元)',
-        dataIndex: '_id',
-        key: 'total_fee',
+        title: '进货单价',
+        dataIndex: 'purchase_price',
+        key: 'purchase_price',
         className: 'text-right',
-        render: (value, record) => Number(record.in_price * record.amount).toFixed(2),
+      }, {
+        title: '退货单价',
+        dataIndex: 'reject_price',
+        key: 'reject_price',
+        className: 'text-right',
+      }, {
+        title: '退货金额',
+        dataIndex: '_id',
+        key: 'reject_amount',
+        className: 'text-right',
+        render: (id, record) => Number(record.amount * record.reject_price).toFixed(2),
+      }, {
+        title: '差价',
+        dataIndex: '_id',
+        key: 'diff_worth',
+        className: 'text-right',
+        render: (id, record) => Number((record.purchase_price - record.reject_price) * record.amount).toFixed(2),
       }];
 
     return (
@@ -112,29 +119,29 @@ class Detail extends React.Component {
 
         <Row>
           <Col span={16}>
-            <Form horizontal>
+            <Form>
               <Row>
                 <Col span={8}>
                   <FormItem label="供应商" {...formItemThree}>
-                    <p>{detail.supplier_name}</p>
+                    <p>{detail.supplier_company}</p>
                   </FormItem>
                 </Col>
                 <Col span={8}>
                   <FormItem label="采购金额" {...formItemThree}>
-                    <p>{detail.worth} 元</p>
+                    <p>{detail.old_worth} 元</p>
                   </FormItem>
                 </Col>
                 <Col span={8}>
-                  <FormItem label="实付金额" {...formItemThree}>
-                    <p>{Number(parseFloat(detail.worth) - parseFloat(detail.unpay_worth)).toFixed(2)} 元</p>
+                  <FormItem label="退货金额" {...formItemThree}>
+                    <p>{detail.new_worth} 元</p>
                   </FormItem>
                 </Col>
               </Row>
 
               <Row>
                 <Col span={8}>
-                  <FormItem label="采购类型" {...formItemThree}>
-                    <p>{detail.type_name}</p>
+                  <FormItem label="退款差价" {...formItemThree}>
+                    <p>{detail.diff_worth}</p>
                   </FormItem>
                 </Col>
                 <Col span={8}>
@@ -158,6 +165,14 @@ class Detail extends React.Component {
               </Row>
             </Form>
           </Col>
+
+          <Col span={8}>
+            {String(detail.pay_status) === '2' || String(detail.status) === '-1' ? null :
+              <div className="pull-right">
+                <AuthPay id={detail._id} detail={detail}/>
+              </div>
+            }
+          </Col>
         </Row>
 
         <h4 className="mb10">配件列表</h4>
@@ -168,7 +183,7 @@ class Detail extends React.Component {
           total={total}
           currentPage={page}
           onPageChange={this.handlePageChange}
-          footer={() => <Row><Col span={24}><span className="pull-right">合计：{detail.worth}</span></Col></Row>}
+          footer={() => <Row><Col span={24}><span className="pull-right">合计：{detail.new_worth}</span></Col></Row>}
         />
       </div>
     );

@@ -1,7 +1,8 @@
 import React from 'react';
 import {Modal, Button, Icon} from 'antd';
 import BaseModal from '../../components/base/BaseModal';
-import EditCustomerForm from './EditForm';
+
+import EditForm from './EditForm';
 
 export default class EditCustomerModal extends BaseModal {
   constructor(props) {
@@ -12,19 +13,17 @@ export default class EditCustomerModal extends BaseModal {
   render() {
     return (
       <span>
-        <Button
-          type="primary"
-          onClick={this.showModal}>
-          编辑
-        </Button>
+        <Button type="primary" onClick={this.showModal}>编辑</Button>
+
         <Modal
           title={<span><Icon type="edit"/> 编辑客户信息</span>}
           visible={this.state.visible}
-          width="70%"
+          width={720}
+          className="ant-modal-full"
           onCancel={this.hideModal}
           footer={null}
         >
-          <EditCustomerForm
+          <EditForm
             onSuccess={this.hideModal}
             customer_id={this.props.customer_id}
           />

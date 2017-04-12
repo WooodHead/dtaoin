@@ -22,9 +22,9 @@ export default class PresalesIncomeStatistics extends React.Component {
     return (
       <Card title={<span><Icon type="bar-chart"/> 收入统计</span>} className="mb15">
         {/*为了保持和流失原因一样的样式加了下面Row和Col 在此无意义*/}
-        <Row className="margin-bottom-20">
+        <Row className="mb20">
           <Col span={4}>
-            <span className="font-size-30 margin-right-12 margin-left-20">{}</span>
+            <span className="font-size-30 mr10 ml20">{}</span>
           </Col>
         </Row>
         <BarChart

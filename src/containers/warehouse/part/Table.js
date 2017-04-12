@@ -1,70 +1,19 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Row, Col} from 'antd';
 
-import SearchBox from '../../../components/search/SearchBox';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import BaseTable from '../../../components/base/BaseTable';
 
-import New from './New';
 import Edit from './Edit';
-import StockPartModal from './StockPartModal';
 
-import api from '../../../middleware/api';
-
-export default class Table extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      changeAction: false,
-      list: [],
-      isFetching: false,
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-  }
-
-  componentWillMount() {
-    this.getList(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.getList(nextProps);
-  }
-
-  handleSearchChange(key) {
-    this.props.updateState({key, page: 1});
-  }
-
-  handlePageChange(page) {
-    this.props.updateState({page});
-  }
-
-  handleAdd() {
-    this.getList(this.props);
-  }
-
-  getList(props) {
-    this.setState({isFetching: true});
-    api.ajax({url: props.source}, function (data) {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total), isFetching: false});
-    }.bind(this));
-  }
-
+export default class Table extends BaseTable {
   render() {
-    let {list, total, isFetching} = this.state;
-
     const columns = [
       {
         title: '配件名',
         dataIndex: 'name',
         key: 'name',
-        render(item, record){
-          return (
-            <Link to={{pathname: '/warehouse/part/detail', query: {id: record._id, page: 1}}}>
-              {item}
-            </Link>
-          );
+        render: (item, record) => {
+          return <Link to={{pathname: '/warehouse/part/detail', query: {id: record._id}}}>{item}</Link>;
         },
       }, {
         title: '配件号',
@@ -74,6 +23,10 @@ export default class Table extends React.Component {
         title: '产值类型',
         dataIndex: 'maintain_type_name',
         key: 'maintain_type_name',
+      }, {
+        title: '规格',
+        className: 'text-right',
+        render: (value, record) => `${record.spec || ''}${record.unit || ''}`,
       }, {
         title: '配件分类',
         dataIndex: 'part_type_name',
@@ -91,9 +44,7 @@ export default class Table extends React.Component {
         dataIndex: 'amount',
         key: 'amount',
         className: 'text-right',
-        render(item, record){
-          return <span>{item}/{record.freeze}</span>;
-        },
+        render: (item, record) => <span>{item}/{record.freeze}</span>,
       }, {
         title: '当前进货价（元）',
         dataIndex: 'in_price',
@@ -109,43 +60,10 @@ export default class Table extends React.Component {
         dataIndex: '_id',
         key: 'action',
         className: 'center',
-        render(item, record){
-          return (
-            <div>
-              <Edit part={record} size="small"/>
-              <StockPartModal part={record} size="small"/>
-            </div>
-          );
-        },
+        render: (id, record) => <Edit part={record} onSuccess={this.props.onSuccess} size="small"/>,
       },
     ];
 
-    return (
-      <div>
-        <Row className="mb10">
-          <Col span={12}>
-            <SearchBox
-              change={this.handleSearchChange}
-              placeholder="请输入配件名或配件号搜索"
-              style={{width: 250}}
-            />
-          </Col>
-          <Col span={12}>
-            <div className="pull-right">
-              <New onSuccess={this.handleAdd.bind(this)}/>
-            </div>
-          </Col>
-        </Row>
-
-        <TableWithPagination
-          isLoading={isFetching}
-          columns={columns}
-          dataSource={list}
-          total={total}
-          currentPage={this.props.currentPage}
-          onPageChange={this.handlePageChange}
-        />
-      </div>
-    );
+    return this.renderTable(columns);
   }
 }

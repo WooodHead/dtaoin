@@ -1,5 +1,5 @@
 import BrandInfo from './brand';
-
+import validator from '../utils/validator';
 let hrefBack = location.href;
 
 let whiteList = ['app/download'];       //白名单
@@ -13,63 +13,55 @@ for (let key of whiteList) {
 
 if (!inWhiteList) {
   const API_HOST = window.baseURL + '/v1/';
-  const USER_SESSION = sessionStorage.getItem('USER_SESSION');
-
-  if (!USER_SESSION) {
-    sessionStorage.setItem('USER_SESSION', '{}');
-    //获取用户详情
-    //http://api.daotian.kevin.yunbed.com/v1/user/info
-    $.ajax({
-      url: API_HOST + 'user/info',
-      type: 'GET',
-      header: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': 'true',
-      },
-      xhrFields: {
-        withCredentials: true,
-      },
-      dataType: 'json',
-      success: function (data) {
-        if (data.code == 0) {
-          const user = data.res.user;
-          // 'brand_name': "{%$brand_name%}",
-          // 'brand_logo': "{%$brand_logo%}",
-          // 'uid': "{%$uid%}",
-          // 'company_id': "{%$company_id%}",
-          // 'name': "{%$name%}",
-          // 'company_name': "{%$company_name%}",
-          // 'has_purchase': "{%$has_purchase%}",
-          // 'department': "{%$department%}",
-          // 'role': "{%$role%}"
-
-          let userSession = {
-            brand_name: BrandInfo.brand_name,
-            brand_logo: BrandInfo.brand_logo,
-            uid: user._id,
-            name: user.name,
-            company_id: user.company_id,
-            company_name: user.company_name,
-            company_num: user.company_num,
-            has_purchase: user.has_purchase,
-            department: Number(user.department),
-            department_name: user.department_name,
-            role: Number(user.role),
-          };
-          sessionStorage.setItem('USER_SESSION', JSON.stringify(userSession));
-          // location.href = hrefBack;
-          setTimeout(() => {
-            location.href = hrefBack;
-          }, 0);
-        } else {
-          // console.log('获取用户信息: 数据失败，', data.msg);
-          location.href = '/login';
-        }
-      },
-      error: function () {
-        // console.log('获取用户信息: 请求失败', data);
-        location.href = '/login';
-      },
-    });
+  //防止localStorage预存信息不是base64报错
+  let USER_SESSION = localStorage.getItem('USER_SESSION');
+  let base64Reg = validator.pattern.base64;
+  let isbase64 = base64Reg.test(USER_SESSION);
+  if (!isbase64) {
+    localStorage.clear();
   }
+
+  //获取用户详情
+  $.ajax({
+    url: API_HOST + 'user/info',
+    type: 'GET',
+    header: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+    xhrFields: {
+      withCredentials: true,
+    },
+    dataType: 'json',
+    success: function (data) {
+      if (data.code == 0) {
+        const user = data.res.user;
+        let userSession = {
+          brand_name: BrandInfo.brand_name,
+          brand_logo: BrandInfo.brand_logo,
+          uid: user._id,
+          name: user.name,
+          company_id: user.company_id,
+          company_name: user.company_name,
+          company_num: user.company_num,
+          has_purchase: user.has_purchase,
+          department: user.department,
+          department_name: user.department_name,
+          role: user.role,
+          user_type: user.user_type,
+          is_pos_device: user.is_pos_device,
+          cooperation_type_name: user.cooperation_type_name.full_name,
+          cooperation_type_short: user.cooperation_type_name.short,
+          operation_name: user.operation_name,
+          operation_phone: user.operation_phone,
+        };
+        localStorage.setItem('USER_SESSION', window.btoa(window.encodeURIComponent(JSON.stringify(userSession))));
+      } else {
+        localStorage.clear();
+      }
+    },
+    error: function () {
+      localStorage.clear();
+    },
+  });
 }

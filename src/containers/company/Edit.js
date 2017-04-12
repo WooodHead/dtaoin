@@ -1,24 +1,22 @@
 import React from 'react';
-import {Modal, Icon, Button} from 'antd';
+import {Modal, Icon} from 'antd';
+
 import BaseModal from '../../components/base/BaseModal';
-import EditCompanyForm from './EditForm';
+
+import EditForm from './EditForm';
 
 export default class Edit extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = {
+      visible: false,
+    };
   }
 
   render() {
     return (
       <span>
-        <Button
-          onClick={this.showModal}
-          size="small"
-          className="mr15"
-        >
-          编辑
-        </Button>
+        <a href="javascript:" onClick={this.showModal}>编辑</a>
 
         <Modal
           title={<span><Icon type="edit"/> 编辑门店</span>}
@@ -27,9 +25,10 @@ export default class Edit extends BaseModal {
           onCancel={this.hideModal}
           footer={null}
         >
-          <EditCompanyForm
-            cancelModal={this.hideModal}
+          <EditForm
             company={this.props.company}
+            cancelModal={this.hideModal}
+            onSuccess={this.props.onSuccess}
           />
         </Modal>
       </span>

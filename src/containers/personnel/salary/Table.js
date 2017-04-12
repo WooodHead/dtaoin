@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 import {Row, Col} from 'antd';
 import api from '../../../middleware/api';
 import SearchBox from '../../../components/search/SearchBox';
-import TableWithPagination from '../../../components/base/TableWithPagination';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 import CalculateWageModal from '../user/CalculateWage';
 import AdjustmentRateModal from '../user/AdjustmentRate';
 import FreezeSalaryModal from '../user/FreezeSalary';
@@ -60,7 +60,7 @@ export default class Table extends React.Component {
       key: 'name',
       render(value) {
         return (
-          <Link to={{pathname:'/personnel/user/detail',query:{user_id: value._id}}}>
+          <Link to={{pathname: '/personnel/user/detail', query: {user_id: value._id}}}>
             {value.name}
           </Link>
         );
@@ -128,12 +128,13 @@ export default class Table extends React.Component {
               size="small"
               disabled={record.status === '1'}
             />
-
+            <span className="ant-divider"/>
             <CalculateWageModal
               type="performance"
               user={value}
               month={record.month}
               disabled={record.status === '1'}
+              size="small"
             />
           </span>
         );
@@ -160,7 +161,9 @@ export default class Table extends React.Component {
           <Col span={12}>
             <div className="pull-right">
               <AdjustmentRateModal />
-              <FreezeSalaryModal salaryIds={this.state.salaryIds}/>
+              <span className="mr10">
+                <FreezeSalaryModal salaryIds={this.state.salaryIds}/>
+              </span>
             </div>
           </Col>
         </Row>

@@ -2,6 +2,7 @@ import React from 'react';
 import {Input, Select, Button, Icon} from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
+
 const Option = Select.Option;
 
 const PartSearchBox = React.createClass({
@@ -9,40 +10,53 @@ const PartSearchBox = React.createClass({
     return {
       data: this.props.data ? this.props.data : [],
       part_type_id: 0,
+      supplier_id: 0,
       value: this.props.value ? this.props.value : '',
       focus: false,
     };
   },
 
   componentDidMount(){
-    let item = this.props.value;
-    if (item) {
-      this.setState({value: item});
+    let {value, part_type_id, supplier_id} = this.props;
+
+    if (value) {
+      this.setState({value});
     }
 
-    if (this.props.part_type_id) {
-      this.searchParts('', this.props.part_type_id);
-      this.setState({part_type_id: this.props.part_type_id});
+    if (part_type_id) {
+      this.searchParts('', part_type_id, supplier_id);
+      this.setState({part_type_id});
+    }
+
+    // 退货开单，查询该供货商的配件
+    if (supplier_id) {
+      this.setState({supplier_id});
     }
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.part_type_id != this.props.part_type_id) {
+    let {part_type_id, supplier_id} = nextProps;
+
+    if (part_type_id != this.props.part_type_id) {
       this.setState({value: ''});
 
-      this.searchParts('', nextProps.part_type_id);
-      this.setState({part_type_id: nextProps.part_type_id});
+      this.searchParts('', part_type_id);
+      this.setState({part_type_id});
+    }
+    if (supplier_id !== this.props.supplier_id) {
+      this.setState({supplier_id});
     }
   },
 
   searchParts(key, part_type_id) {
-    api.ajax({url: api.searchParts(key, Number(part_type_id))}, (data) => {
+    api.ajax({url: api.warehouse.part.searchByTypeId(key, Number(part_type_id), this.state.supplier_id)}, (data) => {
       let list = data.res.list;
+      this.setState({data: list});
+
       if (list.length > 0) {
-        this.setState({data: list});
+
       } else {
-        // TODO why
-        this.setState({data: [{_id: -1, scope: '', name: '搜索无结果'}]});
+        // this.setState({data: [{_id: -1, scope: '', name: '搜索无结果'}]});
       }
     });
   },
@@ -64,10 +78,6 @@ const PartSearchBox = React.createClass({
     }
   },
 
-  handleSubmit() {
-    //this.props.select(this.state.data);
-  },
-
   handleFocus() {
     this.setState({focus: true});
   },
@@ -77,17 +87,18 @@ const PartSearchBox = React.createClass({
   },
 
   render() {
+    let {value, data, focus} = this.state;
+    let {style, placeholder, showNewAction} = this.props;
+
     const btnCls = classNames({
       'ant-search-btn': true,
-      'ant-search-btn-noempty': !!this.state.value,
-    });
-    const searchCls = classNames({
-      'ant-search-input': true,
-      'ant-search-input-focus': this.state.focus,
+      'ant-search-btn-noempty': !!value,
     });
 
-    let {value, data} = this.state;
-    let {style, placeholder, showNewAction} = this.props;
+    const searchCls = classNames({
+      'ant-search-input': true,
+      'ant-search-input-focus': focus,
+    });
 
     return (
       <Input.Group className={searchCls} style={style}>
@@ -107,26 +118,24 @@ const PartSearchBox = React.createClass({
           onBlur={this.handleBlur}
         >
           {data.map((item) =>
-            <Option key={item._id + ''}>{item.name} {item.scope}</Option>)}
+            <Option key={item._id + ''}>{item.name} {item.scope} {!!item.spec ? item.spec + item.unit : ''}</Option>)}
         </Select>
+
         <div className="ant-input-group-wrap">
-          {showNewAction && (data.length === 1 && data[0]._id === -1) ?
+          {showNewAction && (data.length === 0 && value.length > 0) ?
             <Button
-              className={btnCls}
+              style={{position: 'relative', left: '100px'}}
               size="large"
-              onClick={this.props.onAdd}
+              onClick={() => this.props.onAdd(value)}
+              type="primary"
             >
-              新增配件
+              创建配件
             </Button>
             :
-            <Button
-              className={btnCls}
-              size="large"
-              onClick={this.handleSubmit}>
+            <Button className={btnCls} size="large">
               <Icon type="search"/>
             </Button>
           }
-
         </div>
       </Input.Group>
     );
@@ -139,4 +148,5 @@ PartSearchBox.defaultProps = {
   },
   placeholder: '用关键字或编号搜索配件',
 };
+
 export default PartSearchBox;

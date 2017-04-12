@@ -7,6 +7,7 @@ export default class BaseList extends React.Component {
       'handleConditionChange',
       'handleDateChange',
       'handleRadioChange',
+      'handleSuccess',
       'updateState',
     ].map(method => this[method] = this[method].bind(this));
   }
@@ -34,5 +35,9 @@ export default class BaseList extends React.Component {
 
   handleRadioChange(propName, e) {
     this.setState({[propName]: e.target.value, page: 1});
+  }
+
+  handleSuccess() {
+    this.setState({reload: true});
   }
 }

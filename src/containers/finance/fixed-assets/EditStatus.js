@@ -26,7 +26,7 @@ class EditStatus extends BaseModal {
   handleSubmit() {
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
-        message.error(validator.hasError);
+        message.error(validator.text.hasError);
         return;
       }
 
@@ -50,13 +50,14 @@ class EditStatus extends BaseModal {
 
   saveChange(params) {
     api.ajax({
-      url: api.fixedAssets.editStatus(),
+      url: api.finance.fixedAssets.editStatus(),
       type: 'POST',
       data: params,
     }, () => {
+      message.success('修改成功');
       this.hideModal();
       this.props.form.resetFields();
-      location.reload();
+      this.props.onSuccess();
     });
   }
 
@@ -64,16 +65,17 @@ class EditStatus extends BaseModal {
     const {getFieldDecorator} = this.props.form;
     const {visible} = this.state;
     const {formItemLayout, selectStyle} = FormLayout;
-
+    const {size} = this.props;
     return (
       <span>
-        <Button
-          size="small"
-          className="btn-action-small"
-          onClick={this.showModal}
-        >
-          修改状态
-        </Button>
+        {
+          size === 'small'
+            ?
+            <a href="javascript:;" onClick={this.showModal}>修改状态</a>
+            :
+            <Button onClick={this.showModal}>修改状态</Button>
+        }
+
         <Modal
           title={<span><Icon type="edit" className="mr10"/>修改状态</span>}
           visible={visible}
@@ -81,7 +83,7 @@ class EditStatus extends BaseModal {
           onCancel={this.hideModal}
         >
 
-          <Form horizontal>
+          <Form>
             {getFieldDecorator('fixed_assets_id', {initialValue: this.props._id})}
 
             <FormItem label="修改状态" {...formItemLayout}>

@@ -1,70 +1,24 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Row, Col} from 'antd';
-import api from '../../../middleware/api';
-import CommonText from '../../../config/text';
-import SearchBox from '../../../components/search/CustomerSearchBox';
-import TableWithPagination from '../../../components/base/TableWithPagination';
-import NewDealModal from '../../../components/modals/presales/NewDealModal';
-import LostCustomerModal from './Lost';
-import NewIntentionModal from './New';
-import NewPotentialCustomerModal from '../../../components/modals/presales/NewPotentialCustomerModal';
 
-import CreateRemind from '../../../components/modals/aftersales/CreateRemind';
+import text from '../../../config/text';
 
-export default class Table extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFetching: false,
-      list: [],
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-  }
+import BaseTable from '../../../components/base/BaseTable';
 
-  componentDidMount() {
-    this.getPotentialCustomers(this.props);
-  }
+import New from './New';
+import Edit from './Edit';
+import Lost from './Lost';
+import CreateRemind from '../../../components/widget/CreateRemind';
 
-  componentWillReceiveProps(nextProps) {
-    this.getPotentialCustomers(nextProps);
-  }
-
-  handleSearchChange(data) {
-    if (data.key) {
-      let {list, total} = data;
-      this.setState({list, total: parseInt(total)});
-    } else {
-      this.getListData(this.props.source(this.props.filter));
-    }
-  }
-
-  handlePageChange(page) {
-    this.props.updateState({page});
-  }
-
-  getPotentialCustomers(props) {
-    this.setState({isFetching: true});
-    api.ajax({url: props.source(props.filter)}, (data) => {
-      let {list, total} = data.res;
-      this.setState({
-        isFetching: false,
-        list,
-        total: parseInt(total),
-      });
-    });
-  }
-
+export default class Table extends BaseTable {
   render() {
-    let {isFetching, list, total} = this.state;
-
+    let self = this;
     const columns = [{
       title: '姓名',
       dataIndex: 'name',
       key: 'name',
       render (text, record) {
-        return <Link to={{pathname: '/customer/detail', query: {customer_id: record._id}}}>{text}</Link>;
+        return <Link to={{pathname: '/customer/detail', query: {customerId: record._id}}}>{text}</Link>;
       },
     }, {
       title: '手机号',
@@ -136,7 +90,7 @@ export default class Table extends React.Component {
         value.map(function (item) {
           autos.push(
             <div className="in-table-line" key={item._id}>
-              {CommonText.isMortgage[Number(item.is_mortgage)]}
+              {text.isMortgage[Number(item.is_mortgage)]}
             </div>
           );
         });
@@ -147,24 +101,38 @@ export default class Table extends React.Component {
       dataIndex: 'intentions',
       key: 'operation',
       className: 'no-padding center action-two',
-      render (value) {
+      render: value => {
         let operations = [];
         value.map(function (item) {
           let status = item.status != 0;
           operations.push(
             <div className="in-table-line" key={item._id}>
-              <NewDealModal
-                customer_id={item.customer_id}
-                intention_id={item._id}
-                disabled={status}
+              <Edit
+                size="small"
+                isSingle={true}
+                intentionId={item._id}
+                customerId={item.customer_id}
+                onSuccess={self.props.onSuccess}
               />
 
-              <LostCustomerModal
-                intention_id={item._id}
-                customer_id={item.customer_id}
+              <span className="ant-divider"/>
+              <Link to={{
+                pathname: '/presales/deal/new', query: {intentionId: item._id, customerId: item.customer_id},
+              }}>
+                成交
+              </Link>
+
+              <span className="ant-divider"/>
+
+              <Lost
+                size="small"
+                intentionId={item._id}
+                customerId={item.customer_id}
+                onSuccess={self.props.onSuccess}
                 disabled={status}
               />
-            </div>);
+            </div>
+          );
         });
         return operations;
       },
@@ -176,42 +144,21 @@ export default class Table extends React.Component {
       render (id) {
         return (
           <div>
-            <NewIntentionModal
-              customer_id={id}
+            <New
               size="small"
               isSingle={true}
-              refresh={false}
+              customerId={id}
+              onSuccess={self.props.onSuccess}
             />
+
+            <span className="ant-divider"/>
+
             <CreateRemind customer_id={id} size="small"/>
           </div>
         );
       },
     }];
 
-    return (
-      <div>
-        <Row className="mb10">
-          <Col span={12}>
-            <SearchBox
-              api={api.autoSellPotentialList(this.props.filter)}
-              change={this.handleSearchChange}
-              style={{width: 250}}
-            />
-          </Col>
-          <Col span={12}>
-            <NewPotentialCustomerModal />
-          </Col>
-        </Row>
-
-        <TableWithPagination
-          isLoading={isFetching}
-          columns={columns}
-          dataSource={list}
-          total={total}
-          currentPage={this.props.currentPage}
-          onPageChange={this.handlePageChange}
-        />
-      </div>
-    );
+    return this.renderTable(columns);
   }
 }

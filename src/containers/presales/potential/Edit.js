@@ -6,33 +6,35 @@ import EditForm from './EditForm';
 export default class Edit extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = {
+      visible: false,
+    };
   }
 
   render() {
+    let {size, disabled, customerId, intentionId, isSingle, onSuccess} = this.props;
+
     return (
       <span>
-        <Button
-          type={this.props.type || 'primary'}
-          onClick={this.showModal}
-          disabled={this.props.disabled}
-          size={this.props.size || 'small'}
-        >
-          编辑
-        </Button>
+        {size === 'small' ?
+          <a href="javascript:" onClick={this.showModal} disabled={disabled}>编辑</a> :
+          <Button type="primary" onClick={this.showModal} disabled={disabled}>编辑</Button>
+        }
 
         <Modal
           title={<span><Icon type="edit"/> 编辑意向信息</span>}
           visible={this.state.visible}
-          width="680px"
+          width={720}
+          className="ant-modal-full"
           onCancel={this.hideModal}
           footer={null}
         >
           <EditForm
             cancelModal={this.hideModal}
-            customer_id={this.props.customer_id}
-            intention_id={this.props.intention_id}
-            isSingle={this.props.isSingle}
+            customerId={customerId}
+            intentionId={intentionId}
+            isSingle={isSingle}
+            onSuccess={onSuccess}
           />
         </Modal>
       </span>

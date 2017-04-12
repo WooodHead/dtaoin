@@ -1,13 +1,13 @@
 import React from 'react';
 import {message, Modal, Form, Row, Col, Button, Input} from 'antd';
 
+import api from '../../../middleware/api';
+import Layout from '../../../utils/FormLayout';
+
 import BaseModal from '../../../components/base/BaseModal';
 import PartSearchBox from '../../../components/search/PartSearchBox';
 
 import NewPartModal from '../part/NewModal';
-
-import api from '../../../middleware/api';
-import Layout from '../../../utils/FormLayout';
 
 const FormItem = Form.Item;
 
@@ -20,6 +20,7 @@ export default class AddPart extends BaseModal {
       part: {},
       price: '',
       count: '',
+      key: '',
     };
 
     [
@@ -29,12 +30,14 @@ export default class AddPart extends BaseModal {
       'handleInPriceChange',
       'handleCountChange',
       'handlePartNew',
+      'handleSuccessAddPart',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   handleSearchSelect(select) {
+    console.log('select', select);
     if (select.data && String(select.data._id) !== '-1') {
-      this.setState({part: select.data});
+      this.setState({part: select.data, visibleNewPart: false});
     }
   }
 
@@ -55,16 +58,24 @@ export default class AddPart extends BaseModal {
 
   handleInPriceChange(e) {
     let price = e.target.value;
-    this.setState({price: price ? price : ''});
+    this.setState({price: price ? price : '', visibleNewPart: false});
   }
 
   handleCountChange(e) {
     let count = e.target.value;
-    this.setState({count: count ? count : ''});
+    this.setState({count: count ? count : '', visibleNewPart: false});
   }
 
-  handlePartNew() {
-    this.setState({visibleNewPart: true});
+  handlePartNew(key) {
+    this.setState({visibleNewPart: true, key});
+  }
+
+  handleSuccessAddPart(data) {
+    this.setState({part: data});
+  }
+
+  showModal() {
+    this.setState({visible: true, visibleNewPart: false});
   }
 
   savePart() {
@@ -75,6 +86,7 @@ export default class AddPart extends BaseModal {
     }
 
     if (Object.keys(part).length > 0) {
+      part.remain_amount = part.amount;
       part.amount = count;
       part.in_price = price;
 
@@ -86,20 +98,27 @@ export default class AddPart extends BaseModal {
         part.part_name = part.name;
       }
 
-      this.props.onAdd(part);
       this.setState({
         part: {},
         price: '',
         count: '',
+        visibleNewPart: false,
       });
+      this.props.onAdd(part);
     }
     return true;
   }
 
   render() {
-    let {visible, part, price, count, visibleNewPart}=this.state;
-
     const {formItemThree} = Layout;
+    let {
+      visible,
+      part,
+      price,
+      count,
+      visibleNewPart,
+      key,
+    } = this.state;
 
     return (
       <span>
@@ -109,25 +128,32 @@ export default class AddPart extends BaseModal {
           title="添加配件"
           visible={visible}
           width={960}
-          onOk={this.handleContinueAdd}
-          onCancel={this.handleComplete}
-          okText="继续添加"
-          cancelText="完成"
+          onCancel={this.hideModal}
+          footer={
+            <span>
+              <Button className="mr5" size="large" onClick={this.handleComplete}>完成</Button>
+              <Button type="primary" size="large" onClick={this.handleContinueAdd}>继续添加</Button>
+            </span>
+          }
         >
           <Row className="mb10">
             <Col span={8}>
               <FormItem label="搜索配件" {...formItemThree}>
                 <PartSearchBox
-                  api={api.searchParts}
+                  api={api.warehouse.part.searchByTypeId}
                   select={this.handleSearchSelect}
-                  style={{width: 200}}
+                  style={{width: 210}}
                   onAdd={this.handlePartNew}
                   showNewAction={true}
                 />
               </FormItem>
             </Col>
             <Col span={8}>
-              <NewPartModal visible={visibleNewPart}/>
+              <NewPartModal
+                visible={visibleNewPart}
+                inputValue={key}
+                onSuccessAddParts={this.handleSuccessAddPart}
+              />
             </Col>
           </Row>
 
@@ -161,8 +187,8 @@ export default class AddPart extends BaseModal {
               </FormItem>
             </Col>
             <Col span={8}>
-              <FormItem label="产值类型" {...formItemThree}>
-                <p>{part.maintain_type_name}</p>
+              <FormItem label="规格" {...formItemThree}>
+                <p>{!!part.spec ? part.spec + part.unit : ''}</p>
               </FormItem>
             </Col>
           </Row>
@@ -170,17 +196,17 @@ export default class AddPart extends BaseModal {
           <Row className="mb10">
             <Col span={8}>
               <FormItem label="历史最低进价" {...formItemThree}>
-                <p>{part.min_in_price}</p>
+                <p>{part.min_in_price || 0}</p>
               </FormItem>
             </Col>
             <Col span={8}>
               <FormItem label="库存数量" {...formItemThree}>
-                <p>{part.amount}</p>
+                <p>{part.amount || 0}</p>
               </FormItem>
             </Col>
             <Col span={8}>
               <FormItem label="冻结数量" {...formItemThree}>
-                <p>{part.freeze}</p>
+                <p>{part.freeze || 0}</p>
               </FormItem>
             </Col>
           </Row>
@@ -188,12 +214,12 @@ export default class AddPart extends BaseModal {
           <Row className="mb10">
             <Col span={8}>
               <FormItem label="采购单价" {...formItemThree} required>
-                <Input defaultValue={price} addonAfter="元" onChange={this.handleInPriceChange}/>
+                <Input value={price} addonAfter="元" onChange={this.handleInPriceChange}/>
               </FormItem>
             </Col>
             <Col span={8}>
               <FormItem label="采购数量" {...formItemThree} required>
-                <Input defaultValue={count} onChange={this.handleCountChange}/>
+                <Input value={count} onChange={this.handleCountChange}/>
               </FormItem>
             </Col>
             <Col span={8}>

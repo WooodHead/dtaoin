@@ -57,17 +57,14 @@ class CalculateWageModal extends BaseModal {
     let formData = this.props.form.getFieldsValue();
 
     api.ajax({
-        url: api.user.calculateSalary(user._id, type !== 'month' ? month : this.state.month),
-        type: 'POST',
-        data: formData,
-      },
-      () => {
-        message.success('工资计算成功');
-        this.hideModal();
-        location.reload();
-      }
-    )
-    ;
+      url: api.user.calculateSalary(user._id, type !== 'month' ? month : this.state.month),
+      type: 'POST',
+      data: formData,
+    }, () => {
+      message.success('工资计算成功');
+      this.hideModal();
+      this.props.onSuccess();
+    });
   }
 
   handleRateChange(rate) {
@@ -166,7 +163,7 @@ class CalculateWageModal extends BaseModal {
     const {formItem12, formItemThree, formItemFour} = Layout;
     const {getFieldDecorator} = this.props.form;
 
-    let {type, user, month, disabled} = this.props;
+    let {type, user, month, disabled, size} = this.props;
     let {
       salaryInfo,
       rate,
@@ -183,14 +180,13 @@ class CalculateWageModal extends BaseModal {
 
     return (
       <span>
-        <Button
-          onClick={this.showSalaryModal}
-          size="small"
-          className="mr15"
-          disabled={disabled ? disabled : false}
-        >
-          工资计算
-        </Button>
+        {
+          size === 'small'
+            ?
+            <a href="javascript:;" onClick={this.showSalaryModal} disabled={disabled ? disabled : false}>工资计算</a>
+            :
+            <Button onClick={this.showSalaryModal} disabled={disabled ? disabled : false}>工资计算</Button>
+        }
 
         <Modal
           title={<span><Icon type="calculator"/> 工资计算</span>}
@@ -199,7 +195,7 @@ class CalculateWageModal extends BaseModal {
           onOk={this.handleSubmit}
           onCancel={this.hideModal}
           maskClosable={false}>
-          <Form horizontal>
+          <Form>
             <Collapse defaultActiveKey={['1', '2']}>
               <Panel header="员工信息" key="1">
                 <Row type="flex">
@@ -256,6 +252,7 @@ class CalculateWageModal extends BaseModal {
                         onChange={this.handleMonthChange}
                         disabledDate={this.disabledMonth}
                         disabled={type !== 'month'}
+                        allowClear={false}
                       />
                     </FormItem>
                   </Col>
