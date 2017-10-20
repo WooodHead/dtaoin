@@ -1,21 +1,22 @@
 import React from 'react';
 import ReactHighcharts from 'react-highcharts';
+import createReactClass from 'create-react-class';
 
-const LineChart = React.createClass({
+const LineChart = createReactClass({
   render() {
-    let {title, unit, categories, series, allowDecimals, subtitle, lineHeight} = this.props;
-    let chart = {
+    const { title, unit, categories, series, allowDecimals, subtitle, lineHeight } = this.props;
+    const chart = {
       chart: {
         type: 'spline',
         height: lineHeight || '400',
       },
       title: {
-        text: title + '<br/>' || '',
+        text: `${title  }<br/>` || '',
         useHTML: true,
         align: 'left',
       },
       subtitle: {
-        text: subtitle ? subtitle + '<br/>' : '',
+        text: subtitle ? `${subtitle  }<br/>` : '',
         useHTML: true,
         align: 'left',
         style: {
@@ -41,13 +42,13 @@ const LineChart = React.createClass({
         allowDecimals: allowDecimals || true,
       },
       xAxis: {
-        categories: categories,
+        categories,
         tickInterval: categories.length > 7 ? 2 : 1,
       },
-      series: series,
+      series,
     };
 
-    return React.createElement(ReactHighcharts, {config: chart});
+    return React.createElement(ReactHighcharts, { config: chart });
   },
 });
 

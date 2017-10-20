@@ -1,1 +1,1 @@
-../cfg/url_config/api.daotian.dev2.yunbed.com.js
+window.baseURL = 'https://api.daotian.dev2.yunbed.com';

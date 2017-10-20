@@ -1,36 +1,38 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import { Input, Select, Button, Icon } from 'antd';
 import classNames from 'classnames';
+import createReactClass from 'create-react-class';
+
 const Option = Select.Option;
 
-const SearchMultipleBox = React.createClass({
+const SearchMultipleBox = createReactClass({
   getInitialState() {
     return {
       focus: false,
     };
   },
 
-  componentWillMount(){
-    let item = this.props.defaultValue;
+  componentWillMount() {
+    const item = this.props.defaultValue;
     if (item) {
-      this.setState({select_value: item});
+      this.setState({ select_value: item });
     } else {
-      this.setState({select_value: []});
+      this.setState({ select_value: [] });
     }
   },
 
   handleSelect(key) {
-    let value = this.state.select_value;
+    const value = this.state.select_value;
     value.push(key);
-    this.setState({select_value: value});
+    this.setState({ select_value: value });
 
     this.props.select(this.state.select_value);
   },
 
   handleDeselect(key) {
-    let value = this.state.select_value;
+    const value = this.state.select_value;
     value.splice(value.indexOf(key), 1);
-    this.setState({select_value: value});
+    this.setState({ select_value: value });
 
     this.props.select(this.state.select_value);
   },
@@ -38,7 +40,7 @@ const SearchMultipleBox = React.createClass({
   handleChange(key) {
     if (!!key) {
       this.props.change(key);
-      this.setState({value: key});
+      this.setState({ value: key });
     }
   },
 
@@ -47,11 +49,11 @@ const SearchMultipleBox = React.createClass({
   },
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   },
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   },
 
   render() {
@@ -64,30 +66,30 @@ const SearchMultipleBox = React.createClass({
       'ant-search-input-focus': this.state.focus,
     });
 
-    let {style, placeholder} = this.props;
+    const { style, placeholder } = this.props;
 
     return (
       <Input.Group className={searchCls} style={style}>
         <Select
-          multiple
+          mode="multiple"
           size="large"
           className="no-margin-bottom"
           style={{ width: '100%' }}
           defaultValue={this.state.select_value}
           placeholder={placeholder}
           notFoundContent="未找到"
-          //defaultActiveFirstOption={false}
+          // defaultActiveFirstOption={false}
           optionLabelProp="children"
           showArrow={false}
           filterOption={false}
           onSelect={this.handleSelect}
           onDeselect={this.handleDeselect}
           onSearch={this.handleChange}
-          //onFocus={this.handleFocus}
-          //onBlur={this.handleBlur}
+          // onFocus={this.handleFocus}
+          // onBlur={this.handleBlur}
         >
 
-          {this.props.data.map((item) =>
+          {this.props.data.map(item =>
             <Option key={item._id} value={item._id}>{item.name}</Option>)}
         </Select>
         <div className="ant-input-group-wrap">
@@ -103,5 +105,5 @@ const SearchMultipleBox = React.createClass({
   },
 });
 
-SearchMultipleBox.defaultProps = {placeholder: '用关键字搜索'};
+SearchMultipleBox.defaultProps = { placeholder: '用关键字搜索' };
 export default SearchMultipleBox;

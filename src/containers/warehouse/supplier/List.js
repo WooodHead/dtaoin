@@ -1,13 +1,14 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col, Input } from 'antd';
 
 import BaseList from '../../../components/base/BaseList';
-import SearchBox from '../../../components/search/SearchBox';
 
 import api from '../../../middleware/api';
 
 import New from './New';
 import Table from './Table';
+
+const Search = Input.Search;
 
 export default class List extends BaseList {
   constructor(props) {
@@ -20,35 +21,39 @@ export default class List extends BaseList {
     this.handleSearchChange = this.handleSearchChange.bind(this);
   }
 
-  handleSearchChange(company) {
-    this.setState({company, page: 1});
+  handleSearchChange(e) {
+    const company = e.target.value;
+    this.setState({ company, page: 1 });
   }
 
   render() {
     return (
       <div>
-        <Row className="head-action-bar">
+        <Row className="head-action-bar-line mb10">
           <Col span={12}>
-            <SearchBox
-              change={this.handleSearchChange}
+            <Search
+              onChange={this.handleSearchChange}
+              size="large"
+              style={{ width: '250px' }}
               placeholder="请输入供应商名称搜索"
-              style={{width: 250}}
             />
           </Col>
           <Col span={12}>
             <div className="pull-right">
-              <New onSuccess={this.handleSuccess}/>
+              <New onSuccess={this.handleSuccess} />
             </div>
           </Col>
         </Row>
 
-        <Table
-          source={api.warehouse.supplier.list(this.state)}
-          page={this.state.page}
-          reload={this.state.reload}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
+        <span className="supplier-index">
+          <Table
+            source={api.warehouse.supplier.list(this.state)}
+            page={this.state.page}
+            reload={this.state.reload}
+            updateState={this.updateState}
+            onSuccess={this.handleSuccess}
+          />
+        </span>
       </div>
     );
   }

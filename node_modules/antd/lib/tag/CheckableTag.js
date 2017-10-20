@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -16,6 +15,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -33,7 +36,7 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
     var t = {};
@@ -45,12 +48,12 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 };
 
 var CheckableTag = function (_React$Component) {
-    (0, _inherits3["default"])(CheckableTag, _React$Component);
+    (0, _inherits3['default'])(CheckableTag, _React$Component);
 
     function CheckableTag() {
-        (0, _classCallCheck3["default"])(this, CheckableTag);
+        (0, _classCallCheck3['default'])(this, CheckableTag);
 
-        var _this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.apply(this, arguments));
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (CheckableTag.__proto__ || Object.getPrototypeOf(CheckableTag)).apply(this, arguments));
 
         _this.handleClick = function () {
             var _this$props = _this.props,
@@ -64,22 +67,24 @@ var CheckableTag = function (_React$Component) {
         return _this;
     }
 
-    CheckableTag.prototype.render = function render() {
-        var _classNames;
+    (0, _createClass3['default'])(CheckableTag, [{
+        key: 'render',
+        value: function render() {
+            var _classNames;
 
-        var _a = this.props,
-            _a$prefixCls = _a.prefixCls,
-            prefixCls = _a$prefixCls === undefined ? 'ant-tag' : _a$prefixCls,
-            className = _a.className,
-            checked = _a.checked,
-            restProps = __rest(_a, ["prefixCls", "className", "checked"]);
-        var cls = (0, _classnames2["default"])(prefixCls, (_classNames = {}, (0, _defineProperty3["default"])(_classNames, prefixCls + '-checkable', true), (0, _defineProperty3["default"])(_classNames, prefixCls + '-checkable-checked', checked), _classNames), className);
-        delete restProps.onChange; // TypeScript cannot check delete now.
-        return _react2["default"].createElement('div', (0, _extends3["default"])({}, restProps, { className: cls, onClick: this.handleClick }));
-    };
-
+            var _a = this.props,
+                _a$prefixCls = _a.prefixCls,
+                prefixCls = _a$prefixCls === undefined ? 'ant-tag' : _a$prefixCls,
+                className = _a.className,
+                checked = _a.checked,
+                restProps = __rest(_a, ["prefixCls", "className", "checked"]);
+            var cls = (0, _classnames2['default'])(prefixCls, (_classNames = {}, (0, _defineProperty3['default'])(_classNames, prefixCls + '-checkable', true), (0, _defineProperty3['default'])(_classNames, prefixCls + '-checkable-checked', checked), _classNames), className);
+            delete restProps.onChange; // TypeScript cannot check delete now.
+            return _react2['default'].createElement('div', (0, _extends3['default'])({}, restProps, { className: cls, onClick: this.handleClick }));
+        }
+    }]);
     return CheckableTag;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = CheckableTag;
+exports['default'] = CheckableTag;
 module.exports = exports['default'];

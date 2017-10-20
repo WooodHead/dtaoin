@@ -1,9 +1,11 @@
 import React from 'react';
-import {message, Row, Col, Form, Input, Button, Select} from 'antd';
+import ReactDOM from 'react-dom';
+import { Button, Col, DatePicker, Form, Icon, Input, message, Row, Select, Tooltip } from 'antd';
 
 import api from '../../middleware/api';
 import Layout from '../../utils/FormLayout';
 import validator from '../../utils/validator';
+import formatter from '../../utils/DateFormatter';
 import FormValidator from '../../utils/FormValidator';
 
 import Qiniu from '../../components/widget/UploadQiniu';
@@ -41,7 +43,12 @@ class NewCustomerForm extends UploadComponent {
 
   componentDidMount() {
     this.getCustomerDetail(this.props.customer_id);
-    this.getMemberLevels();
+
+    const birthdayElement = this.birthdayInput;
+    if (birthdayElement) {
+      const birthdayRect = ReactDOM.findDOMNode(birthdayElement).getBoundingClientRect();
+      this.props.syncElementRect(birthdayRect);
+    }
   }
 
   handleSubmit(e) {
@@ -52,6 +59,7 @@ class NewCustomerForm extends UploadComponent {
         return;
       }
       values.invite_id = this.state.invite_id;
+      values.birth_date = formatter.date(values.birth_date);
 
       api.ajax({
         url: api.customer.edit(),
@@ -66,9 +74,9 @@ class NewCustomerForm extends UploadComponent {
   }
 
   handleLevelChange(levelId) {
-    this.state.memberLevels.forEach((item) => {
+    this.state.memberLevels.forEach(item => {
       if (levelId.toString() === item._id.toString()) {
-        this.setState({memberPrice: item.price});
+        this.setState({ memberPrice: item.price });
       }
     });
   }
@@ -89,26 +97,20 @@ class NewCustomerForm extends UploadComponent {
   }
 
   handleSearchChange(selected) {
-    let customer = selected.list[0];
-    this.setState({invite_id: customer._id});
-    this.props.form.setFieldsValue({'invite_user_name': customer.name});
-  }
-
-  getMemberLevels() {
-    api.ajax({url: api.customer.getMemberConfig()}, function (data) {
-      this.setState({memberLevels: data.res.member_levels});
-    }.bind(this));
+    const customer = selected.list[0];
+    this.setState({ invite_id: customer._id });
+    this.props.form.setFieldsValue({ invite_user_name: customer.name });
   }
 
   getSourceTypes(sourceDeal) {
-    api.ajax({url: api.customer.getSourceTypes(sourceDeal)}, function (data) {
-      let sources = data.res.source_types;
-      this.setState({sourceType: sources});
-    }.bind(this));
+    api.ajax({ url: api.customer.getSourceTypes(sourceDeal) }, data => {
+      const sources = data.res.source_types;
+      this.setState({ sourceType: sources });
+    });
   }
 
   getCustomerDetail(customerId) {
-    api.ajax({url: api.customer.detail(customerId)}, (data) => {
+    api.ajax({ url: api.customer.detail(customerId) }, data => {
       let customer = data.res.customer_info,
         form = this.props.form;
 
@@ -119,22 +121,22 @@ class NewCustomerForm extends UploadComponent {
         });
       }
       this.setState({
-        customer: customer,
+        customer,
         source: customer.source,
         memberPrice: customer.member_price,
       });
       this.getSourceTypes(customer.source_deal);
 
       form.setFieldsValue({
-        'name': customer.name,
-        'phone': customer.phone,
-        'source': customer.source,
-        'mail': customer.mail,
-        'id_card_num': customer.id_card_num,
-        'id_card_pic_front': customer.id_card_pic_front ? customer.id_card_pic_front : '',
-        'id_card_pic_back': customer.id_card_pic_back ? customer.id_card_pic_back : '',
-        'driver_license_front': customer.driver_license_front ? customer.driver_license_front : '',
-        'driver_license_back': customer.driver_license_back ? customer.driver_license_back : '',
+        name: customer.name,
+        phone: customer.phone,
+        source: customer.source,
+        mail: customer.mail,
+        id_card_num: customer.id_card_num,
+        id_card_pic_front: customer.id_card_pic_front ? customer.id_card_pic_front : '',
+        id_card_pic_back: customer.id_card_pic_back ? customer.id_card_pic_back : '',
+        driver_license_front: customer.driver_license_front ? customer.driver_license_front : '',
+        driver_license_back: customer.driver_license_back ? customer.driver_license_back : '',
       });
 
       this.getUploadedImages(customer);
@@ -159,25 +161,26 @@ class NewCustomerForm extends UploadComponent {
   }
 
   render() {
-    const {formItem8_15} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {customer} = this.state;
+    const { formItem8_15 } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { customer } = this.state;
 
-    const uploadImageSize = {height: 38, width: 38};
+    const uploadImageSize = { height: 38, width: 38 };
 
     const selectGenderAfter = (
-      getFieldDecorator('gender', {initialValue: String(customer.gender) || '1'})(
-        <Select style={{width: 70}}>
+      getFieldDecorator('gender', { initialValue: String(customer.gender) || '1' })(
+        <Select style={{ width: 70 }}>
           <Option value={'1'}>先生</Option>
           <Option value={'0'}>女士</Option>
           <Option value={'-1'}>未知</Option>
-        </Select>
+        </Select>,
       )
     );
 
     return (
       <Form>
-        <Input type="hidden" {...getFieldDecorator('customer_id', {initialValue: customer._id})}/>
+        <Input
+          type="hidden" {...getFieldDecorator('customer_id', { initialValue: customer._id })} />
         <Row>
           <Col span={12}>
             <FormItem label="姓名" {...formItem8_15}>
@@ -186,7 +189,7 @@ class NewCustomerForm extends UploadComponent {
                 rules: FormValidator.getRuleNotNull(),
                 validatorTrigger: 'onBlur',
               })(
-                <Input placeholder="请输入姓名" addonAfter={selectGenderAfter}/>
+                <Input placeholder="请输入姓名" addonAfter={selectGenderAfter} />,
               )}
             </FormItem>
           </Col>
@@ -197,34 +200,34 @@ class NewCustomerForm extends UploadComponent {
                 rules: FormValidator.getRulePhoneNumber(),
                 validatorTrigger: 'onBlur',
               })(
-                <Input placeholder="请输入手机号"/>
+                <Input placeholder="请输入手机号" />,
               )}
             </FormItem>
           </Col>
         </Row>
 
-        <Row>
+        {/* <Row>
           <Col span={12}>
             <FormItem label="会员信息" {...formItem8_15}>
               <p>{customer.member_card_name || '无'}</p>
             </FormItem>
           </Col>
-        </Row>
+        </Row>*/}
 
-        <div className="form-line-divider"/>
+        <div className="form-line-divider" />
 
         <Row>
           <Col span={12}>
             <FormItem label="微信号" {...formItem8_15}>
-              {getFieldDecorator('weixin', {initialValue: customer.weixin})(
-                <Input placeholder="请输入微信号"/>
+              {getFieldDecorator('weixin', { initialValue: customer.weixin })(
+                <Input placeholder="请输入微信号" />,
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="QQ" {...formItem8_15}>
-              {getFieldDecorator('qq', {initialValue: customer.qq})(
-                <Input placeholder="请输入QQ"/>
+              {getFieldDecorator('qq', { initialValue: customer.qq })(
+                <Input placeholder="请输入QQ" />,
               )}
             </FormItem>
           </Col>
@@ -235,18 +238,41 @@ class NewCustomerForm extends UploadComponent {
             <FormItem label="邮箱" {...formItem8_15}>
               {getFieldDecorator('mail', {
                 initialValue: customer.mail,
-                validate: [{
-                  rules: [{type: 'email', message: validator.text.email}],
-                  trigger: ['onBlur', 'onChange'],
-                }],
+                validate: [
+                  {
+                    rules: [{ type: 'email', message: validator.text.email }],
+                    trigger: ['onBlur', 'onChange'],
+                  }],
               })(
-                <Input placeholder="请输入邮箱"/>
+                <Input placeholder="请输入邮箱" />,
               )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem label="生日" {...formItem8_15}>
+              <div>
+                {getFieldDecorator('birth_date', {
+                  initialValue: customer.birth_date && customer.birth_date.indexOf('0000') < 0
+                    ? formatter.getMomentDate(customer.birth_date)
+                    : formatter.getMomentDate(),
+                })(
+                  <DatePicker
+                    size="large"
+                    format={formatter.pattern.day}
+                    allowClear={false}
+                    placeholder="请输入生日"
+                    ref={birthday => this.birthdayInput = birthday}
+                  />,
+                )}
+                <Tooltip title="系统根据生日信息，自动发送生日关怀短信" arrowPointAtCenter>
+                  <Icon type="question-circle-o" className="help-icon-font" />
+                </Tooltip>
+              </div>
             </FormItem>
           </Col>
         </Row>
 
-        <div className="form-line-divider"/>
+        <div className="form-line-divider" />
 
         <Row>
           <Col span={12}>
@@ -256,19 +282,19 @@ class NewCustomerForm extends UploadComponent {
                 rules: FormValidator.getRuleIDCard(),
                 validatorTrigger: 'onBlur',
               })(
-                <Input placeholder="请输入身份证号"/>
+                <Input placeholder="请输入身份证号" />,
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="身份证照片" {...formItem8_15}>
               <Row>
-                <Col span={10} style={{overflow: 'hidden'}}>
+                <Col span={10} style={{ overflow: 'hidden' }}>
                   {getFieldDecorator('id_card_pic_front')(
-                    <Input type="hidden"/>
+                    <Input type="hidden" />,
                   )}
                   <Qiniu
-                    style={{...uploadImageSize}}
+                    style={{ ...uploadImageSize }}
                     prefix="id_card_pic_front"
                     saveKey={this.handleKey.bind(this)}
                     source={api.system.getPrivatePicUploadToken('id_card_pic_front')}
@@ -277,12 +303,12 @@ class NewCustomerForm extends UploadComponent {
                     {this.renderImage('id_card_pic_front', uploadImageSize)}
                   </Qiniu>
                 </Col>
-                <Col span={10} style={{overflow: 'hidden'}}>
+                <Col span={10} style={{ overflow: 'hidden' }}>
                   {getFieldDecorator('id_card_pic_back')(
-                    <Input type="hidden"/>
+                    <Input type="hidden" />,
                   )}
                   <Qiniu
-                    style={{...uploadImageSize}}
+                    style={{ ...uploadImageSize }}
                     prefix="id_card_pic_back"
                     saveKey={this.handleKey.bind(this)}
                     source={api.system.getPrivatePicUploadToken('id_card_pic_back')}
@@ -299,15 +325,15 @@ class NewCustomerForm extends UploadComponent {
         <Row>
           <Col span={12}>
             <FormItem label="身份证地址" {...formItem8_15}>
-              {getFieldDecorator('id_card_address', {initialValue: customer.id_card_address})(
-                <Input placeholder="请输入身份证地址"/>
+              {getFieldDecorator('id_card_address', { initialValue: customer.id_card_address })(
+                <Input placeholder="请输入身份证地址" />,
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="常住地址" {...formItem8_15}>
-              {getFieldDecorator('address', {initialValue: customer.address})(
-                <Input placeholder="请输入常住地址"/>
+              {getFieldDecorator('address', { initialValue: customer.address })(
+                <Input placeholder="请输入常住地址" />,
               )}
             </FormItem>
           </Col>
@@ -316,20 +342,20 @@ class NewCustomerForm extends UploadComponent {
         <Row>
           <Col span={12}>
             <FormItem label="驾驶证号" {...formItem8_15}>
-              {getFieldDecorator('driver_license_num', {initialValue: customer.driver_license_num})(
-                <Input placeholder="请输入驾驶证号"/>
+              {getFieldDecorator('driver_license_num', { initialValue: customer.driver_license_num })(
+                <Input placeholder="请输入驾驶证号" />,
               )}
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem label="驾驶证号照片" {...formItem8_15}>
+            <FormItem label="驾驶证照片" {...formItem8_15}>
               <Row>
-                <Col span={10} style={{overflow: 'hidden'}}>
+                <Col span={10} style={{ overflow: 'hidden' }}>
                   {getFieldDecorator('driver_license_front')(
-                    <Input type="hidden"/>
+                    <Input type="hidden" />,
                   )}
                   <Qiniu
-                    style={{...uploadImageSize}}
+                    style={{ ...uploadImageSize }}
                     prefix="driver_license_front"
                     saveKey={this.handleKey.bind(this)}
                     source={api.system.getPrivatePicUploadToken('driver_license_front')}
@@ -338,12 +364,12 @@ class NewCustomerForm extends UploadComponent {
                     {this.renderImage('driver_license_front', uploadImageSize)}
                   </Qiniu>
                 </Col>
-                <Col span={10} style={{overflow: 'hidden'}}>
+                <Col span={10} style={{ overflow: 'hidden' }}>
                   {getFieldDecorator('driver_license_back')(
-                    <Input type="hidden"/>
+                    <Input type="hidden" />,
                   )}
                   <Qiniu
-                    style={{...uploadImageSize}}
+                    style={{ ...uploadImageSize }}
                     prefix="driver_license_back"
                     saveKey={this.handleKey.bind(this)}
                     source={api.system.getPrivatePicUploadToken('driver_license_back')}
@@ -360,8 +386,8 @@ class NewCustomerForm extends UploadComponent {
         <Row>
           <Col span={12}>
             <FormItem label="备注" {...formItem8_15}>
-              {getFieldDecorator('remark', {initialValue: customer.remark})(
-                <Input type="textarea"/>
+              {getFieldDecorator('remark', { initialValue: customer.remark })(
+                <Input type="textarea" />,
               )}
             </FormItem>
           </Col>

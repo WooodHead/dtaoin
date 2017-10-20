@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Form, Input, Button, Row, Col, Modal, message} from 'antd';
+import React, { Component } from 'react';
+import { Form, Input, Button, Row, Col, Modal, message } from 'antd';
 import api from '../../../middleware/api';
 import FormModalLayout from '../../../utils/FormLayout';
 import SearchSelectBox from '../../../components/widget/SearchSelectBox';
@@ -23,12 +23,12 @@ export default class GenMemberCard extends Component {
       'handleSelectKey',
       'handleSearch',
       'requireData',
-    ].forEach((method) => this[method] = this[method].bind(this));
+    ].forEach(method => this[method] = this[method].bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.visible) {
-      this.setState({currentIndex: ''});
+      this.setState({ currentIndex: '' });
     }
     if (!!nextProps.memberCardTypeInfo) {
       this.requireData(nextProps.memberCardTypeInfo);
@@ -41,15 +41,15 @@ export default class GenMemberCard extends Component {
     const failHandler = function (error) {
       message.error(error);
     };
-    let url = api.coupon.getMemberCardTypeCompanyList(memberCardTypeInfo._id, '');
-    api.ajax({url}, (data) => {
+    const url = api.coupon.getMemberCardTypeCompanyList(memberCardTypeInfo._id, '');
+    api.ajax({ url }, data => {
       if (data.code === 0) {
-        this.setState({companyList: data.res.list});
+        this.setState({ companyList: data.res.list });
         successHandler();
       } else {
         failHandler(data.msg);
       }
-    }, (error) => {
+    }, error => {
       failHandler(error);
     });
   }
@@ -61,31 +61,31 @@ export default class GenMemberCard extends Component {
 
     if (key == 'total_count' && value < free_count) {
       this.setState({
-        total_count: '' + (value || 0),
-        free_count: '' + (0),
+        total_count: `${  value || 0}`,
+        free_count: `${  0}`,
       });
     } else if (key == 'free_count' && value > total_count) {
       this.setState({
-        total_count: '' + (value || 0),
-        free_count: '' + (value || 0),
+        total_count: `${  value || 0}`,
+        free_count: `${  value || 0}`,
       });
     } else {
       this.setState({
-        [key]: '' + (value || 0),
+        [key]: `${  value || 0}`,
       });
     }
   }
 
   handleSearch(memberCardTypeInfo, key, successHandle, failHandle) {
-    let url = api.coupon.getMemberCardTypeCompanyList(memberCardTypeInfo._id, key);
-    api.ajax({url}, (data) => {
+    const url = api.coupon.getMemberCardTypeCompanyList(memberCardTypeInfo._id, key);
+    api.ajax({ url }, data => {
       if (data.code === 0) {
-        this.setState({companyList: data.res.list});
+        this.setState({ companyList: data.res.list });
         successHandle(data.res.list);
       } else {
         failHandle(data.msg);
       }
-    }, (error) => {
+    }, error => {
       failHandle(error);
     });
   }
@@ -97,7 +97,7 @@ export default class GenMemberCard extends Component {
   }
 
   submitData(successHandler = null) {
-    const {companyList, currentIndex, total_count, free_count} = this.state;
+    const { companyList, currentIndex, total_count, free_count } = this.state;
     const memberCardTypeInfo = this.props.memberCardTypeInfo;
     const memberCardTypeId = memberCardTypeInfo._id;
     const company = companyList[currentIndex];
@@ -122,13 +122,13 @@ export default class GenMemberCard extends Component {
       member_card_type_id: memberCardTypeId,
       company_id: companyId,
       count: total_count,
-      free_count: free_count,
+      free_count,
     };
-    api.ajax({url, data, type: 'POST'}, (data) => {
+    api.ajax({ url, data, type: 'POST' }, data => {
       if (data.code === 0) {
-        message.success('生成会员卡成功！');
+        message.success('生成套餐卡成功！');
         typeof(successHandler) == 'function' && successHandler(data.res.detail);
-        //重置状态
+        // 重置状态
         this.setState({
           currentIndex: '',
           total_count: 0,
@@ -137,44 +137,45 @@ export default class GenMemberCard extends Component {
       } else {
         message.error(data.msg);
       }
-    }, (error) => {
+    }, error => {
       message.error(error);
     });
   }
 
   exportData(logDetail) {
-    let logId = logDetail._id;
-    let typeId = logDetail.member_card_type;
+    const logId = logDetail._id;
+    const typeId = logDetail.member_card_type;
 
     const url = api.coupon.exportMemberCardDistributeLog(typeId, logId);
-    let aToExportCSV = document.createElement('a');
+    const aToExportCSV = document.createElement('a');
     aToExportCSV.href = url;
     aToExportCSV.target = '_blank';
     aToExportCSV.click();
   }
 
-  //完成
+  // 完成
   handleFinish() {
-    //提交数据
-    this.submitData((logDetail) => {
-      const {companyList, currentIndex} = this.state;
+    // 提交数据
+    this.submitData(logDetail => {
+      const { companyList, currentIndex } = this.state;
       const company = companyList[currentIndex];
-      logDetail['status'] = '0';
-      logDetail['company_name'] = company ? company.name : api.getLoginUser().companyName;
+
+      logDetail.status = '0';
+      logDetail.company_name = company ? company.company_name : api.getLoginUser().companyName;
 
       this.props.finish(logDetail);
       this.props.onSuccess();
     });
   }
 
-  //完成并导出
+  // 完成并导出
   handleFinishAndExport() {
-    //提交数据, 提交数据成功后，导出
-    this.submitData((logDetail) => {
-      const {companyList, currentIndex} = this.state;
+    // 提交数据, 提交数据成功后，导出
+    this.submitData(logDetail => {
+      const { companyList, currentIndex } = this.state;
       const company = companyList[currentIndex];
-      logDetail['status'] = '0';
-      logDetail['company_name'] = company ? company.name : api.getLoginUser().companyName;
+      logDetail.status = '0';
+      logDetail.company_name = company ? company.name : api.getLoginUser().companyName;
 
       this.exportData(logDetail);
       this.props.finish(logDetail);
@@ -183,10 +184,10 @@ export default class GenMemberCard extends Component {
   }
 
   render() {
-    let {formItemTwo, formItemLayout_1014} = FormModalLayout;
-    let {total_count, free_count} = this.state;
-    let memberCardTypeInfo = this.props.memberCardTypeInfo || {};
-    let companyId = api.getLoginUser().companyId;
+    const { formItemTwo, formItemLayout_1014 } = FormModalLayout;
+    const { total_count, free_count } = this.state;
+    const memberCardTypeInfo = this.props.memberCardTypeInfo || {};
+    const companyId = api.getLoginUser().companyId;
 
     return (
       <Modal
@@ -205,12 +206,12 @@ export default class GenMemberCard extends Component {
           <Row>
             <Col className={companyId === '1' ? '' : 'hide'}>
               <FormItem
-                label="发卡门店"
-                labelCol={{span: 4}}
-                wrapperCol={{span: 18}}
+                label="适用门店"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 18 }}
               >
                 <SearchSelectBox
-                  style={{width: 170, float: 'left'}}
+                  style={{ width: 174, float: 'left' }}
                   placeholder={'请输入搜索门店名称'}
                   onSearch={this.handleSearch.bind(this, memberCardTypeInfo)}
                   onSelectKey={this.handleSelectKey}
@@ -230,7 +231,7 @@ export default class GenMemberCard extends Component {
                   type="number"
                   placeholder="请输入总数量"
                   value={total_count !== 0 ? total_count : ''}
-                  onChange={(e) => this.handleInputChange('total_count', e.target.value)}
+                  onChange={e => this.handleInputChange('total_count', e.target.value)}
                 />
               </FormItem>
             </Col>
@@ -243,7 +244,7 @@ export default class GenMemberCard extends Component {
                   type="number"
                   placeholder="请输入免费数量"
                   value={free_count !== 0 ? free_count : ''}
-                  onChange={(e) => this.handleInputChange('free_count', e.target.value)}
+                  onChange={e => this.handleInputChange('free_count', e.target.value)}
                 />
               </FormItem>
             </Col>

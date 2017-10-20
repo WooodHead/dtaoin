@@ -1,5 +1,5 @@
 import React from 'react';
-import {Input, Select, Button, Icon, message} from 'antd';
+import { Input, Select, Button, Icon, message } from 'antd';
 
 import classNames from 'classnames';
 import api from '../../middleware/api';
@@ -23,12 +23,12 @@ class SearchBox extends React.Component {
       'handleAdd',
       'handleFocus',
       'handleBlur',
-    ].forEach((method) => this[method] = this[method].bind(this));
+    ].forEach(method => this[method] = this[method].bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
-      this.setState({value: nextProps.value});
+      this.setState({ value: nextProps.value });
     }
   }
 
@@ -37,9 +37,9 @@ class SearchBox extends React.Component {
     if (key.indexOf('-') > -1) {
       selectValue = key.split('-')[1];
     }
-    this.setState({value: selectValue});
+    this.setState({ value: selectValue });
     if (!!selectValue) {
-      let keyType = Number(selectValue);
+      const keyType = Number(selectValue);
       if (isNaN(keyType) && selectValue.length < 2) {
         return false;
       }
@@ -48,27 +48,27 @@ class SearchBox extends React.Component {
         return false;
       }
 
-      this.setState({isFetching: true});
-      api.ajax({url: api.customer.searchCustomer(selectValue)}, (data) => {
-        let {list} = data.res;
+      this.setState({ isFetching: true });
+      api.ajax({ url: api.customer.searchCustomer(selectValue) }, data => {
+        const { list } = data.res;
         if (list.length > 0) {
-          this.setState({isFetching: false, data: list, isAdd: false});
+          this.setState({ isFetching: false, data: list, isAdd: false });
         } else {
-          this.setState({data: [], isAdd: true});
+          this.setState({ data: [], isAdd: true });
           this.props.onChange(selectValue);
         }
-      }, (data) => {
-        this.setState({data: [], isAdd: true});
+      }, data => {
+        this.setState({ data: [], isAdd: true });
         message.error(data);
       });
     } else {
-      this.setState({data: []});
+      this.setState({ data: [] });
     }
   }
 
   handleSelect(value) {
-    let values = value.split('-');
-    this.setState({value: values[1]});
+    const values = value.split('-');
+    this.setState({ value: values[1] });
     this.props.onSelect(values[0]);
   }
 
@@ -77,15 +77,15 @@ class SearchBox extends React.Component {
   }
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   }
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   }
 
   render() {
-    let {isAdd, value, focus, data} = this.state;
+    const { isAdd, value, focus, data } = this.state;
 
     const btnCls = classNames({
       'ant-search-btn': true,
@@ -100,7 +100,7 @@ class SearchBox extends React.Component {
       <Input.Group className={searchCls} style={this.props.style}>
         <Select
           size="large"
-          combobox
+          mode="combobox"
           value={value}
           notFoundContent="暂无信息"
           defaultActiveFirstOption={true}
@@ -113,28 +113,30 @@ class SearchBox extends React.Component {
           placeholder={this.props.placeholder}
         >
           {data.map(
-            item => <Option key={item._id} value={item._id + '-' + item.phone}>{item.name} {item.phone}</Option>
+            item => <Option key={item._id}
+                            value={`${item._id  }-${  item.phone}`}>{item.name} {item.phone}</Option>,
           )}
         </Select>
         <div className="ant-input-group-wrap">
-          {/*<Button className={btnCls} size="large" onClick={isAdd ? this.handleAdd : this.handleSearch}>
+          {/* <Button className={btnCls} size="large" onClick={isAdd ? this.handleAdd : this.handleSearch}>
            <Icon type={data.length == 0 && value.length > 1 ? 'plus' : 'search'}/>
            </Button>*/}
           {
-            isAdd ?
-              <Button
-                className={btnCls}
-                onClick={this.handleAdd}
-                size="large">
-                <Icon type="plus"/>
-              </Button>
-              :
-              <Button
-                className={btnCls}
-                onClick={this.handleSearch}
-                size="large">
-                <Icon type="search"/>
-              </Button>
+            isAdd ? <Button
+              className={btnCls}
+              onClick={this.handleAdd}
+              size="large"
+              icon="search"
+            >
+              <Icon type="plus" />
+            </Button>
+              : <Button
+              className={btnCls}
+              onClick={this.handleSearch}
+              size="large"
+              icon="search"
+            >
+            </Button>
           }
         </div>
       </Input.Group>

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {message, Alert, Modal, Icon, Row, Col, Table, Form, Input, Select, Badge} from 'antd';
+import { Link } from 'react-router-dom';
+import { message, Alert, Modal, Icon, Row, Col, Table, Form, Input, Select, Badge } from 'antd';
 import QRCode from 'qrcode.react';
 import classNames from 'classnames';
 
@@ -38,7 +38,7 @@ class Clearing extends BaseModal {
   }
 
   handlePreparePay() {
-    let {supplierId} = this.props;
+    const { supplierId } = this.props;
     this.getUnPayList(supplierId);
 
     this.interval = setInterval(this.checkPayStatus.bind(this, supplierId), 2000);
@@ -56,8 +56,8 @@ class Clearing extends BaseModal {
   }
 
   handlePayWorthChange(e) {
-    let {unpayTotal} = this.state;
-    let payWorth = e.target.value;
+    const { unpayTotal } = this.state;
+    const payWorth = e.target.value;
 
     if (payWorth < 0) {
       message.warning('应付金额不能小于0');
@@ -67,14 +67,14 @@ class Clearing extends BaseModal {
   }
 
   calculateSelectPayTotal(selectedIds) {
-    let {itemMap} = this.state;
+    const { itemMap } = this.state;
 
     let unpayTotal = 0;
     let purchaseIds = [], rejectIds = [];
     let purchaseMap = new Map(), rejectMap = new Map();
 
     itemMap.forEach(item => {
-      let itemId = item._id;
+      const itemId = item._id;
       if (selectedIds.indexOf(itemId) > -1) {
         if (item.type) {
           unpayTotal += parseFloat(item.unpay_worth);
@@ -99,7 +99,9 @@ class Clearing extends BaseModal {
 
   calculateUnPayTotal(items) {
     let total = 0;
-    items.forEach(item => item.type ? total += parseFloat(item.unpay_worth) : total -= parseFloat(item.unreceive_worth));
+    items.forEach(item => item.type
+      ? total += parseFloat(item.unpay_worth)
+      : total -= parseFloat(item.unreceive_worth));
     return total;
   }
 
@@ -118,10 +120,10 @@ class Clearing extends BaseModal {
    * 通过比较采购单/退货单列表中最早的单(列表中id最小)的支付状态或支付金额来判断是否支付成功
    */
   checkPayStatus() {
-    let {purchaseIds, rejectIds, purchaseMap, rejectMap} = this.state;
+    const { purchaseIds, rejectIds, purchaseMap, rejectMap } = this.state;
 
-    let orderedPurchaseIds = purchaseIds.sort();
-    let orderedRejectIds = rejectIds.sort();
+    const orderedPurchaseIds = purchaseIds.sort();
+    const orderedRejectIds = rejectIds.sort();
 
     if (purchaseIds.length > 0) {
       this.checkPayPurchaseStatus(purchaseMap.get(orderedPurchaseIds[0]));
@@ -132,18 +134,20 @@ class Clearing extends BaseModal {
   }
 
   checkPayPurchaseStatus(purchaseItem) {
-    api.ajax({url: api.warehouse.purchase.detail(purchaseItem._id)}, data => {
-      let {detail} = data.res;
-      if (String(detail.pay_status) === '2' || parseFloat(detail.unpay_worth) < parseFloat(purchaseItem.unpay_worth)) {
+    api.ajax({ url: api.warehouse.purchase.detail(purchaseItem._id) }, data => {
+      const { detail } = data.res;
+      if (String(detail.pay_status) === '2' ||
+        parseFloat(detail.unpay_worth) < parseFloat(purchaseItem.unpay_worth)) {
         this.paySuccess();
       }
     });
   }
 
   checkPayRejectStatus(rejectItem) {
-    api.ajax({url: api.warehouse.reject.detail(rejectItem._id)}, data => {
-      let {detail} = data.res;
-      if (String(detail.pay_status) === '2' || parseFloat(detail.unpay_worth) < parseFloat(rejectItem.unreceive_worth)) {
+    api.ajax({ url: api.warehouse.reject.detail(rejectItem._id) }, data => {
+      const { detail } = data.res;
+      if (String(detail.pay_status) === '2' ||
+        parseFloat(detail.unpay_worth) < parseFloat(rejectItem.unreceive_worth)) {
         this.paySuccess();
       }
     });
@@ -160,44 +164,48 @@ class Clearing extends BaseModal {
   getUnPayList(supplierId) {
     this.getUnPayPurchases(supplierId, 1); // 挂账
     this.getUnPayRejects(supplierId, 1);   // 挂账
+
+    this.getUnPayPurchases(supplierId, '0'); // 未结算
+    this.getUnPayRejects(supplierId, '0'); // 未结算
   }
 
   getUnPayPurchases(supplierId, payStatus) {
-    api.ajax({url: api.warehouse.purchase.getAllBySupplierAndPayStatus(supplierId, payStatus)}, data => {
-      let {itemMap} = this.state;
-      let {list} = data.res;
+    api.ajax({ url: api.warehouse.purchase.getAllBySupplierAndPayStatus(supplierId, payStatus) }, data => {
+      const { itemMap } = this.state;
+      const { list } = data.res;
 
       list.map(item => itemMap.set(item._id, item));
-      this.setState({itemMap});
+      this.setState({ itemMap });
     });
   }
 
   getUnPayRejects(supplierId, payStatus) {
-    api.ajax({url: api.warehouse.reject.getAllBySupplierAndPayStatus(supplierId, payStatus)}, data => {
-      let {itemMap} = this.state;
-      let {list} = data.res;
+    api.ajax({ url: api.warehouse.reject.getAllBySupplierAndPayStatus(supplierId, payStatus) }, data => {
+      const { itemMap } = this.state;
+      const { list } = data.res;
 
       list.map(item => itemMap.set(item._id, item));
-      this.setState({itemMap});
+      this.setState({ itemMap });
     });
   }
 
   render() {
-    const {visible, itemMap, unpayTotal, purchaseIds, rejectIds}=this.state;
-    const {formItemThree, selectStyle} = Layout;
-    const {getFieldDecorator, getFieldValue} = this.props.form;
+    const { visible, itemMap, unpayTotal, purchaseIds, rejectIds } = this.state;
+    const { formItemThree, selectStyle } = Layout;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
 
-    let items = Array.from(itemMap.values());
-    let unPayTotal = this.calculateUnPayTotal(items);
+    const items = Array.from(itemMap.values());
+    const unPayTotal = this.calculateUnPayTotal(items);
 
     const payInfoContainer = classNames({
       hide: parseFloat(unpayTotal) === 0,
     });
 
-    let payWorth = parseFloat(getFieldValue('pay_worth')) || 0;
+    const payWorth = parseFloat(getFieldValue('pay_worth')) || 0;
     const qrCodeContainer = classNames({
       center: true,
-      hide: unPayTotal <= 0 || unpayTotal < payWorth || !getFieldValue('pay_worth') || payWorth <= 0,
+      hide: unPayTotal <= 0 || unpayTotal < payWorth || !getFieldValue('pay_worth') ||
+      payWorth <= 0,
     });
 
     const columns = [
@@ -222,9 +230,8 @@ class Clearing extends BaseModal {
         dataIndex: '_id',
         key: 'item_type',
         className: 'center',
-        render: (value, record) => {
-          return record.type ? <Badge status="success" text="采购"/> : <Badge status="error" text="退货"/>;
-        },
+        render: (value, record) => record.type ? <Badge status="success" text="采购" /> :
+            <Badge status="error" text="退货" />,
       }, {
         title: '账单金额(元)',
         dataIndex: 'worth',
@@ -236,17 +243,17 @@ class Clearing extends BaseModal {
         dataIndex: 'unpay_worth',
         key: 'unpay_worth',
         className: 'text-right',
-        render: (value, record) => record.type ?
-          Number(record.worth - record.unpay_worth).toFixed(2) :
-          Number(record.new_worth - record.unreceive_worth).toFixed(2),
+        render: (value, record) => record.type ? Number(record.worth - record.unpay_worth).
+          toFixed(2) : Number(record.new_worth - record.unreceive_worth).toFixed(2),
       }, {
         title: '操作',
         dataIndex: '_id',
         key: 'action',
         className: 'center',
         render: (id, record) => {
-          let path = record.type ? 'purchase' : 'purchase-reject';
-          return <Link to={{pathname: `/warehouse/${path}/detail`, query: {id}}} target="_blank">查看详情</Link>;
+          const path = record.type ? 'purchase' : 'purchase-reject';
+          return <Link to={{ pathname: `/warehouse/${path}/detail/${id}` }}
+                       target="_blank">查看详情</Link>;
         },
       },
     ];
@@ -260,14 +267,14 @@ class Clearing extends BaseModal {
         <a href="javascript:" onClick={this.handlePreparePay}>结算</a>
 
         <Modal
-          title={<span><Icon type="calculator"/> 供应商货款结算</span>}
+          title={<span><Icon type="calculator" /> 供应商货款结算</span>}
           visible={visible}
           width={960}
           onCancel={this.closeModal}
           onOk={this.handleSubmit}
           footer={null}
         >
-          <Alert message="请勾选要结算的采购/退货单，并扫码确认付款" type="info" showIcon/>
+          <Alert message="请勾选要结算的采购/退货单，并扫码确认付款" className="mb10" type="info" showIcon />
 
           <Table
             rowSelection={rowSelection}
@@ -281,7 +288,8 @@ class Clearing extends BaseModal {
             footer={() => (
               <Row>
                 <Col span={24}>
-                  <span className="pull-right">合计: {Number(unPayTotal > 0 ? unpayTotal : 0).toFixed(2)}元</span>
+                  <span className="pull-right">合计: {Number(unPayTotal > 0 ? unpayTotal : 0).
+                    toFixed(2)}元</span>
                 </Col>
               </Row>
             )}
@@ -303,18 +311,18 @@ class Clearing extends BaseModal {
                       addonAfter="元"
                       placeholder="填写实付金额"
                       disabled={unpayTotal <= 0}
-                    />
+                    />,
                   )}
                 </FormItem>
 
                 <FormItem label="支付方式" {...formItemThree}>
-                  {getFieldDecorator('pay_type', {initialValue: '2'})(
+                  {getFieldDecorator('pay_type', { initialValue: '2' })(
                     <Select {...selectStyle} disabled={unpayTotal <= 0}>
                       <Option key="1">银行转账</Option>
                       <Option key="2">现金支付</Option>
                       <Option key="3">微信支付</Option>
                       <Option key="4">支付宝支付</Option>
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Form>

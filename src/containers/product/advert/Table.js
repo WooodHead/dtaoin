@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Popconfirm} from 'antd';
+import { message, Popconfirm } from 'antd';
 
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
@@ -14,7 +14,7 @@ export default class Table extends BaseTable {
     api.ajax({
       url: api.advert.offline(),
       type: 'POST',
-      data: {advert_id: id},
+      data: { advert_id: id },
     }, () => {
       message.success('广告下线成功');
       this.props.onSuccess();
@@ -24,7 +24,7 @@ export default class Table extends BaseTable {
   }
 
   render() {
-    let self = this;
+    const self = this;
     const columns = [{
       title: '上线时间',
       dataIndex: 'online_time',

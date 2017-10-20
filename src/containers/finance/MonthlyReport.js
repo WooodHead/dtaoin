@@ -1,20 +1,21 @@
-import React, {Component} from 'react';
-import {Card, Row, Col, DatePicker, Spin} from 'antd';
+import React, { Component } from 'react';
+import { Card, Row, Col, DatePicker, Spin } from 'antd';
 
 import formatter from '../../utils/DateFormatter';
 import api from '../../middleware/api';
 
 const MonthPicker = DatePicker.MonthPicker;
 
-require('../../styles/monthlyReport.css');
-let icon_1 = require('../../images/monthly_report/yuebao_icon_1.png');
-let icon_2 = require('../../images/monthly_report/yuebao_icon_2.png');
-let icon_3 = require('../../images/monthly_report/yuebao_icon_3.png');
-let icon_4 = require('../../images/monthly_report/yuebao_icon_4.png');
-let icon_5 = require('../../images/monthly_report/yuebao_icon_5.png');
-let icon_6 = require('../../images/monthly_report/yuebao_icon_6.png');
-let icon_7 = require('../../images/monthly_report/yuebao_icon_7.png');
-let icon_8 = require('../../images/monthly_report/yuebao_icon_8.png');
+require('./monthlyReport.css');
+
+const icon_1 = require('../../images/monthly_report/yuebao_icon_1.png');
+const icon_2 = require('../../images/monthly_report/yuebao_icon_2.png');
+const icon_3 = require('../../images/monthly_report/yuebao_icon_3.png');
+const icon_4 = require('../../images/monthly_report/yuebao_icon_4.png');
+const icon_5 = require('../../images/monthly_report/yuebao_icon_5.png');
+const icon_6 = require('../../images/monthly_report/yuebao_icon_6.png');
+const icon_7 = require('../../images/monthly_report/yuebao_icon_7.png');
+const icon_8 = require('../../images/monthly_report/yuebao_icon_8.png');
 
 export default class MonthlyReport extends Component {
   constructor(props) {
@@ -35,33 +36,33 @@ export default class MonthlyReport extends Component {
   }
 
   getList() {
-    this.setState({isFetching: true});
-    api.ajax({url: api.finance.getFinancialSummary(this.state.month)}, (data) => {
-      this.setState({detail: data.res, isFetching: false});
+    this.setState({ isFetching: true });
+    api.ajax({ url: api.finance.getFinancialSummary(this.state.month) }, data => {
+      this.setState({ detail: data.res, isFetching: false });
     }, () => {
     });
   }
 
   handleDateRangeChange(momentMonth, stringMonth) {
-    this.setState({month: stringMonth}, () => {
+    this.setState({ month: stringMonth }, () => {
       this.getList();
     });
   }
 
   disabledDate(current) {
     // can not select days after today and today and before 2017.
-    let today = new Date();
-    let earliestTime = new Date(new Date('2017-01-01 00:00:00'));
+    const today = new Date();
+    const earliestTime = new Date(new Date('2017-01-01 00:00:00'));
     return current && (current.valueOf() >= today || current.valueOf() < earliestTime);
   }
 
   render() {
-    let {detail} = this.state;
-    let inventory = (detail.godown && Number(detail.godown.panying) >= 0) ?
-      {img: icon_7, word: '盘差金额'} : {img: icon_6, word: '盘差金额'};
+    const { detail } = this.state;
+    const inventory = (detail.godown && Number(detail.godown.panying) >= 0) ?
+      { img: icon_7, word: '盘差金额' } : { img: icon_6, word: '盘差金额' };
 
     return (
-      <div style={{marginLeft: '25px', marginRight: '90px'}}>
+      <div className="monthly-report" style={{ marginLeft: '25px', marginRight: '90px' }}>
         <Row>
           <laber>选择月份：</laber>
           <MonthPicker
@@ -80,7 +81,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_1} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">总毛利</p>
                     <p className="number">
@@ -95,11 +96,11 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_2} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">总毛利率</p>
                     <p className="number">
-                      {detail.total && detail.total.maolilv && (Number(detail.total.maolilv).toFixed(2) + '%') || '0.00%'}
+                      {detail.total && detail.total.maolilv && (`${Number(detail.total.maolilv).toFixed(2)  }%`) || '0.00%'}
                     </p>
                   </div>
                 </Col>
@@ -110,7 +111,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_1} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">总净利</p>
                     <p className="number">
@@ -125,11 +126,11 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_2} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">总净利率</p>
                     <p className="number">
-                      {detail.total && detail.total.jinglilv && (Number(detail.total.jinglilv).toFixed(2) + '%') || '0.00%'}
+                      {detail.total && detail.total.jinglilv && (`${Number(detail.total.jinglilv).toFixed(2)  }%`) || '0.00%'}
                     </p>
                   </div>
                 </Col>
@@ -138,14 +139,14 @@ export default class MonthlyReport extends Component {
           </Row>
 
           <Row className="mb10">
-            <Card style={{height: '103px'}}>
-              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
+            <Card style={{ height: '103px' }}>
+              <Col span={5} style={{ textAlign: 'center', marginLeft: '0.2%' }}>
                 <Col span={5} offset={2}>
                   <img src={icon_3} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
-                    <p className="explain-word">营业额汇总(元)</p>
+                    <p className="explain-word">营业额汇总</p>
                     <p className="number">
                       {detail.in && detail.in.total && Number(detail.in.total).toFixed(2) || '0.00'}
                     </p>
@@ -182,12 +183,12 @@ export default class MonthlyReport extends Component {
 
 
           <Row className="mb10">
-            <Card style={{height: '103px'}}>
-              <Col span={5} style={{textAlign: 'center', marginLeft: '0.2%'}}>
+            <Card style={{ height: '103px' }}>
+              <Col span={5} style={{ textAlign: 'center', marginLeft: '0.2%' }}>
                 <Col span={5} offset={2}>
                   <img src={icon_4} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">支出汇总</p>
                     <p className="number">
@@ -230,7 +231,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_5} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">仓库期末金额</p>
                     <p className="number">
@@ -245,7 +246,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_5} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">仓库期初金额</p>
                     <p className="number">
@@ -260,7 +261,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={inventory.img} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">{inventory.word}</p>
                     <p className="number">
@@ -275,7 +276,7 @@ export default class MonthlyReport extends Component {
                 <Col span={5} offset={2}>
                   <img src={icon_8} alt="" className="img-report"/>
                 </Col>
-                <Col span={10}>
+                <Col span={17}>
                   <div className="first-div">
                     <p className="explain-word">固定资产</p>
                     <p className="number">

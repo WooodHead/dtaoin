@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Input, Radio, Select} from 'antd';
+import { Row, Col, Input, Radio, Select } from 'antd';
 
 import api from '../../../middleware/api';
 import validator from '../../../utils/validator';
@@ -31,21 +31,21 @@ export default class List extends BaseList {
   }
 
   handleSearchChange(e) {
-    let value = e.target.value;
+    const value = e.target.value;
 
     if (!value) {
-      this.setState({key: '', page: 1});
+      this.setState({ key: '', page: 1 });
     } else if (validator.number(value) && value.length > 3) {
-      this.setState({key: value, page: 1});
+      this.setState({ key: value, page: 1 });
     }
   }
 
   handleTimeChange(e) {
-    this.setState({lastDealDays: e.target.value, page: 1});
+    this.setState({ lastDealDays: e.target.value, page: 1 });
   }
 
   handleStatusChange(value) {
-    this.setState({payStatus: value, page: 1});
+    this.setState({ payStatus: value, page: 1 });
   }
 
   render() {
@@ -55,7 +55,7 @@ export default class List extends BaseList {
           <Col span={24}>
             <Search
               size="large"
-              style={{width: 200}}
+              style={{ width: 200 }}
               onChange={this.handleSearchChange}
               onSearch={this.handleSearchChange}
               placeholder="输入手机号搜索"
@@ -78,7 +78,7 @@ export default class List extends BaseList {
             <label className="label ml20">结算状态</label>
             <Select
               size="large"
-              style={{width: 200}}
+              style={{ width: 200 }}
               defaultValue={'-1'}
               onSelect={this.handleStatusChange}
             >
@@ -89,12 +89,14 @@ export default class List extends BaseList {
           </Col>
         </Row>
 
-        <Table
-          source={api.presales.deal.list(this.state)}
-          page={this.state.page}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
+        <span className="presales-deal-index">
+          <Table
+            source={api.presales.deal.list(this.state)}
+            page={this.state.page}
+            updateState={this.updateState}
+            onSuccess={this.handleSuccess}
+          />
+        </span>
       </div>
     );
   }

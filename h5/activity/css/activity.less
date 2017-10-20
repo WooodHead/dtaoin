@@ -1,0 +1,424 @@
+.content {
+  background-color: #108ee9;
+  font-family: 'PingFang SC', 'Microsoft yahei', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', 'sans-serif';
+
+  .banner {
+    width: 100%;
+    height: 225px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .coupon {
+    padding: 20px;
+    .descript {
+      display: flex;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      font-size: 16px;
+      color: #FFFFFF;
+    }
+    .active {
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      //display: none;
+      .card {
+        width: 100%;
+        height: 90px;
+        margin-top: 19px;
+        background: url("../images/coupon_bg_h5.png") no-repeat;
+        background-size: 100% 100%;
+        .left {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          float: left;
+          width: (200rem/20);
+          height: 100%;
+
+          span:nth-of-type(1) {
+            font-size: 18px;
+            color: #F6A623;
+          }
+          span:nth-of-type(2) {
+            font-size: 32px;
+            color: #F6A623;
+          }
+        }
+        .right {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          padding-left: 20px;
+          float: left;
+          width: (350rem/20);
+          height: 100%;
+          p {
+            margin-top: 2px;
+          }
+          p:nth-of-type(1) {
+            font-size: 18px;
+            color: #333333;
+          }
+          p:nth-of-type(2) {
+            font-size: 12px;
+            color: #F6A623;
+          }
+          p:nth-of-type(3), p:nth-of-type(4) {
+            font-size: 12px;
+            color: #999999;
+          }
+        }
+      }
+
+      .prompt {
+        display: flex;
+        justify-content: center;
+        margin: 18px 0;
+        p {
+          font-size: 14px;
+          color: #ffffff;
+        }
+      }
+
+      .btn {
+        margin: 0 10px;
+
+        div {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .verification {
+          margin-top: 15px;
+          display: none;
+        }
+
+        input {
+          display: flex;
+          align-items: center;
+          padding: 13px 10px;
+          font-size: 16px;
+          border-radius: 6px;
+          outline: none;
+        }
+        .input-phone {
+          width: 100%;
+        }
+
+        .input-code {
+          width: 43%;
+          font-size: 17px;
+        }
+
+        .button {
+          height: 45px;
+          line-height: 45px;
+          display: inline-block;
+          vertical-align: baseline;
+          outline: none;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 6px;
+          border: 0;
+          background-color: #FFD500;
+          font-size: 16px;
+          margin-top: 15px;
+          color: black;
+        }
+
+        .receive {
+          width: 100%;
+        }
+
+        .get-code {
+          width: 43%;
+          margin-top: 0;
+          background-color: rgba(0, 0, 0, 0);
+          border: 1px solid white;
+          color: white;
+        }
+      }
+
+      .explain {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        p {
+          font-size: 14px;
+          color: #ffffff;
+        }
+      }
+    }
+
+    //下载APP
+    .download {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      p {
+        font-size: 14px;
+        color: #ffffff;
+      }
+      a {
+        width: 100%;
+        text-align: center;
+      }
+      .button {
+        width: 90%;
+        height: 50px;
+        line-height: 50px;
+        display: inline-block;
+        vertical-align: baseline;
+        outline: none;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 6px;
+        border: 0;
+        background-color: #FFD500;
+        font-size: 16px;
+        margin-top: 15px;
+        color: #333;
+      }
+    }
+
+    //活动过期  已经领取  领取成功
+    .overdue, .has-receive, .success-receive {
+      padding: 20px 0 10px 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      //display: ;
+
+      p {
+        color: #ffffff;
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+      p:nth-of-type(2) {
+        font-size: 23px;
+        text-align: center;
+        padding: 0 10px;
+      }
+    }
+  }
+
+  /*footer {
+    width: 100%;
+    margin-top: 25px;
+    //height: 127px;
+    .logo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      div:nth-of-type(1) {
+        width: 157px;
+        height: 38px;
+        margin-bottom: 10px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      p {
+        font-size: 16px;
+        color: #ffffff;
+      }
+    }
+
+    .show {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 127px;
+      margin: 15px 20px 0;
+      padding-bottom: 20px;
+      border-top: 1px solid white;
+
+      img {
+        width: 45px;
+        height: 45px;
+      }
+      span {
+        margin-top: 6px;
+        font-size: 14.4px;
+        color: #ffffff;
+      }
+      & > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+    }
+  }*/
+
+  .activity-description {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.7);
+
+    & > div {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -40%);
+      width: (610rem/20);
+      background-color: white;
+      border-radius: 6px;
+      div:nth-of-type(1) {
+        padding: 25px 34px;
+        text-align: left;
+        h1 {
+          margin-bottom: 28px;
+          text-align: center;
+        }
+        p:nth-of-type(1) {
+          margin-bottom: 10px;
+        }
+        p {
+          color: #7b7b7b;
+          font-size: 13px;
+        }
+
+      }
+
+      div:nth-of-type(2) {
+        border-top: 1px solid #cccccc;
+        font-size: 18px;
+        text-align: center;
+        color: #0f86dd;
+        p {
+          height: 50px;
+          line-height: 50px;
+        }
+      }
+    }
+
+  }
+}
+
+/*@media screen and (min-width: 375px) {
+
+}*/
+
+@media screen and (max-width: 370px) {
+  .content {
+    .coupon {
+      padding: 10px;
+      .active {
+        .card {
+          .left {
+            span:nth-of-type(1) {
+              font-size: 16px;
+            }
+            span:nth-of-type(2) {
+              font-size: 28px;
+            }
+          }
+          .right {
+            p:nth-of-type(1) {
+              font-size: 16px;
+            }
+            p:nth-of-type(2) {
+              font-size: 12px;
+            }
+            p:nth-of-type(3), p:nth-of-type(4) {
+              font-size: 12px;
+              font-family: "Songti SC";
+            }
+          }
+        }
+
+        .prompt {
+          p {
+            font-size: 13px;
+          }
+        }
+
+        .btn {
+          input {
+            font-size: 15px;
+          }
+          .input-code {
+            font-size: 15px;
+          }
+
+          .button {
+            font-size: 14px;
+          }
+        }
+
+        .explain {
+          p {
+            font-size: 13px;
+          }
+        }
+      }
+
+      //下载APP
+      .download {
+        p {
+          font-size: 13px;
+        }
+        .button {
+          font-size: 14px;
+        }
+      }
+
+      //活动过期  已经领取  领取成功
+      .overdue, .has-receive, .success-receive {
+        p {
+          font-size: 13px;
+        }
+        p:nth-of-type(2) {
+          font-size: 20px;
+        }
+      }
+    }
+
+   /* footer {
+      .logo {
+        p {
+          font-size: 14px;
+        }
+      }
+    }*/
+
+    .activity-description {
+      & > div {
+        div:nth-of-type(1) {
+          p {
+            color: #7b7b7b;
+            font-size: 12px;
+          }
+        }
+        div:nth-of-type(2) {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}

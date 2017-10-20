@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {Button, Row, Col, Select, Input} from 'antd';
+import { Link } from 'react-router-dom';
+import { Button, Row, Col, Select, Input } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -29,32 +29,32 @@ export default class MaintProjectList extends BaseList {
   }
 
   handleSearchChange(e) {
-    let value = e.target.value;
+    const value = e.target.value;
     if (value.length > 2) {
-      this.setState({key: value, page: 1});
+      this.setState({ key: value, page: 1 });
     } else if (!value) {
-      this.setState({key: '', page: 1});
+      this.setState({ key: '', page: 1 });
     }
   }
 
   handleStatusChange(value) {
-    this.setState({status: value, page: 1});
+    this.setState({ status: value, page: 1 });
   }
 
   handlePayStatusChange(value) {
-    this.setState({pay_status: value, page: 1});
+    this.setState({ pay_status: value, page: 1 });
   }
 
   render() {
     return (
-      <div>
+      <div className="aftersales-index">
         <Row className="head-action-bar">
           <Col span={18}>
             <span className="mr20">
               <Search
                 onChange={this.handleSearchChange}
                 size="large"
-                style={{width: 250}}
+                style={{ width: 250 }}
                 placeholder="请输入工单号、车牌号、电话搜索"
               />
             </span>
@@ -62,33 +62,34 @@ export default class MaintProjectList extends BaseList {
             <label className="mr5">状态:</label>
             <Select
               size="large"
-              style={{width: 200}}
+              style={{ width: 150 }}
               defaultValue="-2"
               onSelect={this.handleStatusChange}
             >
               <Option value="-2">全部</Option>
               <Option value="0">服务中</Option>
-              <Option value="1">已完工</Option>
+              {/* <Option value="1">已完工</Option>*/}
               <Option value="-1">已作废</Option>
             </Select>
 
             <label className="ml20 mr5">结算状态:</label>
             <Select
               size="large"
-              style={{width: 200}}
+              style={{ width: 150 }}
               defaultValue="-2"
               onSelect={this.handlePayStatusChange}
             >
               <Option value="-2">全部</Option>
-              <Option value="0">待付款</Option>
+              <Option value="0">未付款</Option>
               <Option value="1">挂账</Option>
               <Option value="2">已结算</Option>
+              <Option value="3">坏账</Option>
             </Select>
           </Col>
 
           <Col span={6}>
             <div className="pull-right">
-              <Link to={{pathname: '/aftersales/project/new'}} target="_blank">
+              <Link to={{ pathname: '/aftersales/project/new' }} target="_blank">
                 <Button type="primary" size="default">创建工单</Button>
               </Link>
             </div>
@@ -99,6 +100,7 @@ export default class MaintProjectList extends BaseList {
           updateState={this.updateState}
           page={this.state.page}
           source={api.aftersales.project.list(this.state)}
+          reload={this.state.reload}
         />
       </div>
     );

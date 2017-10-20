@@ -1,0 +1,95 @@
+.sms-manage {
+  .company {
+    display: inline-block;
+    min-width: 260px;
+  }
+
+  .info {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    width: 240px;
+    height: 120px;
+    vertical-align: top;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    .number {
+      font-size: 14px;
+      margin-top: 15px;
+      margin-left: 10px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    .money {
+      font-size: 20px;
+      margin-top: 18px;
+    }
+    .single {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    &:hover {
+      border: 2px solid #108ee9;
+      background-color: #f3f9fe;
+      .money {
+        color: #108ee9;
+      }
+    }
+  }
+
+  .info-chose {
+    border: 2px solid #108ee9;
+    background-color: #f3f9fe;
+    .money {
+      color: #108ee9;
+    }
+  }
+  .info-chose:after {
+    content: url("../../images/tag_choosen.png");
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .line {
+    border-top: 1px solid #cccccc;
+    width: 100%;
+    margin: 20px 0;
+  }
+  .qr-code {
+    display: inline-block;
+    text-align: center;
+    line-height: 120px;
+    margin-top: 30px;
+    margin-left: 130px;
+    margin-bottom: 30px;
+    width: 120px;
+    height: 120px;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #979797;
+    vertical-align: middle;
+  }
+  .introduce {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 40px;
+    p {
+      font-size: 14px;
+      color: #666666;
+      line-height: 21px;
+    }
+  }
+}
+
+.common-problem {
+  .question {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  p:not(.question) {
+    margin-left: 20px;
+    color: #9c9c9c;
+  }
+
+}

@@ -12,15 +12,15 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
-    let {fileType} = this.props;
+    const { fileType } = this.props;
     if (fileType) {
       this.getImageUrl(fileType);
     }
   }
 
   getImageUrl(fileType) {
-    api.ajax({url: api.system.getPrivatePicUrl(fileType)}, data => {
-      this.setState({avatarUrl: data.res.url});
+    api.ajax({ url: api.system.getPublicPicUrl(fileType) }, data => {
+      this.setState({ avatarUrl: data.res.url });
     });
   }
 
@@ -30,7 +30,7 @@ export default class Profile extends React.Component {
         src={this.state.avatarUrl}
         alt="无头像"
         className="avatar"
-        style={{width: 40, height: 40, cursor: 'pointer'}}
+        style={{ width: 40, height: 40, cursor: 'pointer' }}
       />
     );
   }

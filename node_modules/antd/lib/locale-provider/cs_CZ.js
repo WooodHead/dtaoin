@@ -24,15 +24,15 @@ var _cs_CZ7 = require('../calendar/locale/cs_CZ');
 
 var _cs_CZ8 = _interopRequireDefault(_cs_CZ7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('cs');
-exports["default"] = {
+_moment2['default'].locale('cs');
+exports['default'] = {
     locale: 'cs',
-    Pagination: _cs_CZ2["default"],
-    DatePicker: _cs_CZ4["default"],
-    TimePicker: _cs_CZ6["default"],
-    Calendar: _cs_CZ8["default"],
+    Pagination: _cs_CZ2['default'],
+    DatePicker: _cs_CZ4['default'],
+    TimePicker: _cs_CZ6['default'],
+    Calendar: _cs_CZ8['default'],
     Table: {
         filterTitle: 'Filtr',
         filterConfirm: 'Potvrdit',

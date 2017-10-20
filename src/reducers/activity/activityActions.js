@@ -14,49 +14,38 @@ const {
   EDIT_ACTIVITY_SUCCESS,
   EDIT_ACTIVITY_FAILURE,
 
-} = require('../../config/constants').default;
+  SET_ACTIVITY_PAGE,
+} = require('../constants').default;
 
 import server from '../../middleware/server';
 import api from '../../middleware/api';
 
+import { createAction } from 'redux-actions';
+
 /**
  * ## get activity list
  */
-export function getActivitiesRequest() {
-  return {
-    type: GET_ACTIVITIES_REQUEST,
-  };
-}
-
-export function getActivitiesSuccess(json) {
-  return {
-    type: GET_ACTIVITIES_SUCCESS,
-    payload: json,
-  };
-}
-
-export function getActivitiesFailure(error) {
-  return {
-    type: GET_ACTIVITIES_FAILURE,
-    payload: error,
-  };
-}
+export const getActivitiesRequest = createAction(GET_ACTIVITIES_REQUEST);
+export const getActivitiesSuccess = createAction(GET_ACTIVITIES_SUCCESS);
+export const getActivitiesFailure = createAction(GET_ACTIVITIES_FAILURE);
 
 export function getActivities(condition) {
   return dispatch => {
     dispatch(getActivitiesRequest());
+    api.ajax({ url: api.activity.list(condition) }, data => {
+      dispatch(getActivitiesSuccess(data.res));
+    }, data => {
+      dispatch(getActivitiesFailure(data.msg));
+    });
+  };
+}
 
-    server.get(api.activity.list(condition))
-      .then(data => {
-        if (data.code === 0) {
-          dispatch(getActivitiesSuccess(data.res));
-        } else {
-          dispatch(getActivitiesFailure(data.msg));
-        }
-      })
-      .catch(error => {
-        dispatch(getActivitiesFailure(error));
-      });
+/**
+ * ## setPage
+ * */
+export function setPage(page) {
+  return dispatch => {
+    dispatch(createAction(SET_ACTIVITY_PAGE)(page));
   };
 }
 
@@ -87,17 +76,15 @@ export function add(params) {
   return dispatch => {
     dispatch(addActivityRequest());
 
-    server.post(api.activity.add(), params)
-      .then(data => {
-        if (data.code === 0) {
-          dispatch(addActivitySuccess(data.res));
-        } else {
-          dispatch(addActivityFailure(data.msg));
-        }
-      })
-      .catch(error => {
-        dispatch(addActivityFailure(error));
-      });
+    server.post(api.activity.add(), params).then(data => {
+      if (data.code === 0) {
+        dispatch(addActivitySuccess(data.res));
+      } else {
+        dispatch(addActivityFailure(data.msg));
+      }
+    }).catch(error => {
+      dispatch(addActivityFailure(error));
+    });
   };
 }
 
@@ -128,17 +115,15 @@ export function edit(params) {
   return dispatch => {
     dispatch(editActivityRequest());
 
-    server.post(api.activity.edit(), params)
-      .then(data => {
-        if (data.code === 0) {
-          dispatch(editActivitySuccess(data.res));
-        } else {
-          dispatch(editActivityFailure(data.msg));
-        }
-      })
-      .catch(error => {
-        dispatch(editActivityFailure(error));
-      });
+    server.post(api.activity.edit(), params).then(data => {
+      if (data.code === 0) {
+        dispatch(editActivitySuccess(data.res));
+      } else {
+        dispatch(editActivityFailure(data.msg));
+      }
+    }).catch(error => {
+      dispatch(editActivityFailure(error));
+    });
   };
 }
 

@@ -1,13 +1,21 @@
 const CommonText = {
+  // 全局通用
   routeType: {
     0: '路由',
     1: '模态框',
     2: '授权',
   },
-
+  autoLogin: {
+    0: '未注册',
+    1: '已注册',
+  },
   memberCardStatus: {
     0: '启用中',
     1: '未启用',
+  },
+  memberCardSale: {
+    0: '未结算',
+    1: '已结算',
   },
   companyType: {
     0: '未知',
@@ -37,18 +45,36 @@ const CommonText = {
   },
   technicianStatus: {
     '-1': '已封禁',
-    0: '待审核',
-    1: '审核通过',
+    0: '待认证',
+    1: '已认证',
+    2: '已驳回',
+    3: '审核中',
   },
-  taskDetails: {
-    0: '开始',
-    1: '跟进',
-    2: '详情',
+
+  // 提醒
+  task: {
+    dueDateMin: {
+      '-1': '0-30',
+      0: '0-15',
+      1: '16-30',
+    },
+    dueDate: {
+      '-1': '0-45',
+      0: '0-30',
+      1: '30-45',
+    },
+    action: {
+      0: '开始',
+      1: '跟进',
+      2: '详情',
+    },
   },
-  dueData: {
-    '-1': '',
-    0: '0-15',
-    1: '15-30',
+
+  department: {
+    0: '--',
+    1: '总经办',
+    2: '售前',
+    3: '售后',
   },
 
   balancePayments: {
@@ -71,9 +97,22 @@ const CommonText = {
     2: '折扣',
     3: '立减',
   },
+  couponActivityStatus: {
+    0: '待开始',
+    1: '活动中',
+    2: '已结束',
+  },
   useStatus: {
     0: '启用',
     1: '停用',
+  },
+  prizeStatus: {
+    0: '未兑奖',
+    1: '已兑奖',
+  },
+  partStatus: {
+    '-1': '停用',
+    0: '启用',
   },
   week: {
     0: '周日',
@@ -90,7 +129,12 @@ const CommonText = {
     1: '已完工',
   },
   gender: {
-    1: '男士',
+    1: '男',
+    0: '女',
+    '-1': '未知',
+  },
+  gender_o: {
+    1: '先生',
     0: '女士',
     '-1': '未知',
   },
@@ -139,6 +183,18 @@ const CommonText = {
     4: '装潢交易',
     5: '维保交易',
   },
+
+  // 提成类型
+  commissionType: {
+    1: '项目销售',
+    2: '项目施工',
+    3: '套餐卡销售',
+    4: '领券活动阅读',
+    5: '领券活动核销',
+    6: '助力砍价阅读',
+    7: '助力砍价核销',
+  },
+
   energyType: {
     0: '汽油',
     1: '柴油',
@@ -154,12 +210,28 @@ const CommonText = {
       0: '待付款',
       1: '挂账',
       2: '已结算',
+      3: '坏账',
     },
   },
 
-  //2C客户端下载地址
+  greetings: {
+    1: '早上好，一天的工作要开始了！',
+    2: '上午好，今天也要元气满满哦。',
+    3: '中午好，吃饭的时候最好不要盯着电脑哟。',
+    4: '下午好，忙碌的你有着最迷人的剪影！',
+    5: '在忙吗，还有水稻汽车陪着你。',
+    6: '晚安，愿你今夜好梦。',
+  },
+
+  smsStatus: {
+    0: '发送中',
+    1: '发送成功',
+    2: '失败',
+  },
+
+  // 2C客户端下载地址
   clientVersion: {
-    //应用宝地址
+    // 应用宝地址
     downloadAddress: 'http://a.app.qq.com/o/simple.jsp?pkgname=com.shuidao.daotiantoc',
   },
 
@@ -189,18 +261,18 @@ const CommonText = {
     pay_card_pic: '工资卡',
     user_certificate_pic: '资格证书',
   },
-  //pay_type支付类型：0(默认):挂账；1:现金
+  // pay_type支付类型：0(默认):挂账；1:现金
   partPayType: {
     0: '挂账',
     1: '现金',
   },
 
   e2cPosition: {
-    'sa': 'SA',
-    'financial': '收银员',
+    sa: 'SA',
+    financial: '收银员',
 
   },
-  /*前端写死部分,集结于此，方便管理*/
+  /* 前端写死部分,集结于此，方便管理*/
   /*  formType: {
    1: '维修保养',
    2: '会员购买',
@@ -213,21 +285,20 @@ const CommonText = {
    },*/
 
   IncomeFromType: [
-    {id: 1, name: '维修保养'},
-    {id: 2, name: '会员购买'}, /*,
+    { id: 1, name: '维修保养' },
+    { id: 2, name: '套餐卡购买' }, /*,
      {id: 0, name: '全部'}*/
   ],
 
-
   IncomeStatus: [
-    {id: 1, name: '未结算'},
-    {id: 2, name: '已结算'}, /*,
+    { id: 1, name: '未结算' },
+    { id: 2, name: '已结算' }, /*,
      {id: 0, name: '全部'}*/
   ],
 
   IncomeAccountType: [
-    {id: 0, name: '门店收款'},
-    {id: 10, name: '总公司收款'},
+    { id: 0, name: '门店收款' },
+    { id: 10, name: '总公司收款' },
   ],
 
   insuranceName: {
@@ -260,33 +331,33 @@ const CommonText = {
     ci_spec: '不计免赔特约险',
   },
   insuranceValue: {
-    '车辆损失险': 'ci_damage',
-    '第三责任险': 'ci_third',
+    车辆损失险: 'ci_damage',
+    第三责任险: 'ci_third',
     '车上人员责任险(驾驶员)': 'ci_driver',
     '车上人员责任险(乘客)': 'ci_passenger',
-    '全车盗抢险': 'ci_stolen',
-    '车载货物掉落责任险': 'ci_car_goods_drop',
-    '风挡玻璃单独破碎险': 'ci_windscreen',
-    '车辆停驶损失险': 'ci_traffic_free_loss_danger',
-    '自燃损失险': 'ci_combust',
-    '新增加设备损失险': 'ci_new_equipment_loss_danger',
-    '划痕险': 'ci_scratch',
-    '无过错责任险': 'ci_no_fault_liability',
-    '涉水行驶险': 'ci_wade',
-    '不计免赔特约险': 'ci_spec',
+    全车盗抢险: 'ci_stolen',
+    车载货物掉落责任险: 'ci_car_goods_drop',
+    风挡玻璃单独破碎险: 'ci_windscreen',
+    车辆停驶损失险: 'ci_traffic_free_loss_danger',
+    自燃损失险: 'ci_combust',
+    新增加设备损失险: 'ci_new_equipment_loss_danger',
+    划痕险: 'ci_scratch',
+    无过错责任险: 'ci_no_fault_liability',
+    涉水行驶险: 'ci_wade',
+    不计免赔特约险: 'ci_spec',
   },
 
   question: {
     '-1': '已屏蔽',
-    '0': '正常',
+    0: '正常',
   },
 
   settings: {
     account: {
       userType: {
-        '1': '连锁店管理员',
-        '2': '区域管理员',
-        '3': '总公司管理员',
+        1: '连锁店管理员',
+        2: '区域管理员',
+        3: '总公司管理员',
       },
     },
   },

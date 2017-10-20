@@ -40,6 +40,13 @@ const path = {
   deal: {
     calculatedReturn: 'presales/deal-auto/calculation-income',
   },
+
+  maintainItem: {
+    commission: 'maintain-item/commission',
+  },
+  marketing: {
+    commission: '	marketing/membercard/commission',
+  },
 };
 
 export default path;

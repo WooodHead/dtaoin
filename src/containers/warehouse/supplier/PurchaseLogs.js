@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
 
@@ -25,19 +25,19 @@ export default class PartEntryLog extends BaseModal {
   }
 
   handlePageChange(page) {
-    this.setState({page});
+    this.setState({ page });
     this.getPayPurchases(this.props.supplierId, page);
   }
 
   getPayPurchases(supplierId, page) {
-    api.ajax({url: api.warehouse.purchase.getListBySupplierAndPayStatus(supplierId, '', page)}, data => {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
+    api.ajax({ url: api.warehouse.purchase.getListBySupplierAndPayStatus(supplierId, '', page) }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total) });
     });
   }
 
   render() {
-    const {visible, list, total, page}=this.state;
+    const { visible, list, total, page } = this.state;
 
     const columns = [
       {
@@ -59,7 +59,7 @@ export default class PartEntryLog extends BaseModal {
         dataIndex: 'arrival_time',
         key: 'arrival_time',
         className: 'center',
-        render: value => value.indexOf('0000') > -1 ? null : value,
+        render: value => value && value.indexOf('0000') > -1 ? null : value,
       }, {
         title: '采购金额',
         dataIndex: 'worth',
@@ -80,7 +80,7 @@ export default class PartEntryLog extends BaseModal {
         dataIndex: 'pay_time',
         key: 'pay_time',
         className: 'center',
-        render: value => value.indexOf('0000') > -1 ? '--' : value,
+        render: value => value && value.indexOf('0000') > -1 ? '--' : value,
       },
     ];
 

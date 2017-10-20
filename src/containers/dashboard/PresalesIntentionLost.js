@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Icon, Row, Col} from 'antd';
+import { Card, Icon, Row, Col } from 'antd';
 import BarChart from '../../components/chart/BarChart';
 
 export default class PresalesIntentionLost extends React.Component {
@@ -8,8 +8,8 @@ export default class PresalesIntentionLost extends React.Component {
   }
 
   render() {
-    let intentionLostTitle = [];
-    let intentionLostCount = [];
+    const intentionLostTitle = [];
+    const intentionLostCount = [];
 
     let carSourceCount = 0;
     let priceCount = 0;
@@ -30,7 +30,7 @@ export default class PresalesIntentionLost extends React.Component {
       }
     });
 
-    if(this.props.intentionLostSubInfo.length <= 0) {
+    if (this.props.intentionLostSubInfo.length <= 0) {
       title = '暂无数据';
     }
 
@@ -39,7 +39,7 @@ export default class PresalesIntentionLost extends React.Component {
       intentionLostCount.push(parseInt(item.count));
     });
 
-    let series = [{
+    const series = [{
       name: '次数',
       data: intentionLostCount,
     }];
@@ -68,6 +68,7 @@ export default class PresalesIntentionLost extends React.Component {
           categories={intentionLostTitle}
           series={series}
           title={title}
+          chartHeight="378"
         />
       </Card>
     );

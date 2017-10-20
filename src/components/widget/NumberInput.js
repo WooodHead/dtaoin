@@ -16,6 +16,7 @@
  layout：布局；
  label:
  unitVisible: 单位是否显示，默认显示
+ unit: 单位
  disabled:
 
  功能：
@@ -33,7 +34,7 @@
  />
  **/
 import React from 'react';
-import {message, Form} from 'antd';
+import { message, Form } from 'antd';
 import className from 'classnames';
 
 const FormItem = Form.Item;
@@ -51,12 +52,13 @@ export default class NumberInput extends React.Component {
 
   static defaultProps = {
     defaultValue: '',
-    style: {width: '100%'},
+    style: { width: '100%' },
     isInt: false,
     placeholder: '',
     rules: '',
-    layout: {labelCol: {span: 8}, wrapperCol: {span: 16}},
+    layout: { labelCol: { span: 8 }, wrapperCol: { span: 16 } },
     label: '',
+    unit: '',
     unitVisible: true,
     onChange: () => {
     },
@@ -68,12 +70,11 @@ export default class NumberInput extends React.Component {
         unitShow: true,
       });
     }, 0);
-
   }
 
   handleChange(e) {
-    let value = e.target.value;
-    let {id, onChange, isInt} = this.props;
+    const value = e.target.value;
+    const { id, onChange, isInt } = this.props;
 
     let showValue = '';
 
@@ -84,7 +85,7 @@ export default class NumberInput extends React.Component {
       return false;
     }
 
-    let decimal = value.split('.')[1];
+    const decimal = value.split('.')[1];
 
     if (!isInt) {
       (decimal && decimal.length > 2) ? message.warning('最多只能输入两位小数') : '';
@@ -96,7 +97,7 @@ export default class NumberInput extends React.Component {
       this[id].value = showValue;
     }
 
-    let isEmpty = onChange(showValue);
+    const isEmpty = onChange(showValue);
     if (isEmpty === false) {
       this[id].value = '';
       onChange('');
@@ -104,53 +105,54 @@ export default class NumberInput extends React.Component {
   }
 
   render() {
-    let {unitShow} = this.state;
-    let {defaultValue, id, style, self, placeholder, rules, layout, label, unitVisible, disabled} = this.props;
+    const { unitShow } = this.state;
+    const { defaultValue, id, value, style, self, placeholder, rules, layout, label, unitVisible, disabled, unit } = this.props;
     let getFieldDecorator = '';
     let content = '';
 
-    let unit = className({
+    const isUnit = className({
       'number-input-addon': unitVisible && unitShow,
       hide: !unitVisible || !unitShow,
     });
 
     self && (getFieldDecorator = self.props.form.getFieldDecorator);
 
-    self ?
-      content = (
-        <span ref={content => this[`content${id}`] = content}>
+    self ? content = (
+        <span ref={content => this[`content${id}`] = content} style={style}>
           <FormItem label={label} {...layout}>
-            {getFieldDecorator(id, {
-              initialValue: String(defaultValue) || '',
-              validateTrigger: 'onBlur',
-              rules: rules,
-            })(
-              <input
-                className="ant-input ant-input-lg"
-                style={style}
-                ref={price => this[id] = price}
-                onInput={e => this.handleChange(e)}
-                placeholder={placeholder}
-                disabled={disabled}
-              />
-            )}
-            <span className={unit}>元</span>
+              {getFieldDecorator(id, {
+                initialValue: String(defaultValue) || '',
+                validateTrigger: 'onBlur',
+                rules,
+              })(
+                <input
+                  className="ant-input ant-input-lg"
+                  ref={price => this[id] = price}
+                  onInput={e => this.handleChange(e)}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  style={{ width: '100%' }}
+                />,
+              )}
+            <span className={isUnit}>{unit ? unit : '元'}</span>
            </FormItem>
         </span>
       )
-      :
-      content = (
-        <span ref={content => this[`content${id}`] = content}>
+      : content = (
+        <span ref={content => this[`content${id}`] = content} style={Object.assign(style, {
+          display: 'inline-block',
+          position: 'relative',
+        })}>
           <input
-            defaultValue={defaultValue}
+            value={value}
             className="ant-input ant-input-lg"
-            style={style}
+            style={{ width: '100%' }}
             ref={price => this[id] = price}
             onInput={e => this.handleChange(e)}
             placeholder={placeholder}
             disabled={disabled}
           />
-          <span className={unit}>个</span>
+          <span className={isUnit}>{unit ? unit : '个'}</span>
         </span>
       );
     return content;

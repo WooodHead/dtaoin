@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -8,7 +8,7 @@ import FormPart from './FormPart';
 export default class EditPart extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
   }
 
   onSuccess(data) {
@@ -17,7 +17,7 @@ export default class EditPart extends BaseModal {
   }
 
   render() {
-    let {customer_id, maintain_part, memberDetailList} = this.props;
+    const { customer_id, maintain_part, memberDetailList } = this.props;
 
     return (
       <span>

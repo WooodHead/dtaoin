@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button, Form, Input, DatePicker, Select} from 'antd';
+import { Row, Col, Modal, Icon, Button, Form, Input, DatePicker, Select } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -12,6 +12,7 @@ import FormValidator from '../../../utils/FormValidator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const TextArea = Input.TextArea;
 
 class NewExpenceModal extends BaseModal {
   constructor(props) {
@@ -40,11 +41,11 @@ class NewExpenceModal extends BaseModal {
         url: api.finance.newDailyExpense(),
         type: 'POST',
         data: values,
-      }, function () {
+      }, () => {
         this.hideModal();
         // location.reload();
         window.location.href = '/finance/expense/list';
-      }.bind(this));
+      });
     });
   }
 
@@ -52,34 +53,34 @@ class NewExpenceModal extends BaseModal {
     api.ajax({
       url: api.finance.newExpenseType(),
       type: 'POST',
-      data: {name: newItem, type: 1},
-    }, function (data) {
+      data: { name: newItem, type: 1 },
+    }, data => {
       this.getExpensiveTypes(data.res.sub_type._id);
-    }.bind(this));
+    });
   }
 
   getExpensiveTypes(newTypeId) {
-    api.ajax({url: api.finance.getProjectTypeList(1)}, function (data) {
-      this.setState({expenseTypes: data.res.list});
+    api.ajax({ url: api.finance.getProjectTypeList(1) }, data => {
+      this.setState({ expenseTypes: data.res.list });
       if (newTypeId) {
-        this.props.form.setFieldsValue({sub_type: newTypeId});
+        this.props.form.setFieldsValue({ sub_type: newTypeId });
       }
-    }.bind(this));
+    });
   }
 
   getUsersByDeptAndRole() {
-    api.ajax({url: api.user.getUsersByDeptAndRole()}, function (data) {
-      let user = data.res.user_list;
+    api.ajax({ url: api.user.getUsersByDeptAndRole() }, data => {
+      const user = data.res.user_list;
       this.setState({
         user,
       });
-    }.bind(this));
+    });
   }
 
   render() {
-    const {selectStyle, formItemThree, formItemTwo} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {visible, expenseTypes} = this.state;
+    const { selectStyle, formItemThree, formItemTwo } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { visible, expenseTypes } = this.state;
 
     return (
       <span>
@@ -91,7 +92,7 @@ class NewExpenceModal extends BaseModal {
           新增支出
         </Button>
         <Modal
-          title={<span><Icon type="plus" className="mr10"/>新增支出</span>}
+          title={<span><Icon type="plus" className="mr10" />新增支出</span>}
           visible={visible}
           width="720px"
           onOk={this.handleSubmit.bind(this)}
@@ -104,7 +105,7 @@ class NewExpenceModal extends BaseModal {
                   {getFieldDecorator('ptime', {
                     initialValue: formatter.getMomentDate(),
                   })(
-                    <DatePicker allowClear={false}/>
+                    <DatePicker allowClear={false} />,
                   )}
                 </FormItem>
               </Col>
@@ -116,14 +117,14 @@ class NewExpenceModal extends BaseModal {
                     })(
                       <Select{...selectStyle}>
                         {expenseTypes.map(type => <Option key={type._id}>{type.name}</Option>)}
-                      </Select>
+                      </Select>,
                     )}
                   </FormItem>
                 </Col>
                 <Col span={4} offset={1}>
                     <FormItem label="">
                       <p className="ant-form-text">
-                      <NewExpenseType save={this.saveNewType.bind(this)}/>
+                      <NewExpenseType save={this.saveNewType.bind(this)} />
                     </p>
                     </FormItem>
                 </Col>
@@ -136,7 +137,7 @@ class NewExpenceModal extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input type="number" addonBefore="￥" style={{width: 136}}/>
+                    <Input type="number" addonBefore="￥" style={{ width: 165 }} />,
                   )}
                 </FormItem>
               </Col>
@@ -148,12 +149,12 @@ class NewExpenceModal extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Select style={{width: 162}}>
+                    <Select style={{ width: 172 }}>
                       <Option key="1">银行转账</Option>
                       <Option key="2">现金支付</Option>
                       <Option key="3">微信支付</Option>
                       <Option key="4">支付宝支付</Option>
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
@@ -166,27 +167,27 @@ class NewExpenceModal extends BaseModal {
                   rules: FormValidator.getRuleNotNull(),
                   validateTrigger: 'onBlur',
                 })(
-                  <Input placeholder="收款方" style={{width: 165}}/>
+                  <Input placeholder="收款方" style={{ width: 165 }} />,
                 )}
                 </FormItem>
               </Col>
 
               <Col span={9}>
                 <FormItem label="经办人" {...formItemTwo}>
-                  {getFieldDecorator('user_id', {initialValue: api.getLoginUser.uid})(
-                    <Select style={{width: 162}}>
+                  {getFieldDecorator('user_id', { initialValue: api.getLoginUser().uid })(
+                    <Select style={{ width: 172 }}>
                       {this.state.user.map(item => <Option key={item._id}>{item.name}</Option>)}
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
             </Row>
 
             <Row>
-              <Col span={24}>
-              <FormItem label="描述" labelCol={{span: 3}} wrapperCol={{span: 16}}>
+              <Col span={20}>
+              <FormItem label="描述" labelCol={{ span: 4 }} wrapperCol={{ span: 16 }}>
                 {getFieldDecorator('remark')(
-                  <Input type="textarea"/>
+                  <TextArea style={{ width: '448px' }} />,
                 )}
               </FormItem>
               </Col>

@@ -1,58 +1,73 @@
 import React from 'react';
-import {Row, Col, Select, DatePicker} from 'antd';
+import { Select, DatePicker, Input } from 'antd';
 
 import Table from './Table';
 import ConsumpMaterialModal from './New';
 
-import SearchSelectBox from '../../../components/widget/SearchSelectBox';
 import BaseList from '../../../components/base/BaseList';
 
 import formatter from '../../../utils/DateFormatter';
 import api from '../../../middleware/api';
 
 const Option = Select.Option;
+const Search = Input.Search;
+
+const lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
 
 export default class ConsumptiveMaterialList extends BaseList {
   constructor(props) {
     super(props);
     this.state = {
       key: '',
-      selectedItem: '',
       page: 1,
       status: '-2',
       startTime: '',
       endTime: '',
       endOpen: false,
-      consumptiveShow: props.location.query.consumptiveShow || false,
+      partsInfo: '',
+      chooseRejectParts: '',
+      consumptiveShow: props.match.params.consumptiveShow || false,
+
+      searchKey: '',
     };
 
     [
       'handleStatusSelectChange',
-      'handleSearch',
-      'handleSelectItem',
+      'handleShowPartsInfo',
+      'disabledEndDate',
+      'handleSearchChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   handleStartTimeChange(value) {
-    this.setState({startTime: formatter.day(value)});
+    this.setState({ startTime: formatter.day(value) });
   }
 
   handleEndTimeChange(value) {
-    this.setState({endTime: formatter.day(value), page: 1});
+    this.setState({ endTime: formatter.day(value), page: 1 });
   }
 
   handleStartOpenChange(open) {
     if (!open) {
-      this.setState({endOpen: true});
+      this.setState({ endOpen: true });
     }
   }
 
+  handleShowPartsInfo(partsInfo) {
+    this.setState({ partsInfo });
+  }
+
   handleEndOpenChange(open) {
-    this.setState({endOpen: open});
+    this.setState({ endOpen: open });
+  }
+
+  disabledEndDate(current) {
+    const { startTime } = this.state;
+    return current && (current.valueOf() >= lastDate || current.valueOf() <= new Date(startTime));
   }
 
   handleStatusSelectChange(value) {
-    let now = new Date();
+    const now = new Date();
     let startTime = '';
     let endTime = '';
     if (Number(value) === 1) {
@@ -67,47 +82,40 @@ export default class ConsumptiveMaterialList extends BaseList {
     });
   }
 
-  handleSearch(key, successHandle, failHandle) {
-    let {page, startTime, endTime, status} = this.state;
-    let url = api.aftersales.getConsumableList(key, page, startTime, endTime, status);
-    api.ajax({url}, (data) => {
-      if (data.code === 0) {
-        this.setState({key});
-        successHandle(data.res.list);
-      } else {
-        failHandle(data.msg);
-      }
-    }, () => {
-    });
+  handleSearchChange(e) {
+    const key = e.target.value;
+    this.setState({ key, page: 1 });
   }
 
   handleSelectItem(selectedItem) {
-    this.setState({selectedItem});
+    this.setState({ selectedItem });
   }
 
   render() {
-    let {key, page, startTime, endTime, status, selectedItem, reload, endOpen} = this.state;
+    const { key, page, startTime, endTime, status, reload, endOpen } = this.state;
     return (
       <div>
-        <Row className="mb15">
-          <Col span={22}>
-            <SearchSelectBox
-              style={{width: 250, float: 'left'}}
-              placeholder={'请输入搜索名称'}
-              onSearch={this.handleSearch}
-              displayPattern={item => item.part_names}
-              onSelectItem={this.handleSelectItem}
-            />
+        <div className="mb15">
+          <Search
+            onChange={this.handleSearchChange}
+            size="large"
+            style={{ width: '250px' }}
+            placeholder="请输入搜索名称"
+          />
 
-            <label className="ml20">状态：</label>
-            <Select size="large" defaultValue="-2" onSelect={this.handleStatusSelectChange} style={{width: 200}}>
-              <Option value="-2">全部</Option>
-              <Option value="-1">已取消</Option>
-              <Option value="0">待审核</Option>
-              <Option value="1">已领用</Option>
-            </Select>
+          <label className="ml20">状态：</label>
+          <Select
+            size="large" defaultValue="-2"
+            onSelect={this.handleStatusSelectChange}
+            style={{ width: 200 }}
+          >
+            <Option value="-2">全部</Option>
+            <Option value="-1">已取消</Option>
+            <Option value="0">待审核</Option>
+            <Option value="1">已领用</Option>
+          </Select>
 
-            <span className={Number(this.state.status) === 1 ? '' : 'hide'}>
+          <span className={Number(this.state.status) === 1 ? '' : 'hide'}>
               <label className="ml20">领用日期：</label>
               <DatePicker
                 format={formatter.pattern.day}
@@ -118,6 +126,7 @@ export default class ConsumptiveMaterialList extends BaseList {
               />
               -
               <DatePicker
+                disabledDate={this.disabledEndDate}
                 format={formatter.pattern.day}
                 value={formatter.getMomentDate(endTime)}
                 onChange={this.handleEndTimeChange.bind(this)}
@@ -126,23 +135,24 @@ export default class ConsumptiveMaterialList extends BaseList {
                 allowClear={false}
               />
             </span>
-          </Col>
+          <div className="pull-right">
+            <ConsumpMaterialModal
+              getList={this.handleSuccess}
+              consumptiveShow={this.state.consumptiveShow}
+              showPartsInfo={this.handleShowPartsInfo}
+            />
+          </div>
+        </div>
 
-          <Col span={2}>
-            <div className="pull-right">
-              <ConsumpMaterialModal getList={this.handleSuccess} consumptiveShow={this.state.consumptiveShow}/>
-            </div>
-          </Col>
-        </Row>
-
-        <Table
-          source={api.aftersales.getConsumableList(key, page, startTime, endTime, status)}
-          page={page}
-          reload={reload}
-          selectedItem={selectedItem}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
+        <span className="consumptive-index">
+          <Table
+            source={api.aftersales.getConsumableList(key, page, startTime, endTime, status)}
+            page={page}
+            reload={reload}
+            updateState={this.updateState}
+            onSuccess={this.handleSuccess}
+          />
+        </span>
       </div>
     );
   }

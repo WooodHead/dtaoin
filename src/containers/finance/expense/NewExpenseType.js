@@ -1,7 +1,8 @@
 import React from 'react';
-import {Row, Col, Popover, Button, Icon} from 'antd';
+import { Row, Col, Popover, Button, Icon } from 'antd';
+import createReactClass from 'create-react-class';
 
-const NewExpenseType = React.createClass({
+const NewExpenseType = createReactClass({
   getInitialState() {
     return {
       visible: false,
@@ -15,11 +16,11 @@ const NewExpenseType = React.createClass({
   },
 
   handleVisibleChange(visible) {
-    this.setState({visible});
+    this.setState({ visible });
   },
 
-  addNewItem(){
-    let newItem = this.refs.newItem.value;
+  addNewItem() {
+    const newItem = this.refs.newItem.value;
     if (newItem) {
       this.props.save(newItem);
       this.hide();
@@ -34,7 +35,7 @@ const NewExpenseType = React.createClass({
             <label className="input-label">项目名称：</label>
           </Col>
           <Col span={16}>
-            <input className="ant-input ant-input-lg" ref="newItem" placeholder="类型名称"/>
+            <input className="ant-input ant-input-lg" ref="newItem" placeholder="类型名称" />
           </Col>
         </Row>
 
@@ -48,10 +49,11 @@ const NewExpenseType = React.createClass({
     return (
       <Popover
         content={content}
-        title={<span><Icon type="plus"/> 添加新类型</span>}
+        title={<span className="popover-title"><Icon type="plus" /> 添加新类型</span>}
         trigger="click"
         visible={this.state.visible}
         onVisibleChange={this.handleVisibleChange}
+        overlayClassName="white"
       >
         <a href="javascript:;">新增支出类型</a>
       </Popover>

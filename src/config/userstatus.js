@@ -1,10 +1,10 @@
 import BrandInfo from './brand';
 import validator from '../utils/validator';
-let hrefBack = location.href;
+const hrefBack = location.href;
 
-let whiteList = ['app/download'];       //白名单
-let inWhiteList = false;                //是否在白名单，在白名单则请求用户状态
-for (let key of whiteList) {
+const whiteList = ['app/download'];       // 白名单
+let inWhiteList = false;                // 是否在白名单，在白名单则请求用户状态
+for (const key of whiteList) {
   if (hrefBack.indexOf(key) >= 0) {
     inWhiteList = true;
     break;
@@ -12,18 +12,18 @@ for (let key of whiteList) {
 }
 
 if (!inWhiteList) {
-  const API_HOST = window.baseURL + '/v1/';
-  //防止localStorage预存信息不是base64报错
-  let USER_SESSION = localStorage.getItem('USER_SESSION');
-  let base64Reg = validator.pattern.base64;
-  let isbase64 = base64Reg.test(USER_SESSION);
+  const API_HOST = `${window.baseURL  }/v1/`;
+  // 防止localStorage预存信息不是base64报错
+  const USER_SESSION = localStorage.getItem('USER_SESSION');
+  const base64Reg = validator.pattern.base64;
+  const isbase64 = base64Reg.test(USER_SESSION);
   if (!isbase64) {
     localStorage.clear();
   }
 
-  //获取用户详情
+  // 获取用户详情
   $.ajax({
-    url: API_HOST + 'user/info',
+    url: `${API_HOST  }user/info`,
     type: 'GET',
     header: {
       'Access-Control-Allow-Origin': '*',
@@ -33,10 +33,10 @@ if (!inWhiteList) {
       withCredentials: true,
     },
     dataType: 'json',
-    success: function (data) {
+    success (data) {
       if (data.code == 0) {
         const user = data.res.user;
-        let userSession = {
+        const userSession = {
           brand_name: BrandInfo.brand_name,
           brand_logo: BrandInfo.brand_logo,
           uid: user._id,
@@ -60,7 +60,7 @@ if (!inWhiteList) {
         localStorage.clear();
       }
     },
-    error: function () {
+    error () {
       localStorage.clear();
     },
   });

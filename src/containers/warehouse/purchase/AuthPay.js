@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Row, Col, Form, Button, Select, Input} from 'antd';
+import { message, Modal, Icon, Row, Col, Form, Button, Select, Input } from 'antd';
 import QRCode from 'qrcode.react';
 
 import BaseModal from '../../../components/base/BaseModal';
@@ -35,7 +35,7 @@ class AuthPay extends BaseModal {
   }
 
   handleShow() {
-    let {detail} = this.props;
+    const { detail } = this.props;
 
     if (String(detail.status) !== '1') {
       message.error('请先入库采购单，再结算');
@@ -58,7 +58,12 @@ class AuthPay extends BaseModal {
 
   handlePay(e) {
     e.preventDefault();
-    let values = this.props.form.getFieldsValue();
+    const values = this.props.form.getFieldsValue();
+
+    if (values.pay_worth > this.state.detail.unpay_worth) {
+      message.warn('请检查输入金额');
+      return false;
+    }
 
     values.purchase_id = this.props.id;
 
@@ -77,22 +82,22 @@ class AuthPay extends BaseModal {
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
+    const hasPermission = await api.checkPermission(path);
     if (hasPermission) {
       this.getPurchaseDetail(this.props.id);
     } else {
       this.interval = setInterval(this.getPurchaseDetail.bind(this, this.props.id), 2000);
     }
-    this.setState({hasPermission});
+    this.setState({ hasPermission });
   }
 
   getPurchaseDetail(id) {
-    api.ajax({url: api.warehouse.purchase.detail(id)}, (data) => {
-      let {detail} = data.res;
+    api.ajax({ url: api.warehouse.purchase.detail(id) }, data => {
+      const { detail } = data.res;
 
-      this.setState({detail});
+      this.setState({ detail });
 
-      let payStatus = String(detail.pay_status);
+      const payStatus = String(detail.pay_status);
       if (payStatus === '2' || (payStatus === '1' && parseFloat(detail.unpay_worth) !== this.state.unPayWorth)) {
         message.success('支付成功');
         clearInterval(this.interval);
@@ -102,12 +107,12 @@ class AuthPay extends BaseModal {
   }
 
   render() {
-    const {formItemTwo, selectStyle} = FormLayout;
-    let {visible, hasPermission, detail, unPayWorth}=this.state;
-    let {id, disabled, form, size}=this.props;
-    let {getFieldDecorator, getFieldValue} = form;
+    const { formItemTwo, selectStyle } = FormLayout;
+    const { visible, hasPermission, detail, unPayWorth } = this.state;
+    const { id, disabled, form, size } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
 
-    let payStatus = String(detail.pay_status);
+    const payStatus = String(detail.pay_status);
 
     return (
       <span>
@@ -147,7 +152,7 @@ class AuthPay extends BaseModal {
                   )}
                 </FormItem>
                 <FormItem label="支付方式" {...formItemTwo}>
-                  {getFieldDecorator('pay_type', {initialValue: '2'})(
+                  {getFieldDecorator('pay_type', { initialValue: '2' })(
                     <Select {...selectStyle}>
                       <Option key="1">银行转账</Option>
                       <Option key="2">现金支付</Option>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon, Button, Form} from 'antd';
+import { Modal, Icon, Button, Form } from 'antd';
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -19,14 +19,14 @@ class TransferDetailModal extends BaseModal {
   getPrivatePicUrl(pay_pic) {
     api.ajax({
       url: api.system.getPrivatePicUrl(pay_pic),
-    }, function (data) {
-      this.setState({pay_pic_url: data.res.url});
-    }.bind(this));
+    }, data => {
+      this.setState({ pay_pic_url: data.res.url });
+    });
   }
 
   render() {
-    const {visible} = this.state;
-    let {size} = this.props;
+    const { visible } = this.state;
+    const { size } = this.props;
     return (
       <span>
         {

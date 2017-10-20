@@ -43,18 +43,38 @@
   }
 
   .customer-name {
-    font-size: 20px;
+    font-size: 16px;
     color: #333;
   }
 }
 
 .auto-container {
-  display: flex;
-  align-items: center;
-  height: 66px;
+  background-color: #f7f7f7;
   border: 1px solid #e5e5e5;
   border-radius: 4px;
-  background-color: #f7f7f7;
+  overflow: hidden;
+  .info {
+    display: flex;
+    height: 66px;
+    .auto {
+      display: flex;
+      flex: 2;
+      align-items: center;
+    }
+    .edit {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+
+  .hide-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
 
 .member-autos-info {
@@ -74,6 +94,7 @@
 
     span {
       color: #333333;
+      font-size: 14px;
     }
 
     div {
@@ -81,7 +102,7 @@
     }
 
     > div:nth-of-type(1) {
-      width: 110px;
+      width: 150px;
     }
 
     > div:nth-of-type(2) {

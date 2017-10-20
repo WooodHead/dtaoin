@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button} from 'antd';
+import { Modal, Button } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -29,7 +29,7 @@ export default class Pay extends BaseModal {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({btnText: Number(nextProps.status) === 1 ? '还款' : '结算'});
+    this.setState({ btnText: Number(nextProps.status) === 1 ? '还款' : '结算' });
   }
 
   payVisible() {
@@ -65,21 +65,21 @@ export default class Pay extends BaseModal {
   }
 
   getPartSellDetail(id) {
-    api.ajax({url: api.aftersales.getPartSellDetail(id)}, data => {
-      let detail = data.res.detail;
-      this.setState({customerInfo: detail});
+    api.ajax({ url: api.aftersales.getPartSellDetail(id) }, data => {
+      const detail = data.res.detail;
+      this.setState({ customerInfo: detail });
     });
   }
 
   getPartSellPartList(id) {
-    api.ajax({url: api.aftersales.getPartSellPartList(id)}, data => {
-      let list = data.res.list;
-      this.setState({partsDetail: list});
+    api.ajax({ url: api.aftersales.getPartSellPartList(id) }, data => {
+      const list = data.res.list;
+      this.setState({ partsDetail: list });
     });
   }
 
   render() {
-    let {
+    const {
       payVisible,
       billVisible,
       payBillVisible,
@@ -89,7 +89,7 @@ export default class Pay extends BaseModal {
       btnText,
     } = this.state;
 
-    let {status, size} = this.props;
+    const { status, size } = this.props;
 
     return (
       <span>

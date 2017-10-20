@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -16,6 +15,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -37,7 +40,7 @@ var _rcInputNumber = require('rc-input-number');
 
 var _rcInputNumber2 = _interopRequireDefault(_rcInputNumber);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
     var t = {};
@@ -49,28 +52,30 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 };
 
 var InputNumber = function (_React$Component) {
-    (0, _inherits3["default"])(InputNumber, _React$Component);
+    (0, _inherits3['default'])(InputNumber, _React$Component);
 
     function InputNumber() {
-        (0, _classCallCheck3["default"])(this, InputNumber);
-        return (0, _possibleConstructorReturn3["default"])(this, _React$Component.apply(this, arguments));
+        (0, _classCallCheck3['default'])(this, InputNumber);
+        return (0, _possibleConstructorReturn3['default'])(this, (InputNumber.__proto__ || Object.getPrototypeOf(InputNumber)).apply(this, arguments));
     }
 
-    InputNumber.prototype.render = function render() {
-        var _classNames;
+    (0, _createClass3['default'])(InputNumber, [{
+        key: 'render',
+        value: function render() {
+            var _classNames;
 
-        var _a = this.props,
-            className = _a.className,
-            size = _a.size,
-            others = __rest(_a, ["className", "size"]);
-        var inputNumberClass = (0, _classnames2["default"])((_classNames = {}, (0, _defineProperty3["default"])(_classNames, this.props.prefixCls + '-lg', size === 'large'), (0, _defineProperty3["default"])(_classNames, this.props.prefixCls + '-sm', size === 'small'), _classNames), className);
-        return _react2["default"].createElement(_rcInputNumber2["default"], (0, _extends3["default"])({ className: inputNumberClass }, others));
-    };
-
+            var _a = this.props,
+                className = _a.className,
+                size = _a.size,
+                others = __rest(_a, ["className", "size"]);
+            var inputNumberClass = (0, _classnames2['default'])((_classNames = {}, (0, _defineProperty3['default'])(_classNames, this.props.prefixCls + '-lg', size === 'large'), (0, _defineProperty3['default'])(_classNames, this.props.prefixCls + '-sm', size === 'small'), _classNames), className);
+            return _react2['default'].createElement(_rcInputNumber2['default'], (0, _extends3['default'])({ className: inputNumberClass }, others));
+        }
+    }]);
     return InputNumber;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = InputNumber;
+exports['default'] = InputNumber;
 
 InputNumber.defaultProps = {
     prefixCls: 'ant-input-number',

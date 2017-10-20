@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
 
@@ -25,19 +25,19 @@ export default class PartEntryLog extends BaseModal {
   }
 
   handlePageChange(page) {
-    this.setState({page});
+    this.setState({ page });
     this.getPayRejects(this.props.supplierId, page);
   }
 
   getPayRejects(supplierId, page) {
-    api.ajax({url: api.warehouse.reject.getListBySupplierAndPayStatus(supplierId, '', page)}, (data) => {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
+    api.ajax({ url: api.warehouse.reject.getListBySupplierAndPayStatus(supplierId, '', page) }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total) });
     });
   }
 
   render() {
-    const {visible, list, total, page}=this.state;
+    const { visible, list, total, page } = this.state;
 
     const columns = [
       {

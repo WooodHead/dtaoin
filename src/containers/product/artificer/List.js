@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Select, Popconfirm, Button, message} from 'antd';
+import { Row, Col, Select, Popconfirm, Button, message } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -33,21 +33,21 @@ export default class List extends BaseList {
   }
 
   handleRowSelect(selectedRowKeys, selectedRows) {
-    let payInfos = [];
-    selectedRows.map(item => payInfos.push({_id: item._id, pay_amount: item.unpay_amount}));
-    this.setState({payInfos: payInfos});
+    const payInfos = [];
+    selectedRows.map(item => payInfos.push({ _id: item._id, pay_amount: item.unpay_amount }));
+    this.setState({ payInfos });
   }
 
   handleStatusChange(status) {
-    this.setState({status});
+    this.setState({ status });
   }
 
   handleBrandChange(brand) {
-    this.setState({brand});
+    this.setState({ brand });
   }
 
   handleSettlement() {
-    let payInfo = {pay_infos: JSON.stringify(this.state.payInfos)};
+    const payInfo = { pay_infos: JSON.stringify(this.state.payInfos) };
 
     api.ajax({
       url: api.technician.settlement(),
@@ -55,22 +55,23 @@ export default class List extends BaseList {
       type: 'POST',
     }, () => {
       message.success('结算成功');
-      this.setState({reload: true});
+      this.setState({ reload: true });
+      location.reload();
     });
   }
 
   getBrands() {
-    api.ajax({url: api.auto.getBrands()}, data => {
-      let {auto_brand_list} = data.res;
-      this.setState({brands: auto_brand_list});
+    api.ajax({ url: api.auto.getBrands() }, data => {
+      const { auto_brand_list } = data.res;
+      this.setState({ brands: auto_brand_list });
     });
   }
 
   render() {
-    let {brands, page, payInfos} = this.state;
+    const { brands, page, payInfos } = this.state;
     const rowSelection = {
       onChange: this.handleRowSelect,
-      getCheckboxProps: record => ({disabled: Number(record.unpay_amount) === 0}),
+      getCheckboxProps: record => ({ disabled: Number(record.unpay_amount) === 0 }),
     };
 
     return (
@@ -82,9 +83,9 @@ export default class List extends BaseList {
               defaultValue=""
               optionFilterProp="children"
               onSelect={this.handleBrandChange}
-              style={{width: 200}}
+              style={{ width: 200 }}
               size="large"
-              dropdownStyle={{maxHeight: '200px'}}
+              dropdownStyle={{ maxHeight: '200px' }}
             >
               <Option value="">全部</Option>
               {brands.map(brands => <Option key={brands._id}>{brands.name}</Option>)}
@@ -93,14 +94,15 @@ export default class List extends BaseList {
             <label className="ml20">状态：</label>
             <Select
               size="large"
-              style={{width: 150}}
+              style={{ width: 150 }}
               onSelect={this.handleStatusChange}
               defaultValue="-2"
             >
               <Option value="-2">全部</Option>
-              <Option value="0">待审核</Option>
-              <Option value="1">正常</Option>
-              <Option value="-1">不通过</Option>
+              <Option value="0">待认证</Option>
+              <Option value="1">已认证</Option>
+              <Option value="2">已驳回</Option>
+              <Option value="3">审核中</Option>
             </Select>
 
             <div className="pull-right">
@@ -109,7 +111,7 @@ export default class List extends BaseList {
                 title="批量结算所选技师？"
                 onConfirm={this.handleSettlement}
               >
-                <Button type="primary" disabled={payInfos.length == 0}>批量结算</Button>
+                <Button type="primary" disabled={Number(payInfos.length) === 0}>批量结算</Button>
               </Popconfirm>
 
             </div>

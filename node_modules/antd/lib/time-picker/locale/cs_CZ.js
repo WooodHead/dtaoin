@@ -6,5 +6,5 @@ Object.defineProperty(exports, "__esModule", {
 var locale = {
     placeholder: 'Vybrat čas'
 };
-exports["default"] = locale;
+exports['default'] = locale;
 module.exports = exports['default'];

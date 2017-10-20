@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>评价服务</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/thank.css">
+</head>
+<script>
+  (function(doc, win) {
+    var docEl = doc.documentElement,
+      resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+      recalc = function() {
+        window.clientWidth = docEl.clientWidth;
+        if (!window.clientWidth) return;
+        docEl.style.fontSize = 20 * (window.clientWidth / 750) + 'px';
+        window.base = 20 * (window.clientWidth / 750);
+      };
+    // Abort if browser does not support addEventListener
+    if (!doc.addEventListener) return;
+    win.addEventListener(resizeEvt, recalc, false);
+    doc.addEventListener('DOMContentLoaded', recalc, false);
+  })(document, window);
+</script>
+<body>
+
+<div class="content">
+  <div class="top">
+    <div class="title-pic">
+      <img src="./image/tip_comments_icon@2x.png" alt="">
+    </div>
+
+    <p class="thank">感谢您的评价</p>
+    <p>春风十里不如您的一句满意~</p>
+    <p>您的评价是我们改进的方向与动力</p>
+    <p>欢迎下载水稻汽车APP</p>
+    <p>加入老司机的汽车之家</p>
+
+    <a href="#" class="downloadBtn">下载水稻APP</a>
+  </div>
+
+  <div class="bottom">
+    <div class="one line">
+      <div class="left">
+        <img src="./image/feature_icon_1@2x.png" alt="">
+        <p class="title">违章查询</p>
+        <p>最准确快速的</p>
+        <p>违章查询服务</p>
+      </div>
+      <div class="right">
+        <img src="./image/feature_icon_2@2x.png" alt="">
+        <p class="title">技师问答</p>
+        <p>住在您手机里的</p>
+        <p>汽车顾问</p>
+      </div>
+    </div>
+
+    <div class="two line">
+      <div class="left">
+        <img src="./image/feature_icon_3@2x.png" alt="">
+        <p class="title">汽车金融</p>
+        <p>提供多种贷款和</p>
+        <p>保险的配套方案</p>
+        <p>供您选择</p>
+      </div>
+      <div class="right">
+        <img src="./image/feature_icon_4@2x.png" alt="">
+        <p class="title">移动支付</p>
+        <p>随时随地查询</p>
+        <p>订单状态</p>
+        <p>移动支付方便快捷</p>
+      </div>
+    </div>
+
+    <div class="three line">
+      <div class="left">
+        <img src="./image/feature_icon_5@2x.png" alt="">
+        <p class="title">活动通知</p>
+        <p>查看最新最全的</p>
+        <p>活动信息</p>
+        <p>不错过任何优惠</p>
+      </div>
+      <div class="right">
+        <img src="./image/feature_icon_6@2x.png" alt="">
+        <p class="title">门店导航</p>
+        <p>根据定位查找汽修门店</p>
+        <p>一键导航，省时放心</p>
+      </div>
+    </div>
+
+    <a href="#" class="downloadBtn">更多服务请下载水稻汽车APP体验</a>
+  </div>
+</div>
+
+</body>
+<script src="../../dist/jquery.min.js"></script>
+<script src="../../dist/baseUrl.js"></script>
+<script src="./js/thank.js"></script>
+</html>

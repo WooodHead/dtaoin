@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Button, Row, Col, Form, Collapse, DatePicker, Input, InputNumber} from 'antd';
+import { message, Modal, Icon, Button, Row, Col, Form, Collapse, DatePicker, Input, InputNumber } from 'antd';
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
 import BaseModal from '../../../components/base/BaseModal';
@@ -8,6 +8,7 @@ import SocialSecurityDetailModal from './SocialSecurityDetail';
 
 const FormItem = Form.Item;
 const Panel = Collapse.Panel;
+const TextArea = Input.TextArea;
 const MonthPicker = DatePicker.MonthPicker;
 const now = new Date();
 
@@ -40,21 +41,21 @@ class CalculateWageModal extends BaseModal {
   }
 
   showSalaryModal() {
-    let {type, user, month} = this.props;
+    const { type, user, month } = this.props;
     switch (type) {
-      case 'month':
-        this.getBaseSalaryInfo(user._id, this.state.month);
-        break;
-      case 'performance':
-        this.getBaseSalaryInfo(user._id, month);
-        break;
+    case 'month':
+      this.getBaseSalaryInfo(user._id, this.state.month);
+      break;
+    case 'performance':
+      this.getBaseSalaryInfo(user._id, month);
+      break;
     }
     this.showModal();
   }
 
   handleSubmit() {
-    let {type, user, month} = this.props;
-    let formData = this.props.form.getFieldsValue();
+    const { type, user, month } = this.props;
+    const formData = this.props.form.getFieldsValue();
 
     api.ajax({
       url: api.user.calculateSalary(user._id, type !== 'month' ? month : this.state.month),
@@ -68,32 +69,32 @@ class CalculateWageModal extends BaseModal {
   }
 
   handleRateChange(rate) {
-    this.setState({rate: rate});
+    this.setState({ rate });
 
-    let stateObj = this.state;
+    const stateObj = this.state;
     stateObj.rate = rate;
 
-    let {socialSecurity, providentFund} = stateObj;
-    let salary = this.calculateTaxBeforeSalary(stateObj);
+    const { socialSecurity, providentFund } = stateObj;
+    const salary = this.calculateTaxBeforeSalary(stateObj);
 
     this.calculateTax(salary, socialSecurity, providentFund);
   }
 
   handleSalaryChange(propName, e) {
-    let value = Number(e.target.value);
-    this.setState({[propName]: value});
+    const value = Number(e.target.value);
+    this.setState({ [propName]: value });
 
-    let stateObj = this.state;
+    const stateObj = this.state;
     stateObj[propName] = value;
 
-    let {socialSecurity, providentFund} = stateObj;
-    let salary = this.calculateTaxBeforeSalary(stateObj);
+    const { socialSecurity, providentFund } = stateObj;
+    const salary = this.calculateTaxBeforeSalary(stateObj);
 
     this.calculateTax(salary, socialSecurity, providentFund);
   }
 
   calculateTaxBeforeSalary(stateObj) {
-    let {
+    const {
       baseSalary,
       basePerformanceSalary,
       rate,
@@ -101,8 +102,8 @@ class CalculateWageModal extends BaseModal {
       bonus,
       adjustment,
     } = stateObj;
-    let performanceSalary = basePerformanceSalary * rate;
-    let salary = baseSalary + performanceSalary + bonus - punishment + adjustment;
+    const performanceSalary = basePerformanceSalary * rate;
+    const salary = baseSalary + performanceSalary + bonus - punishment + adjustment;
     return salary;
   }
 
@@ -111,13 +112,13 @@ class CalculateWageModal extends BaseModal {
       url: api.user.calculateTax(),
       type: 'POST',
       data: {
-        salary: salary,
+        salary,
         social_security: socialSecurity,
         provident_fund: providentFund,
       },
-    }, function (data) {
-      this.setState({tax: data.res.tax});
-    }.bind(this));
+    }, data => {
+      this.setState({ tax: data.res.tax });
+    });
   }
 
   disabledMonth(month) {
@@ -129,9 +130,9 @@ class CalculateWageModal extends BaseModal {
   }
 
   getBaseSalaryInfo(userId, month) {
-    api.ajax({url: api.user.prepareCalculateSalary(userId, month)}, function (data) {
-      let salaryInfo = data.res.user_salary;
-      let {
+    api.ajax({ url: api.user.prepareCalculateSalary(userId, month) }, data => {
+      const salaryInfo = data.res.user_salary;
+      const {
         base_salary,
         actual_day,
         paid_vacation,
@@ -139,32 +140,32 @@ class CalculateWageModal extends BaseModal {
         punishment,
         performance_salary,
       } = salaryInfo;
-      let {person_security_total, person_provident_fund_total} = salaryInfo.security_fund;
+      const { person_security_total, person_provident_fund_total } = salaryInfo.security_fund;
 
       let attendanceRate = (parseInt(actual_day) + parseInt(paid_vacation)) / parseInt(due_day),
         baseSalary = parseFloat(base_salary) * attendanceRate;
 
       this.setState({
-        month: month,
-        salaryInfo: salaryInfo,
-        attendanceRate: attendanceRate,
-        baseSalary: baseSalary,
+        month,
+        salaryInfo,
+        attendanceRate,
+        baseSalary,
         basePerformanceSalary: performance_salary,
-        punishment: punishment,
+        punishment,
         socialSecurity: person_security_total,
         providentFund: person_provident_fund_total,
       });
 
       this.calculateTax();
-    }.bind(this));
+    });
   }
 
   render() {
-    const {formItem12, formItemThree, formItemFour} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { formItem12, formItemThree, formItemFour } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
-    let {type, user, month, disabled, size} = this.props;
-    let {
+    const { type, user, month, disabled, size } = this.props;
+    const {
       salaryInfo,
       rate,
       baseSalary,
@@ -175,8 +176,8 @@ class CalculateWageModal extends BaseModal {
       punishment,
     } = this.state;
 
-    let performanceSalary = basePerformanceSalary * rate;
-    let finalSalary = baseSalary + performanceSalary + bonus + adjustment - punishment - tax;
+    const performanceSalary = basePerformanceSalary * rate;
+    const finalSalary = baseSalary + performanceSalary + bonus + adjustment - punishment - tax;
 
     return (
       <span>
@@ -292,15 +293,13 @@ class CalculateWageModal extends BaseModal {
                       <p className="ant-form-text">{salaryInfo.performance_salary}</p>
                     </FormItem>
                   </Col>
-                  {salaryInfo.performance_salary_detail ? salaryInfo.performance_salary_detail.map((item, i) => {
-                      return (
+                  {salaryInfo.performance_salary_detail ? salaryInfo.performance_salary_detail.map((item, i) => (
                         <Col span={6} key={i}>
                           <FormItem label={`${item.item_name}`} {...formItemFour}>
                             <p className="ant-form-text">{item.amount}</p>
                           </FormItem>
                         </Col>
-                      );
-                    }) : ''}
+                      )) : ''}
                 </Row>
 
                 <Row>
@@ -386,7 +385,7 @@ class CalculateWageModal extends BaseModal {
                   <Col span={12}>
                     <FormItem label="备注" {...formItem12}>
                       {getFieldDecorator('remark')(
-                        <Input type="textarea"/>
+                        <TextArea />
                       )}
                     </FormItem>
                   </Col>

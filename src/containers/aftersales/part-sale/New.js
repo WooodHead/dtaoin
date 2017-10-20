@@ -1,32 +1,31 @@
-import React, {Component} from 'react';
-import {Row, Col, Button, Input, message, Table, Menu, Dropdown, Icon} from 'antd';
+import React, { Component } from 'react';
+import { Row, Col, Button, Input, message, Table, Menu, Dropdown, Icon } from 'antd';
+
+import text from '../../../config/text';
+import className from 'classnames';
+import api from '../../../middleware/api';
+
+import NumberInput from '../../../components/widget/NumberInput';
+import SearchDropDown from '../../../components/widget/SearchDropDown';
 
 import Pay from './Pay';
 import PrintArrearsModal from './PrintArrearsModal';
 import PrintPaymentModal from './PrintPaymentModal';
 import TablePaymentHistory from './TablePaymentHistory';
+import CustomerSearchDrop from './CustomerSearchDrop';
 
-import NewCustomerAutoModal from '../../auto/NewCustomerAutoModal';
-import SearchSelectBox from '../../../components/widget/SearchSelectBox';
-import NumberInput from '../../../components/widget/NumberInput';
-
-import text from '../../../config/text';
-// import Layout from '../../../utils/FormLayout';
-import className from 'classnames';
-import api from '../../../middleware/api';
-
-// const FormItem = Form.Item;
 const DropdownButton = Dropdown.Button;
+const Search = Input.Search;
 
 export default class New extends Component {
   constructor(props) {
     super(props);
 
-    let {id} = props.location.query;
+    const { id } = props.match.params;
     this.state = {
-      id: id,
+      id: id || '',
       key: '',
-      customerInfo: {}, //当搜索客户时候存储所有搜索到的客户[]，当选中客户时候存储选中的客户{}, 编辑的时候存储当前销售单的信息(包含顾客信息){}
+      customerInfo: {}, // 当搜索客户时候存储所有搜索到的客户[]，当选中客户时候存储选中的客户{}, 编辑的时候存储当前销售单的信息(包含顾客信息){}
       historicalDebts: '',
       discount: '0.00',
       partsDetail: new Map(),
@@ -44,125 +43,164 @@ export default class New extends Component {
       'handleDiscountChange',
       'handleSubmit',
       'getPartsDetailArray',
+      'handlePartsKeyClear',
+      'handleSearchClear',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    let {id} = this.state;
+    const { id } = this.state;
 
     if (id) {
       this.getPartSellDetail(id);
       this.getPartSellPartList(id);
     }
+    this.setInputContentPadding();
+  }
+
+  componentDidUpdate() {
+    this.setInputContentPadding();
+  }
+
+  setInputContentPadding() {
+    let inputContent = document.getElementsByClassName('input-content');
+    inputContent = Array.from(inputContent);
+    if (inputContent) {
+      for (const i in inputContent) {
+        if (inputContent.hasOwnProperty(i)) {
+          inputContent[i].parentNode.parentNode.style.padding = '2px 2px';
+        }
+      }
+    }
   }
 
   handleNewCustomer(data) {
-    this.setState({customerInfo: data});
+    this.setState({ customerInfo: data });
     this.getCustomerUnpayAmount(data.customer_id);
   }
 
-  handleCustomerSearch(key, successHandle) {
-    let url = api.customer.searchCustomer(key);
-    api.ajax({url}, (data) => {
-      if (data.code === 0) {
-        this.setState({key: key, customerInfo: data.res.list});
-        successHandle(data.res.list);
-      }
+  handleCustomerSearch(e) {
+    const key = e.target.value;
+    this.setState({ key });
+    const coordinate = api.getPosition(e);
+
+    const url = api.customer.searchCustomer(key);
+    api.ajax({ url }, data => {
+      const list = data.res.list;
+      const info = {};
+      info.info = list.filter(item => item._id !== null);
+      info.coordinate = coordinate;
+      info.visible = true;
+      info.keyword = key;
+      this.setState({ customerData: info, customerInfo: data.res.list });
     }, () => {
     });
   }
 
-  handlePartsSearch(key, successHandle, failHandle) {
-    let url = api.warehouse.part.search(key);
-
-    api.ajax({url}, (data) => {
-      if (data.code === 0) {
-        successHandle(data.res.list);
-      } else {
-        failHandle(data.msg);
-      }
-    }, () => {
-    });
+  handlePartsSearch(e) {
+    const coordinate = api.getPosition(e);
+    const key = e.target.value;
+    this.setState({ partKey: key });
+    if (key.length >= 1) {
+      api.ajax({ url: api.warehouse.part.list({ key }) }, data => {
+        const list = data.res.list;
+        const partsInfo = {};
+        partsInfo.info = list;
+        partsInfo.coordinate = coordinate;
+        partsInfo.visible = true;
+        partsInfo.keyword = key;
+        this.setState({ partsInfo });
+      });
+    }
   }
 
   handleCustomerSelectItem(selectItem) {
-    this.setState({customerInfo: selectItem});
-    this.getCustomerUnpayAmount(selectItem._id);
+    const customerId = selectItem.customer_id || selectItem._id;
+    this.setState({ customerInfo: selectItem });
+    this.getCustomerUnpayAmount(customerId);
+  }
+
+  handleSearchClear() {
+    this.setState({ key: '' });
   }
 
   handlePartsSelectItem(selectInfo) {
-    let realAmount = Number(selectInfo.amount) - Number(selectInfo.freeze);
-
+    const realAmount = Number(selectInfo.amount) - Number(selectInfo.freeze);
     if (realAmount <= 0) {
       message.error('该配件剩余库存不足');
       return false;
     }
 
-    let {partsDetail} = this.state;
+    const { partsDetail } = this.state;
     if (partsDetail.has(selectInfo._id)) {
       message.error('该配件已经添加');
       return false;
     }
 
     partsDetail.set(selectInfo._id, selectInfo);
-    this.setState({partsDetail});
+    this.setState({ partsDetail });
+  }
+
+  handlePartsKeyClear() {
+    this.setState({ partKey: '' });
   }
 
   handleCountChange(value, record) {
-    let realAmount = Number(record.amount || record.part_amount) - Number(record.freeze || record.part_freeze);
-    let {partsDetail, discount} = this.state;
+    const realAmount = Number(record.amount || record.part_amount) -
+      Number(record.freeze || record.part_freeze);
+    const { partsDetail, discount } = this.state;
 
     if (Number(value) > realAmount) {
       record.count = '';
       partsDetail.set(record.part_id || record._id, record);
-      this.setState({partsDetail});
+      this.setState({ partsDetail });
       message.error('输入数量有误，请重新输入');
 
       if (this.getTotalSettlement() < Number(discount)) {
-        this.setState({discount: '0.00'});
+        this.setState({ discount: '0.00' });
       }
       return false;
     }
 
     record.count = value;
     partsDetail.set(record.part_id || record._id, record);
-    this.setState({partsDetail});
+    this.setState({ partsDetail });
 
     if (this.getTotalSettlement() < Number(discount)) {
-      this.setState({discount: '0.00'});
+      this.setState({ discount: '0.00' });
     }
     return true;
   }
 
   handlePriceChange(value, record) {
-    let {partsDetail, discount} = this.state;
+    const { partsDetail, discount } = this.state;
 
     record.price = value;
 
     partsDetail.set(record.part_id || record._id, record);
-    this.setState({partsDetail});
+    this.setState({ partsDetail });
 
     if (this.getTotalSettlement() < Number(discount)) {
-      this.setState({discount: '0.00'});
+      this.setState({ discount: '0.00' });
     }
   }
 
   handleDiscountChange(e) {
     if (Number(e.target.value) < 0) {
-      this.setState({discount: '0.00'});
+      this.setState({ discount: '0.00' });
       message.error('优惠金额不能为负数, 请重新输入');
       return false;
     } else if (Number(e.target.value) > this.getTotalSettlement()) {
-      this.setState({discount: '0.00'});
+      this.setState({ discount: '0.00' });
       message.error('优惠金额不能超过结算金额, 请重新输入');
       return false;
     }
 
-    this.setState({discount: e.target.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3')});
+    this.setState({ discount: e.target.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') });
   }
 
   handlePartsDelete(partId, id) {
-    let {partsDetail, discount, partDeleteIds} = this.state;
+    let { partsDetail, discount, partDeleteIds } = this.state;
 
     if (String(partId) !== String(id)) {
       partDeleteIds = partDeleteIds ? `${partDeleteIds},${id}` : `${id}`;
@@ -170,16 +208,16 @@ export default class New extends Component {
 
     partsDetail.delete(partId);
 
-    this.setState({partsDetail, partDeleteIds});
+    this.setState({ partsDetail, partDeleteIds });
 
-    //价格改变，如果优惠金额大于结算金额 优惠金额置为0
+    // 价格改变，如果优惠金额大于结算金额 优惠金额置为0
     if (this.getTotalSettlement() < Number(discount)) {
-      this.setState({discount: '0.00'});
+      this.setState({ discount: '0.00' });
     }
   }
 
   handleSubmit() {
-    let {customerInfo, partsDetail, discount, partDeleteIds} = this.state;
+    const { customerInfo, partsDetail, discount, partDeleteIds } = this.state;
 
     if (JSON.stringify(customerInfo) == '{}' || customerInfo instanceof Array) {
       message.error('请输入手机号搜索客户');
@@ -191,9 +229,9 @@ export default class New extends Component {
       return false;
     }
 
-    let customerId = customerInfo._id || customerInfo.customer_id;
-    let partList = [];
-    for (let values of partsDetail.values()) {
+    const customerId = customerInfo.customer_id || customerInfo._id;
+    const partList = [];
+    for (const values of partsDetail.values()) {
       if (!values.price) {
         message.error('有配件未输入单价');
         return false;
@@ -203,7 +241,7 @@ export default class New extends Component {
         return false;
       }
 
-      let part = {};
+      const part = {};
       part._id = values.part_id ? values._id : 0;
       part.price = values.price || 0;
       part.part_id = values.part_id ? values.part_id : values._id;
@@ -211,43 +249,41 @@ export default class New extends Component {
       partList.push(part);
     }
 
-    //两种情况，一种是创建保存，一种是编辑保存
+    // 两种情况，一种是创建保存，一种是编辑保存
     !!(customerInfo.status)
-      ?
-      api.ajax({
+      ? api.ajax({
         url: api.aftersales.partSellEdit(),
         type: 'POST',
         data: {
-          _id: customerInfo.customer_id,
+          _id: customerInfo._id,
           part_list: JSON.stringify(partList),
-          discount: discount,
+          discount,
           part_delete_ids: partDeleteIds,
         },
       }, data => {
         message.success('保存数据成功');
-        window.location.href = `/aftersales/part-sale/edit?id=${data.res.detail._id}`;
+        window.location.href = `/aftersales/part-sale/edit/${data.res.detail._id}`;
       })
-      :
-      api.ajax({
+      : api.ajax({
         url: api.aftersales.createPartSell(),
         type: 'POST',
         data: {
           customer_id: customerId,
           part_list: JSON.stringify(partList),
-          discount: discount,
+          discount,
         },
       }, data => {
         message.success('保存数据成功');
-        window.location.href = `/aftersales/part-sale/edit?id=${data.res.detail._id}`;
+        window.location.href = `/aftersales/part-sale/edit/${data.res.detail._id}`;
       });
   }
 
   getTotalSettlement() {
-    let {partsDetail} = this.state;
+    const { partsDetail } = this.state;
     let total = 0;
 
     if (partsDetail.size > 0) {
-      for (let value of partsDetail.values()) {
+      for (const value of partsDetail.values()) {
         total += Number(value.count || 0) * Number(value.price || 0);
       }
     }
@@ -255,35 +291,33 @@ export default class New extends Component {
   }
 
   getCustomerUnpayAmount(customerId) {
-    api.ajax({url: api.customer.getCustomerUnpayAmount(customerId)}, data => {
-      let {unpay_amount} = data.res;
-      this.setState({historicalDebts: unpay_amount ? Number(unpay_amount).toFixed(2) : '0.00'});
+    api.ajax({ url: api.customer.getCustomerUnpayAmount(customerId) }, data => {
+      const { unpay_amount } = data.res;
+      this.setState({ historicalDebts: unpay_amount ? Number(unpay_amount).toFixed(2) : '0.00' });
     });
   }
 
   getPartSellDetail(id) {
-    api.ajax({url: api.aftersales.getPartSellDetail(id)}, data => {
-      let detail = data.res.detail;
+    api.ajax({ url: api.aftersales.getPartSellDetail(id) }, data => {
+      const detail = data.res.detail;
 
       this.getCustomerUnpayAmount(detail.customer_id);
-      this.setState({customerInfo: detail, discount: detail.discount});
+      this.setState({ customerInfo: detail, discount: detail.discount });
     });
   }
 
   getPartSellPartList(id) {
-    api.ajax({url: api.aftersales.getPartSellPartList(id)}, data => {
-      let list = data.res.list;
-      let mapList = list.map(item => {
-        return [item.part_id, item];
-      });
-      this.setState({partsDetail: new Map(mapList)});
+    api.ajax({ url: api.aftersales.getPartSellPartList(id) }, data => {
+      const list = data.res.list;
+      const mapList = list.map(item => [item.part_id, item]);
+      this.setState({ partsDetail: new Map(mapList) });
     });
   }
 
   getPartsDetailArray() {
-    let {partsDetail} = this.state;
+    const { partsDetail } = this.state;
     const partsDetailArray = [];
-    for (let value of partsDetail.values()) {
+    for (const value of partsDetail.values()) {
       partsDetailArray.push(value);
     }
     return partsDetailArray;
@@ -303,31 +337,30 @@ export default class New extends Component {
   }
 
   displayPatternParts(item) {
-    /*return (
-     <div>
-     <span className="width-150 inline-block">
-     {item.name}
-     </span>
-     <span>
-     {'  库存 ' + (Number(item.amount) - Number(item.freeze))}
-     </span>
-     </div>
-     );*/
-    return `${item.name} ${item.part_no} ${item.brand} ${item.scope} 库存${Number(item.amount) - Number(item.freeze)}`;
+    return `${item.name} ${item.part_no} ${item.brand} ${item.scope} 库存${Number(item.amount) -
+    Number(item.freeze)}`;
   }
 
   render() {
-    const {key, customerInfo, historicalDebts, partsDetail, discount} = this.state;
-    // const {formItemThree} = Layout;
-    let self = this;
+    const {
+      key,
+      partKey,
+      customerInfo,
+      historicalDebts,
+      partsDetail,
+      discount,
+      customerData,
+    } = this.state;
+
+    const self = this;
 
     const printMenu = (
       <Menu>
         <Menu.Item key="1">
-          <PrintPaymentModal customerInfo={customerInfo} partsDetail={this.getPartsDetailArray()}/>
+          <PrintPaymentModal customerInfo={customerInfo} partsDetail={this.getPartsDetailArray()} />
         </Menu.Item>
         <Menu.Item key="2" className={Number(customerInfo.status) === 1 ? '' : 'hide'}>
-          <PrintArrearsModal customerInfo={customerInfo} partsDetail={this.getPartsDetailArray()}/>
+          <PrintArrearsModal customerInfo={customerInfo} partsDetail={this.getPartsDetailArray()} />
         </Menu.Item>
       </Menu>
     );
@@ -342,119 +375,124 @@ export default class New extends Component {
       hide: !(customerInfo._id || customerInfo.customer_id),
     });
 
-    const columns = [{
-      title: '序号',
-      dataIndex: '',
-      key: '',
-      render: (value, record, index) => index + 1,
-    }, {
-      title: '规格',
-      className: 'text-right',
-      render: (value, record) => (record.spec || record.part_spec || '') + (record.unit || record.part_unit || ''),
-    }, {
-      title: '配件分类',
-      dataIndex: 'part_type_name',
-      key: 'part_type_name',
-    }, {
-      title: '配件名',
-      render: (value, record) => record.name || record.part_name,
-    }, {
-      title: '配件号',
-      dataIndex: 'part_no',
-      key: 'part_no',
-    }, {
-      title: '适用车型',
-      render: (value, record) => record.scope || record.part_scope,
-    }, {
-      title: '品牌',
-      render: (value, record) => record.brand || record.part_brand,
-    }, {
-      title: '剩余库存',
-      dataIndex: '',
-      key: '',
-      render: (value, record) => {
-        let stock = (record.amount - record.freeze) || (record.part_amount - record.part_freeze) || 0;
-        return stock - parseInt(self.state.partsDetail.get(record.part_id || record._id).count || 0);
-      },
-    }, {
-      title: '数量',
-      dataIndex: 'take_amount',
-      key: 'take_amount',
-      width: '10%',
-      render: (value, record) => {
-        return (
-          <NumberInput
-            defaultValue={record.count}
-            id={`amount${record._id}`}
-            onChange={value => self.handleCountChange(value, record)}
-            unitVisible={false}
-            isInt={true}
-          />
-        );
-      },
-    }, {
-      title: '销售单价(元)',
-      dataIndex: 'sales_price',
-      key: 'sales_price',
-      width: '10%',
-      render: (value, record) => {
-        return (
-          <NumberInput
-            defaultValue={record.price}
-            id={`price${record._id}`}
-            onChange={value => self.handlePriceChange(value, record)}
-            unitVisible={false}
-          />
-        );
-      },
-    }, {
-      title: '金额(元)',
-      className: 'text-right',
-      width: '10%',
-      render: (value, record) => {
-        let {partsDetail} = self.state;
-        let item = record.part_id ? partsDetail.get(record.part_id) : partsDetail.get(record._id);
-        return (Number(item.count || 0) * Number(item.price || 0)).toFixed(2);
-      },
-    }, {
-      title: '操作',
-      className: 'center',
-      render: (value, record) => (
-        <a
-          href="javascript:;"
-          onClick={() => self.handlePartsDelete(record.part_id || record._id, record._id)}
-        >
-          删除
-        </a>
-      ),
-    }];
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: '',
+        key: '',
+        width: '48px',
+        render: (value, record, index) => index + 1,
+      }, {
+        title: '配件名',
+        render: (value, record) => record.name || record.part_name,
+      }, {
+        title: '配件号',
+        dataIndex: 'part_no',
+        key: 'part_no',
+      }, {
+        title: '规格',
+        className: 'text-right',
+        width: '75px',
+        render: (value, record) => (record.spec || record.part_spec || '') +
+          (record.unit || record.part_unit || ''),
+      }, {
+        title: '品牌',
+        render: (value, record) => record.brand || record.part_brand,
+      }, {
+        title: '适用车型',
+        render: (value, record) => record.scope || record.part_scope,
+      }, {
+        title: '剩余库存',
+        dataIndex: '',
+        key: '',
+        width: '75px',
+        render: (value, record) => {
+          const stock = (record.amount - record.freeze) ||
+            (record.part_amount - record.part_freeze) || 0;
+          return stock -
+            parseInt(self.state.partsDetail.get(record.part_id || record._id).count || 0);
+        },
+      }, {
+        title: '数量',
+        dataIndex: 'take_amount',
+        key: 'take_amount',
+        width: '74px',
+        render: (value, record) => (
+            <div>
+              <div className="input-content" />
+              <NumberInput
+                value={record.count}
+                id={`amount${record._id}`}
+                onChange={value => self.handleCountChange(value, record)}
+                unitVisible={false}
+                isInt={true}
+              />
+            </div>
+          ),
+      }, {
+        title: '销售单价',
+        dataIndex: 'sales_price',
+        key: 'sales_price',
+        width: '74px',
+        render: (value, record) => (
+            <div>
+              <div className="input-content" />
+              <NumberInput
+                value={record.price}
+                id={`price${record._id}`}
+                onChange={value => self.handlePriceChange(value, record)}
+                unitVisible={false}
+              />
+            </div>
+          ),
+      }, {
+        title: '金额',
+        className: 'text-right',
+        width: '95px',
+        render: (value, record) => {
+          const { partsDetail } = self.state;
+          const item = record.part_id ? partsDetail.get(record.part_id) : partsDetail.get(record._id);
+          return (Number(item.count || 0) * Number(item.price || 0)).toFixed(2);
+        },
+      }, {
+        title: '操作',
+        className: 'center',
+        width: '70px',
+        render: (value, record) => (
+          <a
+            href="javascript:;"
+            onClick={() => self.handlePartsDelete(record.part_id || record._id, record._id)}
+          >
+            删除
+          </a>
+        ),
+      }];
 
     return (
       <div>
+        <SearchDropDown
+          partsInfo={this.state.partsInfo}
+          onTableRowClick={this.handlePartsSelectItem}
+          isInsertPart="false"
+          onCancel={this.handlePartsKeyClear}
+        />
+
+        <CustomerSearchDrop
+          info={customerData}
+          onItemSelect={this.handleCustomerSelectItem}
+          onCancel={this.handleSearchClear}
+        />
+
         <Row className="mb10">
           <Col span={10}>
-            <Input.Group style={{width: '50px'}}>
-              <SearchSelectBox
-                placeholder={'请输入手机号搜索'}
-                onSearch={this.handleCustomerSearch}
-                onSelectItem={this.handleCustomerSelectItem}
-                displayPattern={item => this.displayPatternCustomer(item)}
-                searchDisabled={'status' in customerInfo}
+            <Input.Group style={{ width: '50px' }}>
+              <Search
+                placeholder="请输入手机号搜索"
+                onChange={e => this.handleCustomerSearch(e)}
+                size="large"
+                style={{ width: '300px' }}
+                value={key}
               />
-
-              <div className="ant-input-group-wrap" style={{position: 'relative', left: '-80px'}}>
-                {
-                  key.length > 2 && (JSON.stringify(customerInfo) == '{}' || JSON.stringify(customerInfo) == '[]') ?
-                    <NewCustomerAutoModal
-                      inputValue={key}
-                      onSuccess={this.handleNewCustomer}
-                      size="default"
-                      required="false"
-                    />
-                    :
-                    ''
-                }
-              </div>
             </Input.Group>
           </Col>
           <Col span={14}>
@@ -486,13 +524,15 @@ export default class New extends Component {
         <div className="base-info with-bottom-divider mb20">
           <div className="customer-container">
             <div className={customerNameIcon}>
-              {(customerInfo.customer_name || customerInfo.name) ? (customerInfo.customer_name || customerInfo.name).substr(0, 1) :
-                <Icon type="user" style={{color: '#fff'}}/>}
+              {(customerInfo.customer_name || customerInfo.name) ? (customerInfo.customer_name ||
+                customerInfo.name).substr(0, 1) : <Icon type="user" style={{ color: '#fff' }} />}
             </div>
             <div className={customerInfoContainer}>
               <div>
-                <span className="customer-name">{customerInfo.customer_name || customerInfo.name}</span>
-                <span className="ml6">{text.gender[String(customerInfo.customer_gender || customerInfo.gender)]}</span>
+                <span className="customer-name">{customerInfo.customer_name ||
+                customerInfo.name}</span>
+                <span className="ml6">{text.gender[String(customerInfo.customer_gender ||
+                  customerInfo.gender)]}</span>
               </div>
               <div>
                 <span>{customerInfo.customer_phone || customerInfo.phone}</span>
@@ -508,16 +548,18 @@ export default class New extends Component {
 
         <Row className="mt20 mb10">
           <Col span={24}>
-            <SearchSelectBox
-              placeholder={'请输入搜索名称'}
-              displayPattern={item => this.displayPatternParts(item)}
-              onSearch={this.handlePartsSearch}
-              onSelectItem={this.handlePartsSelectItem}
+            <label className="label">搜索配件</label>
+            <Search
+              placeholder="请输入配件名、配件名首字母或配件号搜索"
+              style={{ width: 305 }}
+              onChange={this.handlePartsSearch}
+              size="large"
+              value={partKey}
             />
           </Col>
         </Row>
 
-        <div className="with-bottom-divider">
+        <div className="with-bottom-divider part-sale-mingxi">
           <Table
             columns={columns}
             dataSource={[...partsDetail.values()]}
@@ -531,43 +573,44 @@ export default class New extends Component {
           <h3>结算信息</h3>
         </Row>
 
-
-        <div className="info-line">
-          <label className="label">结算金额</label>
-          <span className="ant-form-text">{`${this.getTotalSettlement().toFixed(2)}元`}</span>
-        </div>
-
-        <div className="info-line">
-          <label className="label">优惠金额</label>
-          <div className="width-150">
-            <Input
-              type="number"
-              addonAfter="元"
-              onChange={this.handleDiscountChange}
-              value={discount}
-            />
+        <div className="ml-80">
+          <div className="info-line">
+            <label className="label">结算金额</label>
+            <span className="ant-form-text">{`${this.getTotalSettlement().toFixed(2)}元`}</span>
           </div>
-        </div>
 
-        <div className="info-line">
-          <label className="label">应付金额</label>
-          <p className="ant-form-text order-money">
-            {`${(this.getTotalSettlement() - Number(discount)).toFixed(2)}元`}
-          </p>
+          <div className="info-line">
+            <label className="label">优惠金额</label>
+            <div className="width-150">
+              <Input
+                type="number"
+                addonAfter="元"
+                onChange={this.handleDiscountChange}
+                value={discount}
+              />
+            </div>
+          </div>
 
-          <div className={Number(customerInfo.status) === 1 ? 'ml40' : 'hide'}>
-            <label className="label">实付金额</label>
+          <div className="info-line">
+            <label className="label">应付金额</label>
             <p className="ant-form-text order-money">
-              {Number((customerInfo.real_amount || 0) - (customerInfo.unpay_amount || 0)).toFixed(2)}元
+              {`${(this.getTotalSettlement() - Number(discount)).toFixed(2)}元`}
             </p>
-          </div>
 
-          <div className={Number(customerInfo.status) === 1 ? 'ml40' : 'hide'}>
-            <label className="label">还款记录</label>
-            <TablePaymentHistory customerInfo={customerInfo} size="small"/>
+            <div className={Number(customerInfo.status) === 1 ? 'ml40' : 'hide'}>
+              <label className="label">实付金额</label>
+              <p className="ant-form-text order-money">
+                {Number((customerInfo.real_amount || 0) - (customerInfo.unpay_amount || 0)).
+                  toFixed(2)}元
+              </p>
+            </div>
+
+            <div className={Number(customerInfo.status) === 1 ? 'ml40' : 'hide'}>
+              <label className="label">还款记录</label>
+              <TablePaymentHistory customerInfo={customerInfo} size="small" />
+            </div>
           </div>
         </div>
-
       </div>
     );
   }

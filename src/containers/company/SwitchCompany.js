@@ -1,4 +1,6 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import api from '../../middleware/api';
 
 export default class SwitchCompany extends Component {
@@ -11,9 +13,11 @@ export default class SwitchCompany extends Component {
     api.ajax({
       url: api.company.switch(),
       type: 'POST',
-      data: {company_id: this.props.company._id},
+      data: { company_id: this.props.company._id },
     }, () => {
-      let USER_SESSION = localStorage.getItem('USER_SESSION') ? window.decodeURIComponent(window.atob(localStorage.getItem('USER_SESSION'))) : '';
+      let USER_SESSION = localStorage.getItem('USER_SESSION')
+        ? window.decodeURIComponent(window.atob(localStorage.getItem('USER_SESSION')))
+        : '';
       USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
       USER_SESSION = {
         brand_name: USER_SESSION.brand_name,
@@ -37,10 +41,12 @@ export default class SwitchCompany extends Component {
   updateUserPrivileges() {
     api.ajax({
       url: api.user.info(),
-    }, (data) => {
+    }, data => {
       const user = data.res.user;
 
-      let USER_SESSION = localStorage.getItem('USER_SESSION') ? window.decodeURIComponent(window.atob(localStorage.getItem('USER_SESSION'))) : '';
+      let USER_SESSION = localStorage.getItem('USER_SESSION')
+        ? window.decodeURIComponent(window.atob(localStorage.getItem('USER_SESSION')))
+        : '';
       USER_SESSION = USER_SESSION ? JSON.parse(USER_SESSION) : {};
       USER_SESSION = {
         brand_name: USER_SESSION.brand_name,
@@ -63,9 +69,10 @@ export default class SwitchCompany extends Component {
       };
 
       localStorage.setItem('USER_SESSION', window.btoa(window.encodeURIComponent(JSON.stringify(USER_SESSION))));
-      this.props.type == 'help' ?
-        sessionStorage.setItem('menu', 'overview') :
-        sessionStorage.setItem('menu', 'home');
+      sessionStorage.setItem('menu', '/home');
+      /* this.props.type == 'help'
+        ? sessionStorage.setItem('menu', '/home')
+        : sessionStorage.setItem('menu', '/home');*/
       location.href = '/';
     }, () => {
       location.href = '/';
@@ -73,17 +80,15 @@ export default class SwitchCompany extends Component {
   }
 
   render() {
-    let {type, returnVisible} = this.props;
+    const { type, returnVisible } = this.props;
     return (
       <span>
         {
-          type == 'help' ?
-            !!returnVisible ?
-              <div className="returnWord" onClick={this.switchCompany}>
-                <p>返回</p>
-                <p>后台</p>
-              </div> :
-              <div onClick={this.switchCompany} className="return"></div> :
+          type == 'help' ? !!returnVisible ?
+            <div className="returnWord" onClick={this.switchCompany}>
+              <p>返回</p>
+              <p>后台</p>
+            </div> : <div onClick={this.switchCompany} className="return"></div> :
             <a href="javascript:" onClick={this.switchCompany}>进入门店</a>
         }
       </span>

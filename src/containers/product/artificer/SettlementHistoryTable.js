@@ -1,4 +1,4 @@
-import {message} from 'antd';
+import { message } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -10,25 +10,25 @@ export default class Table extends BaseTable {
       this.getList(nextProps);
     }
     if (JSON.stringify(this.props.selectedItem) != JSON.stringify(nextProps.selectedItem)) {
-      this.setState({list: [nextProps.selectedItem], total: 1});
+      this.setState({ list: [nextProps.selectedItem], total: 1 });
     }
   }
 
   getList(props) {
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: props.source,
     }, data => {
-      let {list, total} = data.res;
+      const { list, total } = data.res;
       this.getAccumulatedAmount(list);
       this.setState({
         isFetching: false,
         list,
         total: parseInt(total),
       });
-    }, (error) => {
+    }, error => {
       message.error(`获取列表数据失败[${error}]`);
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 

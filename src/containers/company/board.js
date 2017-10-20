@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Row, Col, Card} from 'antd';
+import React, { Component } from 'react';
+import { Row, Col, Card } from 'antd';
 
 import api from '../../../middleware/api';
 import fetch from 'isomorphic-fetch';
@@ -16,7 +16,7 @@ export default class Board extends Component {
   }
 
   componentWillMount() {
-    let userInfo = api.getLoginUser();
+    const userInfo = api.getLoginUser();
 
     if (userInfo.department < 0) {
       this.getCompanies();
@@ -24,16 +24,16 @@ export default class Board extends Component {
   }
 
   getCompanies() {
-    fetch(api.company.list(), {mode: 'cors', credentials: 'include'})
+    fetch(api.company.list(), { mode: 'cors', credentials: 'include' })
       .then(response => response.json())
       .then(data => {
-        this.setState({companies: data.res.list});
+        this.setState({ companies: data.res.list });
       });
   }
 
   render() {
-    let userInfo = api.getLoginUser();
-    const {companies} = this.state;
+    const userInfo = api.getLoginUser();
+    const { companies } = this.state;
 
     if (userInfo.department > 0) {
       return '';

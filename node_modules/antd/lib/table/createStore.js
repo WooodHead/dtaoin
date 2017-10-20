@@ -1,13 +1,14 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _extends2 = require("babel-runtime/helpers/extends");
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 exports["default"] = createStore;
-
-var _objectAssign = require('object-assign');
-
-var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -15,7 +16,7 @@ function createStore(initialState) {
     var state = initialState;
     var listeners = [];
     function setState(partial) {
-        state = (0, _objectAssign2["default"])({}, state, partial);
+        state = (0, _extends3["default"])({}, state, partial);
         for (var i = 0; i < listeners.length; i++) {
             listeners[i]();
         }
@@ -36,4 +37,4 @@ function createStore(initialState) {
         subscribe: subscribe
     };
 }
-module.exports = exports['default'];
+module.exports = exports["default"];

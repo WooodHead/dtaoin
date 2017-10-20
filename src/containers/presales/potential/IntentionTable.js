@@ -1,10 +1,10 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col } from 'antd';
 import text from '../../../config/text';
 
 export default class IntentionTable extends React.Component {
   render() {
-    let {intention} = this.props;
+    const { intention } = this.props;
 
     let reason = '';
     if (Number(intention.status) === -1) {
@@ -12,7 +12,7 @@ export default class IntentionTable extends React.Component {
     }
 
     return (
-      /*<div className="ant-table ant-table-middle ant-table-bordered">
+      /* <div className="ant-table ant-table-middle ant-table-bordered">
         <div className="ant-table-body">
           <table>
             <tbody className="ant-table-tbody">

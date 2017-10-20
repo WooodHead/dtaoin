@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Row, Col, Form, Input, Button, message} from 'antd';
+import React, { Component } from 'react';
+import { Row, Col, Form, Input, Button, message } from 'antd';
 
 import api from '../../middleware/api';
 import className from 'classnames';
@@ -24,7 +24,7 @@ class InfoBank extends Component {
   }
 
   handleIsEdit() {
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
@@ -48,18 +48,18 @@ class InfoBank extends Component {
   }
 
   render() {
-    let {getFieldDecorator} = this.props.form;
-    const {formItemThree} = Layout;
-    let companyInfo = this.props.companyInfo || {};
-    let {isEdit} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const { formItemThree } = Layout;
+    const companyInfo = this.props.companyInfo || {};
+    const { isEdit } = this.state;
 
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
@@ -67,7 +67,7 @@ class InfoBank extends Component {
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('company_id', {initialValue: companyInfo._id})(
+          {getFieldDecorator('company_id', { initialValue: companyInfo._id })(
             <Input type="hidden"/>
           )}
 
@@ -79,7 +79,7 @@ class InfoBank extends Component {
                   rules: [{
                     required: true,
                     message: validator.required.notNull,
-                  }, {validator: FormValidator.notNull}],
+                  }, { validator: FormValidator.notNull }],
                   validateTrigger: 'onBlur',
                 })(
                   <Input placeholder="请输入"/>
@@ -95,7 +95,7 @@ class InfoBank extends Component {
                   rules: [{
                     required: true,
                     message: validator.required.notNull,
-                  }, {validator: FormValidator.notNull}],
+                  }, { validator: FormValidator.notNull }],
                   validateTrigger: 'onBlur',
                 })(
                   <Input placeholder="请输入"/>
@@ -111,7 +111,7 @@ class InfoBank extends Component {
                   rules: [{
                     required: true,
                     message: validator.required.notNull,
-                  }, {validator: FormValidator.notNull}],
+                  }, { validator: FormValidator.notNull }],
                   validateTrigger: 'onBlur',
                 })(
                   <Input placeholder="请输入门店名称"/>

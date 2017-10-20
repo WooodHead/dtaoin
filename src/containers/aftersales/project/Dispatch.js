@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Form, Button, Icon, Select} from 'antd';
+import { message, Modal, Form, Button, Icon, Select } from 'antd';
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
 import BaseModal from '../../../components/base/BaseModal';
@@ -26,16 +26,16 @@ export default class Dispatch extends BaseModal {
   }
 
   getFitterUsers() {
-    api.ajax({url: api.user.getMaintainUsers(0)}, function (data) {
-      this.setState({fitterUsers: data.res.user_list});
-    }.bind(this));
+    api.ajax({ url: api.user.getMaintainUsers(0) }, data => {
+      this.setState({ fitterUsers: data.res.user_list });
+    });
   }
 
   handleFixerChange(value) {
-    let userIds = value ? value.toString() : '';
+    const userIds = value ? value.toString() : '';
 
-    let userIdArray = userIds.split(',');
-    let userNameArray = [];
+    const userIdArray = userIds.split(',');
+    const userNameArray = [];
     for (let i = 0; i < this.state.fitterUsers.length; i++) {
       if (userIdArray.indexOf(this.state.fitterUsers[i]._id) > -1) {
         userNameArray.push(this.state.fitterUsers[i].name);
@@ -51,22 +51,22 @@ export default class Dispatch extends BaseModal {
   handleCommit(e) {
     e.preventDefault();
 
-    let {fitter_user_ids, fitter_user_names} = this.state;
+    const { fitter_user_ids, fitter_user_names } = this.state;
     if (!fitter_user_ids) {
       message.warning('请选择工人');
       return;
     }
 
-    this.setState({visible: false});
+    this.setState({ visible: false });
     this.props.onSuccess(this.props.itemIds, fitter_user_ids, fitter_user_names);
   }
 
 
   render() {
-    const {formItemLayout, selectStyle} = Layout;
+    const { formItemLayout, selectStyle } = Layout;
 
-    let {disabled} = this.props;
-    let {visible, fitterUsers} = this.state;
+    const { disabled } = this.props;
+    const { visible, fitterUsers } = this.state;
 
     return (
       <span>
@@ -74,7 +74,7 @@ export default class Dispatch extends BaseModal {
           type="primary"
           disabled={disabled}
           onClick={this.showDispatchModal}
-          icon="double-right"
+          className="pull-right"
         >
           批量派工
         </Button>
@@ -87,9 +87,9 @@ export default class Dispatch extends BaseModal {
           footer={null}
         >
           <Form>
-            <FormItem label="维修人员" {...formItemLayout} labelCol={{span: 6}} wrapperCol={{span: 14}} required>
+            <FormItem label="维修人员" {...formItemLayout} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }} required>
               <Select
-                multiple
+                mode="multiple"
                 {...selectStyle}
                 onChange={this.handleFixerChange.bind(this)}
                 placeholder="请选择维修人员"
@@ -98,7 +98,7 @@ export default class Dispatch extends BaseModal {
               </Select>
             </FormItem>
 
-            <FormItem wrapperCol={{span: 14, offset: 6}}>
+            <FormItem wrapperCol={{ span: 14, offset: 6 }}>
               <Button type="primary" className="mr15" onClick={this.handleCommit.bind(this)}>确认派工</Button>
             </FormItem>
           </Form>

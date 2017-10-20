@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button} from 'antd';
+import { Row, Col, Modal, Icon, Button } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 
 class EditStatus extends BaseModal {
@@ -11,8 +11,8 @@ class EditStatus extends BaseModal {
   }
 
   render() {
-    let {visible} = this.state;
-    let {detail, size} = this.props;
+    const { visible } = this.state;
+    const { detail, size } = this.props;
 
     return (
       <span>

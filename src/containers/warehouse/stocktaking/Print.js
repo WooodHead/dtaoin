@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Modal, Icon, Spin, Table, Button} from 'antd';
+import { Modal, Icon, Spin, Table, Button } from 'antd';
 
 import BasePrint from '../../../components/base/BasePrint';
 
@@ -30,11 +30,11 @@ export default class Print extends BasePrint {
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
   }
 
   handlePrint() {
-    let printSection = ReactDOM.findDOMNode(this.refs.print_container);
+    const printSection = ReactDOM.findDOMNode(this.refs.print_container);
 
     this.printThis({
       element: $(printSection),
@@ -64,9 +64,9 @@ export default class Print extends BasePrint {
   }
 
   render() {
-    let {visible, isFetching, parts} = this.state;
+    const { visible, isFetching, parts } = this.state;
 
-    let columns = [
+    const columns = [
       {
         title: '序号',
         dataIndex: '_id',

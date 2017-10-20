@@ -1,5 +1,7 @@
-import React, {Component, PropTypes} from 'react';
-import {Spin, Table} from 'antd';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Spin, Table } from 'antd';
+
 import api from '../../middleware/api';
 
 export default class TableWithPagination extends Component {
@@ -12,6 +14,13 @@ export default class TableWithPagination extends Component {
     size: 'middle',
     footer: null,
     pageSize: api.config.limit,
+    bordered: true,
+    handleRowClick: () => {
+    },
+    handleTableChange: () => {
+
+    },
+    scroll: {},
   };
 
   static propTypes = {
@@ -38,12 +47,17 @@ export default class TableWithPagination extends Component {
       footer,
       rowKey,
       pageSize,
+      bordered,
+      handleRowClick,
+      pagination,
+      scroll,
+      handleTableChange,
     } = this.props;
 
-    const pagination = {
-      total: total,
+    const _pagination = pagination !== undefined ? pagination : {
+      total,
       current: parseInt(currentPage),
-      pageSize: pageSize,
+      pageSize,
       showQuickJumper: true,
       size: 'middle',
       onChange: onPageChange,
@@ -56,11 +70,14 @@ export default class TableWithPagination extends Component {
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataSource}
-          pagination={pagination}
+          pagination={_pagination}
           size={size}
           rowKey={rowKey || (record => record._id)}
-          bordered
+          bordered={bordered}
           footer={footer}
+          onRowClick={handleRowClick}
+          scroll={scroll}
+          onChange={handleTableChange}
         />
       </Spin>
     );

@@ -1,125 +1,97 @@
 import React from 'react';
-import {message, Modal, Form, Row, Col, Button, Input} from 'antd';
+import { Modal, Form, Row, Col, Button, Input } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
 
+import Type from '../part/Type';
 import BaseModal from '../../../components/base/BaseModal';
-import PartSearchBox from '../../../components/search/PartSearchBox';
-
-import NewPartModal from '../part/NewModal';
+import Table from './TableAddParts';
 
 const FormItem = Form.Item;
+const Search = Input.Search;
 
 export default class AddPart extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
+      advancedFilterVisible: false,
       visible: false,
       visibleNewPart: false,
-      part: {},
+      parts: new Map(),
       price: '',
       count: '',
       key: '',
+      partType: '',
+      brand: '',
+      scope: '',
+      status: '',
+      page: 1,
     };
 
     [
-      'handleSearchSelect',
-      'handleComplete',
-      'handleContinueAdd',
-      'handleInPriceChange',
-      'handleCountChange',
-      'handlePartNew',
-      'handleSuccessAddPart',
+      'handleSearchPartChange',
+      'handleTableRowClick',
+      'updateState',
+      'handleBrandChange',
+      'handleScopeChange',
+      'handleTypeChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
-  handleSearchSelect(select) {
-    console.log('select', select);
-    if (select.data && String(select.data._id) !== '-1') {
-      this.setState({part: select.data, visibleNewPart: false});
-    }
-  }
-
-  handleComplete() {
-    if (Object.keys(this.state.part).length === 0) {
-      this.hideModal();
-      return;
-    }
-
-    if (this.savePart()) {
-      this.hideModal();
-    }
-  }
-
-  handleContinueAdd() {
-    this.savePart();
-  }
-
-  handleInPriceChange(e) {
-    let price = e.target.value;
-    this.setState({price: price ? price : '', visibleNewPart: false});
-  }
-
-  handleCountChange(e) {
-    let count = e.target.value;
-    this.setState({count: count ? count : '', visibleNewPart: false});
-  }
-
-  handlePartNew(key) {
-    this.setState({visibleNewPart: true, key});
-  }
-
-  handleSuccessAddPart(data) {
-    this.setState({part: data});
+  componentWillReceiveProps(nextProps) {
+    this.setState({ parts: nextProps.partsMap });
   }
 
   showModal() {
-    this.setState({visible: true, visibleNewPart: false});
+    this.setState({
+      visible: true,
+      reload: true,
+      key: '',
+    });
   }
 
-  savePart() {
-    let {part, price, count} = this.state;
-    if (!price && !count) {
-      message.warning('请输入进货单价和数量');
-      return false;
-    }
+  updateState(obj) {
+    this.setState(obj);
+  }
 
-    if (Object.keys(part).length > 0) {
+  handleBrandChange(e) {
+    const brand = e.target.value;
+    this.setState({ brand, page: 1 });
+  }
+
+  handleScopeChange(e) {
+    const scope = e.target.value;
+    this.setState({ scope, page: 1 });
+  }
+
+  handleTypeChange(pid) {
+    this.setState({ partType: pid, page: 1 });
+  }
+
+  handleSearchPartChange(e) {
+    const key = e.target.value;
+    this.setState({ key, page: 1 });
+  }
+
+  handleTableRowClick(part) {
+    const { parts } = this.state;
+    if (parts.has(part._id)) {
+      parts.delete(part._id);
+    } else {
       part.remain_amount = part.amount;
-      part.amount = count;
-      part.in_price = price;
-
-      if (!part.hasOwnProperty('part_id')) {
-        part.part_id = part._id;
-      }
-
-      if (!part.hasOwnProperty('part_name')) {
-        part.part_name = part.name;
-      }
-
-      this.setState({
-        part: {},
-        price: '',
-        count: '',
-        visibleNewPart: false,
-      });
-      this.props.onAdd(part);
+      part.part_name = part.part_name || part.name;
+      part.amount = 1;
+      parts.set(part._id, part);
     }
-    return true;
+
+    this.setState({ parts });
+    this.props.onPartsChange(parts);
   }
 
   render() {
-    const {formItemThree} = Layout;
-    let {
-      visible,
-      part,
-      price,
-      count,
-      visibleNewPart,
-      key,
-    } = this.state;
-
+    const { formItemThree } = Layout;
+    const { visible, key, parts } = this.state;
     return (
       <span>
         <Button onClick={this.showModal}>添加配件</Button>
@@ -129,105 +101,53 @@ export default class AddPart extends BaseModal {
           visible={visible}
           width={960}
           onCancel={this.hideModal}
-          footer={
-            <span>
-              <Button className="mr5" size="large" onClick={this.handleComplete}>完成</Button>
-              <Button type="primary" size="large" onClick={this.handleContinueAdd}>继续添加</Button>
-            </span>
-          }
+          footer={null}
         >
           <Row className="mb10">
-            <Col span={8}>
+            <Col span={6}>
               <FormItem label="搜索配件" {...formItemThree}>
-                <PartSearchBox
-                  api={api.warehouse.part.searchByTypeId}
-                  select={this.handleSearchSelect}
-                  style={{width: 210}}
-                  onAdd={this.handlePartNew}
-                  showNewAction={true}
+                <Search
+                  onChange={this.handleSearchPartChange}
+                  size="large"
+                  placeholder="全部"
+                  value={key}
                 />
               </FormItem>
             </Col>
-            <Col span={8}>
-              <NewPartModal
-                visible={visibleNewPart}
-                inputValue={key}
-                onSuccessAddParts={this.handleSuccessAddPart}
-              />
-            </Col>
-          </Row>
-
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="配件名" {...formItemThree}>
-                <p>{part.name}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="配件号" {...formItemThree}>
-                <p>{part.part_no}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="适用车型" {...formItemThree}>
-                <p>{part.scope}</p>
-              </FormItem>
-            </Col>
-          </Row>
-
-          <Row className="mb10">
-            <Col span={8}>
+            <Col span={6}>
               <FormItem label="品牌" {...formItemThree}>
-                <p>{part.brand}</p>
+               <Search
+                 onChange={this.handleBrandChange}
+                 size="large"
+                 placeholder="全部"
+               />
               </FormItem>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
+              <FormItem label="适用车型" {...formItemThree}>
+                <Search
+                  onChange={this.handleScopeChange}
+                  size="large"
+                  placeholder="全部"
+                />
+              </FormItem>
+            </Col>
+            <Col span={6}>
               <FormItem label="配件分类" {...formItemThree}>
-                <p>{part.part_type_name}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="规格" {...formItemThree}>
-                <p>{!!part.spec ? part.spec + part.unit : ''}</p>
+                <Type onSuccess={this.handleTypeChange} />
               </FormItem>
             </Col>
           </Row>
 
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="历史最低进价" {...formItemThree}>
-                <p>{part.min_in_price || 0}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="库存数量" {...formItemThree}>
-                <p>{part.amount || 0}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="冻结数量" {...formItemThree}>
-                <p>{part.freeze || 0}</p>
-              </FormItem>
-            </Col>
-          </Row>
-
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="采购单价" {...formItemThree} required>
-                <Input value={price} addonAfter="元" onChange={this.handleInPriceChange}/>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="采购数量" {...formItemThree} required>
-                <Input value={count} onChange={this.handleCountChange}/>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="金额" {...formItemThree}>
-                <p>{price * count} 元</p>
-              </FormItem>
-            </Col>
-          </Row>
+          <Table
+            source={api.warehouse.part.list(this.state)}
+            page={this.state.page}
+            updateState={this.updateState}
+            handleRowClick={this.handleTableRowClick}
+            parts={parts}
+            reload={this.state.reload}
+            keyword={key}
+          />
         </Modal>
       </span>
     );

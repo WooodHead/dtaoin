@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -16,6 +15,10 @@ var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -33,7 +36,7 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
     var t = {};
@@ -45,49 +48,51 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 };
 
 var TimelineItem = function (_React$Component) {
-    (0, _inherits3["default"])(TimelineItem, _React$Component);
+    (0, _inherits3['default'])(TimelineItem, _React$Component);
 
     function TimelineItem() {
-        (0, _classCallCheck3["default"])(this, TimelineItem);
-        return (0, _possibleConstructorReturn3["default"])(this, _React$Component.apply(this, arguments));
+        (0, _classCallCheck3['default'])(this, TimelineItem);
+        return (0, _possibleConstructorReturn3['default'])(this, (TimelineItem.__proto__ || Object.getPrototypeOf(TimelineItem)).apply(this, arguments));
     }
 
-    TimelineItem.prototype.render = function render() {
-        var _classNames, _classNames2;
+    (0, _createClass3['default'])(TimelineItem, [{
+        key: 'render',
+        value: function render() {
+            var _classNames, _classNames2;
 
-        var _a = this.props,
-            prefixCls = _a.prefixCls,
-            className = _a.className,
-            _a$color = _a.color,
-            color = _a$color === undefined ? '' : _a$color,
-            last = _a.last,
-            children = _a.children,
-            pending = _a.pending,
-            dot = _a.dot,
-            restProps = __rest(_a, ["prefixCls", "className", "color", "last", "children", "pending", "dot"]);
-        var itemClassName = (0, _classnames2["default"])((_classNames = {}, (0, _defineProperty3["default"])(_classNames, prefixCls + '-item', true), (0, _defineProperty3["default"])(_classNames, prefixCls + '-item-last', last), (0, _defineProperty3["default"])(_classNames, prefixCls + '-item-pending', pending), _classNames), className);
-        var dotClassName = (0, _classnames2["default"])((_classNames2 = {}, (0, _defineProperty3["default"])(_classNames2, prefixCls + '-item-head', true), (0, _defineProperty3["default"])(_classNames2, prefixCls + '-item-head-custom', dot), (0, _defineProperty3["default"])(_classNames2, prefixCls + '-item-head-' + color, true), _classNames2));
-        return _react2["default"].createElement(
-            'li',
-            (0, _extends3["default"])({}, restProps, { className: itemClassName }),
-            _react2["default"].createElement('div', { className: prefixCls + '-item-tail' }),
-            _react2["default"].createElement(
-                'div',
-                { className: dotClassName, style: { borderColor: /blue|red|green/.test(color) ? null : color } },
-                dot
-            ),
-            _react2["default"].createElement(
-                'div',
-                { className: prefixCls + '-item-content' },
-                children
-            )
-        );
-    };
-
+            var _a = this.props,
+                prefixCls = _a.prefixCls,
+                className = _a.className,
+                _a$color = _a.color,
+                color = _a$color === undefined ? '' : _a$color,
+                last = _a.last,
+                children = _a.children,
+                pending = _a.pending,
+                dot = _a.dot,
+                restProps = __rest(_a, ["prefixCls", "className", "color", "last", "children", "pending", "dot"]);
+            var itemClassName = (0, _classnames2['default'])((_classNames = {}, (0, _defineProperty3['default'])(_classNames, prefixCls + '-item', true), (0, _defineProperty3['default'])(_classNames, prefixCls + '-item-last', last), (0, _defineProperty3['default'])(_classNames, prefixCls + '-item-pending', pending), _classNames), className);
+            var dotClassName = (0, _classnames2['default'])((_classNames2 = {}, (0, _defineProperty3['default'])(_classNames2, prefixCls + '-item-head', true), (0, _defineProperty3['default'])(_classNames2, prefixCls + '-item-head-custom', dot), (0, _defineProperty3['default'])(_classNames2, prefixCls + '-item-head-' + color, true), _classNames2));
+            return _react2['default'].createElement(
+                'li',
+                (0, _extends3['default'])({}, restProps, { className: itemClassName }),
+                _react2['default'].createElement('div', { className: prefixCls + '-item-tail' }),
+                _react2['default'].createElement(
+                    'div',
+                    { className: dotClassName, style: { borderColor: /blue|red|green/.test(color) ? null : color } },
+                    dot
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    { className: prefixCls + '-item-content' },
+                    children
+                )
+            );
+        }
+    }]);
     return TimelineItem;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = TimelineItem;
+exports['default'] = TimelineItem;
 
 TimelineItem.defaultProps = {
     prefixCls: 'ant-timeline',

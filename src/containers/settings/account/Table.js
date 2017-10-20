@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Popconfirm} from 'antd';
+import { message, Popconfirm } from 'antd';
 
 import api from '../../../middleware/api';
 import text from '../../../config/text';
@@ -21,13 +21,13 @@ export default class Table extends BaseTable {
     }, () => {
       message.success('停用成功');
       this.props.onSuccess();
-    }, (err) => {
+    }, err => {
       message.error(`停用失败[${err}]`);
     });
   }
 
   render() {
-    let self = this;
+    const self = this;
     const columns = [{
       title: '姓名',
       dataIndex: 'name',
@@ -45,9 +45,7 @@ export default class Table extends BaseTable {
       title: '管理连锁名称',
       dataIndex: 'chain_name',
       key: 'chain_name',
-      render: (value) => {
-        return value ? value : '--';
-      },
+      render: value => value ? value : '--',
     }, {
       title: '创建人',
       dataIndex: 'create_user_name',

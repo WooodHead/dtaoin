@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Icon} from 'antd';
+import { Row, Col, Icon } from 'antd';
 
 import EditCustomerModal from '../../../containers/customer/Edit';
 
@@ -21,23 +21,23 @@ export default class CustomerInfo extends React.Component {
   }
 
   componentDidMount() {
-    let {customerId} = this.props;
+    const { customerId } = this.props;
     this.getCustomerInfo(customerId);
   }
 
   handleCustomerChange() {
-    let {customerId} = this.props;
+    const { customerId } = this.props;
     this.getCustomerInfo(customerId);
   }
 
   getCustomerInfo(customerId) {
-    api.ajax({url: api.customer.detail(customerId)}, data => {
-      this.setState({customerInfo: data.res.customer_info});
+    api.ajax({ url: api.customer.detail(customerId) }, data => {
+      this.setState({ customerInfo: data.res.customer_info });
     });
   }
 
   render() {
-    let {customerInfo} = this.state;
+    const { customerInfo } = this.state;
 
     const customerNameIcon = className({
       'icon-first-name-none': !customerInfo._id,
@@ -85,7 +85,7 @@ export default class CustomerInfo extends React.Component {
               <div className="customer-container">
                 <div className={customerNameIcon}>
                   {(customerInfo.customer_name || customerInfo.name) ? (customerInfo.customer_name || customerInfo.name).substr(0, 1) :
-                    <Icon type="user" style={{color: '#fff'}}/>}
+                    <Icon type="user" style={{ color: '#fff' }}/>}
                 </div>
                 <div className={customerInfoContainer}>
                   <div>

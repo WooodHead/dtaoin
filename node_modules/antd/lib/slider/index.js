@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = undefined;
 
 var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
 
@@ -16,6 +15,10 @@ var _extends4 = _interopRequireDefault(_extends3);
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
 
@@ -45,7 +48,7 @@ var _tooltip = require('../tooltip');
 
 var _tooltip2 = _interopRequireDefault(_tooltip);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var __rest = undefined && undefined.__rest || function (s, e) {
     var t = {};
@@ -57,18 +60,18 @@ var __rest = undefined && undefined.__rest || function (s, e) {
 };
 
 var Slider = function (_React$Component) {
-    (0, _inherits3["default"])(Slider, _React$Component);
+    (0, _inherits3['default'])(Slider, _React$Component);
 
     function Slider(props) {
-        (0, _classCallCheck3["default"])(this, Slider);
+        (0, _classCallCheck3['default'])(this, Slider);
 
-        var _this = (0, _possibleConstructorReturn3["default"])(this, _React$Component.call(this, props));
+        var _this = (0, _possibleConstructorReturn3['default'])(this, (Slider.__proto__ || Object.getPrototypeOf(Slider)).call(this, props));
 
         _this.toggleTooltipVisible = function (index, visible) {
             _this.setState(function (_ref) {
                 var visibles = _ref.visibles;
                 return {
-                    visibles: (0, _extends4["default"])({}, visibles, (0, _defineProperty3["default"])({}, index, visible))
+                    visibles: (0, _extends4['default'])({}, visibles, (0, _defineProperty3['default'])({}, index, visible))
                 };
             });
         };
@@ -83,10 +86,10 @@ var Slider = function (_React$Component) {
                 tipFormatter = _this$props.tipFormatter;
             var visibles = _this.state.visibles;
 
-            return _react2["default"].createElement(
-                _tooltip2["default"],
+            return _react2['default'].createElement(
+                _tooltip2['default'],
                 { prefixCls: tooltipPrefixCls, title: tipFormatter ? tipFormatter(value) : '', visible: tipFormatter && (visibles[index] || dragging), placement: 'top', transitionName: 'zoom-down', key: index },
-                _react2["default"].createElement(_Handle2["default"], (0, _extends4["default"])({}, restProps, { onMouseEnter: function onMouseEnter() {
+                _react2['default'].createElement(_Handle2['default'], (0, _extends4['default'])({}, restProps, { value: value, onMouseEnter: function onMouseEnter() {
                         return _this.toggleTooltipVisible(index, true);
                     }, onMouseLeave: function onMouseLeave() {
                         return _this.toggleTooltipVisible(index, false);
@@ -99,20 +102,22 @@ var Slider = function (_React$Component) {
         return _this;
     }
 
-    Slider.prototype.render = function render() {
-        var _a = this.props,
-            range = _a.range,
-            restProps = __rest(_a, ["range"]);
-        if (range) {
-            return _react2["default"].createElement(_Range2["default"], (0, _extends4["default"])({}, restProps, { handle: this.handleWithTooltip }));
+    (0, _createClass3['default'])(Slider, [{
+        key: 'render',
+        value: function render() {
+            var _a = this.props,
+                range = _a.range,
+                restProps = __rest(_a, ["range"]);
+            if (range) {
+                return _react2['default'].createElement(_Range2['default'], (0, _extends4['default'])({}, restProps, { handle: this.handleWithTooltip }));
+            }
+            return _react2['default'].createElement(_Slider2['default'], (0, _extends4['default'])({}, restProps, { handle: this.handleWithTooltip }));
         }
-        return _react2["default"].createElement(_Slider2["default"], (0, _extends4["default"])({}, restProps, { handle: this.handleWithTooltip }));
-    };
-
+    }]);
     return Slider;
-}(_react2["default"].Component);
+}(_react2['default'].Component);
 
-exports["default"] = Slider;
+exports['default'] = Slider;
 
 Slider.defaultProps = {
     prefixCls: 'ant-slider',

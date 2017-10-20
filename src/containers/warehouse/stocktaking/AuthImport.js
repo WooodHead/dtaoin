@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Row, Col, Button} from 'antd';
+import { message, Modal, Icon, Row, Col, Button } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import QRCode from 'qrcode.react';
@@ -34,14 +34,14 @@ export default class AuthImport extends BaseModal {
   }
 
   showAuthModal() {
-    let {id} = this.props;
+    const { id } = this.props;
     this.interval = setInterval(this.getStocktakingDetail.bind(this, id), 2000);
     this.showModal();
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path);
+    this.setState({ hasPermission });
   }
 
   handleCancel() {
@@ -50,8 +50,8 @@ export default class AuthImport extends BaseModal {
   }
 
   handleImport() {
-    let {id, remark} = this.props;
-    let {hasPermission, detail} = this.state;
+    const { id, remark } = this.props;
+    const { hasPermission, detail } = this.state;
 
     if (!hasPermission && String(detail.authorize_user_id) === '0') {
       message.warning('还未授权，请先授权');
@@ -73,10 +73,10 @@ export default class AuthImport extends BaseModal {
   }
 
   getStocktakingDetail(id) {
-    api.ajax({url: api.warehouse.stocktaking.detail(id)}, (data) => {
-      let {detail} = data.res;
+    api.ajax({ url: api.warehouse.stocktaking.detail(id) }, data => {
+      const { detail } = data.res;
 
-      this.setState({detail});
+      this.setState({ detail });
 
       if (detail.authorize_user_id.toString() !== '0') {
         clearInterval(this.interval);
@@ -85,9 +85,9 @@ export default class AuthImport extends BaseModal {
   }
 
   render() {
-    let {visible, hasPermission, detail}=this.state;
-    let {id, type}=this.props;
-    let authUserId = detail.authorize_user_id;
+    const { visible, hasPermission, detail } = this.state;
+    const { id, type } = this.props;
+    const authUserId = detail.authorize_user_id;
 
     return (
       <span>
@@ -140,7 +140,7 @@ export default class AuthImport extends BaseModal {
                     requestParams: {
                       type: 'post',
                       url: api.warehouse.stocktaking.auth(),
-                      data: {stocktaking_id: id},
+                      data: { stocktaking_id: id },
                     },
                   })}
                   size={128}

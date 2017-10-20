@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Form, Collapse, Row, Col, Icon, Button, InputNumber} from 'antd';
+import { message, Modal, Form, Collapse, Row, Col, Icon, Button, InputNumber } from 'antd';
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
 import Layout from '../../../utils/FormLayout';
@@ -37,7 +37,7 @@ class AdjustmentRateModal extends BaseModal {
   }
 
   handleSubmit() {
-    let data = this.state;
+    const data = this.state;
     if (data.amountRate !== 100 && data.salaryRate !== 100) {
       message.error('分成比例或薪资组占比之和必须等于100');
       return false;
@@ -47,15 +47,15 @@ class AdjustmentRateModal extends BaseModal {
       delete data.salaryRate;
     }
 
-    for (let prop in data) {
+    for (const prop in data) {
       data[prop] = data[prop] / 100;
     }
 
     api.ajax({
-        url: api.company.editCommissionRate(),
-        type: 'POST',
-        data: data,
-      },
+      url: api.company.editCommissionRate(),
+      type: 'POST',
+      data,
+    },
       () => {
         message.success('比例调整成功');
         this.hideModal();
@@ -71,11 +71,11 @@ class AdjustmentRateModal extends BaseModal {
       'boss',
       'purchase',
       'maintenance',
-    ].map((prop) => amountRate += amountRateObj[prop]);
+    ].map(prop => amountRate += amountRateObj[prop]);
 
     this.setState({
       [propName]: value,
-      amountRate: amountRate,
+      amountRate,
     });
 
     if (amountRate > 100) {
@@ -84,7 +84,7 @@ class AdjustmentRateModal extends BaseModal {
   }
 
   calculateSalaryRate(propName, value) {
-    let salaryRateObj = this.state;
+    const salaryRateObj = this.state;
     salaryRateObj[propName] = value;
 
     let salaryRate = 0;
@@ -101,11 +101,11 @@ class AdjustmentRateModal extends BaseModal {
       'g_ximei',
       'g_weibao',
       'g_sajiedai',
-    ].map((prop) => salaryRate += salaryRateObj[prop]);
+    ].map(prop => salaryRate += salaryRateObj[prop]);
 
     this.setState({
       [propName]: value,
-      salaryRate: salaryRate,
+      salaryRate,
     });
     if (salaryRate > 100) {
       message.error('薪资组占比之和必须等于100');
@@ -113,7 +113,7 @@ class AdjustmentRateModal extends BaseModal {
   }
 
   getCommissionRateDetail() {
-    api.ajax({url: api.company.getCommissionRate()}, function (data) {
+    api.ajax({ url: api.company.getCommissionRate() }, data => {
       let rate = data.res.commission_rate,
         stateObj = {};
       let amountRate = 0, salaryRate = 0;
@@ -133,8 +133,8 @@ class AdjustmentRateModal extends BaseModal {
         'g_ximei',
         'g_weibao',
         'g_sajiedai',
-      ].map((prop) => {
-        let value = Number(rate[prop]) * 100;
+      ].map(prop => {
+        const value = Number(rate[prop]) * 100;
 
         if (prop.startsWith('g_')) {
           salaryRate += value;
@@ -147,20 +147,20 @@ class AdjustmentRateModal extends BaseModal {
       stateObj.salaryRate = salaryRate;
 
       this.setState(stateObj);
-    }.bind(this));
+    });
   }
 
   render() {
     const FormItem = Form.Item;
     const Panel = Collapse.Panel;
-    let {formItemTwo} = Layout;
-    let inProps = {
+    const { formItemTwo } = Layout;
+    const inProps = {
       min: 0,
       max: 100,
       step: 1,
     };
 
-    let {
+    const {
       boss,
       purchase,
       maintenance,
@@ -288,7 +288,7 @@ class AdjustmentRateModal extends BaseModal {
                 </Row>
                 <Row>
                   <Col span={8}>
-                    <FormItem label="机修组" {...formItemTwo}>
+                    <FormItem label="维修组" {...formItemTwo}>
                       <InputNumber
                         {...inProps}
                         value={g_jixiu}

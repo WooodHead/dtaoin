@@ -1,5 +1,5 @@
 import React from 'react';
-import {Tag} from 'antd';
+import { Tag } from 'antd';
 
 import api from '../../middleware/api';
 import BaseTable from '../../components/base/BaseTable';
@@ -9,11 +9,11 @@ import CreateChain from './CreateChain';
 
 export default class TableStore extends BaseTable {
 
-  //计算指定日期距离今天的天数 date格式为'yyyy-mm-rr'
+  // 计算指定日期距离今天的天数 date格式为'yyyy-mm-rr'
   dueExpire(date) {
-    let forceExpireTimeStamp = Date.parse(new Date(date));
-    let todayTimeStamp = new Date().getTime();
-    let dueDateStamp = forceExpireTimeStamp - todayTimeStamp;
+    const forceExpireTimeStamp = Date.parse(new Date(date));
+    const todayTimeStamp = new Date().getTime();
+    const dueDateStamp = forceExpireTimeStamp - todayTimeStamp;
     if (Number(dueDateStamp) > 0) {
       return parseInt(dueDateStamp / 1000 / 60 / 60 / 24);
     } else {
@@ -22,7 +22,7 @@ export default class TableStore extends BaseTable {
   }
 
   renderTable(columns) {
-    let {isFetching, list, total} = this.state;
+    const { isFetching, list, total } = this.state;
 
     return (
       <TableWithPagination
@@ -101,8 +101,7 @@ export default class TableStore extends BaseTable {
       key: 'action',
       className: 'center action-three',
       width: '5%',
-      render: (id, record) => {
-        return (
+      render: (id, record) => (
           <span key={id}>
             {
               api.isSuperAdministrator() ?
@@ -110,8 +109,7 @@ export default class TableStore extends BaseTable {
                 <span>编辑</span>
             }
           </span>
-        );
-      },
+        ),
     }];
 
     return this.renderTable(columns);

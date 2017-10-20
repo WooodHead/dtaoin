@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import PrintArrears from './PrintArrears';
@@ -8,7 +8,7 @@ import PrintArrears from './PrintArrears';
 export default class PrintArrearsModal extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
   }
 
   render() {

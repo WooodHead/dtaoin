@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactHighcharts from 'react-highcharts';
+import createReactClass from 'create-react-class';
 
-const SparkingChart = React.createClass({
+const SparkingChart = createReactClass({
   render() {
-    let {data, title, subtitle} = this.props;
-    let chart = {
+    const { data, title, subtitle } = this.props;
+    const chart = {
       chart: {
         backgroundColor: null,
         borderWidth: 0,
@@ -66,8 +67,8 @@ const SparkingChart = React.createClass({
         hideDelay: 0,
         shared: true,
         padding: 0,
-        positioner: function (w, h, point) {
-          return {x: point.plotX - w / 2, y: point.plotY - h};
+        positioner (w, h, point) {
+          return { x: point.plotX - w / 2, y: point.plotY - h };
         },
         headerFormat: '',
         pointFormat: '<b>{point.y}</b>',
@@ -98,11 +99,11 @@ const SparkingChart = React.createClass({
         },
       },
       series: [{
-        data: data,
+        data,
         pointStart: 1,
       }],
     };
-    return React.createElement(ReactHighcharts, {config: chart});
+    return React.createElement(ReactHighcharts, { config: chart });
   },
 });
 

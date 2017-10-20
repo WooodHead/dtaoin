@@ -1,0 +1,29 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+p,
+h1,
+h2,
+h3 {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    color: #333;
+    font-size: 14px;
+    font-family: PingFang-SC-Regular, serif;
+}
+
+input:focus,
+button:focus {
+    outline: none;
+}
+
+a {
+    text-decoration: none;
+}

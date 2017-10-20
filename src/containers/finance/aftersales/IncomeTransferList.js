@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, DatePicker} from 'antd';
+import { Row, Col, DatePicker } from 'antd';
 
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
@@ -14,7 +14,7 @@ export default class IncomeTransferList extends BaseList {
   constructor(props) {
     super(props);
     this.state = {
-      page: props.location.query.page || 1,
+      page: 1,
       end_date: '',
       company_id: '',
       company_data: [],
@@ -34,9 +34,9 @@ export default class IncomeTransferList extends BaseList {
   }
 
   handleSearch(key, successHandle, failHandle) {
-    api.ajax({url: api.company.keyList(key)}, data => {
+    api.ajax({ url: api.company.keyList(key) }, data => {
       if (data.code === 0) {
-        this.setState({company_data: data.res.list});
+        this.setState({ company_data: data.res.list });
         successHandle(data.res.list);
       } else {
         failHandle(data.msg);
@@ -46,7 +46,7 @@ export default class IncomeTransferList extends BaseList {
   }
 
   handleSelectItem = function (selectInfo) {
-    this.setState({value: selectInfo.name, company_id: selectInfo._id, page: 1});
+    this.setState({ value: selectInfo.name, company_id: selectInfo._id, page: 1 });
   };
 
   render() {
@@ -55,7 +55,7 @@ export default class IncomeTransferList extends BaseList {
         <Row className="mb15">
           <Col span={18}>
             <SearchSelectBox
-              style={{float: 'left', width: '250px'}}
+              style={{ float: 'left', width: '250px' }}
               placeholder={'请输入门店名称'}
               onSearch={this.handleSearch}
               displayPattern={item => item.name}

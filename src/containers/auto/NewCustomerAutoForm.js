@@ -1,5 +1,17 @@
 import React from 'react';
-import {message, DatePicker, Row, Col, Form, Input, Select, Button, Collapse} from 'antd';
+import {
+  Button,
+  Col,
+  Collapse,
+  DatePicker,
+  Form,
+  Icon,
+  Input,
+  message,
+  Row,
+  Select,
+  Tooltip,
+} from 'antd';
 
 import api from '../../middleware/api';
 import formatter from '../../utils/DateFormatter';
@@ -19,8 +31,6 @@ class NewCustomerAutoForm extends BaseAuto {
       isFetching: false,
       isNew: true,
       customer_id: '',
-      memberLevels: [],
-      memberPrice: 0,
       brands: [],
       series: [],
       types: [],
@@ -32,7 +42,6 @@ class NewCustomerAutoForm extends BaseAuto {
   }
 
   componentDidMount() {
-    this.getMemberLevels();
     this.getAutoBrands();
   }
 
@@ -46,15 +55,18 @@ class NewCustomerAutoForm extends BaseAuto {
 
       values.customer_id = this.state.customer_id;
       values.register_date = formatter.date(values.register_date);
+      values.birth_date = formatter.date(values.birth_date);
+      values.force_expire_date = formatter.date(values.force_expire_date);
+      values.business_expire_date = formatter.date(values.business_expire_date);
 
-      this.setState({isFetching: true});
+      this.setState({ isFetching: true });
       api.ajax({
         url: this.state.isNew ? api.customer.addCustomerAndAuto() : api.customer.edit(),
         type: 'POST',
         data: values,
-      }, (data) => {
+      }, data => {
         message.success(this.state.isNew ? '新增客户成功!' : '修改客户成功!');
-        this.setState({isFetching: false, isNew: false});
+        this.setState({ isFetching: false, isNew: false });
         this.props.onSuccess({
           customer_id: data.res.customer._id,
           customer_name: data.res.customer.name,
@@ -62,32 +74,18 @@ class NewCustomerAutoForm extends BaseAuto {
           _id: data.res.auto._id,
           plate_num: data.res.auto.plate_num,
         });
-      }, () => {
-        this.setState({isFetching: false});
-        message.error('提交失败');
+      }, msg => {
+        this.setState({ isFetching: false });
+        message.error(msg);
       });
     });
   }
 
-  handleLevelChange(levelId) {
-    this.state.memberLevels.forEach((item) => {
-      if (levelId.toString() === item._id.toString()) {
-        this.setState({memberPrice: item.price});
-      }
-    });
-  }
-
-  getMemberLevels() {
-    api.ajax({url: api.customer.getMemberConfig()}, (data) => {
-      this.setState({memberLevels: data.res.member_levels});
-    });
-  }
-
   render() {
-    const {formItemLg, formItemThree, selectStyle} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {customer_id, required} = this.props;
-    let isRequired = required == 'false';
+    const { formItemLg, formItemThree, formItemLayout_1014, selectStyle } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { customer_id, required } = this.props;
+    const isRequired = required == 'false';
 
     const {
       isFetching,
@@ -98,17 +96,17 @@ class NewCustomerAutoForm extends BaseAuto {
     } = this.state;
 
     const selectGenderAfter = (
-      getFieldDecorator('gender', {initialValue: '1'})(
-        <Select style={{width: 70}}>
+      getFieldDecorator('gender', { initialValue: '1' })(
+        <Select style={{ width: 70 }}>
           <Option value={'1'}>先生</Option>
           <Option value={'0'}>女士</Option>
           <Option value={'-1'}>未知</Option>
-        </Select>
+        </Select>,
       )
     );
 
     const selectInColorAfter = (
-      getFieldDecorator('in_color', {initialValue: '-1'})(
+      getFieldDecorator('in_color', { initialValue: '-1' })(
         <Select {...selectStyle}>
           <Option value={'-1'}>未知</Option>
           <Option value={'0'}>米</Option>
@@ -118,17 +116,17 @@ class NewCustomerAutoForm extends BaseAuto {
           <Option value={'4'}>红</Option>
           <Option value={'5'}>蓝</Option>
           <Option value={'6'}>白</Option>
-        </Select>
+        </Select>,
       )
     );
 
     return (
       <Form className="form-collapse">
-        {getFieldDecorator('customer_id', {initialValue: customer_id})(
-          <Input type="hidden"/>
+        {getFieldDecorator('customer_id', { initialValue: customer_id })(
+          <Input type="hidden" />,
         )}
-        {getFieldDecorator('is_maintain', {initialValue: 1})(
-          <Input type="hidden"/>
+        {getFieldDecorator('is_maintain', { initialValue: 1 })(
+          <Input type="hidden" />,
         )}
 
         <Collapse className="" defaultActiveKey={['1']}>
@@ -141,29 +139,33 @@ class NewCustomerAutoForm extends BaseAuto {
                     rules: FormValidator.getRuleNotNull(),
                     validatorTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入姓名" addonAfter={selectGenderAfter}/>
+                    <Input placeholder="请输入姓名" addonAfter={selectGenderAfter} />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="手机号" {...formItemThree}>
                   {getFieldDecorator('phone', {
-                    initialValue: parseInt(this.props.inputValue) == this.props.inputValue ? this.props.inputValue : '',
+                    initialValue: parseInt(this.props.inputValue) == this.props.inputValue
+                      ? this.props.inputValue
+                      : '',
                     rules: FormValidator.getRulePhoneNumber(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入手机号"/>
+                    <Input placeholder="请输入手机号" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="车牌号" {...formItemThree}>
                   {getFieldDecorator('plate_num', {
-                    initialValue: parseInt(this.props.inputValue) != this.props.inputValue ? this.props.inputValue : '',
+                    initialValue: parseInt(this.props.inputValue) != this.props.inputValue
+                      ? this.props.inputValue
+                      : '',
                     rules: FormValidator.getRulePlateNumber(!isRequired),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入车牌号"/>
+                    <Input placeholder="请输入车牌号" />,
                   )}
                 </FormItem>
               </Col>
@@ -186,7 +188,7 @@ class NewCustomerAutoForm extends BaseAuto {
                       {...selectStyle}
                     >
                       {brands.map(brand => <Option key={brand._id}>{brand.name}</Option>)}
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
@@ -196,7 +198,7 @@ class NewCustomerAutoForm extends BaseAuto {
                     <Select onSelect={this.handleSeriesSelect}{...selectStyle}>
                       <Option key="0">未知</Option>
                       {series.map(series => <Option key={series._id}>{series.name}</Option>)}
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
@@ -205,8 +207,9 @@ class NewCustomerAutoForm extends BaseAuto {
                   {getFieldDecorator('auto_type_id')(
                     <Select onSelect={this.handleTypeSelect} {...selectStyle}>
                       <Option key="0">未知</Option>
-                      {types.map(type => <Option key={type._id}>{type.year} {type.version}</Option>)}
-                    </Select>
+                      {types.map(type => <Option
+                        key={type._id}>{type.year} {type.version}</Option>)}
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
@@ -216,8 +219,23 @@ class NewCustomerAutoForm extends BaseAuto {
               <Col span={16}>
                 <FormItem label="车型名称" {...formItemLg}>
                   {getFieldDecorator('auto_type_name')(
-                    <Input placeholder="请输入车型描述"/>
+                    <Input placeholder="请输入车型描述" />,
                   )}
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                <FormItem label="初登日期" {...formItemThree}>
+                  <div>
+                    {getFieldDecorator('register_date', {
+                      initialValue: formatter.getMomentDate(),
+                    })(
+                      <DatePicker size="large" placeholder="请选择初登日期" allowClear={false} />,
+                    )}
+
+                    <Tooltip title="初登日期指交管所车辆的登记日期，亦即年检日期" arrowPointAtCenter>
+                      <Icon type="question-circle-o" className="help-icon-font" />
+                    </Tooltip>
+                  </div>
                 </FormItem>
               </Col>
             </Row>
@@ -226,14 +244,14 @@ class NewCustomerAutoForm extends BaseAuto {
               <Col span={8}>
                 <FormItem label="车架号" {...formItemThree}>
                   {getFieldDecorator('vin_num')(
-                    <Input placeholder="请输入车架号"/>
+                    <Input placeholder="请输入车架号" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="发动机号" {...formItemThree}>
                   {getFieldDecorator('engine_num')(
-                    <Input placeholder="请输入发动机号"/>
+                    <Input placeholder="请输入发动机号" />,
                   )}
                 </FormItem>
               </Col>
@@ -241,11 +259,11 @@ class NewCustomerAutoForm extends BaseAuto {
                 <FormItem label="外观/内饰" {...formItemThree}>
                   <Row>
                     <Col span={11}>
-                      {getFieldDecorator('out_color', {initialValue: '未知'})(
+                      {getFieldDecorator('out_color', { initialValue: '未知' })(
                         <Select {...selectStyle}>
                           <Option key="0">未知</Option>
                           {outColor.map(color => <Option key={color._id}>{color.name}</Option>)}
-                        </Select>
+                        </Select>,
                       )}
                     </Col>
                     <Col span={2}>
@@ -263,23 +281,35 @@ class NewCustomerAutoForm extends BaseAuto {
           <Panel header="客户其它信息" key="p2">
             <Row>
               <Col span={8}>
+                <FormItem label="生日" {...formItemThree}>
+                  <div>
+                    {getFieldDecorator('birth_date')(
+                      <DatePicker size="large" placeholder="请输选择生日" />,
+                    )}
+                    <Tooltip title="系统根据生日信息，自动发送生日关怀短信" arrowPointAtCenter>
+                      <Icon type="question-circle-o" className="help-icon-font" />
+                    </Tooltip>
+                  </div>
+                </FormItem>
+              </Col>
+              <Col span={8}>
                 <FormItem label="微信号" {...formItemThree}>
                   {getFieldDecorator('weixin')(
-                    <Input placeholder="请输入微信号"/>
+                    <Input placeholder="请输入微信号" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="QQ" {...formItemThree}>
                   {getFieldDecorator('qq')(
-                    <Input type="number" placeholder="请输入QQ"/>
+                    <Input type="number" placeholder="请输入QQ" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="邮箱" {...formItemThree}>
                   {getFieldDecorator('mail')(
-                    <Input type="email" placeholder="请输入邮箱"/>
+                    <Input type="email" placeholder="请输入邮箱" />,
                   )}
                 </FormItem>
               </Col>
@@ -289,21 +319,21 @@ class NewCustomerAutoForm extends BaseAuto {
               <Col span={8}>
                 <FormItem label="身份证号" {...formItemThree} hasFeedback>
                   {getFieldDecorator('id_card_num')(
-                    <Input placeholder="请输入身份证号"/>
+                    <Input placeholder="请输入身份证号" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="身份证地址" {...formItemThree}>
                   {getFieldDecorator('id_card_address')(
-                    <Input placeholder="请输入身份证地址"/>
+                    <Input placeholder="请输入身份证地址" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="常住地址" {...formItemThree}>
                   {getFieldDecorator('address')(
-                    <Input placeholder="请输入常住地址"/>
+                    <Input placeholder="请输入常住地址" />,
                   )}
                 </FormItem>
               </Col>
@@ -313,40 +343,74 @@ class NewCustomerAutoForm extends BaseAuto {
               <Col span={8}>
                 <FormItem label="驾驶证号" {...formItemThree}>
                   {getFieldDecorator('driver_license_num')(
-                    <Input placeholder="请输入驾驶证号"/>
+                    <Input placeholder="请输入驾驶证号" />,
                   )}
                 </FormItem>
               </Col>
             </Row>
           </Panel>
 
-          <Panel header="车辆其他信息" key="p3">
+          <Panel header="保险信息" key="p3">
+            <Row>
+              <Col span={8}>
+                <FormItem label="交强险承保公司" {...formItemLayout_1014}>
+                  {getFieldDecorator('force_company')(
+                    <Input placeholder="请输入交强险承保公司" />,
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                <FormItem label="交强险到期日期" {...formItemLayout_1014}>
+                  {getFieldDecorator('force_expire_date')(
+                    <DatePicker placeholder="交强险到期日" />,
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col span={8}>
+                <FormItem label="商业险承保公司" {...formItemLayout_1014}>
+                  {getFieldDecorator('business_company')(
+                    <Input placeholder="请输入商业险承保公司" />,
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                <FormItem label="商业险到期日期" {...formItemLayout_1014}>
+                  {getFieldDecorator('business_expire_date')(
+                    <DatePicker placeholder="商业险到期日" />,
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={8}>
+                <FormItem label="商业险总额" {...formItemLayout_1014}>
+                  {getFieldDecorator('business_amount')(
+                    <Input placeholder="请输入商业险总额" />,
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+          </Panel>
+
+          <Panel header="车辆其他信息" key="p4">
             <Row>
               <Col span={8}>
                 <FormItem label="燃油" {...formItemThree}>
-                  {getFieldDecorator('energy_type', {initialValue: '-1'})(
+                  {getFieldDecorator('energy_type', { initialValue: '-1' })(
                     <Select {...selectStyle} placeholder="请选择燃油类型">
                       <Option key="-1">未知</Option>
                       <Option key="0">汽油</Option>
                       <Option key="1">柴油</Option>
                       <Option key="2">新能源</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={8}>
-                <FormItem label="初登日期" {...formItemThree}>
-                  {getFieldDecorator('register_date', {
-                    initialValue: formatter.getMomentDate(),
-                  })(
-                    <DatePicker placeholder="请选择初登日期" allowClear={false}/>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="车辆型号" {...formItemThree}>
                   {getFieldDecorator('auto_type_num')(
-                    <Input />
+                    <Input placeholder="请选输入车辆型号" />,
                   )}
                 </FormItem>
               </Col>
@@ -355,7 +419,7 @@ class NewCustomerAutoForm extends BaseAuto {
               <Col span={16}>
                 <FormItem label="备注" {...formItemLg}>
                   {getFieldDecorator('remark')(
-                    <Input type="textarea"/>
+                    <Input type="textarea" placeholder="请输入备注" />,
                   )}
                 </FormItem>
               </Col>
@@ -364,9 +428,24 @@ class NewCustomerAutoForm extends BaseAuto {
         </Collapse>
 
         <div className="form-action-container">
-          <Button type="ghost" onClick={this.props.cancelModal} className="mr10" size="large">取消</Button>
-          <Button type="primary" onClick={this.handleSubmit.bind(this)} size="large" loading={isFetching}
-                  disabled={isFetching}>保存</Button>
+          <Button
+            type="ghost"
+            onClick={this.props.cancelModal}
+            className="mr10"
+            size="large"
+          >
+            取消
+          </Button>
+
+          <Button
+            type="primary"
+            onClick={this.handleSubmit.bind(this)}
+            size="large"
+            loading={isFetching}
+            disabled={isFetching}
+          >
+            保存
+          </Button>
         </div>
       </Form>
     );

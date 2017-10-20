@@ -9,14 +9,14 @@ const server = {
   },
 
   post(url, data) {
-    let fd = new FormData();
-    for (let propName in data) {
+    const fd = new FormData();
+    for (const propName in data) {
       fd.append([propName], data[propName]);
     }
 
     return fetch(url, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       credentials: 'include',

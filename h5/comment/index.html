@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>评价服务</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="css/comment.css">
+</head>
+<script>
+  (function(doc, win) {
+    var docEl = doc.documentElement,
+      resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+      recalc = function() {
+        window.clientWidth = docEl.clientWidth;
+        if (!window.clientWidth) return;
+        docEl.style.fontSize = 20 * (window.clientWidth / 750) + 'px';
+        window.base = 20 * (window.clientWidth / 750);
+      };
+    // Abort if browser does not support addEventListener
+    if (!doc.addEventListener) return;
+    win.addEventListener(resizeEvt, recalc, false);
+    doc.addEventListener('DOMContentLoaded', recalc, false);
+  })(document, window);
+</script>
+<body>
+<div class="content">
+  <div class="message" id="message" style="display: none"></div>
+  <div class="info">
+    <div class="car" id="car">
+      <p id="plant-num"></p>
+      <p id="car-name"></p>
+    </div>
+    <div class="work-order">
+      <p id="project">工单项目：</p>
+      <p id="money">消费金额：</p>
+      <p id="time">进厂时间：</p>
+    </div>
+  </div>
+
+  <div class="score">
+    <div class="title"><p>评价服务</p></div>
+    <div class="express" id="express">
+      <div class="service" id="service">
+        <p class="name">服务态度</p>
+        <img src="./image/face_default@2x.png" data-type="service" data-index="1">
+        <img src="./image/face_default@2x.png" data-type="service" data-index="2">
+        <img src="./image/face_default@2x.png" data-type="service" data-index="3">
+        <img src="./image/face_default@2x.png" data-type="service" data-index="4">
+        <img src="./image/face_default@2x.png" data-type="service" data-index="5">
+        <p class="word"></p>
+      </div>
+      <div class="construction" id="construction">
+        <p class="name">施工质量</p>
+        <img src="./image/face_default@2x.png" data-type="construction" data-index="1">
+        <img src="./image/face_default@2x.png" data-type="construction" data-index="2">
+        <img src="./image/face_default@2x.png" data-type="construction" data-index="3">
+        <img src="./image/face_default@2x.png" data-type="construction" data-index="4">
+        <img src="./image/face_default@2x.png" data-type="construction" data-index="5">
+        <p class="word"></p>
+      </div>
+      <div class="environment" id="environment">
+        <p class="name">店面环境</p>
+        <img src="./image/face_default@2x.png" data-type="environment" data-index="1">
+        <img src="./image/face_default@2x.png" data-type="environment" data-index="2">
+        <img src="./image/face_default@2x.png" data-type="environment" data-index="3">
+        <img src="./image/face_default@2x.png" data-type="environment" data-index="4">
+        <img src="./image/face_default@2x.png" data-type="environment" data-index="5">
+        <p class="word"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="suggest">
+    <textarea id="textarea" placeholder="其他建议和意见"></textarea>
+  </div>
+
+  <div class="submit" id="submit">
+    <button>提交评价</button>
+    <p>您的评价让我们做得更好</p>
+  </div>
+
+</div>
+</body>
+<script src="../../dist/jquery.min.js"></script>
+<script src="../../dist/baseUrl.js"></script>
+<script src="js/comment.js"></script>
+</html>

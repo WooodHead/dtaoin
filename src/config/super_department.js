@@ -4,7 +4,7 @@
 // 2:售前
 // 3:售后
 
-var super_department = [{
+const super_department = [{
   id: '-1',
   name: '区域管理员',
 }, {

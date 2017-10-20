@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Row, Col, Form, Input, Button, Select, Switch} from 'antd';
+import { message, Row, Col, Form, Input, Button, Select, Switch } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -43,17 +43,17 @@ class NewForm extends BaseAutoComponent {
 
   handleSubmit(e) {
     e.preventDefault();
-    let values = this.props.form.getFieldsValue();
+    const values = this.props.form.getFieldsValue();
     values.is_mortgage = values.is_mortgage ? '1' : '0';
 
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: api.presales.intention.add(),
       type: 'POST',
       data: values,
     }, () => {
       message.success('添加成功!');
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
       this.props.onSuccess();
       this.props.form.resetFields();
       this.props.cancelModal();
@@ -62,44 +62,44 @@ class NewForm extends BaseAutoComponent {
         customerForm: '',
         intentionForm: 'hide',
       });
-    }, (err) => {
+    }, err => {
       message.error(`添加失败[${err}]`);
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 
   getBudgetLevels() {
-    api.ajax({url: api.presales.intention.getBudgetLevels()}, data => {
-      this.setState({budgetLevels: data.res.budget_levels});
+    api.ajax({ url: api.presales.intention.getBudgetLevels() }, data => {
+      this.setState({ budgetLevels: data.res.budget_levels });
     });
   }
 
   render() {
     const FormItem = Form.Item;
     const Option = Select.Option;
-    const {formItemLayout, selectStyle} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { formItemLayout, selectStyle } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
-    let {customerId, isSingle, cancelModal} = this.props;
-    let {isFetching, budgetLevels} = this.state;
+    const { customerId, isSingle, cancelModal } = this.props;
+    const { isFetching, budgetLevels } = this.state;
 
     return (
       <Form>
-        {getFieldDecorator('customer_id', {initialValue: customerId})(<Input type="hidden"/>)}
-        {getFieldDecorator('auto_factory_id', {initialValue: this.state.auto_factory_id})(<Input type="hidden"/>)}
-        {getFieldDecorator('auto_series_id', {initialValue: this.state.auto_series_id})(<Input type="hidden"/>)}
+        {getFieldDecorator('customer_id', { initialValue: customerId })(<Input type="hidden"/>)}
+        {getFieldDecorator('auto_factory_id', { initialValue: this.state.auto_factory_id })(<Input type="hidden"/>)}
+        {getFieldDecorator('auto_series_id', { initialValue: this.state.auto_series_id })(<Input type="hidden"/>)}
 
         <Row>
           <Col span={12}>
-            <FormItem label="意向类型" labelCol={{span: 12}} wrapperCol={{span: 6}}>
-              {getFieldDecorator('type', {initialValue: '1'})(
+            <FormItem label="意向类型" labelCol={{ span: 12 }} wrapperCol={{ span: 6 }}>
+              {getFieldDecorator('type', { initialValue: '1' })(
                 <p className="ant-form-text">新车交易</p>
               )}
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem label="意向级别" labelCol={{span: 6}} wrapperCol={{span: 10}}>
-              {getFieldDecorator('level', {initialValue: 'A'})(
+            <FormItem label="意向级别" labelCol={{ span: 6 }} wrapperCol={{ span: 10 }}>
+              {getFieldDecorator('level', { initialValue: 'A' })(
                 <Select {...selectStyle}>
                   <Option key="H">H</Option>
                   <Option key="A">A</Option>
@@ -152,7 +152,7 @@ class NewForm extends BaseAutoComponent {
         <Row>
           <FormItem label="外观/内饰" {...formItemLayout}>
             <Col span={8}>
-              {getFieldDecorator('out_color', {initialValue: '0'})(
+              {getFieldDecorator('out_color', { initialValue: '0' })(
                 <Select {...selectStyle} size="large">
                   <Option key="0">不限</Option>
                   {this.state.outColor.map(color => <Option key={color._id}>{color.name}</Option>)}
@@ -163,7 +163,7 @@ class NewForm extends BaseAutoComponent {
               <p className="ant-form-split">/</p>
             </Col>
             <Col span={9}>
-              {getFieldDecorator('in_color', {initialValue: '-1'})(
+              {getFieldDecorator('in_color', { initialValue: '-1' })(
                 <Select {...selectStyle} size="large">
                   <Option key="-1">不限</Option>
                   <Option key="0">米</Option>
@@ -181,7 +181,7 @@ class NewForm extends BaseAutoComponent {
 
         <Row>
           <FormItem label="购买预算" {...formItemLayout}>
-            {getFieldDecorator('budget_level', {initialValue: '1'})(
+            {getFieldDecorator('budget_level', { initialValue: '1' })(
               <Select {...selectStyle}>
                 {budgetLevels.map(level => <Option key={level.id}>{level.name}</Option>)}
               </Select>

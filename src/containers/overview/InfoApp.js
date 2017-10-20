@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form, Button, Input, TimePicker, Switch, message} from 'antd';
+import { Row, Col, Form, Button, Input, TimePicker, Switch, message, Tag } from 'antd';
 
 import api from '../../middleware/api';
 import formatter from '../../utils/DateFormatter';
@@ -15,6 +15,7 @@ const FormItem = Form.Item;
 
 let introducePicIndex = 0;
 
+const CheckableTag = Tag.CheckableTag;
 class InfoApp extends UploadComponent {
   constructor(props) {
     super(props);
@@ -28,6 +29,8 @@ class InfoApp extends UploadComponent {
       introduce_pics_0_files: [],
       introduce_pics_0_progress: {},
       checkedMaintainTypeValues: [],
+      selectedRadioTags: [],
+      selectedCheckTags: [],
     };
 
     [
@@ -36,6 +39,8 @@ class InfoApp extends UploadComponent {
       'removeIntroducePics',
       'handleIsEdit',
       'handleSubmit',
+      'handleRadioTagChange',
+      'handleCheckTagChange',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -44,14 +49,19 @@ class InfoApp extends UploadComponent {
   }
 
   getPic(Info) {
-    let companyInfo = Info || this.props.companyInfo;
+    const companyInfo = Info || this.props.companyInfo;
+    const companyInfoTags = companyInfo.tags.split(',');
+    const selectRadio = [companyInfoTags[0]];
+    const selectCheck = companyInfoTags.slice(1, companyInfoTags.length);
 
     if (!!companyInfo) {
       this.setState({
         icon_pic_key: companyInfo.icon_pic,
-        checkedMaintainTypeValues: companyInfo.maintain_types.split(','),
+        selectedRadioTags: selectRadio,
+        selectedCheckTags: selectCheck,
+        // checkedMaintainTypeValues: companyInfo.maintain_types.split(','),
       });
-      this.props.form.setFieldsValue({icon_pic: companyInfo.icon_pic});
+      this.props.form.setFieldsValue({ icon_pic: companyInfo.icon_pic });
 
       if (!!companyInfo.icon_pic) {
         this.getImageUrl(api.system.getPublicPicUrl(companyInfo.icon_pic), 'icon_pic');
@@ -65,14 +75,27 @@ class InfoApp extends UploadComponent {
 
   handleIsEdit() {
     this.getCompanyDetail(this.props.companyInfo._id);
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
   }
 
+  handleRadioTagChange(tag, checked) {
+    const nextSelectedTags = checked ? [tag] : [];
+    this.setState({ selectedRadioTags: nextSelectedTags });
+  }
+
+  handleCheckTagChange(tag, checked) {
+    const { selectedCheckTags } = this.state;
+    const nextSelectedTags = checked ? [...selectedCheckTags, tag] : selectedCheckTags.filter(item => item !== tag);
+    this.setState({ selectedCheckTags: nextSelectedTags });
+  }
+
   handleSubmit(e) {
     e.preventDefault();
+    const { selectedRadioTags, selectedCheckTags } = this.state;
+
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
         message.error(validator.text.hasError);
@@ -80,10 +103,12 @@ class InfoApp extends UploadComponent {
       }
 
       values.introduce_pics = this.assembleIntroducePics(values);
-      values.maintain_types = this.state.checkedMaintainTypeValues.join(',');
+      // values.maintain_types = this.state.checkedMaintainTypeValues.join(',');
       values.service_start_time = formatter.time(values.service_start_time, 'HH:mm') || values.service_start_time;
       values.service_end_time = formatter.time(values.service_end_time, 'HH:mm') || values.service_end_time;
       values.is_show_on_app = values.is_show_on_app ? 1 : 0;
+      values.tags = selectedRadioTags.concat(selectedCheckTags).join(',');
+      values.is_rescue = values.is_rescue ? 1 : 0;
 
       api.ajax({
         url: api.overview.editApp(),
@@ -98,7 +123,7 @@ class InfoApp extends UploadComponent {
   }
 
   getCompanyDetail(companyId) {
-    api.ajax({url: api.overview.getCompanyDetail(companyId)}, data => {
+    api.ajax({ url: api.overview.getCompanyDetail(companyId) }, data => {
       this.getPic(data.res.company);
     });
   }
@@ -114,11 +139,11 @@ class InfoApp extends UploadComponent {
   addIntroducePics() {
     introducePicIndex++;
 
-    const {form} = this.props;
+    const { form } = this.props;
 
     let keys = form.getFieldValue('keys');
     keys = keys.concat(introducePicIndex);
-    form.setFieldsValue({keys});
+    form.setFieldsValue({ keys });
 
     let keyProps = `introduce_pics_${introducePicIndex}_key`,
       filesProps = `introduce_pics_${introducePicIndex}_files`,
@@ -131,8 +156,8 @@ class InfoApp extends UploadComponent {
   }
 
   assembleIntroducePics(formData) {
-    let pictures = [];
-    let keys = formData.keys;
+    const pictures = [];
+    const keys = formData.keys;
     for (let i = 0; i < keys.length; i++) {
       let
         deleteProp = `introduce_pics_hide_${i}`,
@@ -150,16 +175,16 @@ class InfoApp extends UploadComponent {
   }
 
   removeIntroducePics(k) {
-    let hideProp = `introduce_pics_hide_${k}`;
-    this.setState({[hideProp]: true});
+    const hideProp = `introduce_pics_hide_${k}`;
+    this.setState({ [hideProp]: true });
   }
 
   getIntroducePics(introducePicIds) {
     let keys = [], stateObj = {};
 
-    let ids = introducePicIds.split(',');
+    const ids = introducePicIds.split(',');
 
-    //删除ids中''元素 否则会报错
+    // 删除ids中''元素 否则会报错
     while ((ids.indexOf('') >= 0)) {
       ids.splice(ids.indexOf(''), 1);
     }
@@ -183,23 +208,26 @@ class InfoApp extends UploadComponent {
       });
     }
 
-    this.setState({keys});
+    this.setState({ keys });
   }
 
   render() {
-    let {getFieldDecorator, getFieldValue} = this.props.form;
-    const {formItemThree, formItem12} = Layout;
-    let {keys, isEdit} = this.state;
-    let companyInfo = this.props.companyInfo || {};
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { formItemThree, formItem12 } = Layout;
+    const { keys, isEdit, selectedRadioTags, selectedCheckTags } = this.state;
+    const companyInfo = this.props.companyInfo || {};
 
-    getFieldDecorator('keys', {initialValue: keys});
+    const radioTag = ['综合维修', '快修快保'];
+    const checkTag = ['新车销售', '二手车', '精品销售'];
 
-    const introducePics = getFieldValue('keys').map((k) => {
-      let hideProp = `introduce_pics_hide_${k}`;
+    getFieldDecorator('keys', { initialValue: keys });
+
+    const introducePics = getFieldValue('keys').map(k => {
+      const hideProp = `introduce_pics_hide_${k}`;
       return (
         <Row className={this.state[hideProp] ? 'hide' : ''} key={k}>
           <Col span={10}>
-            <FormItem label="门店介绍" {...formItemThree} help="尺寸: 1080*1800px">
+            <FormItem label="门店介绍" {...formItemThree} help="尺寸: 1080*1800px" required>
               <Qiniu
                 prefix={`introduce_pics_${k}`}
                 saveKey={this.handleKey.bind(this)}
@@ -226,18 +254,18 @@ class InfoApp extends UploadComponent {
 
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('company_id', {initialValue: companyInfo._id})(
+          {getFieldDecorator('company_id', { initialValue: companyInfo._id })(
             <Input type="hidden"/>
           )}
           <Row>
@@ -269,13 +297,51 @@ class InfoApp extends UploadComponent {
 
           <Row>
             <Col span={10}>
-              <FormItem label="营业时间" {...formItemThree}>
+              <FormItem label="门店标签" {...formItemThree} required>
+                {
+                  radioTag.map(tag => (
+                      <CheckableTag
+                        key={tag}
+                        checked={selectedRadioTags.indexOf(tag) > -1}
+                        onChange={checked => this.handleRadioTagChange(tag, checked)}
+                      >
+                        {tag}
+                      </CheckableTag>
+                    )
+                  )
+                }
+
+              </FormItem>
+            </Col>
+
+            <Col span={10}>
+              <FormItem label="其它标签" {...formItemThree}>
+                {
+                  checkTag.map(tag => (
+                      <CheckableTag
+                        key={tag}
+                        checked={selectedCheckTags.indexOf(tag) > -1}
+                        onChange={checked => this.handleCheckTagChange(tag, checked)}
+                      >
+                        {tag}
+                      </CheckableTag>
+                    )
+                  )
+                }
+
+              </FormItem>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={10}>
+              <FormItem label="营业时间" {...formItemThree} required>
                 <Col span={24}>
-                  {getFieldDecorator('service_start_time', {initialValue: formatter.getMomentHHmm(companyInfo.service_start_time || '07:30')})(
+                  {getFieldDecorator('service_start_time', { initialValue: formatter.getMomentHHmm(companyInfo.service_start_time || '07:30') })(
                     <TimePicker disabledMinutes={this.disabledMinutes.bind(this)} hideDisabledOptions format="HH:mm"/>
                   )}
                   -
-                  {getFieldDecorator('service_end_time', {initialValue: formatter.getMomentHHmm(companyInfo.service_end_time || '17:30')})(
+                  {getFieldDecorator('service_end_time', { initialValue: formatter.getMomentHHmm(companyInfo.service_end_time || '17:30') })(
                     <TimePicker disabledMinutes={this.disabledMinutes.bind(this)} hideDisabledOptions format="HH:mm"/>
                   )}
                 </Col>
@@ -284,8 +350,33 @@ class InfoApp extends UploadComponent {
           </Row>
 
           <Row>
+            <Col span={10}>
+              <FormItem label="门店救援" {...formItemThree}>
+                {getFieldDecorator('is_rescue', {
+                  valuePropName: 'checked',
+                  initialValue: Number(companyInfo.is_rescue) === 1,
+                })(
+                  <Switch checkedChildren={'启用'} unCheckedChildren={'停用'}/>
+                )}
+              </FormItem>
+            </Col>
+
+            <Col span={10}>
+              <FormItem label="救援电话" {...formItemThree}>
+                {getFieldDecorator('rescue_phone', {
+                  initialValue: companyInfo.rescue_phone,
+                  rules: FormValidator.getRulePhoneOrTelNumber(false),
+                  validateTrigger: 'onBlur',
+                })(
+                  <Input placeholder="请输入救援电话"/>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+
+          <Row>
             <Col span={20}>
-              <FormItem label="门店照片" {...formItem12} help="尺寸: 330*240px">
+              <FormItem label="门店封面" {...formItem12} help="尺寸: 330*240px" required>
                 {getFieldDecorator('icon_pic')(
                   <Input type="hidden"/>
                 )}
@@ -321,7 +412,7 @@ class InfoApp extends UploadComponent {
           <Row>
             <Col span={10}>
               <FormItem label="客户端展示" {...formItemThree}>
-                <span>{companyInfo.is_show_on_app == 1 ? '启用' : '停用'}</span>
+                <span>{Number(companyInfo.is_show_on_app) === 1 ? '启用' : '停用'}</span>
               </FormItem>
             </Col>
           </Row>
@@ -336,10 +427,52 @@ class InfoApp extends UploadComponent {
 
           <Row>
             <Col span={10}>
+              <FormItem label="门店标签" {...formItemThree} required>
+                {
+                  selectedRadioTags.map(tag => (
+                      <Button key={tag} type="primary" size="small">
+                        {tag}
+                      </Button>
+                    )
+                  )
+                }
+              </FormItem>
+            </Col>
+
+            <Col span={10}>
+              <FormItem label="其它标签" {...formItemThree}>
+                {
+                  selectedCheckTags.map(tag => (
+                      <Button key={tag} className="ml10" type="primary" size="small">
+                        {tag}
+                      </Button>
+                    )
+                  )
+                }
+              </FormItem>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={10}>
               <FormItem label="营业时间" {...formItemThree}>
                 <span>{companyInfo.service_start_time || '07:30'}</span>
                 -
                 <span>{companyInfo.service_end_time || '17:30'}</span>
+              </FormItem>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={10}>
+              <FormItem label="门店救援" {...formItemThree}>
+                <span>{Number(companyInfo.is_rescue) === 1 ? '启用' : '停用'}</span>
+              </FormItem>
+            </Col>
+
+            <Col span={10}>
+              <FormItem label="救援电话" {...formItemThree}>
+                <span>{companyInfo.rescue_phone}</span>
               </FormItem>
             </Col>
           </Row>
@@ -363,6 +496,7 @@ class InfoApp extends UploadComponent {
             </Col>
           </Row>
           {introducePics}
+
           <Row>
             <Col span={16}>
               <Col span={24} offset={4}>

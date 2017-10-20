@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Form, Input, DatePicker} from 'antd';
+import { message, Modal, Icon, Form, Input, DatePicker } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -28,8 +28,8 @@ class EditAdvert extends BaseModalWithUpload {
   }
 
   editAdvert() {
-    let {advert} = this.props;
-    this.setState({banner_pic_key: advert.banner_pic});
+    const { advert } = this.props;
+    this.setState({ banner_pic_key: advert.banner_pic });
     if (advert.banner_pic) {
       this.getImageUrl(api.system.getPublicPicUrl(advert.banner_pic), 'banner_pic');
     }
@@ -37,13 +37,13 @@ class EditAdvert extends BaseModalWithUpload {
   }
 
   handleSubmit() {
-    this.props.form.validateFieldsAndScroll((errors) => {
+    this.props.form.validateFieldsAndScroll(errors => {
       if (!!errors) {
         message.error(validator.text.hasError);
         return;
       }
 
-      let formData = this.props.form.getFieldsValue();
+      const formData = this.props.form.getFieldsValue();
       formData.offline_time = formatter.date(formData.offline_time);
       formData.online_time = formatter.date(formData.online_time);
 
@@ -62,11 +62,11 @@ class EditAdvert extends BaseModalWithUpload {
   }
 
   render() {
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {visible} = this.state;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { visible } = this.state;
 
-    let {advert} = this.props;
+    const { advert } = this.props;
 
     return (
       <span>
@@ -80,30 +80,30 @@ class EditAdvert extends BaseModalWithUpload {
           onCancel={this.hideModal}
         >
           <Form>
-            {getFieldDecorator('advert_id', {initialValue: advert._id})(
+            {getFieldDecorator('advert_id', { initialValue: advert._id })(
               <Input type="hidden"/>
             )}
 
             <FormItem label="顺序" {...formItemLayout}>
-              {getFieldDecorator('order', {initialValue: advert.order})(
+              {getFieldDecorator('order', { initialValue: advert.order })(
                 <Input type="number" placeholder="请输入广告排序"/>
               )}
             </FormItem>
 
             <FormItem label="上线时间" {...formItemLayout}>
-              {getFieldDecorator('online_time', {initialValue: advert.online_time ? formatter.getMomentDate(advert.online_time) : formatter.getMomentDate(advert.online_time)})(
+              {getFieldDecorator('online_time', { initialValue: advert.online_time ? formatter.getMomentDate(advert.online_time) : formatter.getMomentDate(advert.online_time) })(
                 <DatePicker placeholder="请选择广告上线时间" allowClear={false}/>
               )}
             </FormItem>
 
             <FormItem label="下线时间" {...formItemLayout}>
-              {getFieldDecorator('offline_time', {initialValue: advert.offline_time ? formatter.getMomentDate(advert.offline_time) : formatter.getMomentDate(advert.online_time)})(
+              {getFieldDecorator('offline_time', { initialValue: advert.offline_time ? formatter.getMomentDate(advert.offline_time) : formatter.getMomentDate(advert.online_time) })(
                 <DatePicker placeholder="请选择广告下线时间" allowClear={false}/>
               )}
             </FormItem>
 
             <FormItem label="描述" {...formItemLayout}>
-              {getFieldDecorator('remark', {initialValue: advert.remark})(
+              {getFieldDecorator('remark', { initialValue: advert.remark })(
                 <Input />
               )}
             </FormItem>
@@ -119,7 +119,7 @@ class EditAdvert extends BaseModalWithUpload {
             </FormItem>
 
             <FormItem label="图片" {...formItemLayout} help="尺寸: 1080*360px" required>
-              {getFieldDecorator('banner_pic', {initialValue: advert.banner_pic})(
+              {getFieldDecorator('banner_pic', { initialValue: advert.banner_pic })(
                 <Input type="hidden"/>
               )}
               <Qiniu

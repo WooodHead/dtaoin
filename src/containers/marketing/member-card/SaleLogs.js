@@ -1,108 +1,56 @@
 import React from 'react';
-import {DatePicker, Select, Row, Col, message} from 'antd';
+import { Select, Row, Col, message, Input } from 'antd';
 
 import formatter from '../../../utils/DateFormatter';
 import api from '../../../middleware/api';
 
-import SearchBox from '../../../components/widget/SearchBox';
 import BaseList from '../../../components/base/BaseList';
+import DateRangeSelector from '../../../components/widget/DateRangeSelector';
 
 import Table from './TableSaleLogs';
 
 const Option = Select.Option;
-let lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
+const Search = Input.Search;
 
 export default class SaleLogs extends BaseList {
   constructor(props) {
     super(props);
-    let now = new Date();
+    const now = new Date();
     this.state = {
       page: 1,
-      key: '',                                    //搜索关键词
-      memberCardStatus: '0',                      //会员卡状态
-      memberCardTypeList: [],                     //会员卡类型列表
-      currentCardTypeID: '',                      //选中的卡类型
-      startDate: formatter.day(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30)),                    //开始时间
-      endDate: formatter.day(now),     //结束时间
+      key: '',                                    // 搜索关键词
+      memberCardTypeList: [],                     // 会员卡类型列表
+      couponCardId: '',                      // 选中的卡类型
+      startDate: formatter.day(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30)),                    // 开始时间
+      endDate: formatter.day(now),     // 结束时间
       endOpen: false,
     };
 
     [
-      'handleSearch',
       'handleCardTypeChange',
-      'handlePaginationChange',
-      'disabledEndDate',
-      'handleStartOpenChange',
-      'handleEndOpenChange',
-    ].map((method) => this[method] = this[method].bind(this));
+      'handleSearch',
+      'handleDateChange',
+    ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    this.getMemberCardTypes();
+    this.getCouponCardTypeList();
   }
 
-  handlePaginationChange(page) {
-    this.setState({
-      page: page,
-    }, () => {
-      this.search('', this.state.currentCardTypeID, [this.state.startDate, this.state.endDate], this.state.page);
-    });
-  }
-
-  search(key, cardTypeId, dates, page, successHandle, failHandle) {
-    successHandle || (successHandle = () => {
-    });
-    failHandle || (failHandle = (error) => {
-      message.error(error);
-    });
-    page = page || this.props.location.query.page || 1;
-    let url = api.coupon.getMemberOrderList(key, cardTypeId, dates[0], dates[1], {page});
-    api.ajax({url}, (data) => {
-      this.setState({isFetching: true});
-      if (data.code === 0) {
-        successHandle();
-      } else {
-        failHandle(data.msg);
-      }
-    }, (error) => {
-      failHandle(error);
-    });
-  }
-
-  handleSearch(keyword, successHandle, failHandle) {
-    const {currentCardTypeID, startDate, endDate} = this.state;
-    this.search(keyword, currentCardTypeID, [startDate, endDate], 1, successHandle, failHandle);
-    this.setState({key: keyword});
-  }
-
-  handleCardTypeChange(value) {
-    this.setState({currentCardTypeID: value, page: 1});
-  }
-
-  handleStartTimeChange(value) {
-    this.setState({startDate: formatter.day(value)});
-  }
-
-  handleEndTimeChange(value) {
-    this.setState({endDate: formatter.day(value)});
-  }
-
-  handleStartOpenChange(open) {
-    if (!open) {
-      this.setState({endOpen: true});
+  handleSearch(e) {
+    const key = e.target.value;
+    if (key.length >= 3) {
+      this.setState({ key });
     }
   }
 
-  handleEndOpenChange(open) {
-    this.setState({endOpen: open});
+  handleCardTypeChange(value) {
+    this.setState({ couponCardId: value, page: 1 });
   }
 
-  getMemberCardTypes() {
-    let url = api.coupon.getMemberCardTypeList(this.state.key, this.state.memberCardStatus, {
-      page: 1,
-      pageSize: 100,
-    });
-    api.ajax({url}, (data) => {
+  getCouponCardTypeList() {
+    const url = api.coupon.getCouponCardTypeList('', '-1');
+    api.ajax({ url }, data => {
       if (data.code === 0) {
         this.setState({
           memberCardTypeList: data.res.list,
@@ -111,78 +59,66 @@ export default class SaleLogs extends BaseList {
       } else {
         message.error(data.msg);
       }
-    }, (error) => {
+    }, error => {
       message.error(error);
     });
   }
 
-  disabledStartDate(current) {
-    return current && current.valueOf() >= lastDate;
-  }
-
-  disabledEndDate(current) {
-    let {startDate} = this.state;
-    return current && (current.valueOf() >= lastDate || current.valueOf() <= new Date(startDate));
+  handleDateChange(startDate, endDate) {
+    this.setState({ startDate, endDate });
   }
 
   render() {
     const memberCardTypeList = this.state.memberCardTypeList || [];
-    let {key, currentCardTypeID, startDate, endDate, page, endOpen} = this.state;
+    const { couponCardId, startDate, endDate, page } = this.state;
     return (
       <div>
         <Row className="head-action-bar-line mb20">
           <Col span={24}>
-            <SearchBox
-              style={{width: 300, float: 'left'}}
-              placeholder={'请输入手机号、卡号搜索'}
-              onSearch={this.handleSearch}
-              autoSearchLength={3}
+            <Search
+              placeholder="请输入手机号、卡号搜索"
+              style={{ width: 300, float: 'left' }}
+              onChange={this.handleSearch}
+              size="large"
             />
 
-            <span className="ml20">会员卡名称：</span>
+            <span className="ml20">套餐卡名称：</span>
             <Select
-              style={{width: 150}}
+              style={{ width: 150 }}
               size="large"
-              defaultValue={currentCardTypeID}
+              defaultValue={couponCardId}
               onChange={this.handleCardTypeChange}
             >
               <Option value="">全部</Option>
               {
-                memberCardTypeList.map((memberCardType) => {
-                  return <Option key={memberCardType._id} value={memberCardType._id}>{memberCardType.name}</Option>;
-                })
+                memberCardTypeList.map(memberCardType => (
+                    <Option
+                      key={memberCardType._id}
+                      value={memberCardType._id}
+                    >
+                      {memberCardType.name}
+                    </Option>
+                  ))
               }
             </Select>
 
             <span className="ml20">开卡日期：</span>
-
-            <DatePicker
-              disabledDate={this.disabledStartDate}
-              format={formatter.pattern.day}
-              defaultValue={formatter.getMomentDate(startDate)}
-              onChange={this.handleStartTimeChange.bind(this)}
-              onOpenChange={this.handleStartOpenChange.bind(this)}
-              allowClear={false}
-            />
-            -
-            <DatePicker
-              disabledDate={this.disabledEndDate}
-              format={formatter.pattern.day}
-              defaultValue={formatter.getMomentDate(endDate)}
-              onChange={this.handleEndTimeChange.bind(this)}
-              open={endOpen}
-              onOpenChange={this.handleEndOpenChange.bind(this)}
-              allowClear={false}
+            <DateRangeSelector
+              onDateChange={this.handleDateChange}
+              startTime={startDate}
+              endTime={endDate}
             />
           </Col>
 
         </Row>
 
-        <Table
-          page={page}
-          source={api.coupon.getMemberOrderList({key, currentCardTypeID, startDate, endDate, page})}
-          updateState={this.updateState}
-        />
+        <span className="marketing-salelogs">
+          <Table
+            page={page}
+            source={api.coupon.getCouponOrderList(this.state)}
+            updateState={this.updateState}
+          />
+        </span>
       </div>
     );
   }

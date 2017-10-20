@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button, Icon} from 'antd';
+import { Modal, Button, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 

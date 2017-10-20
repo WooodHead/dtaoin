@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {message, Form, Input, Button, Radio, Select, DatePicker, Row, Col} from 'antd';
+import React, { Component } from 'react';
+import { message, Form, Input, Button, Radio, Select, DatePicker, Row, Col } from 'antd';
 import className from 'classnames';
 
 import NumberInput from '../../../components/widget/NumberInput';
@@ -29,13 +29,13 @@ class NewPurchaseForm extends Component {
   }
 
   componentDidMount() {
-    let {autoDealId, customerId, autoId} = this.props;
+    const { autoDealId, customerId, autoId } = this.props;
     this.getPurchaseUsers(0);
     if (!!autoDealId) {
       this.getAutoPurchaseByDealId(customerId, autoDealId);
     }
     if (!!autoId || !!autoDealId) {
-      this.setState({isEdit: false});
+      this.setState({ isEdit: false });
     }
   }
 
@@ -46,11 +46,10 @@ class NewPurchaseForm extends Component {
         dealInfo: nextProps.dealInfo,
       });
     }
-
   }
 
   handleIsEdit() {
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
@@ -58,9 +57,9 @@ class NewPurchaseForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let {customerId, intentionId, autoId} = this.props;
-    let {isNew} = this.state;
-    let formData = this.props.form.getFieldsValue();
+    const { customerId, intentionId, autoId } = this.props;
+    const { isNew } = this.state;
+    const formData = this.props.form.getFieldsValue();
 
     formData.deliver_date = formatter.day(formData.deliver_date);
     formData.deal_date = formatter.day(formData.deal_date);
@@ -70,68 +69,68 @@ class NewPurchaseForm extends Component {
       type: 'POST',
       data: formData,
     }, data => {
-      let autoDealId = data.res.auto_deal_id;
-      this.setState({isNew: false});
+      const autoDealId = data.res.auto_deal_id;
+      this.setState({ isNew: false });
       this.props.onSuccess(autoDealId, 'autoDealId');
       this.handleIsEdit();
       this.getAutoPurchaseByDealId(customerId, autoDealId);
       message.success(isNew ? '交易信息添加成功' : '交易信息修改成功');
 
       autoId ?
-        location.href = `/presales/deal/new?customerId=${customerId}&intentionId=${intentionId}&autoDealId=${autoDealId}&autoId=${autoId}` :
-        location.href = `/presales/deal/new?customerId=${customerId}&intentionId=${intentionId}&autoDealId=${autoDealId}`;
+        location.href = `/presales/deal/detail/${autoDealId}/${customerId}/${autoId}/${intentionId}` :
+        location.href = `/presales/deal/detail/${autoDealId}/${customerId}/${intentionId}`;
     });
   }
 
   getAutoPurchaseByDealId(customerId, autoDealId) {
     if (customerId && autoDealId) {
-      api.ajax({url: api.presales.autoDealInfo(customerId, autoDealId)}, (data) => {
-        let dealInfo = data.res.detail;
+      api.ajax({ url: api.presales.autoDealInfo(customerId, autoDealId) }, data => {
+        const dealInfo = data.res.detail;
         this.props.onSuccess(dealInfo, 'dealInfo');
-        this.setState({dealInfo: dealInfo || {}});
+        this.setState({ dealInfo: dealInfo || {} });
       });
     }
   }
 
   getPurchaseUsers(isLeader) {
-    api.ajax({url: api.user.getPurchaseUsers(isLeader)}, function (data) {
-      this.setState({users: data.res.user_list});
-    }.bind(this));
+    api.ajax({ url: api.user.getPurchaseUsers(isLeader) }, data => {
+      this.setState({ users: data.res.user_list });
+    });
   }
 
   render() {
-    const {formItemLayout, selectStyle} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    let {isEdit, dealInfo, users} = this.state;
-    let {customerId, intentionId} = this.props;
+    const { selectStyle, formItem9_15 } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { isEdit, dealInfo, users } = this.state;
+    const { customerId, intentionId } = this.props;
 
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('_id', {initialValue: dealInfo._id})(
+          {getFieldDecorator('_id', { initialValue: dealInfo._id })(
             <Input type="hidden"/>
           )}
-          {getFieldDecorator('customer_id', {initialValue: customerId})(
+          {getFieldDecorator('customer_id', { initialValue: customerId })(
             <Input type="hidden"/>
           )}
-          {getFieldDecorator('intention_id', {initialValue: intentionId})(
+          {getFieldDecorator('intention_id', { initialValue: intentionId })(
             <Input type="hidden"/>
           )}
 
           <Row>
             <Col span={6}>
-              <FormItem label="销售负责人" {...formItemLayout}>
-                {getFieldDecorator('seller_user_id', {initialValue: dealInfo.seller_user_id})(
+              <FormItem label="销售负责人" {...formItem9_15}>
+                {getFieldDecorator('seller_user_id', { initialValue: dealInfo.seller_user_id })(
                   <Select {...selectStyle} placeholder="请选择销售负责人">
                     {users.map(user => <Option key={user._id}>{user.name}</Option>)}
                   </Select>
@@ -139,8 +138,8 @@ class NewPurchaseForm extends Component {
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="交易类型" {...formItemLayout}>
-                {getFieldDecorator('car_type', {initialValue: dealInfo.car_type})(
+              <FormItem label="交易类型" {...formItem9_15}>
+                {getFieldDecorator('car_type', { initialValue: dealInfo.car_type })(
                   <RadioGroup>
                     <Radio value="0">现车</Radio>
                     <Radio value="1">订车</Radio>
@@ -149,8 +148,8 @@ class NewPurchaseForm extends Component {
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="付款方式" {...formItemLayout}>
-                {getFieldDecorator('pay_type', {initialValue: dealInfo.pay_type})(
+              <FormItem label="付款方式" {...formItem9_15}>
+                {getFieldDecorator('pay_type', { initialValue: dealInfo.pay_type })(
                   <RadioGroup>
                     <Radio value="0">全款</Radio>
                     <Radio value="1">按揭</Radio>
@@ -162,16 +161,16 @@ class NewPurchaseForm extends Component {
 
           <Row>
             <Col span={6}>
-              <FormItem label="成交时间" {...formItemLayout}>
-                {getFieldDecorator('deal_date', {initialValue: formatter.getMomentDate(dealInfo.deal_date)})(
+              <FormItem label="成交时间" {...formItem9_15}>
+                {getFieldDecorator('deal_date', { initialValue: formatter.getMomentDate(dealInfo.deal_date) })(
                   <DatePicker placeholder="请选择成交时间" allowClear={false}/>
                 )}
               </FormItem>
             </Col>
 
             <Col span={6}>
-              <FormItem label="交车时间" {...formItemLayout}>
-                {getFieldDecorator('deliver_date', {initialValue: formatter.getMomentDate(dealInfo.deliver_date)})(
+              <FormItem label="交车时间" {...formItem9_15}>
+                {getFieldDecorator('deliver_date', { initialValue: formatter.getMomentDate(dealInfo.deliver_date) })(
                   <DatePicker placeholder="请选择交车时间" allowClear={false}/>
                 )}
               </FormItem>
@@ -182,7 +181,7 @@ class NewPurchaseForm extends Component {
                 defaultValue={(dealInfo.sell_price && Number(dealInfo.sell_price).toFixed(2)) || ''}
                 id="sell_price"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入车辆售价"
               />
             </Col>
@@ -192,7 +191,7 @@ class NewPurchaseForm extends Component {
                 defaultValue={(dealInfo.trade_in_price && Number(dealInfo.trade_in_price).toFixed(2)) || ''}
                 id="trade_in_price"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入置换旧车价"
               />
             </Col>
@@ -205,7 +204,7 @@ class NewPurchaseForm extends Component {
                 defaultValue={(dealInfo.deposit && Number(dealInfo.deposit).toFixed(2)) || ''}
                 id="deposit"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入订金"
               />
             </Col>
@@ -215,7 +214,7 @@ class NewPurchaseForm extends Component {
                 defaultValue={(dealInfo.license_tax_in && Number(dealInfo.license_tax_in).toFixed(2)) || ''}
                 id="license_tax_in"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入上牌费"
               />
             </Col>
@@ -225,13 +224,13 @@ class NewPurchaseForm extends Component {
                 defaultValue={(dealInfo.purchase_tax && Number(dealInfo.purchase_tax).toFixed(2)) || ''}
                 id="purchase_tax"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入购置税"
               />
             </Col>
             <Col span={6}>
-              <FormItem label="赠品内容" {...formItemLayout}>
-                {getFieldDecorator('gift', {initialValue: dealInfo.gift})(
+              <FormItem label="赠品内容" {...formItem9_15}>
+                {getFieldDecorator('gift', { initialValue: dealInfo.gift })(
                   <Input placeholder="请输入赠品内容"/>
                 )}
               </FormItem>
@@ -239,8 +238,8 @@ class NewPurchaseForm extends Component {
           </Row>
           <Row>
             <Col span={6}>
-              <FormItem label="备注" {...formItemLayout}>
-                {getFieldDecorator('remark', {initialValue: dealInfo.remark})(
+              <FormItem label="备注" {...formItem9_15}>
+                {getFieldDecorator('remark', { initialValue: dealInfo.remark })(
                   <Input type="textarea" placeholder="请输入备注"/>
                 )}
               </FormItem>
@@ -265,17 +264,17 @@ class NewPurchaseForm extends Component {
         <Form className={show}>
           <Row>
             <Col span={6}>
-              <FormItem label="销售负责人" {...formItemLayout}>
+              <FormItem label="销售负责人" {...formItem9_15}>
                 <span className="ant-form-text">{dealInfo.seller_user_name}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="交易类型" {...formItemLayout}>
+              <FormItem label="交易类型" {...formItem9_15}>
                 <span>{text.carType[dealInfo.car_type]}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="付款方式" {...formItemLayout}>
+              <FormItem label="付款方式" {...formItem9_15}>
                 <span>{text.autoPayType[dealInfo.pay_type]}</span>
               </FormItem>
             </Col>
@@ -283,23 +282,23 @@ class NewPurchaseForm extends Component {
 
           <Row>
             <Col span={6}>
-              <FormItem label="成交时间" {...formItemLayout}>
+              <FormItem label="成交时间" {...formItem9_15}>
                 <span>{dealInfo.deal_date}</span>
               </FormItem>
             </Col>
 
             <Col span={6}>
-              <FormItem label="交车时间" {...formItemLayout}>
+              <FormItem label="交车时间" {...formItem9_15}>
                 <span>{dealInfo.deliver_date}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="车辆售价" {...formItemLayout}>
+              <FormItem label="车辆售价" {...formItem9_15}>
                 <span>{(dealInfo.sell_price && Number(dealInfo.sell_price).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="置换旧车价" {...formItemLayout}>
+              <FormItem label="置换旧车价" {...formItem9_15}>
                 <span>{(dealInfo.trade_in_price && Number(dealInfo.trade_in_price).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
@@ -307,29 +306,29 @@ class NewPurchaseForm extends Component {
 
           <Row>
             <Col span={6}>
-              <FormItem label="订金" {...formItemLayout}>
+              <FormItem label="订金" {...formItem9_15}>
                 <span>{(dealInfo.deposit && Number(dealInfo.deposit).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="上牌费" {...formItemLayout}>
+              <FormItem label="上牌费" {...formItem9_15}>
                 <span>{(dealInfo.license_tax_in && Number(dealInfo.license_tax_in).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="购置税" {...formItemLayout}>
+              <FormItem label="购置税" {...formItem9_15}>
                 <span>{(dealInfo.purchase_tax && Number(dealInfo.purchase_tax).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="赠品内容" {...formItemLayout}>
+              <FormItem label="赠品内容" {...formItem9_15}>
                 <span>{dealInfo.gift}</span>
               </FormItem>
             </Col>
           </Row>
           <Row>
             <Col span={6}>
-              <FormItem label="备注" {...formItemLayout}>
+              <FormItem label="备注" {...formItem9_15}>
                 <span>{dealInfo.remark}</span>
               </FormItem>
             </Col>

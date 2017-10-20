@@ -1,11 +1,12 @@
 import React from 'react';
-import {Button, Modal, Form, message, Input} from 'antd';
+import { Button, Modal, Form, message, Input } from 'antd';
 
 import validator from '../../../utils/validator';
 
 import BaseModal from '../../../components/base/BaseModal';
 
 const FormItem = Form.Item;
+const TextArea = Input.TextArea;
 
 class NotPass extends BaseModal {
   constructor(props) {
@@ -26,17 +27,18 @@ class NotPass extends BaseModal {
         return false;
       }
 
-      this.props.handleAuditExamine({type: 0, reason: values.reason});
+      this.props.handleAuditExamine({ type: 0, reason: values.reason });
       this.props.form.resetFields();
       this.hideModal();
+      // location.reload();
     });
   }
 
   render() {
-    const {getFieldDecorator} = this.props.form;
-    let {visible} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const { visible } = this.state;
 
-    let footer = [
+    const footer = [
       <Button key="btn1" type="ghost" onClick={this.handleSubmit}>提交</Button>,
       <Button key="btn2" type="primary" onClick={this.hideModal}>取消</Button>,
     ];
@@ -44,7 +46,7 @@ class NotPass extends BaseModal {
       <span>
         <Button
           onClick={this.showModal}
-          disabled={Number(this.props.status) === 1}
+          disabled={String(this.props.status) !== '3'}
         >
           不通过
         </Button>
@@ -56,15 +58,16 @@ class NotPass extends BaseModal {
           footer={footer}
           width="720px"
         >
-          <FormItem label="备注" labelCol={{span: 2}} wrapperCol={{span: 20}}>
+          <FormItem label="备注" labelCol={{ span: 2 }} wrapperCol={{ span: 20 }}>
             {getFieldDecorator('reason', {
               initialValue: '',
-              rules: [{
-                required: true,
-                message: validator.required.notNull,
-              }],
+              rules: [
+                {
+                  required: true,
+                  message: validator.required.notNull,
+                }],
             })(
-              <Input type="textarea" rows={4} placeholder="请输入驳回原因"/>
+              <TextArea rows={4} placeholder="请输入驳回原因" />,
             )}
           </FormItem>
         </Modal>

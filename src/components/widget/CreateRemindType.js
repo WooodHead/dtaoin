@@ -1,7 +1,8 @@
 import React from 'react';
-import {Row, Col, Popover, Button, Icon} from 'antd';
+import { Row, Col, Popover, Button, Icon } from 'antd';
+import createReactClass from 'create-react-class';
 
-const NewRemindType = React.createClass({
+const NewRemindType = createReactClass({
   getInitialState() {
     return {
       visible: false,
@@ -15,11 +16,11 @@ const NewRemindType = React.createClass({
   },
 
   handleVisibleChange(visible) {
-    this.setState({visible});
+    this.setState({ visible });
   },
 
-  addNewItem(){
-    let newItem = this.refs.newItem.value;
+  addNewItem() {
+    const newItem = this.refs.newItem.value;
     if (newItem) {
       this.props.save(newItem);
       this.hide();
@@ -28,7 +29,7 @@ const NewRemindType = React.createClass({
 
   render() {
     const content = (
-      <div>
+      <div className="popover-content">
         <Row>
           <Col span={8}>
             <label className="input-label">类型名称：</label>
@@ -48,12 +49,12 @@ const NewRemindType = React.createClass({
     return (
       <Popover
         content={content}
-        title={<span><Icon type="plus"/> 添加新类型</span>}
+        title={<span className="popover-title"><Icon type="plus"/> 添加新类型</span>}
         trigger="click"
         visible={this.state.visible}
         onVisibleChange={this.handleVisibleChange}
       >
-        <a href="javascript:" style={{lineHeight: '28px'}}>新增类型</a>
+        <a href="javascript:" style={{ lineHeight: '28px' }}>新增类型</a>
       </Popover>
     );
   },

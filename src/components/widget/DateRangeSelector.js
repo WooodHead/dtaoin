@@ -1,90 +1,146 @@
 import React from 'react';
-import {Row, Col, DatePicker, Radio} from 'antd';
-import DateFormatter from '../../utils/DateFormatter';
+import { DatePicker } from 'antd';
 
-let now = new Date();
+import formatter from '../../utils/DateFormatter';
 
-const DateRangeSelector = React.createClass({
-  getInitialState(){
-    return {
-      startTime: DateFormatter.date(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate(), 0, 0, 0)),
-      endTime: DateFormatter.date(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)),
+const lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
+const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0);
+
+export default class DateRangeSelector extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      startTime: null,
+      endTime: null,
+      value: '7',
+      endOpen: false,
+      isDefaultValue: false,
     };
-  },
+
+    [
+      'handleDateRangeChange',
+      'handleStartTimeChange',
+      'handleEndTimeChange',
+      'handleStartOpenChange',
+      'handleEndOpenChange',
+      'disabledEndDate',
+      'disabledEndDateCurrent',
+      'disabledStartDate',
+    ].map(method => this[method] = this[method].bind(this));
+  }
+
+  componentDidMount() {
+    this.setState({
+      startTime: this.props.startTime ? formatter.day(this.props.startTime) : null,
+      endTime: this.props.endTime ? formatter.day(this.props.endTime) : null,
+    });
+
+    if (!!this.props.disabled) {
+      this.setState({ startTime: '', endTime: '' });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { isDefaultValue } = this.state;
+    if (!isDefaultValue && nextProps.startTime && nextProps.endTime) {
+      this.setState({
+        startTime: nextProps.startTime ? formatter.day(nextProps.startTime) : null,
+        endTime: nextProps.endTime ? formatter.day(nextProps.endTime) : null,
+        isDefaultValue: true,
+      });
+    }
+
+    if (!!nextProps.disabled) {
+      this.setState({ startTime: '', endTime: '' });
+    }
+  }
 
   handleDateRangeChange(value, dateString) {
-    let startTime = dateString[0], endTime = dateString[1];
-
-    if (this.props.type !== 'day') {
-      startTime = dateString[0].concat(' 00:00:00');
-      endTime = dateString[1].concat(' 23:59:59');
-    }
-
+    let startTime = dateString[0],
+      endTime = dateString[1];
     this.setState({
-      startTime: startTime,
-      endTime: endTime,
-    });
-    this.props.onDateChange(startTime, endTime);
-  },
-
-  handleDateIntervalChange(e) {
-    let startTime = new Date(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)),
-      endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-    switch (e.target.value) {
-      case '7':
-        startTime = new Date(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0));
-        break;
-      case '30':
-        startTime = new Date(new Date(now.getFullYear(), now.getMonth() - 1, now.getDate(), 0, 0, 0));
-        break;
-    }
-    this.setState({
-      startTime: DateFormatter.date(startTime),
-      endTime: DateFormatter.date(endTime),
-    });
-
-    this.props.onDateChange(DateFormatter.date(startTime), DateFormatter.date(endTime));
-  },
-
-  render(){
-    const RangePicker = DatePicker.RangePicker;
-    const RadioGroup = Radio.Group;
-    const RadioButton = Radio.Button;
-
-    let {
       startTime,
       endTime,
-    } = this.state;
+      value: '',
+    });
+    this.props.onDateChange(startTime, endTime);
+  }
 
+  handleStartTimeChange(value) {
+    this.setState({ startTime: formatter.day(value) });
+  }
+
+  handleEndTimeChange(value) {
+    this.setState({ endTime: formatter.day(value), value: '' }, () => {
+      const { startTime, endTime } = this.state;
+      this.props.onDateChange(startTime, endTime);
+    });
+  }
+
+  handleStartOpenChange(open) {
+    if (!open) {
+      this.setState({ endOpen: true });
+    }
+  }
+
+  handleEndOpenChange(open) {
+    this.setState({ endOpen: open });
+  }
+
+  disabledStartDate(current) {
+    if (this.props.earlyTodayDisabled) {
+      return current && current.valueOf() <= lastDate;
+    }
+    return current && current.valueOf() >= lastDate;
+  }
+
+  disabledEndDate(current) {
+    let { startTime } = this.state;
+    startTime = `${startTime  } 00:00:00`;
+
+    if (this.props.earlyTodayDisabled) {
+      return current && ((current.valueOf() <
+        new Date(new Date(startTime).setDate(new Date(startTime).getDate()))) ||
+        (current.valueOf() < today));
+    }
+
+    return current && (current.valueOf() > new Date() || current.valueOf() <=
+      new Date(new Date(startTime).setDate(new Date(startTime).getDate())));
+  }
+
+  disabledEndDateCurrent(current) {
+    const { startTime } = this.state;
+
+    return current &&
+      (current.valueOf() < new Date(new Date(startTime).setDate(new Date(startTime).getDate())));
+  }
+
+  render() {
+    const { startTime, endTime, endOpen } = this.state;
+    const { isDisabled, disabled } = this.props;
     return (
-      <Row>
-        <Col span={this.props.showInterval ? 11 : 24}>
-          <label className="mr5">{this.props.label}:</label>
-          <RangePicker
-            format={DateFormatter.pattern.day}
-            defaultValue={[DateFormatter.getMomentDate(startTime), DateFormatter.getMomentDate(endTime)]}
-            onChange={this.handleDateRangeChange}
-            size="large"
-            allowClear={false}
-          />
-        </Col>
-        {this.props.showInterval ?
-          <Col span={8}>
-            <RadioGroup defaultValue="30" onChange={this.handleDateIntervalChange}>
-              <RadioButton value="0">今天</RadioButton>
-              <RadioButton value="7">7天</RadioButton>
-              <RadioButton value="30">30天</RadioButton>
-            </RadioGroup>
-          </Col>
-          : null
-        }
-      </Row>
+      <span>
+        <DatePicker
+          disabledDate={isDisabled === 'false' ? null : this.disabledStartDate}
+          format={formatter.pattern.day}
+          value={startTime ? formatter.getMomentDate(startTime) : null}
+          onChange={this.handleStartTimeChange}
+          onOpenChange={this.handleStartOpenChange}
+          allowClear={false}
+          disabled={disabled}
+          size="large"
+        /> - <DatePicker
+        disabledDate={isDisabled === 'false' ? this.disabledEndDateCurrent : this.disabledEndDate}
+        format={formatter.pattern.day}
+        value={endTime ? formatter.getMomentDate(endTime) : null}
+        onChange={this.handleEndTimeChange}
+        open={endOpen}
+        onOpenChange={this.handleEndOpenChange}
+        allowClear={false}
+        disabled={disabled}
+        size="large"
+      />
+      </span>
     );
-  },
-});
-
-DateRangeSelector.defaultProps = {
-  showInterval: true,
-};
-
-export default DateRangeSelector;
+  }
+}

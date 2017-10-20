@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select} from 'antd';
+import { message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select } from 'antd';
 
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
@@ -30,7 +30,7 @@ class FormBill extends BaseModal {
   }
 
   componentDidMount() {
-    let {projectId} = this.props;
+    const { projectId } = this.props;
     this.getProjectDetail(projectId);
   }
 
@@ -44,64 +44,61 @@ class FormBill extends BaseModal {
   }
 
   getMaintainItemList(intention_id = '') {
-    api.ajax({url: api.aftersales.getItemListOfMaintProj(intention_id)}, (data) => {
-
-      let maintain_items = new Map();
+    api.ajax({ url: api.aftersales.getItemListOfMaintProj(intention_id) }, data => {
+      const maintain_items = new Map();
       for (let i = 0; i < data.res.list.length; i++) {
         maintain_items.set(data.res.list[i].item_id, data.res.list[i]);
       }
-      this.setState({maintain_items: maintain_items});
+      this.setState({ maintain_items });
     });
   }
 
   getMaintainPartList(intention_id = '') {
-    api.ajax({url: api.aftersales.getPartListOfMaintProj(intention_id)}, (data) => {
-      let maintain_parts = new Map();
+    api.ajax({ url: api.aftersales.getPartListOfMaintProj(intention_id) }, data => {
+      const maintain_parts = new Map();
       for (let i = 0; i < data.res.list.length; i++) {
         maintain_parts.set(data.res.list[i].part_type_id, data.res.list[i]);
       }
-      this.setState({maintain_parts: maintain_parts});
+      this.setState({ maintain_parts });
     });
   }
 
   getUserAuto(customer_id, auto_id) {
-    api.ajax({url: api.auto.detail(customer_id, auto_id)}, (data) => {
-      this.setState({auto: data.res.detail});
+    api.ajax({ url: api.auto.detail(customer_id, auto_id) }, data => {
+      this.setState({ auto: data.res.detail });
     });
   }
 
   onAccountPrint(e) {
     e.preventDefault();
-    let {customerId, projectId} = this.props;
+    const { customerId, projectId } = this.props;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
         message.error('表单内容错误,请检查');
         return;
       }
-      let payAmount = values.actualPaymentAmount;
-      let idCardNum = values.idNumber;
-      let nextPayDate = DateFormatter.day(values.repaymentTime);
-      let arrears = values.arrears;
+      const payAmount = values.actualPaymentAmount;
+      const idCardNum = values.idNumber;
+      const nextPayDate = DateFormatter.day(values.repaymentTime);
+      const arrears = values.arrears;
 
-      let formData = Number(Number(isPosDevice) === 1) ?
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          id_card_num: idCardNum,
-        } :
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          id_card_num: idCardNum,
-          pay_type: values.pay_type,
-        };
+      const formData = Number(Number(isPosDevice) === 1) ? {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        id_card_num: idCardNum,
+      } : {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        id_card_num: idCardNum,
+        pay_type: values.pay_type,
+      };
 
       this.setState({
         btnLoading: true,
@@ -115,9 +112,9 @@ class FormBill extends BaseModal {
         url: api.aftersales.payProjectOnAccount(),
         type: 'POST',
         data: formData,
-      }, function () {
-        let time = setInterval(() => {
-          api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
+      }, () => {
+        const time = setInterval(() => {
+          api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
             if (Number(data.res.intention_info.unpay_amount) === Number(arrears)) {
               window.clearInterval(time);
               this.setState({
@@ -128,17 +125,17 @@ class FormBill extends BaseModal {
               this.props.cancelModal();
               this.showModal();
             }
-          }.bind(this));
+          });
         }, Number(timer));
-      }.bind(this));
+      });
     });
   }
 
   onAccount(e) {
     e.preventDefault();
-    let {customerId, projectId} = this.props;
+    const { customerId, projectId } = this.props;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -146,27 +143,25 @@ class FormBill extends BaseModal {
         return;
       }
 
-      let payAmount = values.actualPaymentAmount;
-      let idCardNum = values.idNumber;
-      let nextPayDate = DateFormatter.day(values.repaymentTime);
-      let arrears = values.arrears;
+      const payAmount = values.actualPaymentAmount;
+      const idCardNum = values.idNumber;
+      const nextPayDate = DateFormatter.day(values.repaymentTime);
+      const arrears = values.arrears;
 
-      let formData = Number(Number(isPosDevice) === 1) ?
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          id_card_num: idCardNum,
-        } :
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          id_card_num: idCardNum,
-          pay_type: values.pay_type,
-        };
+      const formData = Number(Number(isPosDevice) === 1) ? {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        id_card_num: idCardNum,
+      } : {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        id_card_num: idCardNum,
+        pay_type: values.pay_type,
+      };
 
       this.setState({
         btnLoading: true,
@@ -176,28 +171,26 @@ class FormBill extends BaseModal {
         url: api.aftersales.payProjectOnAccount(),
         type: 'POST',
         data: formData,
-      }, function () {
+      }, () => {
         window.time = setInterval(() => {
-          api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
-              if (Number(data.res.intention_info.unpay_amount) === Number(arrears)) {
-                window.clearInterval(window.time);
-                this.setState({
-                  btnLoading: false,
-                });
-                message.success('结算成功!');
-                this.props.cancelModal();
-                location.reload();
-              }
-            }.bind(this)
+          api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
+            if (Number(data.res.intention_info.unpay_amount) === Number(arrears)) {
+              window.clearInterval(window.time);
+              this.setState({
+                btnLoading: false,
+              });
+              message.success('结算成功!');
+              this.props.cancelModal();
+              location.reload();
+            }
+          },
           );
         }, Number(timer));
-      }.bind(this), (err) => {
+      }, err => {
         message.error(err);
         this.props.cancelModal();
       });
     });
-
-
   }
 
   handleCancel() {
@@ -205,20 +198,24 @@ class FormBill extends BaseModal {
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
     location.reload();
   }
 
   getProjectDetail(projectId) {
-    api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
-      this.setState({project: data.res.intention_info});
-    }.bind(this));
+    api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
+      this.setState({ project: data.res.intention_info });
+    });
+  }
+
+  disabledStartDate(current) {
+    return current && current.valueOf() < new Date(new Date().setDate(new Date().getDate() - 1));
   }
 
   render() {
-    const {formItem8_15} = Layout;
-    const {project} = this.state;
-    const {getFieldDecorator} = this.props.form;
+    const { formItem8_15 } = Layout;
+    const { project } = this.state;
+    const { getFieldDecorator } = this.props.form;
     const isPosDevice = api.getLoginUser().isPosDevice;
 
     return (
@@ -241,9 +238,9 @@ class FormBill extends BaseModal {
             <FormItem label="实付金额" {...formItem8_15}>
               {getFieldDecorator('actualPaymentAmount', {
                 initialValue: 0,
-                rules: [{required: true, message: '请输入实付金额'}],
+                rules: [{ required: true, message: '请输入实付金额' }],
               })(
-                <Input addonAfter="元"/>
+                <Input addonAfter="元" />,
               )}
             </FormItem>
           </Col>
@@ -252,7 +249,7 @@ class FormBill extends BaseModal {
               {getFieldDecorator('idNumber', {
                 initialValue: '',
               })(
-                <Input />
+                <Input />,
               )}
             </FormItem>
           </Col>
@@ -260,9 +257,13 @@ class FormBill extends BaseModal {
         <Row>
           <Col span={12}>
             <FormItem label="挂账金额" {...formItem8_15}>
-              {getFieldDecorator('arrears', {initialValue: project.total_fee - this.props.form.getFieldValue('actualPaymentAmount')})(
+              {getFieldDecorator('arrears', {
+                initialValue: project.total_fee -
+                this.props.form.getFieldValue('actualPaymentAmount'),
+              })(
                 <p
-                  className="ant-form-text">{Number(project.total_fee - this.props.form.getFieldValue('actualPaymentAmount')).toFixed(2)}元</p>
+                  className="ant-form-text">{Number(project.total_fee -
+                  this.props.form.getFieldValue('actualPaymentAmount')).toFixed(2)}元</p>,
               )}
             </FormItem>
           </Col>
@@ -270,10 +271,16 @@ class FormBill extends BaseModal {
           <Col span={12}>
             <FormItem label="还款时间" {...formItem8_15}>
               {getFieldDecorator('repaymentTime', {
-                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())),
-                rules: [{required: true, message: '请输入还款时间'}],
+                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() +
+                  1, new Date().getDate())),
+                rules: [{ required: true, message: '请输入还款时间' }],
               })(
-                <DatePicker format={DateFormatter.pattern.day} placeholder="请选择还款时间" allowClear={false}/>
+                <DatePicker
+                  disabledDate={this.disabledStartDate}
+                  format={DateFormatter.pattern.day}
+                  placeholder="请选择还款时间"
+                  allowClear={false}
+                />,
               )}
             </FormItem>
           </Col>
@@ -292,7 +299,7 @@ class FormBill extends BaseModal {
                   <Option key="2">现金支付</Option>
                   <Option key="3">微信支付</Option>
                   <Option key="4">支付宝支付</Option>
-                </Select>
+                </Select>,
               )}
             </FormItem>
           </Col>
@@ -319,7 +326,7 @@ class FormBill extends BaseModal {
           </Button>
 
           <Modal
-            title={<span><Icon type="plus"/>挂账单预览</span>}
+            title={<span><Icon type="plus" />挂账单预览</span>}
             visible={this.state.visible}
             width="980px"
             onCancel={this.hideModal}

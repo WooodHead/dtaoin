@@ -24,15 +24,15 @@ var _sv_SE7 = require('../calendar/locale/sv_SE');
 
 var _sv_SE8 = _interopRequireDefault(_sv_SE7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('sv');
-exports["default"] = {
+_moment2['default'].locale('sv');
+exports['default'] = {
     locale: 'sv',
-    Pagination: _sv_SE2["default"],
-    DatePicker: _sv_SE4["default"],
-    TimePicker: _sv_SE6["default"],
-    Calendar: _sv_SE8["default"],
+    Pagination: _sv_SE2['default'],
+    DatePicker: _sv_SE4['default'],
+    TimePicker: _sv_SE6['default'],
+    Calendar: _sv_SE8['default'],
     Table: {
         filterTitle: 'Filtermeny',
         filterConfirm: 'OK',

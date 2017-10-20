@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 require('../../src/styles/permissionDenied.css');
 
-let permission403 = require('../images/403.png');
+const permission403 = require('../images/403.png');
 
 export default class Permission403 extends Component {
   render() {

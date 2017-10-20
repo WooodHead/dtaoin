@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Row, Col} from 'antd';
+import { Modal, Row, Col } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -9,31 +9,31 @@ export default class CardStore extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
+      id: props.id,
       companyList: [],
-      memberCardType: props.memberCardType,
     };
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
     this.getMemberCardTypeCompanyList();
   }
 
   getMemberCardTypeCompanyList() {
-    let url = api.coupon.getMemberCardTypeCompanyList(this.state.memberCardType, '');
-    api.ajax({url}, (data) => {
-      let companyList = data.res.list;
-      this.setState({companyList});
+    const url = api.coupon.getCouponCardTypeCompanyList(this.state.id, '');
+    api.ajax({ url }, data => {
+      const companyList = data.res.list;
+      this.setState({ companyList });
     });
   }
 
   render() {
-    let {visible, companyList} = this.state;
+    const { visible, companyList } = this.state;
 
-    let content = (
+    const content = (
       <span>
         {
-          <Row className="mb10">
+          <Row className="mb10 font-size-14">
             <Col span={8} className="font-wight-bold">
               门店名称
             </Col>
@@ -43,9 +43,8 @@ export default class CardStore extends BaseModal {
           </Row>
         }
         {
-          companyList.map(item => {
-            return (
-              <Row key={item._id} className="mb10">
+          companyList.map(item => (
+              <Row key={item._id} className="mb10 font-size-14">
                 <Col span={8}>
                   {item.company_name}
                 </Col>
@@ -53,8 +52,7 @@ export default class CardStore extends BaseModal {
                   {item.company_cooperation_type_name.full_name}
                 </Col>
               </Row>
-            );
-          })
+            ))
         }
       </span>
     );
@@ -65,12 +63,12 @@ export default class CardStore extends BaseModal {
           href="javascript:;"
           onClick={this.showModal}
         >
-          发卡门店详细
+          适用门店详情
         </a>
 
         <Modal
           visible={visible}
-          title="发卡门店详细"
+          title="适用门店详情"
           onCancel={this.hideModal}
           footer={null}
           width="720px"

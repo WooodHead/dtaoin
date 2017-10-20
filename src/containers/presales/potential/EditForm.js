@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Row, Col, Form, Input, Button, Select, Switch} from 'antd';
+import { message, Row, Col, Form, Input, Button, Select, Switch } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -33,34 +33,34 @@ class NewForm extends BaseAutoComponent {
 
   handleSubmit(e) {
     e.preventDefault();
-    let values = this.props.form.getFieldsValue();
+    const values = this.props.form.getFieldsValue();
     values.is_mortgage = values.is_mortgage ? '1' : '0';
 
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: api.presales.intention.edit(),
       type: 'POST',
       data: values,
     }, () => {
       message.success('修改成功!');
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
       this.props.form.resetFields();
       this.props.cancelModal();
       this.props.onSuccess();
       this.getIntentionDetail(this.props.customerId, this.props.intentionId);
-    }, (err) => {
+    }, err => {
       message.error(`修改失败[${err}]`);
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 
   getIntentionDetail(customerId, intentionId) {
-    api.ajax({url: api.presales.intention.detail(customerId, intentionId)}, data => {
+    api.ajax({ url: api.presales.intention.detail(customerId, intentionId) }, data => {
       let intention = data.res.intention_info,
         brandId = intention.auto_brand_id,
         seriesId = intention.auto_series_id;
       this.setState({
-        intention: intention,
+        intention,
         autoFactoryId: intention.auto_factory_id,
       });
       this.getAutoSeries(brandId);
@@ -69,27 +69,27 @@ class NewForm extends BaseAutoComponent {
   }
 
   render() {
-    const {formItemLayout, formItemLg, selectStyle} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {isFetching, intention} = this.state;
+    const { formItemLayout, formItemLg, selectStyle } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { isFetching, intention } = this.state;
 
     return (
       <Form>
-        {getFieldDecorator('_id', {initialValue: intention._id})(<Input type="hidden"/>)}
-        {getFieldDecorator('customer_id', {initialValue: intention.customer_id})(<Input type="hidden"/>)}
-        {getFieldDecorator('auto_factory_id', {initialValue: this.state.autoFactoryId})(<Input type="hidden"/>)}
+        {getFieldDecorator('_id', { initialValue: intention._id })(<Input type="hidden"/>)}
+        {getFieldDecorator('customer_id', { initialValue: intention.customer_id })(<Input type="hidden"/>)}
+        {getFieldDecorator('auto_factory_id', { initialValue: this.state.autoFactoryId })(<Input type="hidden"/>)}
 
         <Row>
           <Col span={12}>
-            <FormItem label="意向类型" labelCol={{span: 12}} wrapperCol={{span: 6}}>
-              {getFieldDecorator('type', {initialValue: intention.type})(
+            <FormItem label="意向类型" labelCol={{ span: 12 }} wrapperCol={{ span: 6 }}>
+              {getFieldDecorator('type', { initialValue: intention.type })(
                 <p className="ant-form-text">新车交易</p>
               )}
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem label="意向级别" labelCol={{span: 6}} wrapperCol={{span: 10}}>
-              {getFieldDecorator('level', {initialValue: intention.level})(
+            <FormItem label="意向级别" labelCol={{ span: 6 }} wrapperCol={{ span: 10 }}>
+              {getFieldDecorator('level', { initialValue: intention.level })(
                 <Select {...selectStyle}>
                   <Option key="H">H</Option>
                   <Option key="A">A</Option>
@@ -103,7 +103,7 @@ class NewForm extends BaseAutoComponent {
         </Row>
 
         <FormItem label="品牌" {...formItemLayout}>
-          {getFieldDecorator('auto_brand_id', {initialValue: intention.auto_brand_id})(
+          {getFieldDecorator('auto_brand_id', { initialValue: intention.auto_brand_id })(
             <Select
               showSearch
               onSelect={this.handleBrandSelect}
@@ -142,7 +142,7 @@ class NewForm extends BaseAutoComponent {
         <FormItem label="外观/内饰" {...formItemLayout}>
           <Row>
             <Col span={8}>
-              {getFieldDecorator('out_color', {initialValue: intention.out_color})(
+              {getFieldDecorator('out_color', { initialValue: intention.out_color })(
                 <Select {...selectStyle} size="large">
                   <Option key="0">不限</Option>
                   {this.state.outColor.map(color => <Option key={color._id}>{color.name}</Option>)}
@@ -154,7 +154,7 @@ class NewForm extends BaseAutoComponent {
             </Col>
             <Col span={9}>
               <FormItem {...formItemLg}>
-                {getFieldDecorator('in_color', {initialValue: intention.in_color})(
+                {getFieldDecorator('in_color', { initialValue: intention.in_color })(
                   <Select {...selectStyle} size="large">
                     <Option key="-1">不限</Option>
                     <Option key="0">米</Option>
@@ -172,7 +172,7 @@ class NewForm extends BaseAutoComponent {
         </FormItem>
 
         <FormItem label="购买预算" {...formItemLayout}>
-          {getFieldDecorator('budget_level', {initialValue: intention.budget_level || '0'})(
+          {getFieldDecorator('budget_level', { initialValue: intention.budget_level || '0' })(
             <Select
               {...selectStyle}>
               <Option key="0">10万以下</Option>
@@ -195,25 +195,25 @@ class NewForm extends BaseAutoComponent {
         </FormItem>
 
         <FormItem label="4S给客户报价" {...formItemLayout}>
-          {getFieldDecorator('other_quotation', {initialValue: intention.other_quotation})(
+          {getFieldDecorator('other_quotation', { initialValue: intention.other_quotation })(
             <Input type="textarea" autosize placeholder="请输入4S给客户报价"/>
           )}
         </FormItem>
 
         <FormItem label="买车关注点" {...formItemLayout}>
-          {getFieldDecorator('focus', {initialValue: intention.focus})(
+          {getFieldDecorator('focus', { initialValue: intention.focus })(
             <Input type="textarea" autosize placeholder="请输入买车关注点"/>
           )}
         </FormItem>
 
         <FormItem label="加装需求" {...formItemLayout}>
-          {getFieldDecorator('decoration', {initialValue: intention.decoration})(
+          {getFieldDecorator('decoration', { initialValue: intention.decoration })(
             <Input type="textarea" autosize placeholder="请输入加装需求"/>
           )}
         </FormItem>
 
         <FormItem label="备注" {...formItemLayout}>
-          {getFieldDecorator('remark', {initialValue: intention.remark})(
+          {getFieldDecorator('remark', { initialValue: intention.remark })(
             <Input type="textarea" autosize placeholder="请输入备注"/>
           )}
         </FormItem>

@@ -1,12 +1,14 @@
 import React from 'react';
-import {Badge} from 'antd';
+import { Link } from 'react-router-dom';
+import { Badge, Tooltip } from 'antd';
 
 import text from '../../../../config/text';
 import api from '../../../../middleware/api';
 
 import BaseTable from '../../../../components/base/BaseTable';
 
-import Detail from '../Detail';
+import Delivery from '../Delivery';
+import AdminDelivery from '../AdminDelivery';
 
 export default class Table extends BaseTable {
   componentWillReceiveProps(nextProps) {
@@ -14,70 +16,139 @@ export default class Table extends BaseTable {
       this.getList(nextProps);
     }
     if (JSON.stringify(this.props.selectedItem) != JSON.stringify(nextProps.selectedItem)) {
-      this.setState({list: [nextProps.selectedItem], total: 1});
+      this.setState({ list: [nextProps.selectedItem], total: 1 });
     }
   }
 
   handleUseStatusChange(index, record) {
-    let coupon_item_id = record._id;
-    let status = Number(record.status) === 0 ? 1 : 0;
+    const coupon_item_id = record._id;
+    const status = Number(record.status) === 0 ? 1 : 0;
     api.ajax({
       url: api.coupon.updataCouponStatus(),
       type: 'POST',
-      data: {coupon_item_id: coupon_item_id, status: status},
+      data: { coupon_item_id, status },
     }, () => {
       this.getList(this.props);
     });
   }
 
   render() {
-    let self = this;
+    const self = this;
 
     const columns = [
       {
-        title: '名称',
+        title: '序号',
+        key: 'index',
+        width: '48px',
+        render: (value, record, index) => index + 1,
+      }, {
+        title: '优惠券名称',
         dataIndex: 'name',
         key: 'name',
+        render: value => {
+          if (!value) {
+            return '';
+          }
+          if (value.length <= 8) {
+            return <span>{value}</span>;
+          }
+          return (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          );
+        },
       }, {
-        title: '折扣比例',
+        title: '折扣',
         dataIndex: 'discount_rate',
         key: 'discount_rate',
-      }, {
-        title: '单笔优惠上限',
-        className: 'column-money',
-        dataIndex: 'max_discount_amount',
-        key: 'max_discount_amount',
-        render: value => value > 0 ? value : '无上限',
+        className: 'text-right',
+        width: '60px',
+        render: value => {
+          let rate = String(Number(Number(value).toFixed(2)) * 100);
+          if (rate.length === 1) {
+            return `${(rate / 10) || '0'  }折`;
+          }
+
+          if (Number(rate.charAt(rate.length - 1)) === 0) {
+            rate = rate.slice(0, rate.length - 1);
+          }
+          return `${rate || '0'  }折`;
+        },
       }, {
         title: '描述',
         dataIndex: 'remark',
         key: 'remark',
+        render: value => {
+          if (!value) {
+            return '';
+          }
+          if (value.length <= 8) {
+            return <span>{value}</span>;
+          }
+          return (
+            <Tooltip placement="topLeft" title={value}>
+              {value}
+            </Tooltip>
+          );
+        },
       }, {
-        title: '更新日期',
-        dataIndex: 'mtime',
-        key: 'mtime',
+        title: '有效期',
+        dataIndex: 'valid_type',
+        key: 'valid_type',
+        width: '220px',
+        render: (value, record) => {
+          if (String(value) === '0') {
+            // 时间段
+            return `${record.valid_start_date}至${record.valid_expire_date}`;
+          } else if (String(value) === '1') {
+            // 具体天数
+            return `领取后当天生效${record.valid_day}天有效`;
+          }
+        },
+      }, {
+        title: '领取限制',
+        dataIndex: 'limit_count',
+        key: 'limit_count',
+        width: '75px',
+        render: value => Number(value) > 0 ? value : '无限制',
       }, {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
         className: 'center',
+        width: '75px',
         render: (value, record) => {
-          let status = (Number(value) === 0) ? 'success' : 'default';
-          return <Badge status={status} text={text.useStatus[record.status]}/>;
+          const status = (Number(value) === 0) ? 'success' : 'default';
+          return <Badge status={status} text={text.useStatus[record.status]} />;
         },
       }, {
         title: '操作',
         dataIndex: 'handle',
         key: 'handle',
         className: 'center',
-        width: '10%',
+        width: '150px',
         render: (value, record, index) => {
-          let userStatus = text.useStatus[-(record.status) + 1];
+          const userStatus = text.useStatus[-(record.status) + 1];
           return (
             <div>
-              <a href="javascript:;" onClick={() => self.handleUseStatusChange(index, record)}>{userStatus}</a>
-              <span className="ant-divider"/>
-              <Detail data={record} size="small"/>
+              <span className={(Number(record.status) === 0) ? '' : 'hide'}>
+                {
+                  api.isHeadquarters()
+                    ? <AdminDelivery detail={record} size="small" />
+                    : <Delivery detail={record} size="small" />
+                }
+                <span className="ant-divider" />
+              </span>
+              <a
+                href="javascript:;"
+                onClick={() => self.handleUseStatusChange(index, record)}
+              >{userStatus}
+              </a>
+              <span className="ant-divider" />
+              <Link to={{ pathname: `/marketing/discount/detail/${record._id}` }}>
+                详情
+              </Link>
             </div>
           );
         },

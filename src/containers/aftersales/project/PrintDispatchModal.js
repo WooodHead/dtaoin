@@ -1,12 +1,12 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import PrintDispatch from './PrintDispatch';
 
 export default class PrintDispatchModal extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
   }
 
   onSuccess(data) {
@@ -15,7 +15,7 @@ export default class PrintDispatchModal extends BaseModal {
   }
 
   render() {
-    let {
+    const {
       project,
       customer,
       auto,
@@ -24,8 +24,8 @@ export default class PrintDispatchModal extends BaseModal {
     } = this.props;
 
     return (
-      <span>
-        <p onClick={this.showModal}>打印派工单</p>
+      <span className="center">
+        <p onClick={this.showModal} style={{ width: '120px' }}>打印派工单</p>
 
         <Modal
           title={<span><Icon type="file"/> 派工单预览</span>}

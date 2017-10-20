@@ -7,7 +7,7 @@ import SwitchCompany from './SwitchCompany';
 
 export default class Table extends BaseTable {
   render() {
-    let self = this;
+    const self = this;
     const columns = [{
       title: '门店编号',
       dataIndex: 'company_num',
@@ -57,7 +57,7 @@ export default class Table extends BaseTable {
       dataIndex: 'action',
       key: 'action',
       className: 'center',
-      render: function (value, record) {
+      render (value, record) {
         return (
           <span>
             <Edit company={record} onSuccess={self.props.onSuccess}/>

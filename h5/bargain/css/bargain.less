@@ -1,0 +1,814 @@
+.bargain {
+  font-family: 'PingFang SC', 'Microsoft yahei', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', 'sans-serif';
+  overflow: hidden;
+  width: 100%;
+
+  .activity-info {
+    position: relative;
+    width: 100%;
+    background: url("../images/cut_bg.png") no-repeat;
+    background-size: 100% 100%;
+    z-index: 10;
+    .title {
+      display: flex;
+      justify-content: center;
+      font-size: (48rem/20);
+      color: #FFFFFF;
+      padding-top: (50rem/20);
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: center;
+    }
+    .time {
+      display: flex;
+      justify-content: center;
+      font-size: (28rem/20);
+      color: #FFFFFF;
+      padding-top: (20rem/20);
+    }
+    .title-pic {
+      display: flex;
+      justify-content: center;
+      width: (625rem/20);
+      height: (468rem/20);
+      margin: (40rem/20) auto 0;
+      background-color: white;
+      padding: 3px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .progress-bar {
+      position: relative;
+      margin: 60px auto 0;
+      width: (625rem/20);
+      height: 18px;
+      .price {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 18px;
+      }
+      .now-price {
+        background-color: #ffd500;
+        border-radius: 9px;
+      }
+      .original-price {
+        background-color: white;
+        border-radius: 9px;
+      }
+      .triangle-handstand {
+        position: absolute;
+        left: 0;
+        top: -13px;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 10px solid #ffd500;
+      }
+
+      .now-price-word {
+        position: absolute;
+        top: -41px;
+        left: -15px;
+        display: inline-block;
+        height: 30px;
+        width: 135px;
+        border-radius: 15px;
+        background-color: #FFD500;
+        text-align: center;
+        line-height: 30px;
+        font-size: 16px;
+      }
+    }
+    .all-price {
+      display: flex;
+      justify-content: space-between;
+      width: (625rem/20);
+      margin: 7px auto 0;
+      color: white;
+      font-size: 14px;
+    }
+    .count-time {
+      display: flex;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+      margin-top: (50rem/20);
+      padding-bottom: (94rem/20);
+    }
+
+    .cut_stamp {
+      position: absolute;
+      right: 50px;
+      bottom: 0;
+      transform: translateY(50%);
+      width: (310rem/20);
+      height: (310rem/20);
+    }
+  }
+
+  .active {
+    width: 100%;
+    z-index: 10;
+    background-color: white;
+    .button {
+      width: (625rem/20);
+      height: 50px;
+      line-height: 50px;
+      vertical-align: baseline;
+      outline: none;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 0;
+      background-color: #FFD500;
+      font-size: 16px;
+      color: black;
+    }
+
+    .disabled-btn {
+      width: (625rem/20);
+      height: 50px;
+      line-height: 50px;
+      vertical-align: baseline;
+      outline: none;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 0;
+      background-color: #E1E1E1;;
+      font-size: 16px;
+      color: black;
+    }
+
+    .join, .bargain-btn, .invitation-help-btn, .help-bargain-btn, .my-bargain, .disabled-btn {
+      margin: 20px auto 0;
+    }
+
+    .bargain-btn, .help-bargain-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 5px;
+      }
+
+    }
+
+  }
+
+  .explain {
+    font-size: 12px;
+    z-index: 10;
+    background-color: white;
+    .explain-info {
+      position: relative;
+      width: (625rem/20);
+      margin: 40px auto 0;
+      border-top: 1px solid #d8d8d8;
+      padding-top: 20px;
+      .word {
+        position: absolute;
+        left: 50%;
+        top: -13px;
+        transform: translateX(-50%);
+        width: (190rem/20);
+        background-color: white;
+        text-align: center;
+        font-size: 16px;
+      }
+    }
+
+    a {
+      display: block;
+      margin: 20px auto 0;
+      width: (460rem/20);
+      height: (80rem/20);
+      border-radius: (40rem/20);
+      border: 1px solid #108ee9;
+      text-align: center;
+      line-height: (80rem/20);
+      font-size: 14px;
+      color: #108ee9;
+      text-decoration: none;
+    }
+  }
+
+  .project-introduction {
+    z-index: 10;
+    background-color: white;
+    .gray-line {
+      width: 100%;
+      height: 20px;
+      background-color: #F3F3F3;
+      margin-top: (60rem/20);
+    }
+    .title {
+      position: relative;
+      width: (625rem/20);
+      margin: 0 auto;
+      .line {
+        width: 100%;
+        border-top: 1px solid #d8d8d8;
+        margin-top: 35px;
+      }
+      .word {
+        position: absolute;
+        left: 50%;
+        top: -10px;
+        width: (190rem/20);
+        text-align: center;
+        font-size: 16px;
+        background-color: white;
+        transform: translateX(-50%);
+
+      }
+    }
+
+    .introduce {
+      width: (625rem/20);
+      margin: 0 auto;
+      .pic {
+        width: 100%;
+        //min-height: (443rem/20);
+        background-color: #f0f0f0;
+        margin-top: 40px;
+        img {
+          width: 100%;
+          //height: (354rem/20);
+        }
+        p {
+          min-height: (89rem/20);
+          font-size: 14px;
+          margin-left: 10px;
+          line-height: (58rem/20);
+          word-break: break-all;
+        }
+      }
+
+      .pic-no-text {
+        width: 100%;
+        //height: (354rem/20);
+        background-color: #f0f0f0;
+        margin-top: 40px;
+        img {
+          width: 100%;
+          //height: (354rem/20);
+        }
+      }
+
+    }
+  }
+
+  .bargain-list {
+    z-index: 10;
+    background-color: white;
+    .title {
+      position: relative;
+      width: (625rem/20);
+      margin: 0 auto;
+      .line {
+        width: 100%;
+        border-top: 1px solid #d8d8d8;
+        margin-top: 35px;
+      }
+      .word {
+        position: absolute;
+        left: 50%;
+        top: -10px;
+        width: (190rem/20);
+        text-align: center;
+        font-size: 16px;
+        background-color: white;
+        transform: translateX(-50%);
+      }
+    }
+
+    .tab-content {
+      display: flex;
+      position: relative;
+      width: (625rem/20);
+      height: 48px;
+      margin: 15px auto 0;
+      font-size: 16px;
+      .tab {
+        flex-grow: 1;
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        border-bottom: 1px solid #d8d8d8;
+      }
+      .one {
+        border-bottom: 2px solid #ff7720;
+        color: #ff7720;
+      }
+    }
+
+    .list {
+      width: (625rem/20);
+      margin: 0 auto;
+      font-size: 14px;
+      ul {
+        width: 100%;
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          height: 60px;
+          border-bottom: 1px solid #d8d8d8;
+          .bargain-price {
+            color: #ff7720;
+          }
+          .name {
+            display: flex;
+            align-items: center;
+            img {
+              width: 36px;
+              height: 36px;
+              border-radius: 18px;
+              margin-right: 15px;
+            }
+            .index {
+              width: 16px;
+              height: 16px;
+              border-radius: 8px;
+              font-size: 12px;
+              text-align: center;
+              line-height: 16px;
+              color: white;
+              background-color: #FF7720;;
+              margin-right: 10px;
+            }
+          }
+        }
+
+        li:nth-of-type(1) {
+          .index {
+            background-color: #F8E71C;
+          }
+        }
+        li:nth-of-type(2) {
+          .index {
+            background-color: #D0D0D0;
+          }
+        }
+        li:nth-of-type(3) {
+          .index {
+            background-color: #F5A623;
+          }
+        }
+
+      }
+    }
+
+    .help-bargain-introduce, .rank-list-introduce {
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      color: #999999;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .help-bargain-list {
+
+    }
+
+    .rank-list {
+
+    }
+  }
+
+  //遮罩层
+  .mask {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.8;
+  }
+
+  //填写兑奖信息
+  .awarding {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: (610rem/20);
+    height: 260px;
+    background-color: white;
+    border-radius: 8px;
+    text-align: center;
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+    .phone-error {
+      color: red;
+      float: left;
+      margin-left: 20px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    p:not(.title) {
+      font-size: 14px;
+      color: #666666;
+    }
+    input {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      width: (530rem/20);
+      padding: 13px 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      outline: none;
+      margin-top: 2px;
+    }
+
+    .input-phone-right {
+      border: 1px solid #CCCCCC;
+    }
+
+    .input-phone-error {
+      border: 1px solid red;
+    }
+
+    .button {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      width: (530rem/20);
+      height: 50px;
+      line-height: 50px;
+      vertical-align: baseline;
+      outline: none;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 0;
+      background-color: #FFD500;
+      font-size: 16px;
+      color: black;
+      margin: 10px auto 0;
+    }
+    .close {
+      width: 40px;
+      height: 40px;
+      margin: 40px auto 0;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  //活动结束
+  .active-end {
+    position: fixed;
+    top: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: (510rem/20);
+    height: 210px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    text-align: center;
+
+    img {
+      width: 80px;
+      height: 80px;
+      margin: 30px 0 23px 0;
+    }
+    p {
+      font-size: 16px;
+      color: #FFFFFF;
+    }
+  }
+
+  //帮砍成功,刀法惊人
+  .help-bargain-success {
+    position: fixed;
+    top: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: (590rem/20);
+    height: 210px;
+    border-radius: 8px;
+    //overflow: hidden;
+    background-color: white;
+    .knife {
+      width: 100%;
+      height: 110px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    .word {
+      width: 100%;
+      text-align: center;
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+      .price {
+        font-size: 16px;
+        span {
+          font-size: 18px;
+          color: #ff8638;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .close {
+      width: 40px;
+      height: 40px;
+      margin: 40px auto 0;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  //自砍成功，邀请好友
+  .own-bargain-success {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    width: (590rem/20);
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: white;
+    .knife {
+      width: 100%;
+      height: 110px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    .word {
+      width: 100%;
+      text-align: center;
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+      .price {
+        font-size: 16px;
+        span {
+          font-size: 18px;
+          color: #ff8638;
+          font-weight: bold;
+        }
+      }
+      .coupon {
+        font-size: 16px;
+      }
+    }
+
+    .button {
+      width: (530rem/20);
+      height: 40px;
+      line-height: 40px;
+      vertical-align: baseline;
+      outline: none;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 6px;
+      border: 0;
+      background-color: #FFD500;
+      font-size: 16px;
+      color: black;
+      margin: 5px auto 20px;
+    }
+
+    .close {
+      position: absolute;
+      left: 50%;
+      bottom: -62px;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .invitation-bargain {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -10;
+    width: (590rem/20);
+    border-radius: 8px;
+    background: url("../images/cut_bg.png") no-repeat;
+    background-size: 100% 100%;
+
+    .top {
+      height: (673rem/20);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      .nick {
+        width: 100%;
+        padding-left: 20px;
+        padding-top: 10px;
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 20px;
+          vertical-align: middle;
+        }
+        .nick-name {
+          font-size: 16px;
+          color: white;
+          margin-left: 5px;
+          vertical-align: middle;
+        }
+        span:nth-of-type(2) {
+          font-size: 12px;
+          color: white;
+          margin-left: 5px;
+          vertical-align: middle;
+        }
+      }
+
+      .pic {
+        box-sizing: border-box;
+        width: 100%;
+        height: (370rem/20);
+        margin: 10px auto 0;
+        padding: 0 20px;
+        & > div {
+          height: (370rem/20);
+          padding: 3px;
+          background-color: white;
+        }
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .title-price {
+        .title {
+          font-size: 18px;
+          color: white;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          margin-left: 20px;
+        }
+
+        .sell-price {
+          font-size: 14px;
+          color: white;
+          margin-left: 20px;
+          text-decoration: line-through;
+        }
+
+        .min-price {
+          font-size: 14px;
+          color: #FFD500;
+          margin-left: 10px;
+        }
+
+      }
+    }
+
+    .line {
+      height: 0;
+      margin: 0 20px;
+      border-top: 1px solid white;
+    }
+
+    .bottom {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      .word {
+        width: 200px;
+        display: inline-block;
+        vertical-align: top;
+        p:nth-of-type(1) {
+          font-size: 16px;
+          color: white;
+          padding-top: 30px;
+          padding-left: 20px;
+        }
+
+        p:nth-of-type(2) {
+          font-size: 14px;
+          color: white;
+          padding-top: 5px;
+          padding-left: 20px;
+        }
+      }
+
+      .qrcode {
+        position: absolute;
+        right: 22px;
+        bottom: 15px;
+        display: inline-block;
+        vertical-align: top;
+        padding: 12px;
+        background-color: white;
+      }
+    }
+
+  }
+
+  .invitation-bargain-pic {
+    position: fixed;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: (590rem/20);
+    border-radius: 8px;
+
+    .introduce {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 12px;
+      color: white;
+      padding-top: 10px;
+    }
+
+    .invitation-pic {
+      position: relative;
+      top: 5px;
+      width: 100%;
+      img {
+        width: 100%;
+      }
+    }
+
+    .close {
+      width: 40px;
+      height: 40px;
+      margin: 10px auto 0;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .disabled {
+    background-color: black;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .bargain {
+    //自砍成功，邀请好友
+    .own-bargain-success {
+      //height: 285px;
+      .word {
+        .title {
+          margin-top: 15px;
+        }
+      }
+      .close {
+        margin: 50px auto 0;
+      }
+    }
+    .invitation-bargain {
+      .bottom {
+        .qrcode {
+          padding: 6px 6px 3px;
+        }
+      }
+    }
+
+  }
+}

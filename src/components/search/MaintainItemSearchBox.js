@@ -1,12 +1,13 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import { Input, Select, Button, Icon } from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
 import NewItem from '../../containers/maintain-item/EditNew';
+import createReactClass from 'create-react-class';
 
 const Option = Select.Option;
 
-const MaintainItemSearchBox = React.createClass({
+const MaintainItemSearchBox = createReactClass({
   getInitialState() {
     return {
       data: this.props.data ? this.props.data : [],
@@ -17,48 +18,48 @@ const MaintainItemSearchBox = React.createClass({
   },
 
   handleOnSuccess(data) {
-    this.setState({value: data.name, data: [data]});
-    this.setState({style: {width: '100%'}});
+    this.setState({ value: data.name, data: [data] });
+    this.setState({ style: { width: '100%' } });
     this.props.select(data);
   },
 
   handleSelect(value, option) {
-    let index = option.props.index;
-    let list = this.state.data;
-    this.setState({value: option.props.children});
+    const index = option.props.index;
+    const list = this.state.data;
+    this.setState({ value: option.props.children });
 
     this.props.select(list[index]);
   },
 
   handleChange(key) {
-    this.setState({value: key});
+    this.setState({ value: key });
 
     if (key.length < 2) {
-      this.setState({style: {width: '100%'}});
+      this.setState({ style: { width: '100%' } });
     }
 
     if (!!key && key.length >= 2) {
-      api.ajax({url: api.aftersales.searchMaintainItems(key)}, (data) => {
-        let list = data.res.item_list;
+      api.ajax({ url: api.maintainItem.list({ key }) }, data => {
+        const list = data.res.list;
 
-        //搜索框的长度要根据搜出来的结果变化
+        // 搜索框的长度要根据搜出来的结果变化
         if (key.length > 1 && list.length == 0) {
-          this.setState({style: {width: '110px'}});
+          this.setState({ style: { width: '110px' } });
         } else {
-          this.setState({style: {width: '100%'}});
+          this.setState({ style: { width: '100%' } });
         }
 
         if (list.length > 0) {
-          this.setState({data: list});
+          this.setState({ data: list });
         } else {
-          this.setState({data: []});
+          this.setState({ data: [] });
         }
       });
     } else {
       if (key.length > 1) {
-        this.setState({style: {width: '150px'}});
+        this.setState({ style: { width: '150px' } });
       }
-      this.setState({data: []});
+      this.setState({ data: [] });
     }
   },
 
@@ -67,11 +68,11 @@ const MaintainItemSearchBox = React.createClass({
   },
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   },
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   },
 
   render() {
@@ -89,9 +90,7 @@ const MaintainItemSearchBox = React.createClass({
         <div id="maintain_item_search">
           <Select
             size="large"
-            //combobox={this.state.data.length}
-            combobox
-            //showSearch
+            mode="combobox"
             value={this.state.value}
             placeholder={this.props.placeholder}
             defaultActiveFirstOption={false}
@@ -106,7 +105,7 @@ const MaintainItemSearchBox = React.createClass({
             onBlur={this.handleBlur}
             disabled={this.props.disabled}
           >
-            {this.state.data.map((item) => <Option key={item._id}>{item.name}</Option>)}
+            {this.state.data.map(item => <Option key={item._id}>{item.name}</Option>)}
           </Select>
         </div>
         <div className="ant-input-group-wrap">
@@ -126,5 +125,5 @@ const MaintainItemSearchBox = React.createClass({
   },
 });
 
-MaintainItemSearchBox.defaultProps = {placeholder: '用关键字搜索维保项目'};
+MaintainItemSearchBox.defaultProps = { placeholder: '用关键字搜索维保项目' };
 export default MaintainItemSearchBox;

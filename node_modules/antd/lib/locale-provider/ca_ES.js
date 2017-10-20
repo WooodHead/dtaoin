@@ -24,15 +24,15 @@ var _ca_ES7 = require('../calendar/locale/ca_ES');
 
 var _ca_ES8 = _interopRequireDefault(_ca_ES7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('ca');
-exports["default"] = {
+_moment2['default'].locale('ca');
+exports['default'] = {
     locale: 'ca',
-    Pagination: _ca_ES2["default"],
-    DatePicker: _ca_ES4["default"],
-    TimePicker: _ca_ES6["default"],
-    Calendar: _ca_ES8["default"],
+    Pagination: _ca_ES2['default'],
+    DatePicker: _ca_ES4['default'],
+    TimePicker: _ca_ES6['default'],
+    Calendar: _ca_ES8['default'],
     Table: {
         filterTitle: 'Filtrar Menu',
         filterConfirm: 'OK',

@@ -10,10 +10,10 @@ export default class BaseModalWithUpload extends BaseUpload {
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
   }
 }

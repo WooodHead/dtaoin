@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button, Icon} from 'antd';
+import { Modal, Button, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -14,7 +14,7 @@ export default class New extends BaseModal {
   }
 
   render() {
-    const {size, customerId, isSingle, onSuccess} = this.props;
+    const { size, customerId, isSingle, onSuccess } = this.props;
     return (
       <span>
         {size === 'small' ?

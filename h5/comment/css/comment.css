@@ -1,0 +1,141 @@
+.content {
+  width: 100%;
+  font-family: 'PingFang SC', 'Microsoft yahei', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', 'sans-serif';
+}
+.content .message {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 30px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 30px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+.content .info {
+  width: 100%;
+}
+.content .info .car {
+  width: 100%;
+  height: 7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #FFBB00;
+}
+.content .info .car #plant-num {
+  margin-left: 20px;
+  font-size: 18px;
+  color: #333333;
+}
+.content .info .car #car-name {
+  margin-left: 20px;
+  margin-top: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.content .info .work-order {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px 0;
+}
+.content .info .work-order p {
+  margin-left: 20px;
+  font-size: 14px;
+  color: #666666;
+  line-height: 30px;
+}
+.content .score {
+  width: 100%;
+}
+.content .score .title {
+  background: #F1F1F1;
+}
+.content .score .title p {
+  height: 30px;
+  font-size: 12px;
+  color: #666666;
+  line-height: 30px;
+  margin-left: 20px;
+}
+.content .score .express {
+  width: 100%;
+  margin: 10px 0;
+  border-bottom: 1px solid #F1F1F1;
+  padding-bottom: 20px;
+}
+.content .score .express > div {
+  display: flex;
+  height: 32px;
+  margin-top: 15px;
+}
+.content .score .express > div img {
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  margin-left: 0.7rem;
+}
+.content .score .express > div p {
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+  color: #666666;
+}
+.content .score .express > div .name {
+  margin-left: 20px;
+}
+.content .score .express > div .word {
+  margin-left: 1.25rem;
+}
+.content .suggest {
+  display: flex;
+  justify-content: center;
+}
+.content .suggest textarea {
+  box-sizing: border-box;
+  width: 34.5rem;
+  height: 100px;
+  padding: 10px;
+  outline: none;
+  resize: none;
+  border: none;
+  background: #F1F1F1;
+  font-size: 14px;
+}
+.content .suggest textarea::-webkit-input-placeholder {
+  font-size: 14px;
+  color: #999999;
+}
+.content .submit {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.content .submit button {
+  width: 16rem;
+  height: 45px;
+  line-height: 45px;
+  display: inline-block;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 23px;
+  border: none;
+  background-color: #FFD500;
+  font-size: 16px;
+  margin-top: 15px;
+  color: #333;
+}
+.content .submit p {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}

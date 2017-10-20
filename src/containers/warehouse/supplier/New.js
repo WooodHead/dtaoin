@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Row, Col, Button, Form, Input} from 'antd';
+import { message, Modal, Icon, Row, Col, Button, Form, Input } from 'antd';
 import api from '../../../middleware/api';
 import validator from '../../../utils/validator';
 import BaseModal from '../../../components/base/BaseModal';
@@ -34,7 +34,7 @@ class New extends BaseModal {
         url: api.warehouse.supplier.add(),
         type: 'POST',
         data: values,
-      }, (data) => {
+      }, data => {
         message.success('添加成功！');
         this.hideModal();
         this.props.form.resetFields();
@@ -44,9 +44,9 @@ class New extends BaseModal {
   }
 
   render() {
-    const {visible}=this.state;
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { visible } = this.state;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <span>

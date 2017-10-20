@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Form, Input, DatePicker} from 'antd';
+import { message, Modal, Icon, Form, Input, DatePicker } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -28,8 +28,8 @@ class EditActivity extends BaseModalWithUpload {
   }
 
   editActivity() {
-    let {activity} = this.props;
-    this.setState({icon_pic_key: activity.icon_pic});
+    const { activity } = this.props;
+    this.setState({ icon_pic_key: activity.icon_pic });
     if (activity.icon_pic) {
       this.getImageUrl(api.system.getPublicPicUrl(activity.icon_pic), 'icon_pic');
     }
@@ -37,13 +37,13 @@ class EditActivity extends BaseModalWithUpload {
   }
 
   handleSubmit() {
-    this.props.form.validateFieldsAndScroll((errors) => {
+    this.props.form.validateFieldsAndScroll(errors => {
       if (!!errors) {
         message.error(validator.text.hasError);
         return;
       }
 
-      let formData = this.props.form.getFieldsValue();
+      const formData = this.props.form.getFieldsValue();
       formData.offline_time = formatter.date(formData.offline_time);
       formData.online_time = formatter.date(formData.online_time);
 
@@ -62,11 +62,11 @@ class EditActivity extends BaseModalWithUpload {
   }
 
   render() {
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {visible} = this.state;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { visible } = this.state;
 
-    let {activity} = this.props;
+    const { activity } = this.props;
 
     return (
       <span>
@@ -80,30 +80,30 @@ class EditActivity extends BaseModalWithUpload {
           onCancel={this.hideModal}
         >
           <Form>
-            {getFieldDecorator('activity_id', {initialValue: activity._id})(
+            {getFieldDecorator('activity_id', { initialValue: activity._id })(
               <Input type="hidden"/>
             )}
 
             <FormItem label="顺序" {...formItemLayout}>
-              {getFieldDecorator('order', {initialValue: activity.order})(
+              {getFieldDecorator('order', { initialValue: activity.order })(
                 <Input placeholder="请输入活动排序"/>
               )}
             </FormItem>
 
             <FormItem label="上线时间" {...formItemLayout}>
-              {getFieldDecorator('online_time', {initialValue: activity.online_time ? formatter.getMomentDate(activity.online_time) : formatter.getMomentDate()})(
+              {getFieldDecorator('online_time', { initialValue: activity.online_time ? formatter.getMomentDate(activity.online_time) : formatter.getMomentDate() })(
                 <DatePicker placeholder="请选择活动上线时间" allowClear={false}/>
               )}
             </FormItem>
 
             <FormItem label="下线时间" {...formItemLayout}>
-              {getFieldDecorator('offline_time', {initialValue: activity.offline_time ? formatter.getMomentDate(activity.offline_time) : formatter.getMomentDate()})(
+              {getFieldDecorator('offline_time', { initialValue: activity.offline_time ? formatter.getMomentDate(activity.offline_time) : formatter.getMomentDate() })(
                 <DatePicker placeholder="请选择活动下线时间" allowClear={false}/>
               )}
             </FormItem>
 
             <FormItem label="标题" {...formItemLayout}>
-              {getFieldDecorator('name', {initialValue: activity.name})(
+              {getFieldDecorator('name', { initialValue: activity.name })(
                 <Input />
               )}
             </FormItem>
@@ -119,7 +119,7 @@ class EditActivity extends BaseModalWithUpload {
             </FormItem>
 
             <FormItem label="图片" {...formItemLayout} help="尺寸: 495*210px" required>
-              {getFieldDecorator('icon_pic', {initialValue: activity.icon_pic})(
+              {getFieldDecorator('icon_pic', { initialValue: activity.icon_pic })(
                 <Input type="hidden"/>
               )}
               <Qiniu

@@ -1,5 +1,6 @@
 import React from 'react';
-import {message, Row, Col, Form, Input, Select, Button} from 'antd';
+import { Link } from 'react-router-dom';
+import { message, Row, Col, Form, Input, Select, Button, Tooltip } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -10,15 +11,17 @@ import TableWithPagination from '../../../components/widget/TableWithPagination'
 import AddPart from './AddPart';
 import AuthPay from './AuthPay';
 import AuthExport from './AuthExport';
+import InfoDropDown from '../../../components/widget/InfoDropDown';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const TextArea = Input.TextArea;
 
 class New extends React.Component {
   constructor(props) {
     super(props);
 
-    let {id} = props.location.query;
+    const { id } = props.match.params;
     this.state = {
       isNew: !id,
       id: id || 0,
@@ -30,6 +33,8 @@ class New extends React.Component {
       itemMap: new Map(), // 新增或编辑时的配件集合
       detail: {},
       total: 0,
+      partsInfo: '',
+      enterPartInfo: '',
     };
 
     [
@@ -38,11 +43,14 @@ class New extends React.Component {
       'handlePartDelete',
       'handlePageChange',
       'handleSubmit',
+      'handleShowPartsInfo',
+      'handlePartEnter',
+      'handlePartLeave',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    let {id, page}= this.state;
+    const { id, page } = this.state;
 
     this.getSuppliers();
     if (id) {
@@ -51,18 +59,38 @@ class New extends React.Component {
     }
   }
 
+  handlePartEnter(e, record) {
+    const enterPartInfo = {};
+    enterPartInfo.coordinate = api.getOffsetParentPosition(e);
+    enterPartInfo.info = record;
+    enterPartInfo.visible = true;
+    this.setState({ enterPartInfo });
+  }
+
+  handlePartLeave() {
+    const { enterPartInfo } = this.state;
+    enterPartInfo.visible = false;
+    this.setState({ enterPartInfo });
+  }
+
   handleSupplierChange(supplierId) {
-    this.setState({supplierId});
+    const { itemMap } = this.state;
+    itemMap.clear();
+    this.setState({ supplierId, itemMap });
+  }
+
+  handleShowPartsInfo(partsInfo) {
+    this.setState({ partsInfo });
   }
 
   handlePartAdd(items) {
-    let {itemMap} = this.state;
+    const { itemMap } = this.state;
 
     items.map(item => {
       itemMap.set(item.purchase_item_id, item);
     });
 
-    this.setState({itemMap});
+    this.setState({ itemMap });
   }
 
   /**
@@ -70,7 +98,7 @@ class New extends React.Component {
    * @param id purchase_item_id
    */
   handlePartDelete(id) {
-    let {delItemIdSet, itemMap} = this.state;
+    const { delItemIdSet, itemMap } = this.state;
     itemMap.forEach(item => {
       if (item.purchase_item_id === id) {
         // 已保存的退货配件，保存删除信息
@@ -81,22 +109,22 @@ class New extends React.Component {
       }
     });
 
-    this.setState({delItemIdSet, itemMap});
+    this.setState({ delItemIdSet, itemMap });
   }
 
   handlePageChange(page) {
-    let {id, total} = this.state;
-    this.setState({page});
+    const { id, total } = this.state;
+    this.setState({ page });
     if (total) {
       this.getRejectItems(id, page);
     }
   }
 
   handleSubmit() {
-    let {id, isNew, itemMap, oldItemIdSet, delItemIdSet} = this.state;
-    let formData = this.props.form.getFieldsValue();
+    const { id, isNew, itemMap, oldItemIdSet, delItemIdSet } = this.state;
+    const formData = this.props.form.getFieldsValue();
 
-    let params = [];
+    const params = [];
     Array.from(itemMap.values()).forEach(item => {
       params.push({
         _id: item._id,
@@ -131,12 +159,12 @@ class New extends React.Component {
       data: formData,
     }, data => {
       message.success('退货单保存成功');
-      this.setState({detail: data.res.detail});
+      this.setState({ detail: data.res.detail });
     });
   }
 
   assembleDelInfo(oldItemIdSet, delItemIdSet) {
-    let delIds = [];
+    const delIds = [];
     oldItemIdSet.forEach(oldId => {
       if (delItemIdSet.has(oldId)) {
         delIds.push(oldId);
@@ -146,8 +174,8 @@ class New extends React.Component {
   }
 
   getRejectDetail(id) {
-    api.ajax({url: api.warehouse.reject.detail(id)}, data => {
-      let {detail} = data.res;
+    api.ajax({ url: api.warehouse.reject.detail(id) }, data => {
+      const { detail } = data.res;
       this.setState({
         detail,
         supplierId: detail.supplier_id,
@@ -157,10 +185,10 @@ class New extends React.Component {
   }
 
   getRejectItems(id, page) {
-    api.ajax({url: api.warehouse.reject.items(id, page)}, data => {
-      let {list, total} = data.res;
-      let oldItemIdSet = new Set();
-      let itemMap = new Map();
+    api.ajax({ url: api.warehouse.reject.items(id, page) }, data => {
+      const { list, total } = data.res;
+      const oldItemIdSet = new Set();
+      const itemMap = new Map();
 
       list.map(item => {
         oldItemIdSet.add(item._id); // save reject_item_id
@@ -178,16 +206,17 @@ class New extends React.Component {
   }
 
   getSuppliers() {
-    api.ajax({url: api.warehouse.supplier.getAll()}, data => {
-      this.setState({suppliers: data.res.list});
+    api.ajax({ url: api.warehouse.supplier.getAll() }, data => {
+      this.setState({ suppliers: data.res.list });
     });
   }
 
   render() {
-    const {formItemThree, selectStyle} = Layout;
-    let {getFieldDecorator} = this.props.form;
+    const { formItemThree, selectStyle } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { enterPartInfo, isNew } = this.state;
 
-    let {
+    const {
       page,
       total,
       itemMap,
@@ -196,92 +225,269 @@ class New extends React.Component {
       supplierId,
     } = this.state;
 
-    let parts = Array.from(itemMap.values());
+    const parts = Array.from(itemMap.values());
+    let reject_count = 0;
+    let purchase_amount_price = 0;
+    let reject_amount = 0;
+    let diff_worth = 0;
 
-    let self = this;
-    let columns = [
+    parts.map(item => {
+      reject_count += Number(item.reject_count);
+      purchase_amount_price += Number(item.reject_count) * Number(item.purchase_price);
+      reject_amount += Number(item.reject_count * item.reject_price);
+      diff_worth += ((parseFloat(item.purchase_price) - parseFloat(item.reject_price)) *
+        parseInt(item.reject_count));
+    });
+
+    if (parts.length > 0) {
+      parts.push({
+        _id: '合计',
+        reject_count,
+        purchase_amount_price: purchase_amount_price.toFixed(2),
+        reject_amount: reject_amount.toFixed(2),
+        diff_worth: diff_worth.toFixed(2),
+      });
+    }
+
+    const renderContent = (value, record, index) => {
+      const obj = {
+        children: value,
+        props: {},
+      };
+      if (Number(index) === Number(parts.length - 1)) {
+        obj.props.colSpan = 0;
+      }
+      return obj;
+    };
+
+    const self = this;
+    const columns = [
       {
         title: '序号',
         dataIndex: 'purchase_item_id',
         key: 'index',
-        render: (value, record, index) => index + 1,
-      }, {
-        title: '配件分类',
-        dataIndex: 'part_type_name',
-        key: 'part_type_name',
+        width: '48px',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: '合计',
+              props: {
+                colSpan: 6,
+              },
+            };
+          } else {
+            return index + 1;
+          }
+        },
       }, {
         title: '配件名',
         dataIndex: 'part_name',
         key: 'part_name',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: value,
+              props: {
+                colSpan: 0,
+              },
+            };
+          } else {
+            return (
+              <Link
+                to={{ pathname: `/warehouse/part/detail/${record._id}` }}
+                onMouseEnter={e => self.handlePartEnter(e, record)}
+                onMouseLeave={e => self.handlePartLeave(e, record)}
+              >
+                {value}
+              </Link>
+            );
+          }
+        },
       }, {
         title: '配件号',
         dataIndex: 'part_no',
         key: 'part_no',
+        width: '120px',
+        render: renderContent,
       }, {
-        title: '适用车型',
-        dataIndex: 'scope',
-        key: 'scope',
+        title: '规格',
+        key: 'spec',
+        width: '75px',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: 'value',
+              props: {
+                colSpan: 0,
+              },
+            };
+          } else {
+            return `${record.spec || ''}${record.unit || ''}`;
+          }
+        },
       }, {
         title: '品牌',
         dataIndex: 'brand',
         key: 'brand',
+        width: '75px',
+        render: (value, record, index) => {
+          const obj = {
+            children: (value && value.length <= 4)
+              ? value
+              : <Tooltip placement="topLeft" title={value}>{value}</Tooltip>,
+            props: {},
+          };
+          if (Number(index) === Number(parts.length - 1)) {
+            obj.props.colSpan = 0;
+          }
+          return obj;
+        },
       }, {
-        title: '规格',
-        key: 'spec',
-        render: (value, record) => `${record.spec || ''}${record.unit || ''}`,
-      },{
+        title: '适用车型',
+        dataIndex: 'scope',
+        key: 'scope',
+        width: '135px',
+        render: (value, record, index) => {
+          const obj = {
+            children: (value && value.length <= 8)
+              ? value
+              : <Tooltip placement="topLeft" title={value}>{value}</Tooltip>,
+            props: {},
+          };
+          if (Number(index) === Number(parts.length - 1)) {
+            obj.props.colSpan = 0;
+          }
+          return obj;
+        },
+      }, {
         title: '退货数量',
         dataIndex: 'reject_count',
         key: 'reject_count',
-        className: 'center',
+        width: '75px',
       }, {
-        title: '进货单价',
+        title: '采购单价',
         dataIndex: 'purchase_price',
         key: 'purchase_price',
         className: 'text-right',
-        render: value => Number(value).toFixed(2),
+        width: '80px',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: value,
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return Number(value).toFixed(2);
+          }
+        },
+      }, {
+        title: '采购总价',
+        dataIndex: 'purchase_amount_price',
+        className: 'text-right',
+        width: '85px',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: `￥${value}`,
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return (Number(record.reject_count) * Number(record.purchase_price)).toFixed(2);
+          }
+        },
       }, {
         title: '退货单价',
         dataIndex: 'reject_price',
         key: 'reject_price',
         className: 'text-right',
-        render: value => Number(value).toFixed(2),
+        width: '85px',
+        render: (value, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: '',
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return Number(value).toFixed(2);
+          }
+        },
       }, {
         title: '退货金额',
-        dataIndex: '_id',
+        dataIndex: 'reject_amount',
         key: 'reject_amount',
         className: 'text-right',
-        render: (id, record) => Number(record.reject_count * record.reject_price).toFixed(2),
+        width: '85px',
+        render: (id, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: `￥${id}`,
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return Number(record.reject_count * record.reject_price).toFixed(2);
+          }
+        },
       }, {
-        title: '差价',
+        title: '退货差价',
         dataIndex: 'diff_worth',
         key: 'diff_worth',
         className: 'text-right',
-        render: (id, record) => {
-          let diffPrice = parseFloat(record.purchase_price) - parseFloat(record.reject_price);
-          let count = parseInt(record.reject_count);
-          return Number(diffPrice * count).toFixed(2);
+        width: '80px',
+        render: (id, record, index) => {
+          const diffPrice = parseFloat(record.purchase_price) - parseFloat(record.reject_price);
+          const count = parseInt(record.reject_count);
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: `￥${id}`,
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return Number(diffPrice * count).toFixed(2);
+          }
         },
       }, {
         title: '操作',
         dataIndex: 'purchase_item_id',
         key: 'action',
         className: 'center',
-        render: (id) => {
-          return <a href="javascript:" onClick={self.handlePartDelete.bind(self, id)}>删除</a>;
+        width: '70px',
+        fixed: 'right',
+        render: (id, record, index) => {
+          if (Number(index) === Number(parts.length - 1)) {
+            return {
+              children: id,
+              props: {
+                colSpan: 1,
+              },
+            };
+          } else {
+            return <a href="javascript:" onClick={self.handlePartDelete.bind(self, id)}>删除</a>;
+          }
         },
       },
     ];
 
     return (
       <div>
+        <InfoDropDown partInfo={enterPartInfo} />
+
         <Row className="mb15">
           <Col span={18}>
             <h4 className="mb10">基本信息</h4>
 
             <Form>
               <Row>
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7}>
                   <FormItem label="供应商" {...formItemThree}>
                     {getFieldDecorator('supplier_id', {
                       initialValue: detail.supplier_id,
@@ -293,41 +499,44 @@ class New extends React.Component {
                         showSearch
                         optionFilterProp="children"
                         {...selectStyle}
-                        placeholder="选择供应商">
-                        {suppliers.map(supplier => <Option key={supplier._id}>{supplier.supplier_company}</Option>)}
-                      </Select>
+                        disabled={!isNew}
+                        placeholder="选择供应商"
+                      >
+                        {suppliers.map(supplier => <Option
+                          key={supplier._id}>{supplier.supplier_company}</Option>)}
+                      </Select>,
                     )}
                   </FormItem>
                 </Col>
 
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7}>
                   <FormItem label="运费" {...formItemThree}>
                     {getFieldDecorator('freight', {
                       initialValue: detail.freight,
                     })(
-                      <Input addonAfter="元" placeholder="输入运费"/>
+                      <Input addonAfter="元" placeholder="输入运费" />,
                     )}
                   </FormItem>
                 </Col>
 
-                <Col span={8} lg={8} sm={12}>
+                <Col span={7}>
                   <FormItem label="物流公司" {...formItemThree}>
                     {getFieldDecorator('logistics', {
                       initialValue: detail.logistics,
                     })(
-                      <Input placeholder="输入物流公司"/>
+                      <Input placeholder="输入物流公司" />,
                     )}
                   </FormItem>
                 </Col>
               </Row>
 
               <Row>
-                <Col span={8} lg={8}>
-                  <FormItem label="备注" {...formItemThree}>
+                <Col span={14}>
+                  <FormItem label="备注" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
                     {getFieldDecorator('remark', {
                       initialValue: detail.remark,
                     })(
-                      <Input type="textarea" placeholder="输入备注"/>
+                      <TextArea placeholder="输入备注" rows="1" />,
                     )}
                   </FormItem>
                 </Col>
@@ -370,25 +579,31 @@ class New extends React.Component {
           </Col>
         </Row>
 
-        <Row className="mb10">
-          <Col span={16}>
-            <h4 style={{lineHeight: '28px'}}>配件信息</h4>
-          </Col>
-          <Col span={8}>
-            <div className="pull-right">
-              <AddPart supplierId={supplierId} onAdd={this.handlePartAdd}/>
-            </div>
-          </Col>
-        </Row>
+        <div className="mb10 clearfix">
+          <div className="pull-left">
+            <h4 style={{ lineHeight: '28px' }}>配件信息</h4>
+          </div>
 
-        <TableWithPagination
-          columns={columns}
-          dataSource={parts}
-          total={total === 0 ? parts.length : total}
-          currentPage={page}
-          onPageChange={this.handlePageChange}
-          rowKey={record => record.purchase_item_id}
-        />
+          <div className="pull-right">
+            <AddPart
+              supplierId={supplierId}
+              onAdd={this.handlePartAdd}
+              showPartsInfo={this.handleShowPartsInfo}
+            />
+          </div>
+        </div>
+
+        <span className="purchase-reject">
+          <TableWithPagination
+            columns={columns}
+            dataSource={parts}
+            total={total === 0 ? parts.length : total}
+            currentPage={page}
+            onPageChange={this.handlePageChange}
+            rowKey={record => record.purchase_item_id}
+            scroll={{ x: 1200 }}
+          />
+        </span>
       </div>
     );
   }

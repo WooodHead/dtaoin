@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col } from 'antd';
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
 import BaseList from '../../../components/base/BaseList';
@@ -9,7 +9,7 @@ import SalaryGroupFilter from '../SalaryGroupFilter';
 import DepartmentFilter from '../DepartmentFilter';
 import MonthRangeFilter from './MonthRangeFilter';
 
-let now = new Date();
+const now = new Date();
 
 export default class List extends BaseList {
   constructor(props) {
@@ -20,12 +20,12 @@ export default class List extends BaseList {
       name: '',
       startMonth: formatter.month(new Date(now.getFullYear(), now.getMonth() - 1)),
       endMonth: formatter.month(new Date()),
-      page: props.location.query.page || 1,
+      page: 1,
     };
   }
 
   render() {
-    let {
+    const {
       startMonth,
       endMonth,
     } = this.state;

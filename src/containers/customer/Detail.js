@@ -1,20 +1,23 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 
 import api from '../../middleware/api';
 import path from '../../config/path';
 
-import CustomerInfo from './BaseInfo';
+import BaseInfo from './BaseInfo';
 import PotentialAutoTabs from './PotentialAutoTabs';
 import AutoTabs from './DealAutoTabs';
-import MaintenanceReminderInfo from './MaintenanceReminderInfo';
+import ReminderInfo from './ReminderInfo';
 
+/**
+ * 客户详情页
+ */
 export default class Detail extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      id: props.location.query.customerId,
+      id: props.match.params.customerId || '',
       customerDetail: {},
       autos: [],
       intentions: [],
@@ -22,11 +25,13 @@ export default class Detail extends Component {
       infoPermission: false,
       autoPermission: false,
       intentionsPermission: false,
-      MaintenanceReminderTotal: 0,
+      reminderCount: 0, // control remind module hide if no data
     };
+
     [
       'handleIntentionChange',
-      'handleMaintenanceReminderInfo',
+      'onRequestDataSuccess',
+      'handleEditAutoSuccess',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -37,13 +42,29 @@ export default class Detail extends Component {
     this.getIsAuthorization();
   }
 
-  async getIsAuthorization() {
-    let hasInfoPermission = await api.checkPermission(path.customer.information);
-    let hasAutoPermission = await api.checkPermission(path.customer.auto);
-    let hasIntentionsPermission = await api.checkPermission(path.customer.intention);
+  getIsAuthorization() {
+    this.checkInfoPermission(path.customer.information);
+    this.checkAutoPermission(path.customer.auto);
+    this.checkIntentionsPermission(path.customer.intention);
+  }
+
+  async checkInfoPermission(path) {
+    const hasInfoPermission = await api.checkPermission(path);
     this.setState({
       infoPermission: hasInfoPermission,
+    });
+  }
+
+  async checkAutoPermission(path) {
+    const hasAutoPermission = await api.checkPermission(path);
+    this.setState({
       autoPermission: hasAutoPermission,
+    });
+  }
+
+  async checkIntentionsPermission(path) {
+    const hasIntentionsPermission = await api.checkPermission(path);
+    this.setState({
       intentionsPermission: hasIntentionsPermission,
     });
   }
@@ -52,26 +73,30 @@ export default class Detail extends Component {
     this.getCustomerIntentions(this.state.id);
   }
 
-  handleMaintenanceReminderInfo(value) {
-    this.setState({MaintenanceReminderTotal: value});
+  onRequestDataSuccess(value) {
+    this.setState({ reminderCount: value });
   }
 
   getCustomerDetail(customerId) {
-    api.ajax({url: api.customer.detail(customerId)}, (data) => {
-      this.setState({customerDetail: data.res.customer_info});
+    api.ajax({ url: api.customer.detail(customerId) }, data => {
+      this.setState({ customerDetail: data.res.customer_info });
     });
   }
 
   getCustomerAutos(customerId) {
-    api.ajax({url: api.presales.userAutoList(customerId)}, (data) => {
-      this.setState({autos: data.res.auto_list});
+    api.ajax({ url: api.presales.userAutoList(customerId) }, data => {
+      this.setState({ autos: data.res.auto_list });
     });
   }
 
   getCustomerIntentions(customerId) {
-    api.ajax({url: api.presales.intention.getListByCustomerId(customerId)}, (data) => {
-      this.setState({intentions: data.res.intention_list});
+    api.ajax({ url: api.presales.intention.getListByCustomerId(customerId) }, data => {
+      this.setState({ intentions: data.res.intention_list });
     });
+  }
+
+  handleEditAutoSuccess() {
+    this.getCustomerAutos(this.state.id);
   }
 
   render() {
@@ -83,26 +108,30 @@ export default class Detail extends Component {
       infoPermission,
       autoPermission,
       intentionsPermission,
-      MaintenanceReminderTotal,
+      reminderCount,
     } = this.state;
 
-    const MaintenanceReminderVisible = classNames({
-      'mt40': autoPermission && !!Number(MaintenanceReminderTotal),
-      'hide': !autoPermission || !Number(MaintenanceReminderTotal),
+    const remindContainer = classNames({
+      mb20: autoPermission && !!Number(reminderCount),
+      hide: !autoPermission || !Number(reminderCount),
     });
 
     return (
       <div className="render-content">
-        <div className={infoPermission ? 'mb10' : 'hide'}>
-          <CustomerInfo detail={customerDetail}/>
+        <div className={infoPermission ? 'mb20' : 'hide'}>
+          <BaseInfo detail={customerDetail} />
         </div>
 
-        <div className={MaintenanceReminderVisible}>
-          <MaintenanceReminderInfo customerId={id} onSuccess={this.handleMaintenanceReminderInfo}/>
+        <div className={remindContainer}>
+          <ReminderInfo customerId={id} onSuccess={this.onRequestDataSuccess} />
         </div>
 
-        <div className={autoPermission ? 'mt40' : 'hide'}>
-          <AutoTabs autos={autos} customerId={id}/>
+        <div className={autoPermission ? 'mb20' : 'hide'}>
+          <AutoTabs
+            autos={autos}
+            customerId={id}
+            editSuccess={this.handleEditAutoSuccess}
+          />
         </div>
 
         <div className={intentionsPermission ? '' : 'hide'}>

@@ -23,21 +23,21 @@ export default class BaseList extends React.Component {
    */
   handleConditionChange(type, name, event) {
     if (type === 'value') {
-      this.setState({[name]: event, page: 1});
+      this.setState({ [name]: event, page: 1 });
     } else {
-      this.setState({[name]: name == 'checkbox' ? event.state.checked : event.target.value, page: 1});
+      this.setState({ [name]: name == 'checkbox' ? event.state.checked : event.target.value, page: 1 });
     }
   }
 
   handleDateChange(propName, value, mString) {
-    this.setState({[propName]: mString, page: 1});
+    this.setState({ [propName]: mString, page: 1 });
   }
 
   handleRadioChange(propName, e) {
-    this.setState({[propName]: e.target.value, page: 1});
+    this.setState({ [propName]: e.target.value, page: 1 });
   }
 
   handleSuccess() {
-    this.setState({reload: true});
+    this.setState({ reload: true });
   }
 }

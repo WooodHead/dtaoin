@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button} from 'antd';
+import { Modal } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -28,8 +28,8 @@ export default class Pay extends BaseModal {
   }
 
   showModal() {
-    let {project} = this.props;
-    let payStatus = String(project.pay_status);
+    const { project } = this.props;
+    const payStatus = String(project.pay_status);
     if (payStatus === '0') {
       this.setState({
         settlementLossesVisible: true,
@@ -52,14 +52,14 @@ export default class Pay extends BaseModal {
   }
 
   render() {
-    let {
+    const {
       paymentForm,
       repaymentForm,
       settlementLossesVisible,
       repaymentVisible,
     } = this.state;
 
-    let {
+    const {
       project_id,
       customer_id,
       project,
@@ -74,19 +74,19 @@ export default class Pay extends BaseModal {
     const formProps = {
       customerId: customer_id,
       projectId: project_id,
-      project: project,
-      customer: customer,
-      materialFee: materialFee,
-      timeFee: timeFee,
-      realTotalFee: realTotalFee,
+      project,
+      customer,
+      materialFee,
+      timeFee,
+      realTotalFee,
       repaymentVisible,
       settlementLossesVisible,
       cancelModal: this.hideModal,
       payVisible: this.payVisible,
     };
 
-    let status = String(project.status);
-    let payStatus = String(project.pay_status);
+    const status = String(project.status);
+    const payStatus = String(project.pay_status);
 
     let btnText = '结算';
     if (payStatus === '1') {
@@ -97,12 +97,12 @@ export default class Pay extends BaseModal {
       <span>
         {size === 'small' ?
           <a href="javascript:" onClick={this.showModal}>{btnText}</a> :
-          <Button
+          <p
             onClick={this.showModal}
             disabled={status === '-1' || status == 0 || payStatus === '2' || disabled}
           >
             {btnText}
-          </Button>
+          </p>
         }
 
         <Modal

@@ -1,371 +1,312 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router';
-import {Card, Row, Col, Popover} from 'antd';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 
-import QRCode from 'qrcode.react';
 import api from '../middleware/api';
+import text from '../config/text';
 
-require('../styles/home.css');
-let arrowpng = require('../images/home/arrow.png');
-let icon1png = require('../images/home/icon1.png');
-let icon2png = require('../images/home/icon2.png');
-let icon3png = require('../images/home/icon3.png');
-let icon4png = require('../images/home/icon4.png');
-let icon5png = require('../images/home/icon5.png');
-let icon6png = require('../images/home/icon6.png');
-let icon7png = require('../images/home/icon7.png');
-// let icon8png = require('../images/home/icon8.png');
-let icon9png = require('../images/home/icon9.png');
+require('../styles/home.less');
 
+const icon1 = require('../images/home/home_icon_1.png');
+const icon2 = require('../images/home/home_icon_2.png');
+const icon3 = require('../images/home/home_icon_3.png');
+const icon4 = require('../images/home/home_icon_4.png');
+const icon5 = require('../images/home/home_icon_5.png');
+const icon6 = require('../images/home/home_icon_6.png');
+
+/**
+ * 首页
+ */
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visibleStaff: false,
-      visibleCustomer: false,
-      data: {},
-      insuranceTask: {unfollow: 0, newInspection: 0, conducting: 0},
-      inspectionTask: {unfollow: 0, newInspection: 0, conducting: 0},
-      commonTask: {unfollow: 0, newInspection: 0, conducting: 0},
+      remindSummary: {},
+      warnTotal: 0,
+      bodyClientWidth: '',
+      greetings: '',
     };
+
     [
       'getTaskSummary',
-      'handleVisibleChangeStaff',
-      'handleVisibleChangeCustomer',
+      'getBodyClientWidth',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
+    const bodyClientWidth = document.body.clientWidth;
+    this.setState({ bodyClientWidth });
+
+    window.addEventListener('resize', this.getBodyClientWidth);
+
     this.getTaskSummary();
-    let documentHeight = document.documentElement.clientHeight || window.innerHeight;
-    this.setState({documentHeight: documentHeight * 0.85});
+    const documentHeight = document.documentElement.clientHeight || window.innerHeight;
+    this.setState({ documentHeight: documentHeight * 0.85 });
+
+    const body = document.getElementsByTagName('body')[0];
+    const layOutContainer = this.refs.homeContent.parentNode.parentNode.parentNode;
+    layOutContainer.style.overflow = 'initial';
+    body.style.overflowX = 'hidden';
+
+    this.getGreetings();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.getBodyClientWidth);
+
+    const body = document.getElementsByTagName('body')[0];
+    const layOutContainer = this.refs.homeContent.parentNode.parentNode.parentNode;
+    layOutContainer.style.overflow = 'hidden';
+    body.style.overflowX = 'initial';
   }
 
-  handleVisibleChangeStaff(visible) {
-    this.setState({visibleStaff: visible});
+  getBodyClientWidth() {
+    const bodyClientWidth = document.body.clientWidth;
+    this.setState({ bodyClientWidth });
   }
 
-  handleVisibleChangeCustomer(visible) {
-    this.setState({visibleCustomer: visible});
+  getGreetings() {
+    const hour = Number(new Date().getHours());
+    let greetings = '';
+    if (hour >= 6 && hour < 9) {
+      greetings = text.greetings['1'];
+    } else if (hour >= 9 && hour < 11) {
+      greetings = text.greetings['2'];
+    } else if (hour >= 11 && hour < 14) {
+      greetings = text.greetings['3'];
+    } else if (hour >= 14 && hour < 18) {
+      greetings = text.greetings['4'];
+    } else if (hour >= 18 && hour < 21) {
+      greetings = text.greetings['5'];
+    } else if (hour >= 21 && hour < 6) {
+      greetings = text.greetings['6'];
+    }
 
+    this.setState({ greetings });
   }
 
   getTaskSummary() {
-    api.ajax({
-      url: api.task.tastSummary(),
-    }, (data) => {
-      let list = data.res || {};
+    // 保险，年检，保养及其他
+    api.ajax({ url: api.task.tastSummary() }, data => {
+      this.setState({ remindSummary: data.res });
+    });
 
-      let insuranceTask = {unfollow: 0, newly: 0, conducting: 0};
-      let inspectionTask = {unfollow: 0, newly: 0, conducting: 0};
-      let commonTask = {unfollow: 0, newly: 0, conducting: 0};
-
-      list.insurance_sumary && list.insurance_sumary.map((item) => {
-        if (Number(item.status) === 0) {
-          insuranceTask.unfollow = Number(item.count);
-        } else if (Number(item.status) === 1) {
-          insuranceTask.conducting = Number(item.count);
-        }
-      });
-
-      list.inspection_sumary && list.inspection_sumary.map((item) => {
-        if (Number(item.status) === 0) {
-          inspectionTask.unfollow = Number(item.count);
-        } else if (Number(item.status) === 1) {
-          inspectionTask.conducting = Number(item.count);
-        }
-      });
-
-      list.common_sumary && list.common_sumary.map((item) => {
-        if (Number(item.status) === 0) {
-          commonTask.unfollow = Number(item.count);
-        } else if (Number(item.status) === 1) {
-          commonTask.conducting = Number(item.count);
-        }
-      });
-
-      insuranceTask.newly = list.new_insurance && list.new_insurance.count || 0;
-      inspectionTask.newly = list.new_inspection && list.new_inspection.count || 0;
-      commonTask.newly = list.new_common && list.new_common.count || 0;
-
-      this.setState({
-        insuranceTask,
-        inspectionTask,
-        commonTask,
-      });
+    // 库存预警
+    api.ajax({ url: api.warehouse.part.partLowAmountList(1) }, data => {
+      const warnTotal = data.res.total;
+      this.setState({ warnTotal });
     });
   }
 
   render() {
     const {
-      insuranceTask,
-      inspectionTask,
-      commonTask,
+      remindSummary,
+      warnTotal,
+      greetings,
     } = this.state;
 
-    let userInfo = api.getLoginUser();
-
-    let contentRenewalTask = (
-      <p>
-        <span className="font-size-14 font">续保任务</span>
-        <span className="pull-right">
-          <img src={arrowpng} alt="增长" className="img-tip"/>
-          <span className="font-size-14 mr8">{insuranceTask.newly}</span>
-          <span className="font-size-14 font-color-one">今日新增</span>
-        </span>
-      </p>
-    );
-    let contentYearlyInspectionTask = (
-      <p>
-        <span className="font-size-14 font">年检任务</span>
-        <span className="pull-right">
-          <img src={arrowpng} alt="增长" className="img-tip"/>
-          <span className="font-size-14 mr8">{inspectionTask.newly}</span>
-          <span className="font-size-14 font-color-one">今日新增</span>
-        </span>
-      </p>
-    );
-    let contentCustomertask = (
-      <p>
-        <span className="font-size-14 font">客户任务</span>
-        <span className="pull-right">
-          <img src={arrowpng} alt="增长" className="img-tip"/>
-          <span className="font-size-14 mr8">{commonTask.newly}</span>
-          <span className="font-size-14 font-color-one">今日新增</span>
-        </span>
-      </p>
-    );
+    const newInsuranceRemind = classNames({
+      hidden: !Number(remindSummary.new_insurance) > 0,
+    });
+    const newInspectionRemind = classNames({
+      hidden: !Number(remindSummary.new_inspection) > 0,
+    });
+    const newMaintainRemind = classNames({
+      hidden: !Number(remindSummary.new_maintain) > 0,
+    });
+    const newCommonRemind = classNames({
+      hidden: !Number(remindSummary.new_common) > 0,
+    });
+    const newBirthdayRemind = classNames({
+      hidden: !Number(remindSummary.new_birthday) > 0,
+    });
+    const newCouponRemind = classNames({
+      hidden: !Number(remindSummary.new_coupon_card) > 0,
+    });
+    const newDebtRemind = classNames({
+      hidden: !Number(remindSummary.new_debt) > 0,
+    });
 
     return (
-      <Row>
-        <Col span={17}>
-          <div>
-            <p className="font-size-16 mb20 font">快捷方式</p>
-            <Row gutter={20} className="mt20">
-              <Col span={6}>
-                <Link to={{pathname: '/aftersales/project/new'}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon1png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">创建工单</p>
-                  </Card>
-                </Link>
-              </Col>
+      <div className="home-content" ref="homeContent" id="homeContent" style={{ marginTop: -20 }}>
+        <div className="content">
+          <p className="welcome">{greetings}</p>
 
-              <Col span={6}>
-                <Link to={{pathname: '/aftersales/project/index'}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon2png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">工单管理</p>
-                  </Card>
-                </Link>
-              </Col>
+          <div className="top-navigation">
+            <Link to={{ pathname: '/aftersales/project/new' }} target="_blank">
+              <div className="navigation">
+                <img src={icon1} />
+                <div>
+                  <p>创建工单</p>
+                  <p>日结工单，账目严谨</p>
+                </div>
+              </div>
+            </Link>
 
-              <Col span={6}>
-                <Link to={{pathname: '/marketing/membercard/sale'}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon5png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">办理会员</p>
-                  </Card>
-                </Link>
-              </Col>
-
-              <Col span={6}>
-                <Link to={{pathname: '/warehouse/purchase/new'}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon6png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">采购开单</p>
-                  </Card>
-                </Link>
-              </Col>
-            </Row>
-
-            <Row gutter={20} className="mt20">
-              <Col span={6}>
-                <Link to={{pathname: '/aftersales/part-sale/new'}}
-                      target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon9png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">配件销售</p>
-                  </Card>
-                </Link>
-              </Col>
-
-              <Col span={6}>
-                <Link to={{pathname: '/aftersales/consumptive-material', query: {consumptiveShow: true}}}
-                      target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon7png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">耗材领用</p>
-                  </Card>
-                </Link>
-              </Col>
-
-              {/*<Col span={6}>
-               <Link to={{pathname: '/finance/monthly_report'}} target="_blank">
-               <Card className="shortcut">
-               <p><img src={icon8png} alt="" className="img"/></p>
-               <p className="font-size-18 mt10 font">月报汇总</p>
-               </Card>
-               </Link>
-               </Col>*/}
-              <Col span={6}>
-                <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 1, expenseShow: 0}}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon3png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">新增收入</p>
-                  </Card>
-                </Link>
-              </Col>
-
-              <Col span={6}>
-                <Link to={{pathname: '/finance/expense/list', query: {incomeShow: 0, expenseShow: 1}}} target="_blank">
-                  <Card className="shortcut">
-                    <p><img src={icon4png} alt="" className="img"/></p>
-                    <p className="font-size-18 mt10 font">新增支出</p>
-                  </Card>
-                </Link>
-              </Col>
-            </Row>
-
-            <p className="font-size-16 mt20 mb20 font">任务管理</p>
-            <Row gutter={20} className="margin-bottom-10">
-              <Col span={8}>
-                <Card title={contentCustomertask}>
-                  <Row>
-                    <Link to={{pathname: '/task/list-customer', query: {status: 0}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">未跟进(人)</p>
-                        <p className="task-state-num">{commonTask.unfollow}</p>
-                      </Col>
-                    </Link>
-                    <Link to={{pathname: '/task/list-customer', query: {status: 1}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">进行中(人)</p>
-                        <p className="task-state-num">{commonTask.conducting}</p>
-                      </Col>
-                    </Link>
-                  </Row>
-                  <Row>
-                    <Link to={{pathname: '/task/list-customer', query: {status: 0}}} target="_blank">
-                      <Col span={24} className="center">
-                        <p className="font-size-14">详情></p>
-                      </Col>
-                    </Link>
-                  </Row>
-                </Card>
-              </Col>
-
-              <Col span={8}>
-                <Card title={contentRenewalTask}>
-
-                  <Row>
-                    <Link to={{pathname: '/task/list-renewal', query: {status: 0}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">未跟进(人)</p>
-                        <p className="task-state-num">{insuranceTask.unfollow}</p>
-                      </Col>
-                    </Link>
-                    <Link to={{pathname: '/task/list-renewal', query: {status: 1}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">进行中(人)</p>
-                        <p className="task-state-num">{insuranceTask.conducting}</p>
-                      </Col>
-                    </Link>
-                  </Row>
-                  <Row>
-                    <Link to={{pathname: '/task/list-renewal', query: {status: 0}}} target="_blank">
-                      <Col span={24} className="center">
-                        <p className="font-size-14">详情></p>
-                      </Col>
-                    </Link>
-                  </Row>
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card title={contentYearlyInspectionTask}>
-                  <Row>
-                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 0}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">未跟进(人)</p>
-                        <p className="task-state-num">{inspectionTask.unfollow}</p>
-                      </Col>
-                    </Link>
-                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 1}}} target="_blank">
-                      <Col span={12} className="center">
-                        <p className="task-state">进行中(人)</p>
-                        <p className="task-state-num">{inspectionTask.conducting}</p>
-                      </Col>
-                    </Link>
-                  </Row>
-                  <Row>
-                    <Link to={{pathname: '/task/list-yearlyinspection', query: {status: 0}}} target="_blank">
-                      <Col span={24} className="center">
-                        <p className="font-size-14">详情></p>
-                      </Col>
-                    </Link>
-                  </Row>
-                </Card>
-              </Col>
-            </Row>
+            <Link to={{ pathname: '/aftersales/project/index' }} target="_blank">
+              <div className="navigation">
+                <img src={icon2} />
+                <div>
+                  <p>工单管理</p>
+                  <p>规范管理，提升效率</p>
+                </div>
+              </div>
+            </Link>
+            <Link to={{ pathname: '/marketing/membercard/sale' }} target="_blank">
+              <div className="navigation">
+                <img src={icon3} />
+                <div>
+                  <p>套餐开卡</p>
+                  <p>打包销售，提升客户粘性</p>
+                </div>
+              </div>
+            </Link>
           </div>
-        </Col>
 
-        <Col span={6} offset={1}>
-          <div style={{marginTop: '43px'}}>
-            <Card title={<span className="right-font">门店信息</span>}>
-              <p className="font-color-one font-size-14">门店名称
-                <span className="ml10 font-color-two">{userInfo.companyName}</span>
-              </p>
-              <p className="mt10 font-color-one font-size-14">门店编号
-                <span className="ml10 font-color-two">{userInfo.companyNum}</span>
-              </p>
-              <p className="mt10 font-color-one font-size-14">合作类型
-                <span className="ml10 font-color-two">{userInfo.cooperationTypeName}</span>
-              </p>
-            </Card>
+          <div className="bottom-navigation">
+            <Link to={{ pathname: '/warehouse/purchase/new' }} target="_blank">
+              <div className="navigation">
+                <img src={icon4} />
+                <div>
+                  <p>采购开单</p>
+                  <p>按需采购，及时补充库存</p>
+                </div>
+              </div>
+            </Link>
 
-            <Card
-              className="mt20"
-              title={<span className="right-font">下载中心</span>}>
-              <p className="font-color-two font-size-14">水稻汽车-员工版：
-                <Popover
-                  content={
-                    <span className="canvas no-print">
-                        <QRCode
-                          value={location.origin + '/app-download-tob.html'}
-                          size={128} ref="qrCode"
-                        />
-                      </span>
-                  }
-                  trigger="click"
-                  visible={this.state.visibleStaff}
-                  onVisibleChange={this.handleVisibleChangeStaff}
-                >
-                  <a href="javascript:">点击扫码下载</a>
-                </Popover>
-              </p>
+            <Link to={{ pathname: '/finance/expense/list' }} target="_blank">
+              <div className="navigation">
+                <img src={icon5} />
+                <div>
+                  <p>收支管理</p>
+                  <p>流水随手记,</p>
+                  <p>收支明细一目了然</p>
+                </div>
+              </div>
+            </Link>
 
-              <p className="mt10 font-color-two font-size-14">水稻汽车-客户版：
-                <Popover
-                  content={
-                    <span className="canvas no-print">
-                        <QRCode
-                          value={location.origin + '/app-download-toc.html'}
-                          size={128} ref="qrCode"
-                        />
-                      </span>
-                  }
-                  trigger="click"
-                  visible={this.state.visibleCustomer}
-                  onVisibleChange={this.handleVisibleChangeCustomer}
-                >
-                  <a href="javascript:">点击扫码下载</a>
-                </Popover>
-              </p>
-            </Card>
+            <Link to={{ pathname: '/aftersales/customer/index' }} target="_blank">
+              <div className="navigation">
+                <img src={icon6} />
+                <div>
+                  <p>客户管理</p>
+                  <p>提升客户关怀,</p>
+                  <p>挖掘潜在商机</p>
+                </div>
+              </div>
+            </Link>
           </div>
-        </Col>
-      </Row>
+
+          <p className="task-table-title">任务及提醒</p>
+          <div className="task-table">
+            <div className="table-row">
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/maintain' }} target="_blank">
+                  <div className="title">
+                    <p>保养任务</p>
+                    <p className={newMaintainRemind}>{remindSummary.new_maintain}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.maintain_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/renewal' }} target="_blank">
+                  <div className="title">
+                    <p>续保任务</p>
+                    <p className={newInsuranceRemind}>{remindSummary.new_insurance}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.insurance_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/yearly-inspection' }} target="_blank">
+                  <div className="title">
+                    <p>年检任务</p>
+                    <p className={newInspectionRemind}>{remindSummary.new_inspection}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.inspection_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/coupon-card' }} target="_blank">
+                  <div className="title">
+                    <p>套餐卡到期</p>
+                    <p className={newCouponRemind}>{remindSummary.new_coupon_card}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.coupon_card_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            <div className="table-row">
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/debt' }} target="_blank">
+                  <div className="title">
+                    <p>收款提醒</p>
+                    <p className={newDebtRemind}>{remindSummary.new_debt}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.debt_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/birthday' }} target="_blank">
+                  <div className="title">
+                    <p>生日提醒</p>
+                    <p className={newBirthdayRemind}>{remindSummary.new_birthday}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.birthday_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: '/remind/common' }} target="_blank">
+                  <div className="title">
+                    <p>其他回访</p>
+                    <p className={newCommonRemind}>{remindSummary.new_common}</p>
+                  </div>
+                  <div className="progress">
+                    <p>{remindSummary.common_summary || 0}</p>
+                    <p>未跟进</p>
+                  </div>
+                </Link>
+              </div>
+
+              <div className="table-cell">
+                <Link to={{ pathname: 'aftersales/inventory-warn/index' }} target="_blank">
+                  <div className="title">
+                    <p>库存预警</p>
+                  </div>
+                  <div className="progress">
+                    <p>{warnTotal}</p>
+                    <p>低于安全库存</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 }

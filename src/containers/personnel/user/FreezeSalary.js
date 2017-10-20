@@ -1,18 +1,18 @@
 import React from 'react';
-import {message, Modal, Icon, Button} from 'antd';
+import { message, Modal, Icon, Button } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import api from '../../../middleware/api';
 
 export default class FreezeSalaryModal extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleClick() {
-    let {salaryIds} = this.props;
+    const { salaryIds } = this.props;
     if (salaryIds.length === 0) {
       message.warning('请选择需要冻结工资的员工');
       return false;
@@ -22,21 +22,20 @@ export default class FreezeSalaryModal extends BaseModal {
   }
 
   handleSubmit() {
-    let {salaryIds} = this.props;
+    const { salaryIds } = this.props;
     api.ajax({
-        url: api.user.freezeSalary(),
-        type: 'POST',
-        data: {salary_ids: salaryIds.toString()},
-      },
+      url: api.user.freezeSalary(),
+      type: 'POST',
+      data: { salary_ids: salaryIds.toString() },
+    },
       () => {
-        // (data) => {
-        // console.log('success', data);
+
       });
   }
 
   render() {
-    let {size, disabled} = this.props;
-    let {visible} = this.state;
+    const { size, disabled } = this.props;
+    const { visible } = this.state;
     return (
       <span>
         {

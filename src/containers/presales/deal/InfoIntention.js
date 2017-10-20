@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col } from 'antd';
 
 import Edit from '../../../containers/presales/potential/Edit';
 
@@ -18,30 +18,30 @@ export default class InfoIntention extends React.Component {
   }
 
   componentDidMount() {
-    let {customerId, autoId, intentionId} = this.props;
+    const { customerId, autoId, intentionId } = this.props;
 
-    autoId ?
+    Number(autoId) ?
       this.getIntentionInfoByautoId(customerId, autoId)
       :
       this.getIntentionInfoByIntentionId(customerId, intentionId);
   }
 
   getIntentionInfoByautoId(customerId, autoId) {
-    api.ajax({url: api.presales.intention.getIntentionDetailByAutoId(customerId, autoId)}, (data) => {
-      this.setState({intentionInfo: data.res.intention_info || {}});
+    api.ajax({ url: api.presales.intention.getIntentionDetailByAutoId(customerId, autoId) }, data => {
+      this.setState({ intentionInfo: data.res.intention_info || {} });
     }, () => {
     });
   }
 
   getIntentionInfoByIntentionId(customerId, intentionId) {
-    api.ajax({url: api.presales.intention.detail(customerId, intentionId)}, (data) => {
-      this.setState({intentionInfo: data.res.intention_info || {}});
+    api.ajax({ url: api.presales.intention.detail(customerId, intentionId) }, data => {
+      this.setState({ intentionInfo: data.res.intention_info || {} });
     }, () => {
     });
   }
 
   handleIntentionChange() {
-    let {customerId, autoId, intentionId} = this.props;
+    const { customerId, autoId, intentionId } = this.props;
 
     autoId ?
       this.getIntentionInfoByautoId(customerId, autoId)
@@ -50,8 +50,8 @@ export default class InfoIntention extends React.Component {
   }
 
   render() {
-    let {intentionInfo} = this.state;
-    let {customerId} = this.props;
+    const { intentionInfo } = this.state;
+    const { customerId } = this.props;
     return (
       <div className="mt20">
         <Row>

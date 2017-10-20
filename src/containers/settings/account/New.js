@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Button, Form, Input, Radio, Select} from 'antd';
+import { message, Modal, Icon, Button, Form, Input, Radio, Select } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -43,22 +43,22 @@ class New extends BaseModal {
   }
 
   handleUserTypeChange(userType) {
-    let {chains} = this.state;
+    const { chains } = this.state;
     if (chains.length === 0 && userType === '1') {
       this.getChains();
     }
   }
 
   getChains() {
-    api.ajax({url: api.overview.getAllChains()}, data => {
-      this.setState({chains: data.res.list});
+    api.ajax({ url: api.overview.getAllChains() }, data => {
+      this.setState({ chains: data.res.list });
     });
   }
 
   render() {
-    const {formItemLayout, selectStyle} = Layout;
-    const {getFieldDecorator, getFieldValue} = this.props.form;
-    const {visible, chains} = this.state;
+    const { formItemLayout, selectStyle } = Layout;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { visible, chains } = this.state;
 
     return (
       <span>

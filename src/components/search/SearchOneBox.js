@@ -1,9 +1,11 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import { Input, Select, Button, Icon } from 'antd';
 import classNames from 'classnames';
+import createReactClass from 'create-react-class';
+
 const Option = Select.Option;
 
-const SearchOneBox = React.createClass({
+const SearchOneBox = createReactClass({
   getInitialState() {
     return {
       data: [],
@@ -12,24 +14,24 @@ const SearchOneBox = React.createClass({
     };
   },
 
-  componentDidMount(){
-    let item = this.props.value;
+  componentDidMount() {
+    const item = this.props.value;
     if (item) {
-      this.setState({value: item});
+      this.setState({ value: item });
     }
   },
 
   handleSelect(value, option) {
-    let index = option.props.index;
-    let list = this.props.data;
-    this.setState({value: option.props.children});
+    const index = option.props.index;
+    const list = this.props.data;
+    this.setState({ value: option.props.children });
 
     this.props.select(list[index]);
   },
 
   handleSearch(key) {
     if (!!key) {
-      this.setState({value: key});
+      this.setState({ value: key });
       this.props.change(key);
     }
   },
@@ -39,11 +41,11 @@ const SearchOneBox = React.createClass({
   },
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   },
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   },
 
 
@@ -57,13 +59,13 @@ const SearchOneBox = React.createClass({
       'ant-search-input-focus': this.state.focus,
     });
 
-    let {style, placeholder} = this.props;
+    const { style, placeholder } = this.props;
 
     return (
       <Input.Group className={searchCls} style={style}>
         <Select
           size="large"
-          combobox
+          mode="combobox"
           value={this.state.value}
           placeholder={placeholder}
           notFoundContent="未找到"
@@ -93,5 +95,5 @@ const SearchOneBox = React.createClass({
   },
 });
 
-SearchOneBox.defaultProps = {placeholder: '用关键字搜索'};
+SearchOneBox.defaultProps = { placeholder: '用关键字搜索' };
 export default SearchOneBox;

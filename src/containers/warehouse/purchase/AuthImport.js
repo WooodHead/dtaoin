@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Popover, Button, Icon, Popconfirm} from 'antd';
+import { message, Popover, Button, Icon, Popconfirm } from 'antd';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
@@ -23,7 +23,7 @@ export default class AuthImport extends React.Component {
   }
 
   handleAuthPrepare(visible) {
-    let {id, type} = this.props;
+    const { id, type } = this.props;
     if (type === '1') {
       this.saveInWarehouse(id);
       return;
@@ -34,7 +34,7 @@ export default class AuthImport extends React.Component {
     } else {
       clearInterval(this.interval);
     }
-    this.setState({visible});
+    this.setState({ visible });
   }
 
   handleSubmit(e) {
@@ -43,32 +43,32 @@ export default class AuthImport extends React.Component {
     api.ajax({
       url: api.warehouse.purchase.import(),
       type: 'post',
-      data: {purchase_id: this.props.id},
-    }, (data) => {
-      let {detail} = data.res;
+      data: { purchase_id: this.props.id },
+    }, data => {
+      const { detail } = data.res;
       if (String(detail.import_user_id) !== '0') {
         message.success('入库成功');
         setTimeout(() => {
           location.href = '/warehouse/purchase/index';
         }, 500);
       }
-    }, (error) => {
+    }, error => {
       message.error(`入库失败[${error}]`);
     });
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path);
+    this.setState({ hasPermission });
   }
 
   saveInWarehouse(id) {
     api.ajax({
       type: 'post',
       url: api.warehouse.purchase.import(),
-      data: {purchase_id: id},
+      data: { purchase_id: id },
     }, data => {
-      let {detail} = data.res;
+      const { detail } = data.res;
       if (detail.import_user_id !== '0') {
         message.success('入库成功');
         location.href = '/warehouse/purchase/index';
@@ -79,17 +79,17 @@ export default class AuthImport extends React.Component {
   getPurchaseDetail(id) {
     api.ajax({
       url: api.warehouse.purchase.detail(id),
-    }, (data) => {
-      let {detail} = data.res;
+    }, data => {
+      const { detail } = data.res;
 
-      this.setState({detail});
+      this.setState({ detail });
 
       if (String(detail.import_user_id) !== '0') {
         message.success('入库成功');
         clearInterval(this.interval);
         location.href = '/warehouse/purchase/index';
       }
-    }, (err) => {
+    }, err => {
       message.error(`入库失败[${err}]`);
       clearInterval(this.interval);
     });
@@ -100,9 +100,9 @@ export default class AuthImport extends React.Component {
   }
 
   render() {
-    let {id, disabled} = this.props;
-    let {detail, hasPermission} = this.state;
-    let importUserId = detail.import_user_id;
+    const { id, disabled } = this.props;
+    const { detail, hasPermission } = this.state;
+    const importUserId = detail.import_user_id;
 
     const content = (
       <div className="center">
@@ -112,7 +112,7 @@ export default class AuthImport extends React.Component {
             requestParams: {
               type: 'post',
               url: api.warehouse.purchase.import(),
-              data: {purchase_id: id},
+              data: { purchase_id: id },
             },
           })}
           size={128}

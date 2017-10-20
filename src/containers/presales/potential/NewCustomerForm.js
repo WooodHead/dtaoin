@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Row, Col, Form, Input, Button, Select} from 'antd';
+import { message, Row, Col, Form, Input, Button, Select } from 'antd';
 
 import api from '../../../middleware/api';
 import validator from '../../../utils/validator';
@@ -34,13 +34,13 @@ class NewCustomerForm extends UploadComponent {
   }
 
   handleSearchChange(key) {
-    this.setState({searchPhone: key});
+    this.setState({ searchPhone: key });
   }
 
   handleSearchSelect(customerId) {
     if (customerId) {
-      api.ajax({url: api.customer.detail(customerId)}, data => {
-        let {customer_info} = data.res;
+      api.ajax({ url: api.customer.detail(customerId) }, data => {
+        const { customer_info } = data.res;
         this.setState({
           isNew: false,
           customerId: customer_info._id,
@@ -48,7 +48,7 @@ class NewCustomerForm extends UploadComponent {
         });
       });
     } else {
-      this.setState({customer: {}});
+      this.setState({ customer: {} });
     }
   }
 
@@ -73,14 +73,14 @@ class NewCustomerForm extends UploadComponent {
         return;
       }
 
-      this.setState({isFetching: true});
+      this.setState({ isFetching: true });
       api.ajax({
         url: this.state.isNew ? api.customer.add() : api.customer.edit(),
         type: 'POST',
         data: values,
-      }, (data) => {
+      }, data => {
         message.success(this.state.isNew ? '添加成功!' : '修改成功!');
-        this.setState({isNew: false, isFetching: false});
+        this.setState({ isNew: false, isFetching: false });
         if (action === 'NEXT') {
           this.props.updateState({
             customerId: data.res.customer_id,
@@ -93,25 +93,25 @@ class NewCustomerForm extends UploadComponent {
           this.props.onSuccess();
         }
         this.props.form.resetFields();
-      }, (err) => {
+      }, err => {
         message.error(`${this.state.isNew ? '添加!' : '修改!'}失败[${err}]`);
-        this.setState({isFetching: false});
+        this.setState({ isFetching: false });
       });
     });
   }
 
   render() {
-    const {formItem8_15} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { formItem8_15 } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
-    let {isSingle} = this.props;
-    let {isFetching, isNew, customerId, customer, searchPhone} = this.state;
+    const { isSingle } = this.props;
+    const { isFetching, isNew, customerId, customer, searchPhone } = this.state;
 
     return (
       <Form>
-        {getFieldDecorator('customer_id', {initialValue: customerId})(<Input type="hidden"/>)}
-        {getFieldDecorator('phone', {initialValue: customer.phone || searchPhone})(<Input type="hidden"/>)}
-        {getFieldDecorator('is_purchase', {initialValue: 1})(<Input type="hidden"/>)}
+        {getFieldDecorator('customer_id', { initialValue: customerId })(<Input type="hidden"/>)}
+        {getFieldDecorator('phone', { initialValue: customer.phone || searchPhone })(<Input type="hidden"/>)}
+        {getFieldDecorator('is_purchase', { initialValue: 1 })(<Input type="hidden"/>)}
 
         <Row>
           <Col span={12}>
@@ -133,8 +133,8 @@ class NewCustomerForm extends UploadComponent {
                 validatorTrigger: 'onBlur',
               })(
                 <Input addonAfter={
-                  getFieldDecorator('gender', {initialValue: customer.gender || '-1'})(
-                    <Select style={{width: 60}} disabled={!isNew}>
+                  getFieldDecorator('gender', { initialValue: customer.gender || '-1' })(
+                    <Select style={{ width: 60 }} disabled={!isNew}>
                       <Option value={'1'}>先生</Option>
                       <Option value={'0'}>女士</Option>
                       <Option value={'-1'}>未知</Option>
@@ -149,14 +149,14 @@ class NewCustomerForm extends UploadComponent {
         <Row>
           <Col span={12}>
             <FormItem label="微信号" {...formItem8_15}>
-              {getFieldDecorator('weixin', {initialValue: customer.weixin})(
+              {getFieldDecorator('weixin', { initialValue: customer.weixin })(
                 <Input placeholder="请输入微信号" disabled={!isNew}/>
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="QQ" {...formItem8_15}>
-              {getFieldDecorator('qq', {initialValue: customer.qq})(
+              {getFieldDecorator('qq', { initialValue: customer.qq })(
                 <Input type="number" placeholder="请输入QQ" disabled={!isNew}/>
               )}
             </FormItem>
@@ -167,7 +167,7 @@ class NewCustomerForm extends UploadComponent {
           <Col span={12}>
             <FormItem label="邮箱" {...formItem8_15}>
               {getFieldDecorator('mail', {
-                rules: [{type: 'email', required: false, message: validator.text.email}],
+                rules: [{ type: 'email', required: false, message: validator.text.email }],
                 validateTrigger: 'onBlur',
               })(
                 <Input type="email" placeholder="请输入邮箱" disabled={!isNew}/>
@@ -192,7 +192,7 @@ class NewCustomerForm extends UploadComponent {
           </Col>
           <Col span={12}>
             <FormItem label="身份证地址" {...formItem8_15}>
-              {getFieldDecorator('id_card_address', {initialValue: customer.id_card_address})(
+              {getFieldDecorator('id_card_address', { initialValue: customer.id_card_address })(
                 <Input placeholder="请输入身份证地址"/>
               )}
             </FormItem>
@@ -202,14 +202,14 @@ class NewCustomerForm extends UploadComponent {
         <Row>
           <Col span={12}>
             <FormItem label="驾驶证号" {...formItem8_15}>
-              {getFieldDecorator('driver_license_num', {initialValue: customer.driver_license_num})(
+              {getFieldDecorator('driver_license_num', { initialValue: customer.driver_license_num })(
                 <Input placeholder="请输入驾驶证号"/>
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="常住地址" {...formItem8_15}>
-              {getFieldDecorator('address', {initialValue: customer.address})(
+              {getFieldDecorator('address', { initialValue: customer.address })(
                 <Input placeholder="请输入常住地址"/>
               )}
             </FormItem>

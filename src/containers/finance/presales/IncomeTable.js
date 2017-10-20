@@ -23,19 +23,19 @@ export default class IncomeTable extends React.Component {
   }
 
   handlePageChange(page) {
-    this.props.updateState({page});
+    this.props.updateState({ page });
   }
 
   getList(props) {
-    this.setState({isFetching: true});
-    api.ajax({url: props.source}, function (data) {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total), isFetching: false});
-    }.bind(this));
+    this.setState({ isFetching: true });
+    api.ajax({ url: props.source }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total), isFetching: false });
+    });
   }
 
   render() {
-    let {list, total, isFetching} = this.state;
+    const { list, total, isFetching } = this.state;
     const columns = [
       {
         title: '交易时间',

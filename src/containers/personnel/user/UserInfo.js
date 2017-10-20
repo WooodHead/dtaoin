@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Row, Col} from 'antd';
+import { Card, Row, Col } from 'antd';
 import text from '../../../config/text';
 import api from '../../../middleware/api';
 
@@ -13,13 +13,13 @@ export default class UserInfo extends React.Component {
   }
 
   render() {
-    let {
+    const {
       user,
       certificates,
       salaryItems,
     } = this.props;
 
-    let idCardImages = [];
+    const idCardImages = [];
     if (user.id_card_front_pic) {
       idCardImages.push({
         title: `${user.name}-身份证正面`,
@@ -107,8 +107,7 @@ export default class UserInfo extends React.Component {
           </Row>
 
           <h3 className="mb15">资格证书</h3>
-          {certificates.map((ca, index) => {
-            return (
+          {certificates.map((ca, index) => (
               <Row className={certificates.length - 1 == index ? 'mb15 with-bottom-border' : 'mb10'} key={index}>
                 <Col span={8}>
                   <span className="info-label">证书名称</span>
@@ -126,8 +125,7 @@ export default class UserInfo extends React.Component {
                   />
                 </Col>
               </Row>
-            );
-          })}
+            ))}
 
           <Row className="mb10">
             <Col span={8}>
@@ -266,8 +264,7 @@ export default class UserInfo extends React.Component {
             </Col>
           </Row>
 
-          {salaryItems.map((item, index) => {
-            return (
+          {salaryItems.map((item, index) => (
               <Row className="mb10" key={index}>
                 <Col span={8}>
                   <span className="info-label">{`提成项目${index + 1}`}</span>
@@ -278,8 +275,7 @@ export default class UserInfo extends React.Component {
                   <span>{(Number(item.percent) * 100).toFixed(2)}%</span>
                 </Col>
               </Row>
-            );
-          })}
+            ))}
         </Card>
       </div>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select} from 'antd';
+import { message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select } from 'antd';
 
 import Layout from '../../../utils/FormLayout';
 import DateFormatter from '../../../utils/DateFormatter';
@@ -30,16 +30,16 @@ class FormBill extends BaseModal {
   componentWillReceiveProps(nextProps) {
     if (!nextProps.payBillVisible) {
       this.props.form.resetFields();
-      this.setState({btnLoading: false});
+      this.setState({ btnLoading: false });
     }
-    this.setState({customerInfo: nextProps.customerInfo});
+    this.setState({ customerInfo: nextProps.customerInfo });
   }
 
   onAccountPrint(e) {
     e.preventDefault();
-    let {customerInfo} = this.state;
+    const { customerInfo } = this.state;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -65,7 +65,7 @@ class FormBill extends BaseModal {
         btnLoading: true,
       });
 
-      let arrears = values.arrears;
+      const arrears = values.arrears;
 
       values.order_id = customerInfo._id;
       values.customer_id = customerInfo.customer_id;
@@ -77,7 +77,7 @@ class FormBill extends BaseModal {
         data: values,
       }, () => {
         window.time = setInterval(() => {
-          api.ajax({url: api.aftersales.getPartSellDetail(customerInfo._id)}, data => {
+          api.ajax({ url: api.aftersales.getPartSellDetail(customerInfo._id) }, data => {
             if (Number(data.res.detail.unpay_amount) === Number(arrears)) {
               window.clearInterval(window.time);
               this.setState({
@@ -96,9 +96,9 @@ class FormBill extends BaseModal {
 
   onAccount(e) {
     e.preventDefault();
-    let {customerInfo} = this.state;
+    const { customerInfo } = this.state;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -124,7 +124,7 @@ class FormBill extends BaseModal {
         btnLoading: true,
       });
 
-      let arrears = values.arrears;
+      const arrears = values.arrears;
 
       values.order_id = customerInfo._id;
       values.customer_id = customerInfo.customer_id;
@@ -136,7 +136,7 @@ class FormBill extends BaseModal {
         data: values,
       }, () => {
         window.time = setInterval(() => {
-          api.ajax({url: api.aftersales.getPartSellDetail(customerInfo._id)}, data => {
+          api.ajax({ url: api.aftersales.getPartSellDetail(customerInfo._id) }, data => {
             if (Number(data.res.detail.unpay_amount) === Number(arrears)) {
               window.clearInterval(window.time);
               this.setState({
@@ -148,7 +148,7 @@ class FormBill extends BaseModal {
             }
           });
         }, Number(timer));
-      }, (err) => {
+      }, err => {
         message.error(err);
         this.props.cancelModal();
       });
@@ -168,15 +168,19 @@ class FormBill extends BaseModal {
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
     location.reload();
   }
 
+  disabledStartDate(current) {
+    return current && current.valueOf() < new Date(new Date().setDate(new Date().getDate() - 1));
+  }
+
   render() {
-    const {formItemFour, buttonLayout} = Layout;
-    const {partsDetail} = this.props;
-    const {customerInfo} = this.state;
-    const {getFieldDecorator} = this.props.form;
+    const { formItemFour, buttonLayout } = Layout;
+    const { partsDetail } = this.props;
+    const { customerInfo } = this.state;
+    const { getFieldDecorator } = this.props.form;
     const isPosDevice = api.getLoginUser().isPosDevice;
 
     return (
@@ -189,7 +193,8 @@ class FormBill extends BaseModal {
           </Col>
           <Col span={14}>
             <FormItem label="应付金额" {...formItemFour}>
-              <p className="ant-form-text">¥<strong>{Number(customerInfo.real_amount).toFixed(2)}</strong>元</p>
+              <p className="ant-form-text">¥<strong>{Number(customerInfo.real_amount).
+                toFixed(2)}</strong>元</p>
             </FormItem>
           </Col>
         </Row>
@@ -199,7 +204,7 @@ class FormBill extends BaseModal {
             <NumberInput
               defaultValue="0"
               id="pay_amount"
-              rules={[{required: true, message: '请输入实付金额'}]}
+              rules={[{ required: true, message: '请输入实付金额' }]}
               onChange={this.handleRealAmountChange}
               self={this}
               layout={formItemFour}
@@ -209,13 +214,14 @@ class FormBill extends BaseModal {
           <Col span={14}>
             <FormItem label="身份证号" {...formItemFour}>
               {getFieldDecorator('id_card_num', {
-                rules: [{
-                  required: false,
-                  message: validator.required.idCard,
-                }, {validator: FormValidator.validateIdCard}],
+                rules: [
+                  {
+                    required: false,
+                    message: validator.required.idCard,
+                  }, { validator: FormValidator.validateIdCard }],
                 validateTrigger: 'onBlur',
               })(
-                <Input />
+                <Input />,
               )}
             </FormItem>
           </Col>
@@ -224,11 +230,13 @@ class FormBill extends BaseModal {
           <Col span={10}>
             <FormItem label="挂账金额" {...formItemFour}>
               {getFieldDecorator('arrears', {
-                initialValue: Number(customerInfo.real_amount - (this.props.form.getFieldValue('pay_amount') || 0)).toFixed(2),
+                initialValue: Number(customerInfo.real_amount -
+                  (this.props.form.getFieldValue('pay_amount') || 0)).toFixed(2),
               })(
                 <p
-                  className="ant-form-text">{Number(customerInfo.real_amount - (this.props.form.getFieldValue('pay_amount') || 0)).toFixed(2)}
-                </p>
+                  className="ant-form-text">{Number(customerInfo.real_amount -
+                  (this.props.form.getFieldValue('pay_amount') || 0)).toFixed(2)}
+                </p>,
               )}
             </FormItem>
           </Col>
@@ -236,14 +244,16 @@ class FormBill extends BaseModal {
           <Col span={14}>
             <FormItem label="还款时间" {...formItemFour}>
               {getFieldDecorator('next_pay_date', {
-                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())),
-                rules: [{required: true, message: '请输入还款时间'}],
+                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() +
+                  1, new Date().getDate())),
+                rules: [{ required: true, message: '请输入还款时间' }],
               })(
                 <DatePicker
                   format={DateFormatter.pattern.day}
                   placeholder="请选择还款时间"
                   allowClear={false}
-                />
+                  disabledDate={this.disabledStartDate}
+                />,
               )}
             </FormItem>
           </Col>
@@ -262,7 +272,7 @@ class FormBill extends BaseModal {
                   <Option key="2">现金支付</Option>
                   <Option key="3">微信支付</Option>
                   <Option key="4">支付宝支付</Option>
-                </Select>
+                </Select>,
               )}
             </FormItem>
           </Col>
@@ -285,7 +295,7 @@ class FormBill extends BaseModal {
           </Button>
 
           <Modal
-            title={<span><Icon type="plus"/>挂账单预览</span>}
+            title={<span><Icon type="plus" />挂账单预览</span>}
             visible={this.state.visible}
             width="960px"
             onCancel={this.hideModal}

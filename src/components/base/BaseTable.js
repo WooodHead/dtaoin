@@ -1,5 +1,5 @@
 import React from 'react';
-import {message} from 'antd';
+import { message } from 'antd';
 
 import api from '../../middleware/api';
 import TableWithPagination from '../widget/TableWithPagination';
@@ -33,28 +33,28 @@ export default class BaseTable extends React.Component {
   }
 
   getList(props) {
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: props.source,
-    }, (data) => {
-      let {list, total} = data.res;
+    }, data => {
+      const { list, total } = data.res;
       this.setState({
         isFetching: false,
         list,
         total: parseInt(total),
       });
-    }, (error) => {
+    }, error => {
       message.error(`获取列表数据失败[${error}]`);
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 
   handlePageChange(page) {
-    this.props.updateState({page});
+    this.props.updateState({ page });
   }
 
   renderTable(columns) {
-    let {isFetching, list, total} = this.state;
+    const { isFetching, list, total } = this.state;
 
     return (
       <TableWithPagination

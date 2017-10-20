@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = undefined;
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -17,22 +16,24 @@ var _inherits2 = require('babel-runtime/helpers/inherits');
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
-var _rcTable = require('rc-table');
+var _react = require('react');
 
-var _rcTable2 = _interopRequireDefault(_rcTable);
+var _react2 = _interopRequireDefault(_react);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var ColumnGroup = function (_RcTable$ColumnGroup) {
-  (0, _inherits3["default"])(ColumnGroup, _RcTable$ColumnGroup);
+var ColumnGroup = function (_React$Component) {
+  (0, _inherits3['default'])(ColumnGroup, _React$Component);
 
   function ColumnGroup() {
-    (0, _classCallCheck3["default"])(this, ColumnGroup);
-    return (0, _possibleConstructorReturn3["default"])(this, _RcTable$ColumnGroup.apply(this, arguments));
+    (0, _classCallCheck3['default'])(this, ColumnGroup);
+    return (0, _possibleConstructorReturn3['default'])(this, (ColumnGroup.__proto__ || Object.getPrototypeOf(ColumnGroup)).apply(this, arguments));
   }
 
   return ColumnGroup;
-}(_rcTable2["default"].ColumnGroup);
+}(_react2['default'].Component);
 
-exports["default"] = ColumnGroup;
+exports['default'] = ColumnGroup;
+
+ColumnGroup.__ANT_TABLE_COLUMN_GROUP = true;
 module.exports = exports['default'];

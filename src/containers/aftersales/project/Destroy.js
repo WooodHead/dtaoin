@@ -11,6 +11,7 @@ import FormLayout from '../../../utils/FormLayout';
 import BaseModal from '../../../components/base/BaseModal';
 
 const FormItem = Form.Item;
+const TextArea = Input.TextArea;
 
 class Destroy extends BaseModal {
   constructor(props) {
@@ -31,8 +32,8 @@ class Destroy extends BaseModal {
   }
 
   async checkPermission(path) {
-    let { detail } = this.props;
-    let hasPermission = await api.checkPermission(path);
+    const { detail } = this.props;
+    const hasPermission = await api.checkPermission(path);
 
     if (!hasPermission) {
       this.interval = setInterval(this.getProjectDetail.bind(this, detail._id), 2000);
@@ -54,13 +55,13 @@ class Destroy extends BaseModal {
         type: 'post',
         url: api.aftersales.project.destroy(),
         data: values,
-      }, (data) => {
-        let detail = data.res.intention_info;
+      }, data => {
+        const detail = data.res.intention_info;
         if (String(detail.status) === '-1') {
           message.success('作废成功');
           location.reload();
         }
-      }, (error) => {
+      }, error => {
         message.error(`作废失败[${error}]`);
       });
     });
@@ -68,7 +69,7 @@ class Destroy extends BaseModal {
 
   getProjectDetail(id) {
     api.ajax({ url: api.aftersales.project.detail(id) }, data => {
-      let detail = data.res.intention_info;
+      const detail = data.res.intention_info;
       this.setState({ detail });
 
       if (String(detail.status) === '-1') {
@@ -81,23 +82,24 @@ class Destroy extends BaseModal {
 
   render() {
     const { formItem8_15 } = FormLayout;
-    let { detail, form } = this.props;
-    let { visible, hasPermission } = this.state;
-    let { getFieldDecorator, getFieldValue } = form;
+    const { detail, form } = this.props;
+    const { visible, hasPermission } = this.state;
+    const { getFieldDecorator, getFieldValue } = form;
 
-    let status = String(detail.status);
-    let payStatus = String(detail.pay_status);
+    const status = String(detail.status);
+    const payStatus = String(detail.pay_status);
 
     return (
       <span>
-        <Button
+        <p
           onClick={this.showDestroyModal}
           disabled={status !== '0' || payStatus !== '0'}
+          className="project-destroy"
         >
           作废
-         </Button>
+         </p>
         <Modal
-          title={<span><Icon type="exclamation-circle-o" className="text-red" /> 作废工单</span>}
+          title={<span><Icon type="exclamation-circle-o" className="text-red"/> 作废工单</span>}
           visible={visible}
           width={720}
           onCancel={this.hideModal}
@@ -121,8 +123,8 @@ class Destroy extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validatorTrigger: 'onBlur',
                   })(
-                    <Input type="textarea" placeholder="填写作废原因" />
-                    )}
+                    <TextArea placeholder="填写作废原因"/>
+                  )}
                 </FormItem>
               </Form>
             </Col>
@@ -146,7 +148,7 @@ class Destroy extends BaseModal {
                 />
                 <p>请扫码确认该工单作废</p>
                 <p>已领料配件会被恢复</p>
-                <p><Icon type="check-circle" className={status === '-1' ? 'confirm-check' : 'hide'} /></p>
+                <p><Icon type="check-circle" className={status === '-1' ? 'confirm-check' : 'hide'}/></p>
               </div>
             </Col>
           </Row>

@@ -1,24 +1,22 @@
-import React, {Component} from 'react';
-import className from 'classnames';
-import {Table, Icon} from 'antd';
+import React from 'react';
+import { Table, Modal } from 'antd';
 
 import api from '../../../middleware/api';
 import text from '../../../config/text';
+import BaseModal from '../../../components/base/BaseModal';
 
-export default class TableMemberCard extends Component {
+require('../../marketing/componentsTableNest.css');
+
+export default class TableMemberCard extends BaseModal {
   constructor(props) {
     super(props);
     this.state = {
       visible: false,
       customer: null,
-      memberDetailList: null,
-      couponUseStatus: {},
-      couponItem: [],
-      couponPartType: [],
+      memberDetailList: [],
     };
 
     [
-      'handleShowTable',
       'handleRemoveCoupon',
       'handleAddCoupon',
       'judgeCouponIsUse',
@@ -26,65 +24,42 @@ export default class TableMemberCard extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let {customer, itemMap, partMap} = nextProps;
+    const { customer } = nextProps;
 
-    this.setState({
-      customer,
-      couponItem: Array.from(itemMap.values()),
-      couponPartType: Array.from(partMap.values()),
-    });
+    this.setState({ customer });
 
     if (customer._id && customer._id !== this.props.customer._id) {
       this.getMemberDetail(customer._id);
     }
   }
 
-  handleShowTable() {
-    this.setState({visible: !this.state.visible});
-  }
-
   handleRemoveCoupon(record) {
-    let couponUseStatus = this.state.couponUseStatus;
+    const { itemMap, partMap } = this.props;
+    this.props.onEditCouponUseState(record._id, 'delete');
 
-    delete couponUseStatus[record._id];
-    let couponItem = this.state.couponItem;
-    let couponPartType = this.state.couponPartType;
-    let couponItemFilteredRemoved = couponItem.filter((item) => {
-      return item.customer_coupon_item_id == record._id;
-    });
-    let couponItemFiltered = couponItem.filter((item) => {
-      return item.customer_coupon_item_id !== record._id;
+    Array.from(itemMap.values()).map(item => {
+      if (Number(item.customer_coupon_item_id) === Number(record._id)) {
+        this.props.removeMaintainItem(item.item_id, item._id);
+      }
     });
 
-
-    let couponPartsFilteredRemoved = couponPartType.filter((item) => {
-      return item.customer_coupon_item_id == record._id;
-    });
-    let couponPartsFiltered = couponPartType.filter((item) => {
-      return item.customer_coupon_item_id !== record._id;
-    });
-
-    this.setState({
-      couponUseStatus,
-      couponItem: couponItemFiltered,
-      couponPartType: couponPartsFiltered,
-    }, () => {
-      this.props.getCouponItemRemoved(couponItemFilteredRemoved);
-      this.props.getCouponPartsRemoved(couponPartsFilteredRemoved);
-    });
+    for (const [key, value] of partMap.entries()) {
+      if (Number(value.customer_coupon_item_id) === Number(record._id)) {
+        this.props.removeMaintainPart(key, value._id);
+      }
+    }
   }
 
   judgeCouponIsUse(maintain_partsArr, maintain_itemsArr, recordId) {
-
     let CouponIsUse = false;
-    maintain_partsArr.map((item) => {
-      if (item.customer_coupon_item_id == recordId) {
+    maintain_partsArr.map(item => {
+      if (Number(item.customer_coupon_item_id) === Number(recordId)) {
         CouponIsUse = true;
       }
     });
 
-    maintain_itemsArr.map((item) => {
-      if (item.customer_coupon_item_id == recordId) {
+    maintain_itemsArr.map(item => {
+      if (Number(item.customer_coupon_item_id) === Number(recordId)) {
         CouponIsUse = true;
       }
     });
@@ -92,16 +67,14 @@ export default class TableMemberCard extends Component {
   }
 
   handleAddCoupon(record) {
-    let couponUseStatus = this.state.couponUseStatus;
-    couponUseStatus[record._id] = true;
-    this.setState({
-      couponUseStatus,
-    });
+    this.props.onEditCouponUseState(record._id, 'add');
 
-    let couponPartType = this.state.couponPartType;
-    if (record.coupon_item_info.part_types) {
-      record.coupon_item_info.part_types.map((item) => {
-        let itemKeyChanged = {
+    const { itemMap, partMap } = this.props;
+
+    if (record.coupon_item_info.part_types && record.coupon_item_info.part_types.length > 0) {
+      partMap.delete('add');
+      record.coupon_item_info.part_types.map(item => {
+        const itemKeyChanged = {
           _id: 0,
           coupon_id: record.coupon_item_info._id,
           customer_coupon_item_id: Number(record._id),
@@ -111,6 +84,7 @@ export default class TableMemberCard extends Component {
           coupon_money: item.coupon_money || 0,
           count: 0,
           level_name: '现场报价',
+          levels: item.levels,
           maintain_type: item.maintain_type || '',
           mainitain_type_name: '',
           material_fee: item.material_fee || 0,
@@ -126,21 +100,19 @@ export default class TableMemberCard extends Component {
           remain_count: item.amount,
           scope: record.scope,
           type: record.coupon_item_info.type,
+          couponId: record._id,
+          coupon_price: item.price,
         };
-        couponPartType.push(itemKeyChanged);
+        partMap.set(partMap.size, itemKeyChanged);
       });
 
-      this.setState({
-        couponPartType,
-      }, () => {
-        this.props.getCouponPartType(this.state.couponPartType);
-      });
+      this.props.onPartsUpdateSuccess(partMap);
     }
 
-    let couponItem = this.state.couponItem;
-    if (record.coupon_item_info.items) {
-      record.coupon_item_info.items.map((item) => {
-        let itemKeyChanged = {
+    if (record.coupon_item_info.items && record.coupon_item_info.items.length > 0) {
+      itemMap.delete('add');
+      record.coupon_item_info.items.map(item => {
+        const itemKeyChanged = {
           _id: 0,
           coupon_id: record.coupon_item_info._id,
           customer_coupon_item_id: Number(record._id),
@@ -152,6 +124,7 @@ export default class TableMemberCard extends Component {
           item_id: item._id,
           item_name: item.name || '',
           level_name: '现场报价',
+          levels: item.levels,
           maintain_type: item.maintain_type || '0',
           maintain_type_name: item.maintain_type_name || '',
           time_count: item.time_count || 1,
@@ -160,103 +133,172 @@ export default class TableMemberCard extends Component {
           discount_rate: record.coupon_item_info.discount_rate,
           discount_amount: record.coupon_item_info.discount_amount,
           type: record.coupon_item_info.type,
+          couponId: record._id,
+          coupon_price: item.price,
         };
-        couponItem.push(itemKeyChanged);
+        itemMap.set(itemKeyChanged.item_id, itemKeyChanged);
       });
-      this.setState({
-        couponItem,
-      }, () => {
-        this.props.getCouponItem(this.state.couponItem);
-      });
+
+      this.props.onItemsUpdateSuccess(itemMap);
     }
   }
 
   getMemberDetail(customerId) {
     api.ajax({
-      url: api.statistics.getMemberDetail(customerId, 1, 0),
+      url: api.statistics.getCustomerCouponCards(customerId, 1, 1),
     }, data => {
-      this.setState({
-        memberDetailList: data.res.list || {},
-      }, () => {
-        let {memberDetailList} = this.state;
-        this.props.setMemberDetailList(memberDetailList);
-        if (memberDetailList.length > 0) {
-          this.setState({visible: true});
-        }
-      });
+      this.setState({ memberDetailList: data.res.list });
+      this.props.setMemberDetailList(data.res.list);
     });
   }
 
+  getCouponRate(value) {
+    let rate = String(Number(Number(value).toFixed(2)) * 100);
+    if (rate.length === 1) {
+      return `${(rate / 10) || '0'  }折`;
+    }
+
+    if (Number(rate.charAt(rate.length - 1)) === 0) {
+      rate = rate.slice(0, rate.length - 1);
+    }
+    return `${rate || '0'  }折`;
+  }
+
   render() {
-    let {itemMap, partMap} = this.props;
-    let {visible, couponUseStatus, memberDetailList} = this.state;
+    const { itemMap, partMap, couponUseStatus } = this.props;
+    const { visible, memberDetailList } = this.state;
 
     if (memberDetailList) {
-      memberDetailList.map((item) => {
+      memberDetailList.map(item => {
         item.name = item.coupon_item_info.name;
         item.remark = item.coupon_item_info.remark;
       });
     }
 
-    const tableContainer = className({
-      hide: !visible,
-    });
+    const self = this;
+    const expandedRowRender = record => {
+      const columns = [
+        {
+          title: '名称',
+          dataIndex: 'name',
+          key: 'name',
+        }, {
+          title: '类型',
+          dataIndex: '_id',
+          key: 'type',
+          render: value => value.length > 4 ? '配件' : '项目',
+        }, {
+          title: '数量',
+          dataIndex: 'amount',
+          key: 'amount',
+        }, {
+          title: '售价(元)',
+          dataIndex: 'price',
+          key: 'price',
+          className: String(record.coupon_item_info.type) === '1' ? '' : 'hide',
+          render: value => Number(value || '0').toFixed(2),
+        }, {
+          title: '折扣',
+          key: 'discount_rate',
+          className: String(record.coupon_item_info.type) === '2' ? '' : 'hide',
+          render: () => self.getCouponRate(record.coupon_item_info.discount_rate),
+        }];
 
-    let self = this;
+      const items = record.coupon_item_info.items || [];
+      const partTypes = record.coupon_item_info.part_types || [];
+      const data = items.concat(partTypes);
+
+      return (
+        <Table
+          className="components-table-demo-nested"
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+        />
+      );
+    };
+
     const columns = [
       {
-        title: '序号',
-        key: 'index',
-        render: (value, record, index) => index + 1,
-      }, {
-        title: '优惠名称',
+        title: '优惠券名称',
         dataIndex: 'name',
         key: 'name',
       }, {
-        title: '优惠类型',
-        dataIndex: 'coupon_item_info.type',
-        key: 'type',
-        render: (value) => text.couponType[value],
+        title: '优惠信息',
+        dataIndex: 'coupon_item_info',
+        key: 'coupon_item_info1',
+        width: '77px',
+        render: value => {
+          if (String(value.type) === '1') {
+            return `${value.price  }元`;
+          } else {
+            return self.getCouponRate(value.discount_rate);
+          }
+        },
       }, {
         title: '描述',
         dataIndex: 'remark',
         key: 'remark',
+        maxWidth: '120px',
       }, {
-        title: '剩余数量',
-        dataIndex: 'amount',
-        key: 'amount',
-        render: (amount, record) => {
-          if (Number(record.total) > 0) {
-            return Number(amount - (couponUseStatus[record._id] ? 1 : 0)).toFixed(2);
-          } else if (Number(record.total) === 0) {
-            return '不限次数';
-          } else {
-            return '异常情况';
+        title: '有效期',
+        dataIndex: 'coupon_item_info',
+        key: 'coupon_item_info',
+        render: value => {
+          if (String(value.valid_type) === '0') {
+            // 时间段
+            return `${value.valid_start_date}至${value.valid_expire_date}`;
+          } else if (String(value.valid_type) === '1') {
+            // 具体天数
+            return `领取后当天生效${value.valid_day}天有效`;
           }
         },
+      }, {
+        title: '优惠券类型',
+        dataIndex: 'coupon_item_info.type',
+        key: 'type',
+        width: '92px',
+        render: value => text.couponType[value],
       }, {
         title: '总数',
         dataIndex: 'total',
         key: 'total',
-        render: (total) => {
+        width: '60px',
+        render: total => {
           if (Number(total) > 0) {
             return total;
           } else if (Number(total) === 0) {
-            return '不限次数';
+            return '不限';
           } else {
             return '';
+          }
+        },
+      }, {
+        title: '剩余数量',
+        dataIndex: 'amount',
+        key: 'amount',
+        width: '80px',
+        render: (amount, record) => {
+          if (Number(record.total) > 0) {
+            return Number(amount - (couponUseStatus[record._id] ? 1 : 0)).toFixed(0);
+          } else if (Number(record.total) === 0) {
+            return '不限';
+          } else {
+            return '异常情况';
           }
         },
       }, {
         title: '操作',
         dataIndex: '_id',
         key: 'action',
-        className: 'center width-120',
+        className: 'center',
+        width: '70px',
         render: (id, record) => {
-          let partArr = Array.from(partMap.values());
-          let itemArr = Array.from(itemMap.values());
+          const partArr = Array.from(partMap.values());
+          const itemArr = Array.from(itemMap.values());
 
-          let isCouponUse = self.judgeCouponIsUse(partArr, itemArr, id);
+          const isCouponUse = self.judgeCouponIsUse(partArr, itemArr, id);
+
           if (couponUseStatus[id] || isCouponUse) {
             return (
               <a
@@ -264,12 +306,13 @@ export default class TableMemberCard extends Component {
                 onClick={self.handleRemoveCoupon.bind(self, record)}
                 className="action-delete"
               >
-                移除项目
+                移除
               </a>
             );
           } else {
             if (Number(record.total) === 0 || Number(record.amount) > 0) {
-              return <a href="javascript:;" onClick={self.handleAddCoupon.bind(self, record)}>添加</a>;
+              return <a href="javascript:;"
+                        onClick={self.handleAddCoupon.bind(self, record)}>添加</a>;
             } else if (Number(record.amount) === 0) {
               return '添加';
             } else {
@@ -280,29 +323,31 @@ export default class TableMemberCard extends Component {
       }];
 
     return (
-      <div className="with-bottom-divider">
-        <div className="module-head">
-          <h3>
-            <span>优惠信息</span>
-            <Icon
-              type={visible ? 'down-circle-o' : 'right-circle-o'}
-              className="ml10 btn-arrow"
-              onClick={this.handleShowTable}
-            />
-          </h3>
+      <div>
+        <div style={{ position: 'relative', left: '100px', top: '40px', zIndex: 99, width: '300px' }}>
+          <span style={{ color: '#ff8400' }} className="mr10">
+            {`${memberDetailList.length  }种优惠券可使用`}
+          </span>
+          <a href="javascript:;" onClick={this.showModal}>去使用 ></a>
         </div>
-
-        <div className={tableContainer}>
+        <Modal
+          title="添加优惠券"
+          visible={visible}
+          width={960}
+          onCancel={this.hideModal}
+          footer={null}
+        >
           <Table
+            className="components-table-demo-nested"
             columns={columns}
             dataSource={memberDetailList}
-            size="middle"
-            bordered
+            expandedRowRender={expandedRowRender}
             pagination={false}
             rowKey={record => record._id}
           />
-        </div>
+        </Modal>
       </div>
     );
   }
 }
+

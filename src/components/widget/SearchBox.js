@@ -1,18 +1,20 @@
-import React, {Component, PropTypes} from 'react';
-import {Input, Button, message} from 'antd';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Input, Button, message } from 'antd';
+
 import classNames from 'classnames';
 
-//属性类型
+// 属性类型
 const propTypes = {
-  placeholder: PropTypes.string,          //关键词输入的占位符
-  defaultKey: PropTypes.string,           //默认的搜索关键词
-  keyValidator: PropTypes.func,           //搜索关键词的验证
-  validateFailMsg: PropTypes.string,      //验证未通过时的报错信息
-  onSearch: PropTypes.func.isRequired,    //当进行搜索时
-  autoSearchLength: PropTypes.number,     //自动搜索长度
+  placeholder: PropTypes.string,          // 关键词输入的占位符
+  defaultKey: PropTypes.string,           // 默认的搜索关键词
+  keyValidator: PropTypes.func,           // 搜索关键词的验证
+  validateFailMsg: PropTypes.string,      // 验证未通过时的报错信息
+  onSearch: PropTypes.func.isRequired,    // 当进行搜索时
+  autoSearchLength: PropTypes.number,     // 自动搜索长度
 };
 
-//默认属性
+// 默认属性
 const defaultProps = {
   placeholder: '请输入关键词',
   defaultKey: '',
@@ -21,20 +23,20 @@ const defaultProps = {
   onSearch: (key, callback) => {
     callback([]);
   },
-  autoSearchLength: 0,        //默认自动搜索
+  autoSearchLength: 0,        // 默认自动搜索
 };
 
 
-//组件
+// 组件
 class SearchBox extends Component {
   constructor(props) {
     super(props);
-    //状态
+    // 状态
     this.state = {
-      key: props.defaultKey || '',    //搜索关键词
-      searching: false,               //搜索状态
+      key: props.defaultKey || '',    // 搜索关键词
+      searching: false,               // 搜索状态
     };
-    //自动绑定
+    // 自动绑定
     [
       'onKeyChange',
       'handleFocus',
@@ -42,12 +44,12 @@ class SearchBox extends Component {
       'onSearch',
       '_onSearchSuccess',
       '_onSearchFail',
-    ].forEach((method) => this[method] = this[method].bind(this));
+    ].forEach(method => this[method] = this[method].bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.isSearching !== nextProps.isSearching) {
-      this.setState({searching: nextProps.isSearching});
+      this.setState({ searching: nextProps.isSearching });
     }
   }
 
@@ -66,15 +68,15 @@ class SearchBox extends Component {
 
   search(key) {
     key = key.trim();
-    let keyValidator = this.props.keyValidator;
+    const keyValidator = this.props.keyValidator;
     if (typeof(keyValidator) == 'function' && !keyValidator(key)) {
       this.setState({
-        key: key,
+        key,
       });
       message.error(this.props.validateFailMsg);
     } else {
       this.setState({
-        key: key,
+        key,
         searching: true,
       });
       this.props.onSearch(key, this._onSearchSuccess, this._onSearchFail);
@@ -83,14 +85,14 @@ class SearchBox extends Component {
 
   clear() {
     this.sesState({
-      key: this.props.defaultKey || '',   //搜索关键词
-      searching: false,                   //搜索状态
+      key: this.props.defaultKey || '',   // 搜索关键词
+      searching: false,                   // 搜索状态
     });
   }
 
   onKeyChange(e) {
-    //输入变化
-    //自动搜索
+    // 输入变化
+    // 自动搜索
     const newKey = e.target.value;
     if (newKey.length >= this.props.autoSearchLength) {
       this.search(newKey);
@@ -99,15 +101,14 @@ class SearchBox extends Component {
         key: newKey,
       });
     }
-
   }
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   }
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   }
 
   onSearch() {
@@ -124,8 +125,8 @@ class SearchBox extends Component {
       'ant-search-input-focus': this.state.focus,
     });
 
-    const {placeholder} = this.props;
-    const {key, searching} = this.state;
+    const { placeholder } = this.props;
+    const { key, searching } = this.state;
 
     return (
       <Input.Group className={searchCls} style={this.props.style}>
@@ -140,7 +141,7 @@ class SearchBox extends Component {
         />
         <div className="ant-input-group-wrap">
           <Button
-            style={{minWidth: 28}}
+            style={{ minWidth: 28 }}
             icon="search"
             className={btnCls}
             size="large"
@@ -179,7 +180,6 @@ export default SearchBox;
  let url = api.aftersales.searchMaintainCustomerList() + key;
  api.ajax({url}, (data) => {
  if (data.code === 0) {
- console.log('data.res.list--------', JSON.stringify(data.res.list));
  successHandle();
  } else {
  failHandle(data.msg);

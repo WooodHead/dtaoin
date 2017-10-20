@@ -1,12 +1,12 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import { Input, Select, Button, Icon } from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
-// import NewCategory from '../../containers/warehouse/category/New';
+import createReactClass from 'create-react-class';
 
 const Option = Select.Option;
 
-const MaintainPartTypeSearchBox = React.createClass({
+const MaintainPartTypeSearchBox = createReactClass({
   getInitialState() {
     return {
       data: this.props.data ? this.props.data : [],
@@ -16,34 +16,33 @@ const MaintainPartTypeSearchBox = React.createClass({
   },
 
   handleOnSuccess(data) {
-    this.setState({value: data.name, data: [data]});
+    this.setState({ value: data.name, data: [data] });
 
     this.props.select(data);
   },
 
   handleSelect(value, option) {
-    let index = option.props.index;
-    let list = this.state.data;
-    // console.log(option.props.children);
-    this.setState({value: option.props.children});
+    const index = option.props.index;
+    const list = this.state.data;
+    this.setState({ value: option.props.children });
 
     this.props.select(list[index]);
   },
 
   handleSearch(key) {
-    this.setState({value: key});
+    this.setState({ value: key });
 
     if (!!key && key.length >= 2) {
-      api.ajax({url: api.warehouse.part.searchPartTypes(key)}, (data) => {
-        let list = data.res.list;
+      api.ajax({ url: api.warehouse.part.searchPartTypes(key) }, data => {
+        const list = data.res.list;
         if (list.length > 0) {
-          this.setState({data: list});
+          this.setState({ data: list });
         } else {
-          this.setState({data: []});
+          this.setState({ data: [] });
         }
       });
     } else {
-      this.setState({data: []});
+      this.setState({ data: [] });
     }
   },
 
@@ -52,11 +51,11 @@ const MaintainPartTypeSearchBox = React.createClass({
   },
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   },
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   },
 
   render() {
@@ -74,9 +73,7 @@ const MaintainPartTypeSearchBox = React.createClass({
         <div id="maintain_part_type_search">
           <Select
             size="large"
-            //combobox={this.state.data.length}
-            combobox
-            //showSearch
+            mode="combobox"
             value={this.state.value}
             placeholder={this.props.placeholder}
             defaultActiveFirstOption={false}
@@ -101,22 +98,11 @@ const MaintainPartTypeSearchBox = React.createClass({
             size="large">
             <Icon type="search"/>
           </Button>
-          {/* {
-           this.state.value.length > 0 && this.state.data.length == 0 ?
-           <NewCategory inputValue={this.state.value} onSuccess={this.handleOnSuccess} />
-           :
-           <Button
-           className={btnCls}
-           onClick={this.handleSubmit}
-           size="large">
-           <Icon type="search"/>
-           </Button>
-           }*/}
         </div>
       </Input.Group>
     );
   },
 });
 
-MaintainPartTypeSearchBox.defaultProps = {placeholder: '用关键字搜索维保配件'};
+MaintainPartTypeSearchBox.defaultProps = { placeholder: '用关键字搜索维保配件' };
 export default MaintainPartTypeSearchBox;

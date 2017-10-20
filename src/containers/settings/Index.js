@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Table, Popconfirm, Spin} from 'antd';
+import { Row, Col, Table, Popconfirm, Spin } from 'antd';
 
 import api from '../../middleware/api';
 import text from '../../config/text';
@@ -31,20 +31,20 @@ export default class Index extends BaseList {
 
   handleExpandChange(bool, value) {
     if (bool) {
-      let id = value._id;
+      const id = value._id;
       this.getAuthorityList(id);
     }
   }
 
   getAuthorityList(id) {
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: api.authority.list(id),
     }, data => {
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
       this.handleInsertAuthData(data.res.list);
     }, () => {
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 
@@ -60,57 +60,57 @@ export default class Index extends BaseList {
     });
   }
 
-  //todo 下面children 代表要插入的输入，parent为寻找插入数据的父级节点
-  //todo 递归里面setState会比较多，目前没找到更好的办法，介于目前层数较少，可以先使用
+  // todo 下面children 代表要插入的输入，parent为寻找插入数据的父级节点
+  // todo 递归里面setState会比较多，目前没找到更好的办法，介于目前层数较少，可以先使用
   handleDeleteSuccess(children, parent) {
-    let {authData} = this.state;
-    let searchAuthData = parent || authData;
+    const { authData } = this.state;
+    const searchAuthData = parent || authData;
 
-    for (let item  in searchAuthData) {
+    for (const item  in searchAuthData) {
       if (searchAuthData.hasOwnProperty(item)) {
         if (String(searchAuthData[item]._id) == String(children._id)) {
           searchAuthData.splice(item, 1);
-          this.setState({authData: searchAuthData});
+          this.setState({ authData: searchAuthData });
           return true;
         } else {
           if (searchAuthData[item].children && searchAuthData[item].children.length > 0) {
-            //如果没找到信息且有children，递归
+            // 如果没找到信息且有children，递归
             this.handleDeleteSuccess(children, searchAuthData[item].children);
           }
         }
       }
     }
-    this.setState({authData: searchAuthData});
+    this.setState({ authData: searchAuthData });
   }
 
   handleEditSuccess(children, parent) {
-    let {authData} = this.state;
-    let searchAuthData = parent || authData;
+    const { authData } = this.state;
+    const searchAuthData = parent || authData;
 
-    for (let item in searchAuthData) {
+    for (const item in searchAuthData) {
       if (searchAuthData.hasOwnProperty(item)) {
         if (String(searchAuthData[item]._id) == String(children._id)) {
           children.key = children._id;
           children.children = [];
           searchAuthData[item] = children;
-          this.setState({authData: searchAuthData});
+          this.setState({ authData: searchAuthData });
           return true;
         } else {
           if (searchAuthData[item].children && searchAuthData[item].children.length > 0) {
-            //如果没找到信息且有children，递归
+            // 如果没找到信息且有children，递归
             this.handleEditSuccess(children, searchAuthData[item].children);
           }
         }
       }
     }
-    this.setState({authData: searchAuthData});
+    this.setState({ authData: searchAuthData });
   }
 
   handleCreateSuccess(children, parent) {
-    let {authData} = this.state;
-    let searchAuthData = parent || authData;
+    const { authData } = this.state;
+    const searchAuthData = parent || authData;
 
-    for (let item  in searchAuthData) {
+    for (const item  in searchAuthData) {
       if (searchAuthData.hasOwnProperty(item)) {
         if (String(searchAuthData[item]._id) == String(children.parent_id)) {
           if (!searchAuthData[item].children) {
@@ -119,17 +119,17 @@ export default class Index extends BaseList {
           children.key = children._id;
           children.children = [];
           searchAuthData[item].children.push(children);
-          this.setState({authData: searchAuthData});
+          this.setState({ authData: searchAuthData });
           return true;
         } else {
           if (searchAuthData[item].children && searchAuthData[item].children.length > 0) {
-            //如果没找到信息且有children，递归
+            // 如果没找到信息且有children，递归
             this.handleCreateSuccess(children, searchAuthData[item].children);
           }
         }
       }
     }
-    this.setState({authData: searchAuthData});
+    this.setState({ authData: searchAuthData });
   }
 
   handleInsertAuthData(children, parent) {
@@ -137,51 +137,51 @@ export default class Index extends BaseList {
       return false;
     }
 
-    let {authData} = this.state;
-    let searchAuthData = parent || authData;
+    const { authData } = this.state;
+    const searchAuthData = parent || authData;
 
     if (searchAuthData.length == 0) {
-      for (let key in children) {
+      for (const key in children) {
         if (children.hasOwnProperty(key)) {
           children[key].key = children[key]._id;
-          //为了让antd中能显示出框
+          // 为了让antd中能显示出框
           children[key].children = [];
           searchAuthData.push(children[key]);
         }
       }
-      this.setState({authData: searchAuthData});
+      this.setState({ authData: searchAuthData });
       return true;
     }
 
-    for (let item in searchAuthData) {
+    for (const item in searchAuthData) {
       if (searchAuthData.hasOwnProperty(item)) {
         if (String(searchAuthData[item]._id) == (children[0] && children[0].parent_id || null)) {
           searchAuthData[item].children = [];
-          for (let key in children) {
+          for (const key in children) {
             if (children.hasOwnProperty(key)) {
               children[key].key = children[key]._id;
               children[key].children = [];
               searchAuthData[item].children.push(children[key]);
             }
           }
-          this.setState({authData: searchAuthData});
+          this.setState({ authData: searchAuthData });
           return true;
         } else {
           if (searchAuthData[item].children && searchAuthData[item].children.length > 0) {
-            //如果没找到信息且有children，递归
+            // 如果没找到信息且有children，递归
             this.handleInsertAuthData(children, searchAuthData[item].children);
           }
         }
       }
     }
-    this.setState({authData: searchAuthData});
+    this.setState({ authData: searchAuthData });
   }
 
   render() {
     const data = this.state.authData;
-    let {isFetching} = this.state;
+    const { isFetching } = this.state;
 
-    let self = this;
+    const self = this;
     const columns = [{
       title: '功能名称',
       dataIndex: 'name',
@@ -194,13 +194,12 @@ export default class Index extends BaseList {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
-      render: (value) => text.routeType[value],
+      render: value => text.routeType[value],
     }, {
       title: '操作',
       key: 'action',
       className: 'center',
-      render: (value) => {
-        return (
+      render: value => (
           <div>
             <Edit value={value} isNew={false} onSuccess={self.handleEditSuccess}/>
 
@@ -208,7 +207,7 @@ export default class Index extends BaseList {
 
             <Popconfirm
               title="确定取消吗?"
-              onConfirm={(e) => self.handleDelete(e, value)}
+              onConfirm={e => self.handleDelete(e, value)}
               okText="确定"
               cancelText="取消"
             >
@@ -217,10 +216,9 @@ export default class Index extends BaseList {
 
             <span className="ant-divider"/>
 
-            <New value={{parent_id: value._id}} isNew={true} onSuccess={self.handleCreateSuccess}/>
+            <New value={{ parent_id: value._id }} isNew={true} onSuccess={self.handleCreateSuccess}/>
           </div>
-        );
-      },
+        ),
     }];
 
 
@@ -229,7 +227,7 @@ export default class Index extends BaseList {
         <Row className="head-action-bar">
           <Col span={24}>
             <div className="pull-right">
-              <Edit value={{parent_id: 0}} isNew={true} type="button" onSuccess={this.handleSuccess}/>
+              <Edit value={{ parent_id: 0 }} isNew={true} type="button" onSuccess={this.handleSuccess}/>
             </div>
           </Col>
         </Row>

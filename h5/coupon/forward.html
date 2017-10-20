@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>领券活动</title>
+
+  <link href="https://cdn.bootcss.com/normalize/7.0.0/normalize.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+
+<body>
+<div id="app" class="page-container -page-container">
+  <div class="top-banner -top-banner">
+    <img src="" alt="">
+  </div>
+
+  <div class="content">
+    <div class="content-head">
+      <h3 class="content-head-title -activity-title">春夏特别活动，普洗19.9元</h3>
+      <p class="content-head-desc -activity-desc">佳通汽车服务中心和水稻汽车联姻啦！送出春夏特别福利，洗车只要九块九！</p>
+      <p class="red-packet -activity-packet-count">送你12个红包</p>
+    </div>
+
+    <div class="content-body">
+
+      <!--领取前-->
+      <h3 class="content-body-title -content-body-title">距离优惠券一步之遥了</h3>
+
+      <h3 class="content-body-title hide -content-body-success-title">
+        <p class="margin-bottom-5">恭喜获得优惠券!</p>
+        <p>凭手机号就可到店使用啦！</p>
+      </h3>
+
+      <div class="coupon-card-list -coupon-card-list">
+        <div class="coupon-card-item disabled">
+          <p class="card-left"><span class="rmb">￥</span> 9.9</p>
+
+          <div class="card-right">
+            <h3 class="card-title">九块九普洗券</h3>
+            <p class="card-time">有效期至2017-03-04</p>
+          </div>
+
+          <img src="./img/stamp_closed.png" class="stamp" alt="已抢完">
+        </div>
+
+        <div class="coupon-card-item disabled">
+          <p class="card-left"><span class="rmb">￥</span> 9.9</p>
+
+          <div class="card-right">
+            <h3 class="card-title">九块九普洗券</h3>
+            <p class="card-time">有效期至2017-03-04</p>
+          </div>
+
+          <img src="./img/stamp_overdue.png" class="stamp" alt="已过期">
+        </div>
+      </div>
+
+      <!--领取前-->
+      <div class="form -form">
+        <div class="form-control">
+          <input id="phone" type="text" placeholder="输入手机号码即可领取">
+        </div>
+
+        <div class="form-control form-control-inline hide -verify-code-line">
+          <input id="code" placeholder="输入验证码">
+          <button type="button" class="btn btn-code disabled -btn-send-verify-code" disabled>
+            获取验证码
+          </button>
+        </div>
+
+        <div class="form-control">
+          <button type="button" class="btn btn-share disabled -btn-grab-share-coupon" disabled>
+            领取优惠券
+          </button>
+        </div>
+      </div>
+
+      <!--领取成功-->
+      <div class="content-body-footer-success hide -body-footer-info">
+        <p class="content-body-footer-desc -content-footer-desc">
+          优惠券已经放到您<span class="text-primary">18612469900</span>的账户中
+        </p>
+      </div>
+    </div>
+
+    <!--门店信息-->
+    <div class="store-container">
+      <!--领取前-->
+      <div class="container-title -store-container-title">可使用门店</div>
+
+      <!--领取成功后-->
+      <div class="container-title-success hide -store-container-title-success">
+        <p class="margin-bottom-5">在下列适用门店</p>
+        <p>凭借此手机号即可使用优惠券享受优惠</p>
+      </div>
+
+      <div id="stores_container" class="store-list">
+        <div class="container-item-none">
+          暂无数据
+        </div>
+      </div>
+
+      <div class="container-footer -store-container-footer">
+        <a href="/h5/coupon/stores.html">更多门店 ></a>
+      </div>
+    </div>
+
+    <div class="line-divider">
+      <span class="line"></span>
+      <span class="line-title">看看朋友们手气如何</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="rank-list -rank-list">
+      <div class="rank-item-none">
+
+      </div>
+    </div>
+
+    <div class="line-divider">
+      <span class="line"></span>
+      <span class="line-title">活动规则</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="rule-wrapper">
+      <div class="list -rule-list"></div>
+
+      <p class="margin-top-20 -activity-expire-date"></p>
+      <p>详情请咨询店内前台</p>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-action-bar hide -bottom-action-bar">
+  <div class="action-bar-info">
+    <img src="./img/bottom_dl_appicon.png" class="bar-logo" alt="logo">
+    <div class="bar-info">
+      <h3 class="info-title">下载客户端</h3>
+      <p class="info-desc">更多优惠不容错过</p>
+    </div>
+  </div>
+  <div class="action-bar-button">
+    <a href="#" id="btn_download" class="btn-sm btn-download">立即下载</a>
+  </div>
+</div>
+
+<div id="toast" class="weui_mast hide">
+  <div class="weui-mask_transparent"></div>
+  <div class="weui-toast">
+    <p class="weui-toast__content" id="toast_msg">已完成</p>
+  </div>
+</div>
+
+<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="/dist/baseUrl.js"></script>
+<script src="./js/base.js?v=4"></script>
+<script src="./js/forward.js?v=4"></script>
+<script src="./js/store.js?v=4"></script>
+</body>
+
+</html>

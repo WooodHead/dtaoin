@@ -13,7 +13,7 @@ var _col = require('./col');
 
 var _col2 = _interopRequireDefault(_col);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-exports.Row = _row2["default"];
-exports.Col = _col2["default"];
+exports.Row = _row2['default'];
+exports.Col = _col2['default'];

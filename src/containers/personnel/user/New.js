@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon, Button, Tabs} from 'antd';
+import { Modal, Icon, Button, Tabs } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -28,13 +28,14 @@ export default class NewUserModal extends BaseModal {
   }
 
   render() {
-    let {userId} = this.state;
-    let formProps = {
+    const { userId } = this.state;
+    const formProps = {
       userId: this.state.userId,
       roleId: this.state.roleId,
       onSuccess: this.props.onSuccess,
       cancelModal: this.hideModal,
       updateState: this.updateState,
+      visible: this.state.visible,
     };
 
     return (

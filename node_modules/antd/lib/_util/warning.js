@@ -8,13 +8,13 @@ var _warning = require('warning');
 
 var _warning2 = _interopRequireDefault(_warning);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var warned = {};
 
-exports["default"] = function (valid, message) {
+exports['default'] = function (valid, message) {
     if (!valid && !warned[message]) {
-        (0, _warning2["default"])(false, message);
+        (0, _warning2['default'])(false, message);
         warned[message] = true;
     }
 };

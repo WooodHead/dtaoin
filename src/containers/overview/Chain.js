@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form, Input} from 'antd';
+import { Row, Col, Form, Input } from 'antd';
 
 import api from '../../middleware/api';
 
@@ -31,11 +31,11 @@ class Chain extends BaseList {
   }
 
   handleSearchCompanyChange(e) {
-    this.setState({key: e.target.value});
+    this.setState({ key: e.target.value });
   }
 
   render() {
-    let {key, page} = this.state;
+    const { key, page } = this.state;
     return (
       <Form>
         <Row className="mb20">
@@ -44,7 +44,7 @@ class Chain extends BaseList {
             <Search
               onChange={this.handleSearchCompanyChange}
               size="large"
-              style={{width: 220}}
+              style={{ width: 220 }}
               placeholder="请输入连锁名称"
             />
           </Col>

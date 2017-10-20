@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button} from 'antd';
+import { Row, Col, Modal, Icon, Button } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 
 import DateFormatter from '../../../utils/DateFormatter';
@@ -22,7 +22,7 @@ class EditStatus extends BaseModal {
   }
 
   getUseLogs(fixedAssetsId) {
-    api.ajax({url: api.finance.fixedAssets.useLogs(fixedAssetsId)}, data => {
+    api.ajax({ url: api.finance.fixedAssets.useLogs(fixedAssetsId) }, data => {
       this.setState({
         visible: true,
         logs: data.res.list,
@@ -31,7 +31,7 @@ class EditStatus extends BaseModal {
   }
 
   renderLogs(detail, logs) {
-    let logItems = [];
+    const logItems = [];
     if (logs.length > 0) {
       logs.map(log => {
         logItems.push(
@@ -64,9 +64,9 @@ class EditStatus extends BaseModal {
   }
 
   render() {
-    const {visible} = this.state;
-    let {logs} = this.state;
-    let {detail, size} = this.props;
+    const { visible } = this.state;
+    const { logs } = this.state;
+    const { detail, size } = this.props;
 
     return (
       <span>

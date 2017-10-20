@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Input} from 'antd';
+import { Row, Col, Input } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -22,7 +22,7 @@ export default class List extends BaseList {
   }
 
   handleSearchChange(e) {
-    this.setState({name: e.target.value, page: 1});
+    this.setState({ name: e.target.value, page: 1 });
   }
 
   render() {
@@ -33,7 +33,7 @@ export default class List extends BaseList {
             <Search
               onChange={this.handleSearchChange}
               onSearch={this.handleSearchChange}
-              style={{width: 220}}
+              style={{ width: 220 }}
               size="large"
               placeholder="请输入资产名称搜索"
             />
@@ -45,13 +45,15 @@ export default class List extends BaseList {
           </Col>
         </Row>
 
-        <Table
-          source={api.finance.fixedAssets.list(this.state)}
-          page={this.state.page}
-          reload={this.state.reload}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
+        <span className="fixed-assets-list">
+          <Table
+            source={api.finance.fixedAssets.list(this.state)}
+            page={this.state.page}
+            reload={this.state.reload}
+            updateState={this.updateState}
+            onSuccess={this.handleSuccess}
+          />
+        </span>
       </div>
     );
   }

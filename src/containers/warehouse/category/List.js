@@ -1,82 +1,85 @@
 import React from 'react';
-import {Row, Col, Input, Select} from 'antd';
+import { Row, Col, message } from 'antd';
 
 import api from '../../../middleware/api';
 
 import BaseList from '../../../components/base/BaseList';
-
-import New from './New';
 import Table from './Table';
 
-const Search = Input.Search;
-const Option = Select.Option;
+require('../category.less');
 
 export default class List extends BaseList {
   constructor(props) {
     super(props);
     this.state = {
+      superPartList: [],
+      currentId: '',
       page: 1,
-      key: '',
-      type: '-1',
-      types: [],
+      pid: 1,
     };
 
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handleTypeChange = this.handleTypeChange.bind(this);
+    [
+      'handleSuperPartClick',
+    ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    this.getMaintainItemTypes();
+    this.getSuperPartTypeList();
   }
 
-  handleSearchChange(e) {
-    let key = e.target.value;
-    this.setState({key, page: 1});
+  handleSuperPartClick(e, item) {
+    this.setState({ currentId: item._id, pid: item._id });
   }
 
-  handleTypeChange(type) {
-    this.setState({type});
-  }
-
-  getMaintainItemTypes() {
-    api.ajax({url: api.aftersales.getMaintainItemTypes()}, data => {
-      this.setState({types: data.res.type_list});
+  getSuperPartTypeList() {
+    api.ajax({
+      url: api.warehouse.category.superPartTypeList(),
+    }, data => {
+      this.setState({
+        superPartList: data.res.list,
+        currentId: data.res.list[0]._id,
+        pid: data.res.list[0]._id,
+      });
+    }, error => {
+      message.error(`获取列表数据失败[${error}]`);
     });
   }
 
   render() {
+    const { superPartList, currentId, page, pid } = this.state;
+
     return (
-      <div>
-        <Row className="head-action-bar">
-          <Col span={12}>
-            <Search
-              onChange={this.handleSearchChange}
-              size="large"
-              style={{width: 220}}
-              placeholder="请输入配件分类"
+      <Row>
+        <Col className="top-category" span={6}>
+          <p>配件分类</p>
+          <ul>
+            {
+              superPartList.map(item => {
+                const isActive = Number(item._id) === Number(currentId);
+                return (
+                  <li
+                    className={isActive ? 'active' : ''}
+                    key={item._id}
+                    onClick={() => this.handleSuperPartClick(this, item)}
+                  >
+                    {item.name}
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </Col>
+        <Col className="second-category" span={18}>
+          <p />
+          <div>
+            <Table
+              source={api.warehouse.category.partTypeList(pid, page)}
+              page={page}
+              updateState={this.updateState}
             />
-
-            <label className="label ml20">产值类型</label>
-            <Select onChange={this.handleTypeChange} size="large" defaultValue="-1" style={{width: 220}}>
-              <Option key="-1">全部</Option>
-              {this.state.types.map(type => <Option key={type._id}>{type.name}</Option>)}
-            </Select>
-          </Col>
-          <Col span={12}>
-            <span className="pull-right">
-              <New onSuccess={this.handleSuccess}/>
-            </span>
-          </Col>
-        </Row>
-
-        <Table
-          source={api.warehouse.category.list(this.state)}
-          page={this.state.page}
-          reload={this.state.reload}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
-      </div>
+          </div>
+        </Col>
+      </Row>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Form, Button, Row, Col} from 'antd';
+import { Form, Button, Row, Col } from 'antd';
 
 import api from '../../../middleware/api';
 import text from '../../../config/text';
@@ -10,22 +10,22 @@ import PrintThisComponent from '../../../components/base/BasePrint';
 export default class PrintDispatch extends PrintThisComponent {
   handlePrint(e) {
     e.preventDefault();
-    let userInfo = api.getLoginUser();
-    let printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
+    const userInfo = api.getLoginUser();
+    const printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
 
     this.printThis({
       element: $(printInfo),
-      debug: false,                //show the iframe for debugging
-      importCSS: true,             //import page CSS
-      importStyle: true,          //import style tags
-      printContainer: false,        //grab outer container as well as the contents of the selector
-      loadCSS: '/dist/print.css',   //path to additional css file - us an array [] for multiple
-      pageTitle: '水稻汽车-' + userInfo.companyName + '-派工单',               //add title to print page
-      removeInline: false,         //remove all inline styles from print elements
+      debug: false,                // show the iframe for debugging
+      importCSS: true,             // import page CSS
+      importStyle: true,          // import style tags
+      printContainer: false,        // grab outer container as well as the contents of the selector
+      loadCSS: '/dist/print.css',   // path to additional css file - us an array [] for multiple
+      pageTitle: `${userInfo.companyName  }-派工单`,               // add title to print page
+      removeInline: false,         // remove all inline styles from print elements
       printDelay: 333,            // variable print delay
-      header: '<p class="print-header">水稻汽车-' + userInfo.companyName + '-派工单</p>',               // prefix to body
+      header: `<p class="print-header">水稻汽车-${  userInfo.companyName  }-派工单</p>`,               // prefix to body
       footer: null,               // suffix to body
-      formValues: true,             //preserve input/form values
+      formValues: true,             // preserve input/form values
     });
   }
 
@@ -51,14 +51,14 @@ export default class PrintDispatch extends PrintThisComponent {
   }
 
   render() {
-    let {project, customer, auto, itemMap, partMap} = this.props;
-    let userInfo = api.getLoginUser();
-    let items = Array.from(itemMap.values());
-    let parts = Array.from(partMap.values());
+    const { project, customer, auto, itemMap, partMap } = this.props;
+    const userInfo = api.getLoginUser();
+    const items = Array.from(itemMap.values());
+    const parts = Array.from(partMap.values());
 
     return (
       <div>
-        <h3 className="center">水稻汽车-{userInfo.companyName}-派工单</h3>
+        <h3 className="center">{userInfo.companyName}-派工单</h3>
         <Form ref="printProjectOrder" className="mt15">
           <div className="border-ccc">
             <Row className="padding-tb-15 padding-l-10">
@@ -78,14 +78,14 @@ export default class PrintDispatch extends PrintThisComponent {
             </Row>
 
             <Row className="border-bottom-ccc padding-tb-15 padding-bottom-15 padding-l-10">
-              <Col span={16}>
+              <Col span={12}>
                 车型：
-                {auto.auto_brand_name && auto.auto_brand_name != 0 ? auto.auto_brand_name + ' ' : ''}
-                {auto.auto_series_name && auto.auto_series_name != 0 ? auto.auto_series_name + ' ' : ''}
-                {auto.auto_type_name && auto.auto_type_name != 0 ? auto.auto_type_name + ' ' : ''}
-                {auto.out_color_name && auto.out_color_name != 0 ? auto.out_color_name + ' ' : ''}
+                {auto.auto_brand_name && auto.auto_brand_name != 0 ? `${auto.auto_brand_name  } ` : ''}
+                {auto.auto_series_name && auto.auto_series_name != 0 ? `${auto.auto_series_name  } ` : ''}
+                {auto.auto_type_name && auto.auto_type_name != 0 ? `${auto.auto_type_name  } ` : ''}
+                {auto.out_color_name && auto.out_color_name != 0 ? `${auto.out_color_name  } ` : ''}
               </Col>
-              <Col span={4}>车架号：{auto.vin_num}</Col>
+              <Col span={8}>车架号：{auto.vin_num}</Col>
               <Col span={4}>外观颜色：{auto.out_color_name}</Col>
             </Row>
 

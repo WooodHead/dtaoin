@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Button, Form, Input, DatePicker} from 'antd';
+import { message, Modal, Icon, Button, Form, Input, DatePicker } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -16,12 +16,12 @@ const FormItem = Form.Item;
 class NewActivity extends BaseModalWithUpload {
   constructor(props) {
     super(props);
-    let offline_time = new Date();
+    const offline_time = new Date();
     offline_time.setFullYear(offline_time.getFullYear() + 10);
 
     this.state = {
       visible: false,
-      offline_time: offline_time,
+      offline_time,
       icon_pic_key: '',
       icon_pic_files: [],
       icon_pic_progress: {},
@@ -37,13 +37,13 @@ class NewActivity extends BaseModalWithUpload {
   }
 
   handleSubmit() {
-    this.props.form.validateFieldsAndScroll((errors) => {
+    this.props.form.validateFieldsAndScroll(errors => {
       if (!!errors) {
         message.error(validator.text.hasError);
         return;
       }
 
-      let formData = this.props.form.getFieldsValue();
+      const formData = this.props.form.getFieldsValue();
       formData.offline_time = formatter.date(formData.offline_time);
       formData.online_time = formatter.date(formData.online_time);
 
@@ -62,9 +62,9 @@ class NewActivity extends BaseModalWithUpload {
   }
 
   render() {
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    const {visible, offline_time} = this.state;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { visible, offline_time } = this.state;
 
     return (
       <span>
@@ -90,13 +90,13 @@ class NewActivity extends BaseModalWithUpload {
             </FormItem>
 
             <FormItem label="上线时间" {...formItemLayout}>
-              {getFieldDecorator('online_time', {initialValue: formatter.getMomentDate()})(
+              {getFieldDecorator('online_time', { initialValue: formatter.getMomentDate() })(
                 <DatePicker placeholder="请选择活动上线时间" allowClear={false}/>
               )}
             </FormItem>
 
             <FormItem label="下线时间" {...formItemLayout}>
-              {getFieldDecorator('offline_time', {initialValue: formatter.getMomentDate(offline_time)})(
+              {getFieldDecorator('offline_time', { initialValue: formatter.getMomentDate(offline_time) })(
                 <DatePicker placeholder="请选择活动下线时间" allowClear={false}/>
               )}
             </FormItem>

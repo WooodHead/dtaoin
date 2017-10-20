@@ -1,0 +1,728 @@
+.bargain {
+  font-family: 'PingFang SC', 'Microsoft yahei', 'Helvetica Neue', 'Helvetica', 'STHeitiSC-Light', 'Arial', 'sans-serif';
+  overflow: hidden;
+  width: 100%;
+}
+.bargain .activity-info {
+  position: relative;
+  width: 100%;
+  background: url("../images/cut_bg.png") no-repeat;
+  background-size: 100% 100%;
+  z-index: 10;
+}
+.bargain .activity-info .title {
+  display: flex;
+  justify-content: center;
+  font-size: 2.4rem;
+  color: #FFFFFF;
+  padding-top: 2.5rem;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+}
+.bargain .activity-info .time {
+  display: flex;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #FFFFFF;
+  padding-top: 1rem;
+}
+.bargain .activity-info .title-pic {
+  display: flex;
+  justify-content: center;
+  width: 31.25rem;
+  height: 23.4rem;
+  margin: 2rem auto 0;
+  background-color: white;
+  padding: 3px;
+}
+.bargain .activity-info .title-pic img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .activity-info .progress-bar {
+  position: relative;
+  margin: 60px auto 0;
+  width: 31.25rem;
+  height: 18px;
+}
+.bargain .activity-info .progress-bar .price {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 18px;
+}
+.bargain .activity-info .progress-bar .now-price {
+  background-color: #ffd500;
+  border-radius: 9px;
+}
+.bargain .activity-info .progress-bar .original-price {
+  background-color: white;
+  border-radius: 9px;
+}
+.bargain .activity-info .progress-bar .triangle-handstand {
+  position: absolute;
+  left: 0;
+  top: -13px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid #ffd500;
+}
+.bargain .activity-info .progress-bar .now-price-word {
+  position: absolute;
+  top: -41px;
+  left: -15px;
+  display: inline-block;
+  height: 30px;
+  width: 135px;
+  border-radius: 15px;
+  background-color: #FFD500;
+  text-align: center;
+  line-height: 30px;
+  font-size: 16px;
+}
+.bargain .activity-info .all-price {
+  display: flex;
+  justify-content: space-between;
+  width: 31.25rem;
+  margin: 7px auto 0;
+  color: white;
+  font-size: 14px;
+}
+.bargain .activity-info .count-time {
+  display: flex;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  margin-top: 2.5rem;
+  padding-bottom: 4.7rem;
+}
+.bargain .activity-info .cut_stamp {
+  position: absolute;
+  right: 50px;
+  bottom: 0;
+  transform: translateY(50%);
+  width: 15.5rem;
+  height: 15.5rem;
+}
+.bargain .active {
+  width: 100%;
+  z-index: 10;
+  background-color: white;
+}
+.bargain .active .button {
+  width: 31.25rem;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: baseline;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 0;
+  background-color: #FFD500;
+  font-size: 16px;
+  color: black;
+}
+.bargain .active .disabled-btn {
+  width: 31.25rem;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: baseline;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 0;
+  background-color: #E1E1E1;
+  font-size: 16px;
+  color: black;
+}
+.bargain .active .join,
+.bargain .active .bargain-btn,
+.bargain .active .invitation-help-btn,
+.bargain .active .help-bargain-btn,
+.bargain .active .my-bargain,
+.bargain .active .disabled-btn {
+  margin: 20px auto 0;
+}
+.bargain .active .bargain-btn,
+.bargain .active .help-bargain-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bargain .active .bargain-btn img,
+.bargain .active .help-bargain-btn img {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
+.bargain .explain {
+  font-size: 12px;
+  z-index: 10;
+  background-color: white;
+}
+.bargain .explain .explain-info {
+  position: relative;
+  width: 31.25rem;
+  margin: 40px auto 0;
+  border-top: 1px solid #d8d8d8;
+  padding-top: 20px;
+}
+.bargain .explain .explain-info .word {
+  position: absolute;
+  left: 50%;
+  top: -13px;
+  transform: translateX(-50%);
+  width: 9.5rem;
+  background-color: white;
+  text-align: center;
+  font-size: 16px;
+}
+.bargain .explain a {
+  display: block;
+  margin: 20px auto 0;
+  width: 23rem;
+  height: 4rem;
+  border-radius: 2rem;
+  border: 1px solid #108ee9;
+  text-align: center;
+  line-height: 4rem;
+  font-size: 14px;
+  color: #108ee9;
+  text-decoration: none;
+}
+.bargain .project-introduction {
+  z-index: 10;
+  background-color: white;
+}
+.bargain .project-introduction .gray-line {
+  width: 100%;
+  height: 20px;
+  background-color: #F3F3F3;
+  margin-top: 3rem;
+}
+.bargain .project-introduction .title {
+  position: relative;
+  width: 31.25rem;
+  margin: 0 auto;
+}
+.bargain .project-introduction .title .line {
+  width: 100%;
+  border-top: 1px solid #d8d8d8;
+  margin-top: 35px;
+}
+.bargain .project-introduction .title .word {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  width: 9.5rem;
+  text-align: center;
+  font-size: 16px;
+  background-color: white;
+  transform: translateX(-50%);
+}
+.bargain .project-introduction .introduce {
+  width: 31.25rem;
+  margin: 0 auto;
+}
+.bargain .project-introduction .introduce .pic {
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-top: 40px;
+}
+.bargain .project-introduction .introduce .pic img {
+  width: 100%;
+}
+.bargain .project-introduction .introduce .pic p {
+  min-height: 4.45rem;
+  font-size: 14px;
+  margin-left: 10px;
+  line-height: 2.9rem;
+  word-break: break-all;
+}
+.bargain .project-introduction .introduce .pic-no-text {
+  width: 100%;
+  background-color: #f0f0f0;
+  margin-top: 40px;
+}
+.bargain .project-introduction .introduce .pic-no-text img {
+  width: 100%;
+}
+.bargain .bargain-list {
+  z-index: 10;
+  background-color: white;
+}
+.bargain .bargain-list .title {
+  position: relative;
+  width: 31.25rem;
+  margin: 0 auto;
+}
+.bargain .bargain-list .title .line {
+  width: 100%;
+  border-top: 1px solid #d8d8d8;
+  margin-top: 35px;
+}
+.bargain .bargain-list .title .word {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  width: 9.5rem;
+  text-align: center;
+  font-size: 16px;
+  background-color: white;
+  transform: translateX(-50%);
+}
+.bargain .bargain-list .tab-content {
+  display: flex;
+  position: relative;
+  width: 31.25rem;
+  height: 48px;
+  margin: 15px auto 0;
+  font-size: 16px;
+}
+.bargain .bargain-list .tab-content .tab {
+  flex-grow: 1;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  border-bottom: 1px solid #d8d8d8;
+}
+.bargain .bargain-list .tab-content .one {
+  border-bottom: 2px solid #ff7720;
+  color: #ff7720;
+}
+.bargain .bargain-list .list {
+  width: 31.25rem;
+  margin: 0 auto;
+  font-size: 14px;
+}
+.bargain .bargain-list .list ul {
+  width: 100%;
+}
+.bargain .bargain-list .list ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 60px;
+  border-bottom: 1px solid #d8d8d8;
+}
+.bargain .bargain-list .list ul li .bargain-price {
+  color: #ff7720;
+}
+.bargain .bargain-list .list ul li .name {
+  display: flex;
+  align-items: center;
+}
+.bargain .bargain-list .list ul li .name img {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  margin-right: 15px;
+}
+.bargain .bargain-list .list ul li .name .index {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 16px;
+  color: white;
+  background-color: #FF7720;
+  margin-right: 10px;
+}
+.bargain .bargain-list .list ul li:nth-of-type(1) .index {
+  background-color: #F8E71C;
+}
+.bargain .bargain-list .list ul li:nth-of-type(2) .index {
+  background-color: #D0D0D0;
+}
+.bargain .bargain-list .list ul li:nth-of-type(3) .index {
+  background-color: #F5A623;
+}
+.bargain .bargain-list .help-bargain-introduce,
+.bargain .bargain-list .rank-list-introduce {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #999999;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.bargain .mask {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.8;
+}
+.bargain .awarding {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: 30.5rem;
+  height: 260px;
+  background-color: white;
+  border-radius: 8px;
+  text-align: center;
+}
+.bargain .awarding .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 15px 0;
+}
+.bargain .awarding .phone-error {
+  color: red;
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 12px;
+}
+.bargain .awarding p:not(.title) {
+  font-size: 14px;
+  color: #666666;
+}
+.bargain .awarding input {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 26.5rem;
+  padding: 13px 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  outline: none;
+  margin-top: 2px;
+}
+.bargain .awarding .input-phone-right {
+  border: 1px solid #CCCCCC;
+}
+.bargain .awarding .input-phone-error {
+  border: 1px solid red;
+}
+.bargain .awarding .button {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 26.5rem;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: baseline;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 0;
+  background-color: #FFD500;
+  font-size: 16px;
+  color: black;
+  margin: 10px auto 0;
+}
+.bargain .awarding .close {
+  width: 40px;
+  height: 40px;
+  margin: 40px auto 0;
+}
+.bargain .awarding .close img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .active-end {
+  position: fixed;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: 25.5rem;
+  height: 210px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  text-align: center;
+}
+.bargain .active-end img {
+  width: 80px;
+  height: 80px;
+  margin: 30px 0 23px 0;
+}
+.bargain .active-end p {
+  font-size: 16px;
+  color: #FFFFFF;
+}
+.bargain .help-bargain-success {
+  position: fixed;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: 29.5rem;
+  height: 210px;
+  border-radius: 8px;
+  background-color: white;
+}
+.bargain .help-bargain-success .knife {
+  width: 100%;
+  height: 110px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.bargain .help-bargain-success .word {
+  width: 100%;
+  text-align: center;
+}
+.bargain .help-bargain-success .word .title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+.bargain .help-bargain-success .word .price {
+  font-size: 16px;
+}
+.bargain .help-bargain-success .word .price span {
+  font-size: 18px;
+  color: #ff8638;
+  font-weight: bold;
+}
+.bargain .help-bargain-success .close {
+  width: 40px;
+  height: 40px;
+  margin: 40px auto 0;
+}
+.bargain .help-bargain-success .close img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .own-bargain-success {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  width: 29.5rem;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: white;
+}
+.bargain .own-bargain-success .knife {
+  width: 100%;
+  height: 110px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.bargain .own-bargain-success .word {
+  width: 100%;
+  text-align: center;
+}
+.bargain .own-bargain-success .word .title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+.bargain .own-bargain-success .word .price {
+  font-size: 16px;
+}
+.bargain .own-bargain-success .word .price span {
+  font-size: 18px;
+  color: #ff8638;
+  font-weight: bold;
+}
+.bargain .own-bargain-success .word .coupon {
+  font-size: 16px;
+}
+.bargain .own-bargain-success .button {
+  width: 26.5rem;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: baseline;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 0;
+  background-color: #FFD500;
+  font-size: 16px;
+  color: black;
+  margin: 5px auto 20px;
+}
+.bargain .own-bargain-success .close {
+  position: absolute;
+  left: 50%;
+  bottom: -62px;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+}
+.bargain .own-bargain-success .close img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .invitation-bargain {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -10;
+  width: 29.5rem;
+  border-radius: 8px;
+  background: url("../images/cut_bg.png") no-repeat;
+  background-size: 100% 100%;
+}
+.bargain .invitation-bargain .top {
+  height: 33.65rem;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.bargain .invitation-bargain .top .nick {
+  width: 100%;
+  padding-left: 20px;
+  padding-top: 10px;
+}
+.bargain .invitation-bargain .top .nick img {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  vertical-align: middle;
+}
+.bargain .invitation-bargain .top .nick .nick-name {
+  font-size: 16px;
+  color: white;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.bargain .invitation-bargain .top .nick span:nth-of-type(2) {
+  font-size: 12px;
+  color: white;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.bargain .invitation-bargain .top .pic {
+  box-sizing: border-box;
+  width: 100%;
+  height: 18.5rem;
+  margin: 10px auto 0;
+  padding: 0 20px;
+}
+.bargain .invitation-bargain .top .pic > div {
+  height: 18.5rem;
+  padding: 3px;
+  background-color: white;
+}
+.bargain .invitation-bargain .top .pic img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .invitation-bargain .top .title-price .title {
+  font-size: 18px;
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+}
+.bargain .invitation-bargain .top .title-price .sell-price {
+  font-size: 14px;
+  color: white;
+  margin-left: 20px;
+  text-decoration: line-through;
+}
+.bargain .invitation-bargain .top .title-price .min-price {
+  font-size: 14px;
+  color: #FFD500;
+  margin-left: 10px;
+}
+.bargain .invitation-bargain .line {
+  height: 0;
+  margin: 0 20px;
+  border-top: 1px solid white;
+}
+.bargain .invitation-bargain .bottom {
+  position: relative;
+  width: 100%;
+  height: 110px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.bargain .invitation-bargain .bottom .word {
+  width: 200px;
+  display: inline-block;
+  vertical-align: top;
+}
+.bargain .invitation-bargain .bottom .word p:nth-of-type(1) {
+  font-size: 16px;
+  color: white;
+  padding-top: 30px;
+  padding-left: 20px;
+}
+.bargain .invitation-bargain .bottom .word p:nth-of-type(2) {
+  font-size: 14px;
+  color: white;
+  padding-top: 5px;
+  padding-left: 20px;
+}
+.bargain .invitation-bargain .bottom .qrcode {
+  position: absolute;
+  right: 22px;
+  bottom: 15px;
+  display: inline-block;
+  vertical-align: top;
+  padding: 12px;
+  background-color: white;
+}
+.bargain .invitation-bargain-pic {
+  position: fixed;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: 29.5rem;
+  border-radius: 8px;
+}
+.bargain .invitation-bargain-pic .introduce {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 12px;
+  color: white;
+  padding-top: 10px;
+}
+.bargain .invitation-bargain-pic .invitation-pic {
+  position: relative;
+  top: 5px;
+  width: 100%;
+}
+.bargain .invitation-bargain-pic .invitation-pic img {
+  width: 100%;
+}
+.bargain .invitation-bargain-pic .close {
+  width: 40px;
+  height: 40px;
+  margin: 10px auto 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.bargain .invitation-bargain-pic .close img {
+  width: 100%;
+  height: 100%;
+}
+.bargain .disabled {
+  background-color: black;
+}
+@media screen and (max-width: 350px) {
+  .bargain .own-bargain-success .word .title {
+    margin-top: 15px;
+  }
+  .bargain .own-bargain-success .close {
+    margin: 50px auto 0;
+  }
+  .bargain .invitation-bargain .bottom .qrcode {
+    padding: 6px 6px 3px;
+  }
+}

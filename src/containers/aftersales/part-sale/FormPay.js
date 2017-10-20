@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Button, Row, Col, Select} from 'antd';
+import { message, Form, Button, Row, Col, Select } from 'antd';
 
 import FormValidator from '../../../utils/FormValidator';
 import Layout from '../../../utils/FormLayout';
@@ -18,7 +18,7 @@ class FormPay extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.payBillVisible) {
-      this.setState({btnLoading: false});
+      this.setState({ btnLoading: false });
     }
   }
 
@@ -29,59 +29,59 @@ class FormPay extends React.Component {
 
   onPay(e) {
     e.preventDefault();
-    let {customerInfo} = this.props;
+    const { customerInfo } = this.props;
     const isPosDevice = api.getLoginUser().isPosDevice;
 
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
         return;
       }
-      this.setState({btnLoading: true});
+      this.setState({ btnLoading: true });
 
-      let pay_type = values.pay_type;
-      let formData = Number(isPosDevice) === 0 ? {
-          order_id: customerInfo._id,
-          customer_id: customerInfo.customer_id,
-          pay_type: pay_type,
-        } :
-        {
-          order_id: customerInfo._id,
-          customer_id: customerInfo.customer_id,
-        };
+      const pay_type = values.pay_type;
+      const formData = Number(isPosDevice) === 0 ? {
+        order_id: customerInfo._id,
+        customer_id: customerInfo.customer_id,
+        pay_type,
+      } :
+      {
+        order_id: customerInfo._id,
+        customer_id: customerInfo.customer_id,
+      };
 
       api.ajax({
-          url: api.aftersales.partSellPayByPos(),
-          type: 'POST',
-          data: formData,
-        }, () => {
-          window.time = setInterval(() => {
-            api.ajax({url: api.aftersales.getPartSellDetail(customerInfo._id)}, data => {
-              if (Number(data.res.detail.unpay_amount) === 0) {
-                window.clearInterval(window.time);
+        url: api.aftersales.partSellPayByPos(),
+        type: 'POST',
+        data: formData,
+      }, () => {
+        window.time = setInterval(() => {
+          api.ajax({ url: api.aftersales.getPartSellDetail(customerInfo._id) }, data => {
+            if (Number(data.res.detail.unpay_amount) === 0) {
+              window.clearInterval(window.time);
 
-                this.setState({btnLoading: false});
-                this.props.cancelModal();
-                message.success('结算成功!');
-                location.reload();
-              }
-            });
-          }, Number(timer));
-        }, (err) => {
-          message.error(err);
-          this.props.cancelModal();
-        }
+              this.setState({ btnLoading: false });
+              this.props.cancelModal();
+              message.success('结算成功!');
+              location.reload();
+            }
+          });
+        }, Number(timer));
+      }, err => {
+        message.error(err);
+        this.props.cancelModal();
+      }
       )
       ;
     });
   }
 
   render() {
-    const {formItemFour, buttonLayout} = Layout;
-    let {customerInfo} = this.props;
-    const {getFieldDecorator} = this.props.form;
+    const { formItemFour, buttonLayout } = Layout;
+    const { customerInfo } = this.props;
+    const { getFieldDecorator } = this.props.form;
     const isPosDevice = api.getLoginUser().isPosDevice;
 
     return (

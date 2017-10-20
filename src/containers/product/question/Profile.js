@@ -1,5 +1,5 @@
 import React from 'react';
-import {Popover} from 'antd';
+import { Popover } from 'antd';
 
 import api from '../../../middleware/api';
 import text from '../../../config/text';
@@ -14,18 +14,18 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
-    this.getImageUrl(this.props.item.from_avatar);
+    this.getImageUrl(this.props.item.from_avatar_pic);
   }
 
   getImageUrl(fileType) {
-    api.ajax({url: api.system.getPrivatePicUrl(fileType)}, data => {
-      this.setState({avatarUrl: data.res.url});
+    api.ajax({ url: api.system.getPublicPicUrl(fileType) }, data => {
+      this.setState({ avatarUrl: data.res.url });
     });
   }
 
   render() {
-    let {artificer} = this.props;
-    let {avatarUrl} = this.state;
+    const { artificer } = this.props;
+    const { avatarUrl } = this.state;
 
     const content = (
       <div>
@@ -35,7 +35,7 @@ export default class Profile extends React.Component {
             width={40}
             height={40}
             alt="无头像"
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
           />
           <div className="profile-content">
             <h3>{artificer.name}
@@ -63,7 +63,7 @@ export default class Profile extends React.Component {
             width={40}
             height={40}
             alt="无头像"
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
           />
         </Popover>
       </div>

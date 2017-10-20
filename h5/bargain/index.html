@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="x-rim-auto-match" content="none">
+  <title></title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/bargain.css">
+  <link rel="stylesheet" href="./css/sweet-alert.css">
+</head>
+<script>
+  (function(doc, win) {
+    var docEl = doc.documentElement,
+      resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+      recalc = function() {
+        window.clientWidth = docEl.clientWidth;
+        if (!window.clientWidth) return;
+        docEl.style.fontSize = 20 * (window.clientWidth / 750) + 'px';
+        window.base = 20 * (window.clientWidth / 750);
+      };
+    // Abort if browser does not support addEventListener
+    if (!doc.addEventListener) return;
+    win.addEventListener(resizeEvt, recalc, false);
+    doc.addEventListener('DOMContentLoaded', recalc, false);
+  })(document, window);
+</script>
+
+<body>
+<div class="bargain" style="background-color: white; z-index: 10">
+  <!--上方带背景图部分-->
+  <div class="activity-info">
+    <h3 class="title" id="title"></h3>
+    <p class="time" id="time"></p>
+    <div class="title-pic">
+      <img id="title-pic" src="" alt="">
+    </div>
+
+    <!--进度条-->
+    <div class="progress-bar" id="progress-bar">
+      <span id="current-price">
+        <div class="triangle-handstand" id="triangle-handstand"></div>
+        <span class="now-price-word" id="start_price"></span>
+      </span>
+      <div class="original-price price" id="original-price"></div>
+      <div class="now-price price" id="now-price"></div>
+
+    </div>
+    <div class="all-price">
+      <p id="min-price"></p>
+      <p id="coupon_total"></p>
+      <p id="sell_price"></p>
+    </div>
+
+    <div class="count-time" id="count-time">
+      <p id="bargain-price"></p>
+    </div>
+
+    <img src="./images/cut_stamp_sellout@3x.png" class="cut_stamp" id="cut_stamp"
+         style="display: none">
+  </div>
+
+  <!--中间参加 帮砍价按钮部分-->
+  <div class="active">
+
+    <audio src="./audio/bargain.mp3" id="audio"></audio>
+    <div class="button help-bargain-btn" id="help-bargain-btn" style="display: none">
+      <img src="./images/cut_btn_icon@3x.png" alt="">
+      <span>帮TA砍价</span>
+    </div>
+
+    <div class="disabled-btn" id="bargain-total" style="display: none">已砍到底价</div>
+    <div class="disabled-btn" id="bargain-help-success" style="display:none;">帮砍成功</div>
+    <div class="disabled-btn" id="has-exchange" style="display:none;">好友已兑换</div>
+
+    <div class="button my-bargain" id="my-bargain" style="display: none">我的砍价</div>
+
+    <div class="button join" id="join">我要参加</div>
+
+    <div class="button bargain-btn" id="bargain-btn" style="display: none">
+      <img src="./images/cut_btn_icon@3x.png" alt="">
+      <span>我要砍价</span>
+    </div>
+
+    <div class="button invitation-help-btn" id="invitation-help-btn" style="display: none">邀请好友帮砍
+    </div>
+  </div>
+
+  <!--中间活动规则以及兑奖信息部分包括咨询电话-->
+  <div class="explain">
+    <div class="rule explain-info" id="rules">
+      <div class="rule-word word">活动规则</div>
+      <!--<p>1.在有效期内不先测试</p>
+    <p>2.在有效期内不先测试</p>
+    <p>3.在有效期内不先测试</p>-->
+    </div>
+    <div class="get-prize explain-info">
+      <div class="prize-word word">兑奖信息</div>
+      <p>【兑奖凭证】凭微信名或手机号到店内兑奖</p>
+      <p id="get-prize-time"></p>
+      <p id="get-prize-company"></p>
+      <p id="get-prize-address"></p>
+    </div>
+    <a href="tel:18688888888">咨询电话 18758675867</a>
+  </div>
+  <!--项目介绍图片-->
+  <div class="project-introduction">
+    <div class="gray-line"></div>
+
+    <div class="title">
+      <div class="line"></div>
+      <div class="word">项目介绍</div>
+    </div>
+
+    <div class="introduce" id="introduce">
+      <!--<div class="pic">
+        <img src="./images/cut_tip_pic.png" alt="">
+        <p>我们保证： 每一滴机油都放心</p>
+      </div>-->
+    </div>
+
+    <div class="gray-line"></div>
+  </div>
+
+  <!--下方砍价榜-->
+  <div class="bargain-list">
+    <div class="title">
+      <div class="line"></div>
+      <div class="word">砍价榜</div>
+    </div>
+
+    <div class="tab-content">
+      <a class="one tab" id="tab-one">帮砍榜</a>
+      <div class="two tab" id="tab-two">排行榜</div>
+    </div>
+
+    <div class="help-bargain-list list" id="help-bargain-list"></div>
+    <div class="help-bargain-introduce" id="help-bargain-introduce">点击加载全部</div>
+
+    <div class="rank-list list" id="rand-list" style="display: none"></div>
+    <div class="rank-list-introduce" id="rank-list-introduce" style="display: none">暂无数据</div>
+
+  </div>
+
+  <!--遮罩层-->
+  <div class="mask" id="mask" style="display: none"></div>
+
+  <!--填写兑奖信息-->
+  <div class="awarding" id="awarding" style="display:none;">
+    <p class="title">请填写兑奖信息</p>
+    <p>手机号在商品兑换时用于核对身份，</p>
+    <p>信息保密不公开</p>
+    <span class="phone-error" id="phone-error" style="visibility: hidden">手机号输入错误</span>
+
+    <input class="input-phone-right" id="input-phone" type="number" placeholder="请输入您的手机号码">
+    <div class="button" id="awarding-confirm">确定</div>
+    <!--窗口关闭x-->
+    <div class="close">
+      <img src="./images/close@3x.png" alt="">
+    </div>
+  </div>
+
+  <!--活动售完-->
+  <div class="active-end" id="active-end" style="display: none">
+    <img src="./images/cut_failed_icon@2x.png" alt="">
+    <p>很遗憾， 此次活动已售完，</p>
+    <p>下次早点来参加哟~</p>
+  </div>
+
+  <!--帮砍成功,刀法惊人-->
+  <div class="help-bargain-success" id="help-bargain-success" style="display: none">
+    <img class="knife" src="./images/cut_tip_pic.png" alt="">
+    <div class="word">
+      <p class="title">刀法惊人!</p>
+      <p class="price" id="help-bargain-price">成功砍价<span>6.78</span>元</p>
+    </div>
+    <!--窗口关闭x-->
+    <div class="close">
+      <img src="./images/close@3x.png" alt="">
+    </div>
+  </div>
+
+  <!--自砍成功，邀请好友-->
+  <div class="own-bargain-success" id="own-bargain-success" style="display: none">
+    <img class="knife" src="./images/cut_tip_pic.png" alt="">
+    <div class="word">
+      <p class="title">恭喜您!</p>
+      <p class="coupon" id="own-bargain-coupon"></p>
+      <p class="price" id="own-bargain-price">砍到了<span></span>元</p>
+    </div>
+
+    <div class="button invitation-help-btn">邀请好友砍价</div>
+    <!--窗口关闭x-->
+    <div class="close">
+      <img src="./images/close@3x.png" alt="">
+    </div>
+  </div>
+
+  <!--邀请好友弹窗dom-->
+  <div class="invitation-bargain" id="invitation-bargain" style="z-index: -10; display: none">
+    <div class="top">
+      <div class="nick" id="invitation-bargain-nick">
+        <img src="" alt="" id="invitation-nick-pic">
+        <span class="nick-name" id="invitation-nick-name"></span>
+        <span>正在参加活动</span>
+      </div>
+
+      <div class="pic">
+        <div>
+          <img src="" alt="" id="invitation-pic">
+        </div>
+      </div>
+
+      <div class="title-price">
+        <p class="title" id="invitation-title"></p>
+        <span class="sell-price" id="invitation-sell-price"></span>
+        <span class="min-price" id="invitation-min-price"></span>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div class="bottom">
+      <div class="word">
+        <p>快来帮我砍一刀吧！</p>
+        <p>长按识别二维码参与</p>
+      </div>
+
+      <div class="qrcode" id="qrcode">
+
+      </div>
+    </div>
+  </div>
+
+  <!--邀请好友弹窗图片-->
+  <div class="invitation-bargain-pic" id="invitation-bargain-pic" style="display: none">
+    <div class="introduce">
+      <p>1.长按图片转发至好友或微信群</p>
+      <p>2.保存图片，将其发送至朋友圈邀请好友砍价</p>
+    </div>
+
+    <div class="invitation-pic" id="invitation-bargain-pic-img">
+      <!--<img src="./images/cut_btn_icon@2x.png" alt="">-->
+    </div>
+
+    <!--窗口关闭x-->
+    <div class="close">
+      <img src="./images/close@3x.png" alt="">
+    </div>
+  </div>
+
+</div>
+
+</body>
+<script src="../../dist/jquery.min.js"></script>
+<script src="../../dist/baseUrl.js"></script>
+<script src="js/sweet-alert.min.js"></script>
+<script src="js/qrcode.min.js"></script>
+<script src="js/html2canvas.js"></script>
+<script src="js/canvas2image.js"></script>
+
+<script>
+  function getConfig() {
+    $.ajax({
+      url: window.baseURL + '/wechat/' + 'system/get-js-sdk-config?url=' +
+      encodeURIComponent(window.location.href),
+      success: function(data) {
+        wxShare(data);
+      },
+    });
+  }
+
+  function wxShare(data) {
+    var config = JSON.parse(data).res.config;
+    wx.config({
+      debug: false,
+      appId: config.appId,
+      timestamp: config.timestamp,
+      nonceStr: config.nonceStr,
+      signature: config.signature,
+      jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'],
+    });
+
+    wx.ready(function() {
+      wx.onMenuShareTimeline({
+        title: '听说大侠好刀法，操练一下可好？我在参加【' + window.showTitle + '】活动，快来帮我砍一刀吧！',
+        link: window.location.href,
+        imgUrl: window.shareUrl,
+        success: function() {
+        },
+        cancel: function() {
+        },
+      });
+
+      wx.onMenuShareAppMessage({
+        title: '听说大侠好刀法，操练一下可好？我在参加【' + window.showTitle + '】活动，快来帮我砍一刀吧！',
+        desc: '快来帮我砍一刀吧~',
+        link: window.location.href,
+        imgUrl: window.shareUrl,
+        type: '',
+        dataUrl: '',
+        success: function() {
+        },
+        cancel: function() {
+        },
+      });
+    });
+
+    wx.error(function(res) {
+      //      console.log(res);
+      //      alert('请重新扫码分享');
+    });
+
+  }
+</script>
+
+<script src="./js/bargain.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+
+</html>

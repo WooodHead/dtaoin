@@ -1,11 +1,13 @@
 import React from 'react';
-import {Row, Col, DatePicker} from 'antd';
+import { Row, Col, DatePicker } from 'antd';
 
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
 
 import BaseList from '../../../components/base/BaseList';
 import SearchSelectBox from '../../../components/widget/SearchSelectBox';
+import DateRangeSelector from '../../../components/widget/DateRangeSelector';
+import DateFormatter from '../../../utils/DateFormatter';
 
 import Table from './Table';
 
@@ -16,13 +18,15 @@ export default class List extends BaseList {
       page: 1,
       company_id: '',
       company_data: [],
-      comment_date: formatter.day(new Date()),
+      commentDate: formatter.day(new Date()),
+      startDate: DateFormatter.day(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+      endDate: DateFormatter.day(),
     };
 
     [
       'handleTimeChange',
-      'onSearch',
-      'onSelectItem',
+      'handleSearch',
+      'handleSelectItem',
     ].map(method => this[method] = this[method].bind(this));
   }
 
@@ -30,77 +34,76 @@ export default class List extends BaseList {
     this.getCompanyList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      page: nextProps.location.query.page,
-    });
-  }
-
   getCompanyList() {
-    api.ajax({url: api.company.list(this.state.page)}, (data) => {
-      let {list} = data.res;
+    api.ajax({ url: api.company.list(this.state.page) }, data => {
+      const { list } = data.res;
       if (list.length > 0) {
-        this.setState({company_data: list});
+        this.setState({ company_data: list });
       } else {
-        this.setState({company_data: []});
+        this.setState({ company_data: [] });
       }
     });
   }
 
   handleTimeChange(value, dateString) {
     this.setState({
-      comment_date: dateString,
+      commentDate: dateString,
     });
   }
 
-  onSearch(key, successHandle, failHandle) {
-    let url = api.company.keyList(key);
-    api.ajax({url}, (data) => {
-      let {list} = data.res;
+  handleDateChange(startDate, endDate) {
+    this.setState({ startDate, endDate });
+  }
+
+  handleSearch(key, successHandle, failHandle) {
+    const url = api.company.keyList(key);
+    api.ajax({ url }, data => {
+      const { list } = data.res;
       if (list.length > 0) {
-        this.setState({company_data: list});
+        this.setState({ company_data: list });
       } else {
-        this.setState({company_data: []});
+        this.setState({ company_data: [] });
       }
       successHandle(list);
-    }, (error) => {
+    }, error => {
       failHandle(error);
     });
   }
 
-  onSelectItem(selectedItem) {
-    this.setState({value: selectedItem.name, company_id: selectedItem._id});
+  handleSelectItem(selectedItem) {
+    this.setState({ value: selectedItem.name, company_id: selectedItem._id });
   }
 
   render() {
-    let {comment_date} = this.state;
+    const { commentDate, startDate, endDate } = this.state;
 
     return (
       <div>
         <Row className="head-action-bar">
-          <Col span={18}>
+          <Col span={24}>
             <SearchSelectBox
-              style={{width: 250, float: 'left'}}
+              style={{ width: 250, float: 'left' }}
               placeholder={'请输入门店名称'}
-              onSearch={this.onSearch}
-              onSelectItem={this.onSelectItem}
+              onSearch={this.handleSearch}
+              onSelectItem={this.handleSelectItem}
             />
 
-            <label className="ml20">评价时间:</label>
-            <DatePicker
-              format={formatter.pattern.day}
-              defaultValue={formatter.getMomentDate(comment_date)}
-              onChange={this.handleTimeChange.bind(this)}
-              allowClear={false}
+            <label className="label ml20">评价时间</label>
+            <DateRangeSelector
+              onDateChange={this.handleDateChange}
+              startTime={startDate}
+              endTime={endDate}
             />
           </Col>
         </Row>
 
-        <Table
-          source={api.comment.list(this.state)}
-          page={this.state.page}
-          updateState={this.updateState}
-        />
+        <span className="product-comment">
+          <Table
+            source={api.comment.list(this.state)}
+            page={this.state.page}
+            updateState={this.updateState}
+          />
+        </span>
       </div>
     );
   }

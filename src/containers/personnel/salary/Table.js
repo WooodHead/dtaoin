@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {Row, Col} from 'antd';
+import { Link } from 'react-router-dom';
+import { Row, Col } from 'antd';
 import api from '../../../middleware/api';
 import SearchBox from '../../../components/search/SearchBox';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
@@ -33,34 +33,34 @@ export default class Table extends React.Component {
   }
 
   handleSearchChange(name) {
-    this.props.updateState({name, page: 1});
+    this.props.updateState({ name, page: 1 });
   }
 
   handlePageChange(page) {
-    this.props.updateState({page});
+    this.props.updateState({ page });
   }
 
   handleRowSelectionChange(selectedRowKeys) {
-    this.setState({salaryIds: selectedRowKeys, page: 1});
+    this.setState({ salaryIds: selectedRowKeys, page: 1 });
   }
 
   getListData(props) {
-    this.setState({isFetching: true});
-    api.ajax({url: props.source}, function (data) {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total), isFetching: false});
-    }.bind(this));
+    this.setState({ isFetching: true });
+    api.ajax({ url: props.source }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total), isFetching: false });
+    });
   }
 
   render() {
-    let {list, total, isFetching} = this.state;
+    const { list, total, isFetching } = this.state;
     const columns = [{
       title: '姓名',
       dataIndex: 'user_info',
       key: 'name',
       render(value) {
         return (
-          <Link to={{pathname: '/personnel/user/detail', query: {user_id: value._id}}}>
+          <Link to={{ pathname: `/personnel/user/detail/${value._id}` }}>
             {value.name}
           </Link>
         );
@@ -97,7 +97,7 @@ export default class Table extends React.Component {
       title: '本月实到/本月应到',
       dataIndex: 'actual_day',
       key: 'actual_day',
-      render(value, record){
+      render(value, record) {
         return <span>{value}/{record.due_day}</span>;
       },
     }, {
@@ -120,7 +120,7 @@ export default class Table extends React.Component {
       dataIndex: 'user_info',
       key: 'action',
       className: 'center',
-      render: function (value, record) {
+      render (value, record) {
         return (
           <span>
             <FreezeSalaryModal
@@ -154,7 +154,7 @@ export default class Table extends React.Component {
           <Col span={12}>
             <SearchBox
               change={this.handleSearchChange}
-              style={{width: 250}}
+              style={{ width: 250 }}
               placeholder="请输入姓名搜索"
             />
           </Col>

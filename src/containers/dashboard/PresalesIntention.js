@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Row, Col, Icon} from 'antd';
+import { Card, Row, Col, Icon } from 'antd';
 import PieChart from '../../components/chart/PieChart';
 
 export default class IntentionStatisticsCard extends React.Component {
@@ -8,22 +8,22 @@ export default class IntentionStatisticsCard extends React.Component {
   }
 
   render() {
-    let {
+    const {
       levelList,
       budgetList,
       mortgageList,
     } = this.props;
 
-    let levelData = [];
-    let budgetData = [];
-    let mortgageData = [];
+    const levelData = [];
+    const budgetData = [];
+    const mortgageData = [];
 
     let levelDataTotal = 0;
     let budgetDataTotal = 0;
     let mortgageRate = 0;
 
     levelList.map(item => {
-      let pieObj = {
+      const pieObj = {
         name: item.level,
         y: parseInt(item.count),
       };
@@ -32,7 +32,7 @@ export default class IntentionStatisticsCard extends React.Component {
     });
 
     budgetList.map(item => {
-      let pieObj = {
+      const pieObj = {
         name: item.level_name,
         y: parseInt(item.count),
       };
@@ -41,7 +41,7 @@ export default class IntentionStatisticsCard extends React.Component {
     });
 
     mortgageList.map(item => {
-      let pieObj = {
+      const pieObj = {
         name: Number(item.is_mortgage) === 0 ? '全款' : '按揭',
         y: parseInt(item.count),
       };
@@ -55,11 +55,11 @@ export default class IntentionStatisticsCard extends React.Component {
     if (mortgageData.length > 0) {
       if (!mortgageData[1]) {
         mortgageRate = '100%';
-      } else if(!mortgageData[0]) {
+      } else if (!mortgageData[0]) {
         mortgageRate = '0%';
         mortgageData.shift();
-      }else {
-        mortgageRate = (mortgageData[0].y / (mortgageData[0].y + mortgageData[1].y) * 100).toFixed(2) + '%';
+      } else {
+        mortgageRate = `${(mortgageData[0].y / (mortgageData[0].y + mortgageData[1].y) * 100).toFixed(2)  }%`;
       }
     }
 
@@ -98,7 +98,7 @@ export default class IntentionStatisticsCard extends React.Component {
             </Card>
           </Col>
         </Row>
-        {/*<Row gutter={16} className="mb15">
+        {/* <Row gutter={16} className="mb15">
 
          <Col span={12}>
          <Card title={<span><Icon type="pie-chart"/> 客户来源</span>}>

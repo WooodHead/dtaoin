@@ -15,13 +15,13 @@ export default class MaintenanceOfAuto extends React.Component {
   }
 
   getAutoProjects(customerId, autoId) {
-    api.ajax({url: api.aftersales.maintProjectsByAutoId(customerId, autoId)}, function (data) {
-      this.setState({projects: data.res.list});
-    }.bind(this));
+    api.ajax({ url: api.aftersales.maintProjectsByAutoId(customerId, autoId) }, data => {
+      this.setState({ projects: data.res.list });
+    });
   }
 
   render() {
-    let detail = this.state.projects;
+    const detail = this.state.projects;
     return <MaintProjectInfo detail={detail}/>;
   }
 }

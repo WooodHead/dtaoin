@@ -1,75 +1,65 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {Tabs, Row, Col, Button} from 'antd';
+import { Link } from 'react-router-dom';
+import { Tabs, Row, Col, Button } from 'antd';
 
 import IntentionTable from '../presales/potential/IntentionTable';
 import EditIntentionModal from '../presales/potential/Edit';
 import LostCustomerModal from '../presales/potential/Lost';
 import New from '../presales/potential/New';
 
-export default class AutoTabs extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const TabPane = Tabs.TabPane;
 
-  addIntetionSuccess() {
+export default class AutoTabs extends React.Component {
+  onAddIntentionSuccess() {
     location.reload();
   }
 
   render() {
-    const TabPane = Tabs.TabPane;
-    let {intentions, customerId} = this.props;
-    let tabPanes = [];
-    let self = this;
+    const { intentions, customerId } = this.props;
+    const tabPanes = [];
+    const self = this;
 
-    intentions.map(function (item, index) {
-      let tabInfo = `意向${index + 1}`;
+    intentions.map((item, index) => {
+      const tabInfo = `意向${index + 1}`;
       let disabled = false;
       if (Number(item.status) === -1 || Number(item.status) === 3) {
         disabled = true;
       }
 
       tabPanes.push(
-        <TabPane tab={tabInfo} key={index + 1 + ''}>
-          <div>
-            <IntentionTable intention={item}/>
+        <TabPane tab={tabInfo} key={`${index + 1  }`}>
+          <IntentionTable intention={item} />
 
-            <Row type="flex" className="mt20">
-              <div>
-                <LostCustomerModal
-                  customerId={item.customer_id}
-                  intentionId={item._id}
-                  size="default"
-                  disabled={disabled}
-                />
-              </div>
+          <Row type="flex" className="mt20">
+            <LostCustomerModal
+              customerId={item.customer_id}
+              intentionId={item._id}
+              size="default"
+              disabled={disabled}
+            />
 
-              <div className="ml10">
-                <Link
-                  to={{
-                    pathname: '/presales/deal/new',
-                    query: {customerId: item.customer_id, intentionId: item._id},
-                  }}
-                  target="_blank"
-                >
-                  <Button type="dash" disabled={disabled}>成交</Button>
-                </Link>
-              </div>
+            <div className="ml10">
+              <Link
+                to={{ pathname: `/presales/deal/new/${item.customer_id}/${item._id}` }}
+                target="_blank"
+              >
+                <Button type="dash" disabled={disabled}>成交</Button>
+              </Link>
+            </div>
 
-              <div className="ml10">
-                <EditIntentionModal
-                  customerId={item.customer_id}
-                  intentionId={item._id}
-                  disabled={disabled}
-                  isSingleMode={true}
-                  type="primary"
-                  size="default"
-                  onSuccess={self.props.onSuccess}
-                />
-              </div>
-            </Row>
-          </div>
-        </TabPane>
+            <div className="ml10">
+              <EditIntentionModal
+                customerId={item.customer_id}
+                intentionId={item._id}
+                disabled={disabled}
+                isSingleMode={true}
+                type="primary"
+                size="default"
+                onSuccess={self.props.onSuccess}
+              />
+            </div>
+          </Row>
+        </TabPane>,
       );
     });
 
@@ -85,16 +75,13 @@ export default class AutoTabs extends React.Component {
               <New
                 isSingle={true}
                 customerId={customerId}
-                onSuccess={this.addIntetionSuccess}
+                onSuccess={this.onAddIntentionSuccess}
               />
             </div>
           </Col>
         </Row>
 
-        <Tabs
-          type="card"
-          defaultActiveKey="1"
-        >
+        <Tabs type="card" defaultActiveKey="1">
           {tabPanes}
         </Tabs>
       </div>

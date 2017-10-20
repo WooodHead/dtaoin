@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Form, Input, Radio, Select} from 'antd';
+import { message, Modal, Icon, Form, Input, Radio, Select } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -48,29 +48,29 @@ class Edit extends BaseModal {
         message.success('编辑成功');
         this.hideModal();
         this.props.onSuccess();
-      }, (error) => {
+      }, error => {
         message.error(`编辑失败[${error}]`);
       });
     });
   }
 
   getChains() {
-    api.ajax({url: api.overview.getAllChains()}, data => {
-      this.setState({chains: data.res.list});
+    api.ajax({ url: api.overview.getAllChains() }, data => {
+      this.setState({ chains: data.res.list });
     });
   }
 
   getDetail(id) {
-    api.ajax({url: api.admin.account.detail(id)}, data => {
-      this.setState({detail: data.res.user_info});
+    api.ajax({ url: api.admin.account.detail(id) }, data => {
+      this.setState({ detail: data.res.user_info });
     });
   }
 
   render() {
-    const {formItemLayout, selectStyle} = Layout;
-    const {getFieldDecorator, getFieldValue} = this.props.form;
+    const { formItemLayout, selectStyle } = Layout;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
 
-    let {visible, detail, chains} = this.state;
+    const { visible, detail, chains } = this.state;
 
     return (
       <span>
@@ -84,7 +84,7 @@ class Edit extends BaseModal {
           onCancel={this.hideModal}
         >
           <Form>
-            {getFieldDecorator('_id', {initialValue: detail._id})(<Input type="hidden"/>)}
+            {getFieldDecorator('_id', { initialValue: detail._id })(<Input type="hidden"/>)}
             <FormItem label="姓名" {...formItemLayout}>
               {getFieldDecorator('name', {
                 initialValue: detail.name,

@@ -1,5 +1,13 @@
+/**
+ * 定义通用样式，与业务无关
+ */
+
 .hide {
   display: none !important;
+}
+
+.visible-hidden {
+  visibility: hidden;
 }
 
 .pull-left {
@@ -27,8 +35,24 @@
 }
 
 /*margin-top*/
+.mt-10 {
+  margin-top: -10px;
+}
+
+.mt3 {
+  margin-top: 3px;
+}
+
+.mt4 {
+  margin-top: 4px;
+}
+
 .mt5 {
   margin-top: 5px;
+}
+
+.mt7 {
+  margin-top: 7px;
 }
 
 .mt8 {
@@ -53,6 +77,14 @@
 
 .mt30 {
   margin-top: 30px;
+}
+
+.mt36 {
+  margin-top: 36px;
+}
+
+.mt38 {
+  margin-top: 38px;
 }
 
 .mt40 {
@@ -88,11 +120,47 @@
   margin-right: 26px;
 }
 
+.mr30 {
+  margin-right: 30px;
+}
+
 .mr32 {
   margin-right: 32px;
 }
 
+.mr120 {
+  margin-right: 120px;
+}
+
 /*margin-left*/
+.ml-10 {
+  margin-left: -10px;
+}
+
+.mlr-20 {
+  margin: 0 -20px;
+}
+
+.ml-6 {
+  margin-left: -6px;
+}
+
+.ml-80 {
+  margin-left: -80px;
+}
+
+.ml-60 {
+  margin-left: -60px;
+}
+
+.ml-20 {
+  margin-left: -20px;
+}
+
+.ml3 {
+  margin-left: 3px;
+}
+
 .ml5 {
   margin-left: 5px;
 }
@@ -109,30 +177,71 @@
   margin-left: 10px;
 }
 
+.ml12 {
+  margin-left: 12px;
+}
+
 .ml15 {
   margin-left: 15px;
+}
+
+.ml18 {
+  margin-left: 18px;
 }
 
 .ml20 {
   margin-left: 20px;
 }
 
+.ml25 {
+  margin-left: 25px;
+}
+
+.ml28 {
+  margin-left: 28px;
+}
+
 .ml30 {
   margin-left: 30px;
+}
+
+.ml34 {
+  margin-left: 34px;
 }
 
 .ml40 {
   margin-left: 40px;
 }
 
+.ml45 {
+  margin-left: 45px;
+}
+
+.ml50 {
+  margin-left: 50px;
+}
+
+.ml52 {
+  margin-left: 52px;
+}
+
 .ml55 {
   margin-left: 55px;
 }
 
-/*margin-bottom*/
-.mb5 {
-  margin-bottom: 5px;
+.ml75 {
+  margin-left: 75px;
 }
+
+.ml90 {
+  margin-left: 90px;
+}
+
+.ml120 {
+  margin-left: 120px;
+}
+
+/*margin-bottom*/
 
 .mb5 {
   margin-bottom: 5px;
@@ -158,8 +267,16 @@
   margin-bottom: 30px !important;
 }
 
+.mb40 {
+  margin-bottom: 40px;
+}
+
 .pl20 {
   padding-left: 20px;
+}
+
+.pl40 {
+  padding-left: 40px;
 }
 
 .border-bottom-ccc {
@@ -186,6 +303,10 @@
   padding: 20px;
 }
 
+.padding-top-5 {
+  padding-top: 5px;
+}
+
 .padding-top-15 {
   padding-top: 15px;
 }
@@ -201,6 +322,10 @@
 .padding-tb-15 {
   padding-top: 15px;
   padding-bottom: 15px;
+}
+
+.padding-bottom-10 {
+  padding-bottom: 10px;
 }
 
 .padding-l-10 {
@@ -239,6 +364,10 @@
   font-size: 18px;
 }
 
+.font-size-22 {
+  font-size: 22px;
+}
+
 .font-size-24 {
   font-size: 24px;
 }
@@ -267,6 +396,14 @@
   color: #333;
 }
 
+.grey-999 {
+  color: #999;
+}
+
+.grey-9c9c9c {
+  color: #9c9c9c;
+}
+
 .c-grey-c {
   color: #ccc;
 }
@@ -283,6 +420,10 @@
   color: #666;
 }
 
+.text-gray-999 {
+  color: #999;
+}
+
 .text-red {
   color: #f50;
 }
@@ -295,8 +436,26 @@
   color: #00A854;
 }
 
+.help-icon-font {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.65);
+  margin-left: 5px;
+}
+
 .response-img {
   max-width: 100%;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+//button
+
+.shuidao-btn-tiny {
+  height: 18px;
+  line-height: 18px;
+  font-size: 12px !important;
 }
 
 .dynamic-delete-button {
@@ -333,6 +492,10 @@
   width: 150px;
 }
 
+.width-200 {
+  width: 200px;
+}
+
 .width-250 {
   width: 250px;
 }
@@ -349,6 +512,10 @@
   display: inline-block !important;
 }
 
+.blue-line-color {
+  color: #108ee9;
+}
+
 .btn-arrow {
   color: #999;
 }
@@ -362,6 +529,10 @@
   color: #f04134;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .module-head {
   display: flex !important;
   align-items: center;
@@ -371,6 +542,14 @@
 
 .with-bottom-divider {
   padding-bottom: 20px;
+  border-bottom: 1px dotted #e5e5e5;
+}
+
+.with-bottom-divider:last-of-type {
+  border-bottom: 0;
+}
+
+.bottom-divider-dotted {
   border-bottom: 1px dotted #e5e5e5;
 }
 
@@ -395,8 +574,8 @@
 
 .icon-first-name-three {
   display: inline-block;
-  width: 90px;
-  height: 90px;
+  width: 50px;
+  height: 50px;
   background-color: #9fd46e;
   border-radius: 6px;
   font-size: 24px;
@@ -422,6 +601,10 @@
   background-color: #ffd700;
 }
 
+.text-decoration-none {
+  text-decoration: none;
+}
+
 .label:after {
   content: ":";
   margin: 0 8px 0 2px;
@@ -429,13 +612,20 @@
   top: -0.5px;
 }
 
+.label-right {
+  display: inline-block;
+  min-width: 110px;
+  text-align: right;
+}
+
 .info-line {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  margin-right: 10px;
 
   > .label {
-    min-width: 52px;
+    min-width: 150px;
     text-align: right;
   }
 }
@@ -482,11 +672,19 @@
   }
 }
 
+.align-left {
+  label {
+    min-width: 100px;
+    text-align: right;
+    display: inline-block;
+  }
+}
+
 .render-content {
   margin-top: -20px;
   margin-left: -20px;
   margin-right: -20px;
-  background: #ececec;
+  background: #f3f3f3;
 
   > div, .line-block {
     padding: 20px;
@@ -525,6 +723,7 @@
   float: right;
   right: 0;
 }
+
 //倒立三角形
 .triangle-handstand {
   display: inline-block;
@@ -553,3 +752,31 @@
   line-height: 32px;
   vertical-align: middle;
 }
+
+//带边框的三角形
+.triangle-border {
+  position: relative;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 26px 26px 26px;
+  border-color: transparent transparent #ffd700 transparent;
+}
+
+.clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/*.triangle-border::before {
+  position: absolute;
+  content: '';
+  top: 2px;
+  left: -36px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 36px 36px 36px;
+  border-color: transparent transparent #ffffff transparent;
+}*/

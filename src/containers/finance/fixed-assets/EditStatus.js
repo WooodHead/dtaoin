@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Button, Form, Input, Select} from 'antd';
+import { message, Modal, Icon, Button, Form, Input, Select } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 
 import validator from '../../../utils/validator';
@@ -10,6 +10,7 @@ import api from '../../../middleware/api';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
+const TextArea = Input.TextArea;
 
 class EditStatus extends BaseModal {
   constructor(props) {
@@ -30,7 +31,7 @@ class EditStatus extends BaseModal {
         return;
       }
 
-      let self = this;
+      const self = this;
 
       if (values.type === '7') {
         confirm({
@@ -62,10 +63,10 @@ class EditStatus extends BaseModal {
   }
 
   render() {
-    const {getFieldDecorator} = this.props.form;
-    const {visible} = this.state;
-    const {formItemLayout, selectStyle} = FormLayout;
-    const {size} = this.props;
+    const { getFieldDecorator } = this.props.form;
+    const { visible } = this.state;
+    const { formItemLayout, selectStyle } = FormLayout;
+    const { size } = this.props;
     return (
       <span>
         {
@@ -84,7 +85,7 @@ class EditStatus extends BaseModal {
         >
 
           <Form>
-            {getFieldDecorator('fixed_assets_id', {initialValue: this.props._id})}
+            {getFieldDecorator('fixed_assets_id', { initialValue: this.props._id })}
 
             <FormItem label="修改状态" {...formItemLayout}>
               {getFieldDecorator('type', {
@@ -114,7 +115,7 @@ class EditStatus extends BaseModal {
 
             <FormItem label="描述" {...formItemLayout}>
               {getFieldDecorator('remark')(
-                <Input type="textarea" placeholder="请输入描述"/>
+                <TextArea placeholder="请输入描述"/>
               )}
             </FormItem>
           </Form>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Form, Input, Select} from 'antd';
+import { message, Modal, Icon, Form, Input, Select } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import SearchSelectBox from '../../../components/widget/SearchSelectBox';
@@ -31,7 +31,7 @@ class NewPart extends BaseModal {
 
   componentWillReceiveProps(nextProps) {
     this.getMaintainItemTypes();
-    this.setState({visible: nextProps.visible});
+    this.setState({ visible: nextProps.visible });
   }
 
   handleSubmit() {
@@ -41,7 +41,7 @@ class NewPart extends BaseModal {
         return;
       }
 
-      let {part_type} = this.state;
+      const { part_type } = this.state;
       if (!part_type) {
         message.warning('请选择配件分类');
         return;
@@ -53,7 +53,7 @@ class NewPart extends BaseModal {
         url: api.warehouse.part.add(),
         type: 'POST',
         data: values,
-      }, (data) => {
+      }, data => {
         message.info('添加成功！');
         this.props.form.resetFields();
         this.props.onSuccessAddParts(data.res.auto_part);
@@ -63,30 +63,30 @@ class NewPart extends BaseModal {
   }
 
   handleSearch(key, successHandle, failHandle) {
-    let url = api.warehouse.category.search(key);
-    api.ajax({url}, (data) => {
+    const url = api.warehouse.category.search(key);
+    api.ajax({ url }, data => {
       successHandle(data.res.list);
-      this.setState({partCategories: data.res.list});
-    }, (error) => {
+      this.setState({ partCategories: data.res.list });
+    }, error => {
       failHandle(error);
-      this.setState({partCategories: []});
+      this.setState({ partCategories: [] });
     });
   }
 
   handleSearchSelect(data) {
-    this.setState({part_type: data._id});
+    this.setState({ part_type: data._id });
   }
 
   getMaintainItemTypes() {
-    api.ajax({url: api.aftersales.getMaintainItemTypes()}, data => {
-      this.setState({types: data.res.type_list});
+    api.ajax({ url: api.aftersales.getMaintainItemTypes() }, data => {
+      this.setState({ types: data.res.type_list });
     });
   }
 
   render() {
-    const {visible}=this.state;
-    const {formItemLayout, selectStyle} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { visible } = this.state;
+    const { formItemLayout, selectStyle } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <span>
@@ -151,8 +151,8 @@ class NewPart extends BaseModal {
             <FormItem label="规格" {...formItemLayout}>
               {getFieldDecorator('spec')(
                 <Input addonAfter={
-                  getFieldDecorator('unit', {initialValue: '个'})(
-                    <Select style={{width: 45}}>
+                  getFieldDecorator('unit', { initialValue: '个' })(
+                    <Select style={{ width: 45 }}>
                       <Option value="个">个</Option>
                       <Option value="升">升</Option>
                       <Option value="瓶">瓶</Option>

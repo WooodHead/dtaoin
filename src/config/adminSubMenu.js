@@ -1,7 +1,39 @@
 const menus = [
   {
+    key: 'new-car',
+    icon: 'car',
+    name: '新车',
+    subMenu: [
+      {
+        name: '产品管理',
+        path: '/new-car/product/index',
+      }, {
+        name: '方案管理',
+        path: '/new-car/programme/list',
+      }, {
+        name: '订单管理',
+        path: '/new-car/order/index',
+      }, {
+        name: '材料配置',
+        path: '/new-car/material/list',
+      }, {
+        name: '问答管理',
+        path: '/new-car/qa/list',
+      }, {
+        name: 'banner管理',
+        path: '/new-car/banner/list',
+      }, {
+        name: '资源方管理',
+        path: '/new-car/resource/list',
+      }, {
+        name: '收益记录',
+        path: '/new-car/earnings-record/list',
+      },
+    ],
+  },
+  {
     key: 'maintain_item',
-    icon: 'maintain_item',
+    icon: 'book',
     name: '项目',
     subMenu: [
       {
@@ -11,7 +43,7 @@ const menus = [
     ],
   }, {
     key: 'warehouse',
-    icon: 'warehouse',
+    icon: 'appstore-o',
     name: '配件',
     subMenu: [
       {
@@ -21,23 +53,26 @@ const menus = [
     ],
   }, {
     key: 'marketing',
-    icon: 'marketing',
-    name: '会员',
+    icon: 'notification',
+    name: '营销',
     subMenu: [
       {
-        name: '计次优惠',
+        name: '计次券',
         path: '/marketing/times/list',
       }, {
-        name: '折扣优惠',
+        name: '折扣券',
         path: '/marketing/discount/list',
       }, {
-        name: '会员卡管理',
+        name: '套餐卡管理',
         path: '/marketing/membercard/list',
+      }, {
+        name: '优惠券统计',
+        path: '/marketing/statistics/coupon',
       },
     ],
   }, {
     key: 'finance',
-    icon: 'finance',
+    icon: 'pay-circle-o',
     name: '财务',
     super: true,
     subMenu: [
@@ -48,7 +83,7 @@ const menus = [
     ],
   }, {
     key: 'product',
-    icon: 'warehouse',
+    icon: 'appstore-o',
     name: '产品',
     super: true,
     subMenu: [
@@ -58,6 +93,9 @@ const menus = [
       }, {
         name: '技师管理',
         path: '/product/artificer/index',
+      }, {
+        name: '头条管理',
+        path: '/headlines',
       }, {
         name: '广告管理',
         path: '/advert',
@@ -71,7 +109,7 @@ const menus = [
     ],
   }, {
     key: 'settings',
-    icon: 'aftersales',
+    icon: 'setting',
     name: '设置',
     super: true,
     subMenu: [

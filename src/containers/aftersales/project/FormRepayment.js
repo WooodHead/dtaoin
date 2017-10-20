@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select} from 'antd';
+import { message, Form, Button, DatePicker, Input, Row, Col, Modal, Icon, Select } from 'antd';
 
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
@@ -33,7 +33,7 @@ class FormRepayment extends BaseModal {
   }
 
   componentDidMount() {
-    let {projectId} = this.props;
+    const { projectId } = this.props;
     this.getProjectDetail(projectId);
   }
 
@@ -47,38 +47,36 @@ class FormRepayment extends BaseModal {
   }
 
   getMaintainItemList(intention_id = '') {
-    api.ajax({url: api.aftersales.getItemListOfMaintProj(intention_id)}, (data) => {
-
-      let maintain_items = new Map();
+    api.ajax({ url: api.aftersales.getItemListOfMaintProj(intention_id) }, data => {
+      const maintain_items = new Map();
       for (let i = 0; i < data.res.list.length; i++) {
         maintain_items.set(data.res.list[i].item_id, data.res.list[i]);
       }
-      this.setState({maintain_items: maintain_items});
+      this.setState({ maintain_items });
     });
   }
 
   getMaintainPartList(intention_id = '') {
-    api.ajax({url: api.aftersales.getPartListOfMaintProj(intention_id)}, (data) => {
-      let maintain_parts = new Map();
+    api.ajax({ url: api.aftersales.getPartListOfMaintProj(intention_id) }, data => {
+      const maintain_parts = new Map();
       for (let i = 0; i < data.res.list.length; i++) {
         maintain_parts.set(data.res.list[i].part_type_id, data.res.list[i]);
       }
-      this.setState({maintain_parts: maintain_parts});
+      this.setState({ maintain_parts });
     });
   }
 
   getUserAuto(customer_id, auto_id) {
-    api.ajax({url: api.auto.detail(customer_id, auto_id)}, (data) => {
-      this.setState({auto: data.res.detail});
+    api.ajax({ url: api.auto.detail(customer_id, auto_id) }, data => {
+      this.setState({ auto: data.res.detail });
     });
   }
 
-
   onAccountPrint(e) {
     e.preventDefault();
-    let {customerId, projectId} = this.props;
+    const { customerId, projectId } = this.props;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -86,9 +84,9 @@ class FormRepayment extends BaseModal {
         return;
       }
 
-      let payAmount = values.paymentAmount;
-      let nextPayDate = DateFormatter.day(values.repaymentTime);
-      let arrears = values.arrears;
+      const payAmount = values.paymentAmount;
+      const nextPayDate = DateFormatter.day(values.repaymentTime);
+      const arrears = values.arrears;
 
       if (Number(payAmount) > Number(this.state.project.unpay_amount)) {
         message.warning('还款金额不能大于挂账金额');
@@ -99,20 +97,18 @@ class FormRepayment extends BaseModal {
         return;
       }
 
-      let formData = Number(Number(isPosDevice) === 1) ?
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-        } :
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          pay_type: values.pay_type,
-        };
+      const formData = Number(Number(isPosDevice) === 1) ? {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+      } : {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        pay_type: values.pay_type,
+      };
 
       this.setState({
         btnLoading: true,
@@ -126,10 +122,9 @@ class FormRepayment extends BaseModal {
         url: api.aftersales.payProjectOnRepayment(),
         type: 'POST',
         data: formData,
-      }, function () {
+      }, () => {
         window.time = setInterval(() => {
-          api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
-
+          api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
             if (Number(data.res.intention_info.unpay_amount) === Number(arrears)) {
               window.clearInterval(window.time);
               this.setState({
@@ -141,17 +136,17 @@ class FormRepayment extends BaseModal {
               this.showModal();
               // location.reload();
             }
-          }.bind(this));
+          });
         }, Number(timer));
-      }.bind(this));
+      });
     });
   }
 
   onAccount(e) {
     e.preventDefault();
-    let {customerId, projectId} = this.props;
+    const { customerId, projectId } = this.props;
     const isPosDevice = api.getLoginUser().isPosDevice;
-    let timer = isPosDevice == 0 ? 200 : 2000;
+    const timer = isPosDevice == 0 ? 200 : 2000;
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
       if (!!errors) {
@@ -159,9 +154,9 @@ class FormRepayment extends BaseModal {
         return;
       }
 
-      let payAmount = values.paymentAmount;
-      let nextPayDate = DateFormatter.day(values.repaymentTime);
-      let arrears = values.arrears;
+      const payAmount = values.paymentAmount;
+      const nextPayDate = DateFormatter.day(values.repaymentTime);
+      const arrears = values.arrears;
 
       if (Number(payAmount) > Number(this.state.project.unpay_amount)) {
         message.warning('还款金额不能大于挂账金额');
@@ -172,20 +167,18 @@ class FormRepayment extends BaseModal {
         return;
       }
 
-      let formData = Number(Number(isPosDevice) === 1) ?
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-        } :
-        {
-          _id: projectId,
-          customer_id: customerId,
-          next_pay_date: nextPayDate,
-          pay_amount: payAmount,
-          pay_type: values.pay_type,
-        };
+      const formData = Number(Number(isPosDevice) === 1) ? {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+      } : {
+        _id: projectId,
+        customer_id: customerId,
+        next_pay_date: nextPayDate,
+        pay_amount: payAmount,
+        pay_type: values.pay_type,
+      };
 
       this.setState({
         btnLoading: true,
@@ -195,10 +188,9 @@ class FormRepayment extends BaseModal {
         url: api.aftersales.payProjectOnRepayment(),
         type: 'POST',
         data: formData,
-      }, function () {
+      }, () => {
         window.time = setInterval(() => {
-          api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
-
+          api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
             if (Number(data.res.intention_info.unpay_amount) === Number(arrears)) {
               window.clearInterval(window.time);
               this.setState({
@@ -208,14 +200,14 @@ class FormRepayment extends BaseModal {
               this.props.cancelModal();
               location.reload();
             }
-          }.bind(this));
+          });
         }, Number(timer));
-      }.bind(this));
+      });
     });
   }
 
   paymentAmountChange(e) {
-    let paymentAmount = Number(e.target.value);
+    const paymentAmount = Number(e.target.value);
     if (paymentAmount > Number(this.state.project.unpay_amount)) {
       message.warning('还款金额不可大于挂账金额');
     }
@@ -231,7 +223,7 @@ class FormRepayment extends BaseModal {
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
     location.reload();
   }
 
@@ -240,21 +232,27 @@ class FormRepayment extends BaseModal {
   }
 
   getProjectDetail(projectId) {
-    api.ajax({url: api.aftersales.maintProjectByProjectId(projectId)}, function (data) {
-      this.setState({project: data.res.intention_info});
-    }.bind(this));
+    api.ajax({ url: api.aftersales.maintProjectByProjectId(projectId) }, data => {
+      this.setState({ project: data.res.intention_info });
+    });
+  }
+
+  disabledStartDate(current) {
+    return current && current.valueOf() < new Date(new Date().setDate(new Date().getDate() - 1));
   }
 
   render() {
-    const {formItem8_15} = Layout;
-    const {project} = this.state;
-    const {getFieldDecorator} = this.props.form;
+    const { formItem8_15 } = Layout;
+    const { project } = this.state;
+    const { getFieldDecorator } = this.props.form;
     const isPosDevice = api.getLoginUser().isPosDevice;
 
     return (
       <Form>
-        {getFieldDecorator('arrears', {initialValue: project.unpay_amount - this.props.form.getFieldValue('paymentAmount')})(
-          <Input type="hidden"/>
+        {getFieldDecorator('arrears', {
+          initialValue: project.unpay_amount - this.props.form.getFieldValue('paymentAmount'),
+        })(
+          <Input type="hidden" />,
         )}
 
         <Row>
@@ -275,23 +273,25 @@ class FormRepayment extends BaseModal {
             <FormItem label="还款金额" {...formItem8_15}>
               {getFieldDecorator('paymentAmount', {
                 initialValue: 0,
-                rules: [{required: true, message: '请输入实付金额'}],
+                rules: [{ required: true, message: '请输入实付金额' }],
               })(
-                <Input addonAfter="元" onChange={this.paymentAmountChange}/>
+                <Input addonAfter="元" onChange={this.paymentAmountChange} />,
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="还款时间" {...formItem8_15}>
               {getFieldDecorator('repaymentTime', {
-                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())),
-                rules: [{required: true, message: '请输入还款时间'}],
+                initialValue: DateFormatter.getMomentDate(new Date(new Date().getFullYear(), new Date().getMonth() +
+                  1, new Date().getDate())),
+                rules: [{ required: true, message: '请输入还款时间' }],
               })(
                 <DatePicker
                   disabled={this.state.disabled}
                   format={DateFormatter.pattern.day}
                   placeholder="请选择还款时间" allowClear={false}
-                />
+                  disabledDate={this.disabledStartDate}
+                />,
               )}
             </FormItem>
           </Col>
@@ -310,7 +310,7 @@ class FormRepayment extends BaseModal {
                   <Option key="2">现金支付</Option>
                   <Option key="3">微信支付</Option>
                   <Option key="4">支付宝支付</Option>
-                </Select>
+                </Select>,
               )}
             </FormItem>
           </Col>
@@ -338,7 +338,7 @@ class FormRepayment extends BaseModal {
           </Button>
 
           <Modal
-            title={<span><Icon type="eye-o"/> 挂账单预览</span>}
+            title={<span><Icon type="eye-o" /> 挂账单预览</span>}
             visible={this.state.visible}
             width="980px"
             onCancel={this.hideModal}

@@ -1,12 +1,12 @@
 import React from 'react';
-import {message} from 'antd';
+import { message } from 'antd';
 
 import api from '../../../middleware/api';
 
 export default class Base extends React.Component {
 
   handlePageChange(page) {
-    this.setState({page});
+    this.setState({ page });
     this.getStockTakingParts(this.state.id, page);
   }
 
@@ -14,15 +14,15 @@ export default class Base extends React.Component {
     location.href = '/warehouse/stocktaking/index';
   }
 
-  handleInputBlur(stocktakingItemId, partId, e) {
-    let partCount = e.target.value;
+  handleInputBlur(stocktakingItemId, partId, id, e) {
+    const partCount = e.target.value;
 
     if (!partCount) {
       return;
     }
 
-    let items = [];
-    let stocktakingItem = {
+    const items = [];
+    const stocktakingItem = {
       _id: stocktakingItemId,
       real_amount: partCount,
     };
@@ -42,30 +42,57 @@ export default class Base extends React.Component {
       },
     }, () => {
       message.info('保存成功！');
+      this.handleCheckUpdate(id);
     });
   }
 
   handleSaveNewParts() {
-    let {id, page} = this.state;
+    const { id, page } = this.state;
     this.getStockTakingParts(id, page);
+  }
+
+  handleCheckUpdate(id) {
+    api.ajax({
+      url: api.warehouse.stocktaking.checkUpdateAllStockaking(),
+      type: 'POST',
+      data: { stocktaking_id: id },
+    }, () => {
+      this.setState({ updatePermission: true });
+    }, () => {
+      this.setState({ updatePermission: false });
+    });
   }
 
   getStocktakingDetail(id) {
     api.ajax({
       url: api.warehouse.stocktaking.detail(id),
-    }, (data) => {
-      this.setState({detail: data.res.detail});
+    }, data => {
+      this.setState({ detail: data.res.detail });
+      this.getAllStockTakingParts(data.res.detail._id);
     });
   }
 
   getStockTakingParts(id, page) {
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: api.warehouse.stocktaking.parts(id, page),
-    }, (data) => {
+    }, data => {
       this.setState({
         isFetching: false,
         parts: data.res.list,
+        total: parseInt(data.res.total),
+      });
+    });
+  }
+
+  getAllStockTakingParts(id) {
+    this.setState({ isFetching: true });
+    api.ajax({
+      url: api.warehouse.stocktaking.parts(id),
+    }, data => {
+      this.setState({
+        isFetching: false,
+        partsAll: data.res.list,
         total: parseInt(data.res.total),
       });
     });

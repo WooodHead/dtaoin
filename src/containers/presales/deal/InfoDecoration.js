@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Input, Button, DatePicker, Row, Col} from 'antd';
+import { message, Form, Input, Button, DatePicker, Row, Col } from 'antd';
 import className from 'classnames';
 
 import Layout from '../../../utils/FormLayout';
@@ -26,15 +26,15 @@ class NewDecorationForm extends React.Component {
   }
 
   componentDidMount() {
-    let {customerId, autoDealId, autoId} = this.props;
+    const { customerId, autoDealId, autoId } = this.props;
     this.getDecorationInfo(customerId, autoDealId);
     if (!!autoId || !!autoDealId) {
-      this.setState({isEdit: false});
+      this.setState({ isEdit: false });
     }
   }
 
   handleIsEdit() {
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
@@ -42,15 +42,14 @@ class NewDecorationForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let {isNew} = this.state;
-    let {autoDealId, customerId} = this.props;
+    const { isNew } = this.state;
+    const { autoDealId, customerId } = this.props;
     if (!autoDealId) {
       message.error('请先填写交易信息并保存');
       return false;
     }
 
     this.props.form.validateFieldsAndScroll((errors, values) => {
-
       if (!!errors) {
         message.error(validator.text.hasError);
         return false;
@@ -71,7 +70,7 @@ class NewDecorationForm extends React.Component {
   }
 
   getDecorationInfo(customerId, autoDealId) {
-    api.ajax({url: api.presales.deal.getDecorationLogDetail(customerId, autoDealId)}, data => {
+    api.ajax({ url: api.presales.deal.getDecorationLogDetail(customerId, autoDealId) }, data => {
       this.setState({
         decorationInfo: data.res.detail || {},
         isNew: !(data.res.detail),
@@ -86,56 +85,57 @@ class NewDecorationForm extends React.Component {
   }
 
   render() {
-    const {formItemLayout} = Layout;
-    let {getFieldDecorator} = this.props.form;
-    let {isEdit, decorationInfo} = this.state;
-    let {customerId, autoId, autoDealId} = this.props;
+    const { formItemLayout_1014 } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { isEdit, decorationInfo } = this.state;
+    const { customerId, autoId, autoDealId } = this.props;
 
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('_id', {initialValue: decorationInfo._id})(
-            <Input type="hidden"/>
+          {getFieldDecorator('_id', { initialValue: decorationInfo._id })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('customer_id', {initialValue: customerId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('customer_id', { initialValue: customerId })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('auto_id', {initialValue: autoId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('auto_id', { initialValue: autoId })(
+            <Input type="hidden" />,
           )}
 
-          {getFieldDecorator('auto_deal_id', {initialValue: autoDealId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('auto_deal_id', { initialValue: autoDealId })(
+            <Input type="hidden" />,
           )}
           <Row>
             <Col span={6}>
               <NumberInput
                 label="加装金额"
-                defaultValue={(decorationInfo.price && Number(decorationInfo.price).toFixed(2)) || ''}
+                defaultValue={(decorationInfo.price && Number(decorationInfo.price).toFixed(2)) ||
+                ''}
                 id="price"
                 self={this}
-                layout={formItemLayout} ßß
+                layout={formItemLayout_1014}
                 placeholder="请输入加装金额"
                 rules={FormValidator.getRuleNotNull()}
               />
             </Col>
 
             <Col span={6}>
-              <FormItem label="加装时间" {...formItemLayout}>
+              <FormItem label="加装时间" {...formItemLayout_1014}>
                 {getFieldDecorator('deal_date', {
                   initialValue: formatter.getMomentDate(decorationInfo.deal_date),
                 })(
-                  <DatePicker placeholder="加装时间" allowClear={false}/>
+                  <DatePicker placeholder="加装时间" allowClear={false} />,
                 )}
               </FormItem>
             </Col>
@@ -143,12 +143,12 @@ class NewDecorationForm extends React.Component {
           </Row>
           <Row>
             <Col span={12}>
-              <FormItem label="加装内容" labelCol={{span: 3}} wrapperCol={{span: 16}}>
+              <FormItem label="加装内容" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
                 {getFieldDecorator('content', {
                   initialValue: decorationInfo.content,
                   rules: FormValidator.getRuleNotNull(),
                 })(
-                  <Input type="textarea"/>
+                  <Input type="textarea" />,
                 )}
               </FormItem>
             </Col>
@@ -171,13 +171,14 @@ class NewDecorationForm extends React.Component {
         <Form className={show}>
           <Row>
             <Col span={6}>
-              <FormItem label="加装金额" {...formItemLayout}>
-                <span>{(decorationInfo.price && Number(decorationInfo.price).toFixed(2)) || ''}</span>
+              <FormItem label="加装金额" {...formItemLayout_1014}>
+                <span>{(decorationInfo.price && Number(decorationInfo.price).toFixed(2)) ||
+                ''}</span>
               </FormItem>
             </Col>
 
             <Col span={6}>
-              <FormItem label="加装时间" {...formItemLayout}>
+              <FormItem label="加装时间" {...formItemLayout_1014}>
                 <span>{decorationInfo.deal_date}</span>
               </FormItem>
             </Col>
@@ -186,7 +187,7 @@ class NewDecorationForm extends React.Component {
 
           <Row>
             <Col span={12}>
-              <FormItem label="加装内容" labelCol={{span: 3}} wrapperCol={{span: 16}}>
+              <FormItem label="加装内容" labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
                 <span>{decorationInfo.content}</span>
               </FormItem>
             </Col>

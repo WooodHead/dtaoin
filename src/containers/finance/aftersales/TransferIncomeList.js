@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon, Button, Form} from 'antd';
+import { Modal, Icon, Button, Form } from 'antd';
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
@@ -22,20 +22,20 @@ class TransferIncomeListModal extends BaseModal {
   }
 
   handlePageChange(page) {
-    this.setState({page: page});
+    this.setState({ page });
   }
 
   incomeListByTransferId(transfer_id) {
     api.ajax({
       url: api.finance.incomeListByTransferId(transfer_id, this.state.page),
-    }, function (data) {
-      this.setState({data: data.res.list});
-    }.bind(this));
+    }, data => {
+      this.setState({ data: data.res.list });
+    });
   }
 
   render() {
-    const {visible, total} = this.state;
-    let {size} = this.props;
+    const { visible, total } = this.state;
+    const { size } = this.props;
     const columns = [
       {
         title: '交易时间',

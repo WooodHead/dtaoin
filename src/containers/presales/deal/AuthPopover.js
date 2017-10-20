@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {Popover, Button} from 'antd';
+import { Link } from 'react-router-dom';
+import { Popover, Button } from 'antd';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
@@ -26,13 +26,13 @@ export default class AuthPopover extends React.Component {
   }
 
   handleAuthPrepare(visible) {
-    let {detail} = this.props;
+    const { detail } = this.props;
     if (visible) {
       this.interval = setInterval(this.getDealDetail.bind(this, detail._id), 2000);
     } else {
       clearInterval(this.interval);
     }
-    this.setState({visible});
+    this.setState({ visible });
   }
 
   getDealDetail(id) {
@@ -49,12 +49,12 @@ export default class AuthPopover extends React.Component {
   }
 
   async getIsAuthorization() {
-    let hasPermission = await api.checkPermission(path.deal.calculatedReturn);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path.deal.calculatedReturn);
+    this.setState({ hasPermission });
   }
 
   render() {
-    let {detail, size} = this.props;
+    const { detail, size } = this.props;
 
     const content = (
       <div className="center">
@@ -76,27 +76,24 @@ export default class AuthPopover extends React.Component {
     return (
       <span>
         {
-          this.state.hasPermission ?
-            <span>
+          this.state.hasPermission ? <span>
               {
-                size === 'small' ?
-                  <Link
-                    to={{pathname: '/presales/deal/clearing', query: {id: this.props.detail._id}}}
-                    target="_blank"
-                  >
-                    {String(detail.pay_status) === '1' ? '查看收益' : '计算收益'}
-                  </Link> :
-                  <Link
-                    to={{pathname: '/presales/deal/clearing', query: {id: this.props.detail._id}}}
-                    target="_blank"
-                  >
-                    <Button type="primary">{String(detail.pay_status) === '1' ? '查看收益' : '计算收益'}</Button>
-                  </Link>
-
+                size === 'small' ? <Link
+                  to={{ pathname: `/presales/deal/clearing/${this.props.detail._id}` }}
+                  target="_blank"
+                >
+                  {String(detail.pay_status) === '1' ? '查看收益' : '计算收益'}
+                </Link> : <Link
+                  to={{ pathname: `/presales/deal/clearing/${this.props.detail._id}` }}
+                  target="_blank"
+                >
+                  <Button type="primary">{String(detail.pay_status) === '1'
+                    ? '查看收益'
+                    : '计算收益'}</Button>
+                </Link>
               }
             </span>
-            :
-            <Popover
+            : <Popover
               content={content}
               title=""
               trigger="click"
@@ -106,7 +103,9 @@ export default class AuthPopover extends React.Component {
               {
                 size === 'small' ?
                   <a href="javascript:;">{String(detail.pay_status) === '1' ? '查看收益' : '计算收益'}</a> :
-                  <Button type="primary">{String(detail.pay_status) === '1' ? '查看收益' : '计算收益'}</Button>
+                  <Button type="primary">{String(detail.pay_status) === '1'
+                    ? '查看收益'
+                    : '计算收益'}</Button>
               }
             </Popover>
         }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Radio, Row, Col, DatePicker} from 'antd';
+import { Radio, Row, Col, DatePicker } from 'antd';
 import api from '../../../middleware/api';
 import text from '../../../config/text';
 import formatter from '../../../utils/DateFormatter';
@@ -15,7 +15,7 @@ export default class MaintIncomeList extends BaseList {
   constructor(props) {
     super(props);
     this.state = {
-      page: props.location.query.page || 1,
+      page: 1,
       start_date: formatter.date(new Date(new Date().setMonth(new Date().getMonth() - 1))),
       end_date: formatter.date(new Date()),
       start_time: formatter.date(new Date(new Date().setMonth(new Date().getMonth() - 1))),
@@ -47,7 +47,7 @@ export default class MaintIncomeList extends BaseList {
   }
 
   render() {
-    let {
+    const {
       start_time,
       end_time,
     } = this.state;
@@ -73,7 +73,7 @@ export default class MaintIncomeList extends BaseList {
               onChange={this.handleConditionChange.bind(this, '', 'account_type')}
             >
               <RadioButton value={-1} key="-1">全部</RadioButton>
-              {text.IncomeAccountType.map((item) =>
+              {text.IncomeAccountType.map(item =>
                 <RadioButton value={item.id} key={item.id}>{item.name}</RadioButton>)
               }
             </RadioGroup>
@@ -89,7 +89,7 @@ export default class MaintIncomeList extends BaseList {
               onChange={this.handleConditionChange.bind(this, '', 'status')}
             >
               <RadioButton value={0} key="0">全部</RadioButton>
-              {text.IncomeStatus.map((item) =>
+              {text.IncomeStatus.map(item =>
                 <RadioButton value={item.id} key={item.id}>{item.name}</RadioButton>)
               }
             </RadioGroup>
@@ -101,7 +101,7 @@ export default class MaintIncomeList extends BaseList {
               onChange={this.handleConditionChange.bind(this, '', 'transfer_status')}
             >
               <RadioButton value={0} key="0">全部</RadioButton>
-              {text.IncomeStatus.map((item) =>
+              {text.IncomeStatus.map(item =>
                 <RadioButton value={item.id} key={item.id}>{item.name}</RadioButton>)
               }
             </RadioGroup>

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import api from '../../../middleware/api';
-import {Form, Button, Row, Col} from 'antd';
+import { Form, Button, Row, Col } from 'antd';
 import text from '../../../config/text';
 import formatter from '../../../utils/DateFormatter';
 import PrintThisComponent from '../../../components/base/BasePrint';
@@ -10,22 +10,22 @@ import PrintThisComponent from '../../../components/base/BasePrint';
 export default class PrintPayment extends PrintThisComponent {
   handlePrint(e) {
     e.preventDefault();
-    let userInfo = api.getLoginUser();
-    let printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
+    const userInfo = api.getLoginUser();
+    const printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
 
     this.printThis({
       element: $(printInfo),
-      debug: false,                //show the iframe for debugging
-      importCSS: true,             //import page CSS
-      importStyle: true,          //import style tags
-      printContainer: false,        //grab outer container as well as the contents of the selector
-      loadCSS: '/dist/print.css',   //path to additional css file - us an array [] for multiple
-      pageTitle: '水稻汽车-' + userInfo.companyName + '-客户结算单',               //add title to print page
-      removeInline: false,         //remove all inline styles from print elements
+      debug: false,                // show the iframe for debugging
+      importCSS: true,             // import page CSS
+      importStyle: true,          // import style tags
+      printContainer: false,        // grab outer container as well as the contents of the selector
+      loadCSS: '/dist/print.css',   // path to additional css file - us an array [] for multiple
+      pageTitle: `${userInfo.companyName  }-客户结算单`,               // add title to print page
+      removeInline: false,         // remove all inline styles from print elements
       printDelay: 333,            // variable print delay
-      header: '<p class="print-header">水稻汽车-' + userInfo.companyName + '-客户结算单</p>',               // prefix to body
+      header: `<p class="print-header">水稻汽车-${  userInfo.companyName  }-客户结算单</p>`,               // prefix to body
       footer: ' ',               // suffix to body
-      formValues: true,             //preserve input/form values
+      formValues: true,             // preserve input/form values
     });
   }
 
@@ -33,9 +33,8 @@ export default class PrintPayment extends PrintThisComponent {
     return (
       <Row className="mb5 text-gray" key={item._id}>
         <Col span={6}>{item.item_name}</Col>
-        <Col span={6}>{item.time_fee}</Col>
+        <Col span={6}>{(Number(item.time_fee) - Number(item.coupon_discount)).toFixed(2)}</Col>
         <Col span={6}>{item.fitter_user_names}</Col>
-        <Col span={6}>{item.quality_check_user_names}</Col>
       </Row>
     );
   }
@@ -46,20 +45,22 @@ export default class PrintPayment extends PrintThisComponent {
         <Col span={6}>{part.part_name}</Col>
         <Col span={6}>{part.count}</Col>
         <Col span={6}>{(Number(part.material_fee) || 0) / (Number(part.count) || 0) || 0}</Col>
-        <Col span={4} className="text-right">{part.material_fee}</Col>
+        <Col span={4} className="text-right">{(Number(part.material_fee) -
+        Number(part.coupon_discount)).toFixed(2)}</Col>
       </Row>
     );
   }
 
   render() {
-    let {project, customer, auto, itemMap, partMap, timeFee, materialFee, realTotalFee} = this.props;
-    let userInfo = api.getLoginUser();
-    let items = Array.from(itemMap.values());
-    let parts = Array.from(partMap.values());
+    const { project, customer, auto, itemMap, partMap, timeFee, materialFee, realTotalFee } = this.props;
+    const userInfo = api.getLoginUser();
+    const items = itemMap ? Array.from(itemMap.values()) : [];
+
+    const parts = partMap ? Array.from(partMap.values()) : [];
 
     return (
       <div>
-        <h3 className="center">水稻汽车-{userInfo.companyName}-客户结算单</h3>
+        <h3 className="center">{userInfo.companyName}-客户结算单</h3>
 
         <Form ref="printProjectOrder" className="mt15">
           <div className="border-ccc">
@@ -71,7 +72,9 @@ export default class PrintPayment extends PrintThisComponent {
             </Row>
 
             <Row
-              className={project.is_accident === '1' ? 'padding-bottom-15 padding-l-10' : 'border-bottom-ccc padding-bottom-15 padding-l-10'}>
+              className={project.is_accident === '1'
+                ? 'padding-bottom-15 padding-l-10'
+                : 'border-bottom-ccc padding-bottom-15 padding-l-10'}>
               <Col span={8}>联系方式：{customer.phone}</Col>
               <Col span={5}>客户姓名：{customer.name}</Col>
               <Col span={5}>车牌号：{auto.plate_num}</Col>
@@ -81,10 +84,14 @@ export default class PrintPayment extends PrintThisComponent {
             <Row className="border-bottom-ccc padding-tb-15 padding-bottom-15 padding-l-10">
               <Col span="24">
                 车型：
-                {auto.auto_brand_name && auto.auto_brand_name != 0 ? auto.auto_brand_name + ' ' : ''}
-                {auto.auto_series_name && auto.auto_series_name != 0 ? auto.auto_series_name + ' ' : ''}
-                {auto.auto_type_name && auto.auto_type_name != 0 ? auto.auto_type_name + ' ' : ''}
-                {auto.out_color_name && auto.out_color_name != 0 ? auto.out_color_name + ' ' : ''}
+                {auto.auto_brand_name && auto.auto_brand_name != 0
+                  ? `${auto.auto_brand_name  } `
+                  : ''}
+                {auto.auto_series_name && auto.auto_series_name != 0
+                  ? `${auto.auto_series_name  } `
+                  : ''}
+                {auto.auto_type_name && auto.auto_type_name != 0 ? `${auto.auto_type_name  } ` : ''}
+                {auto.out_color_name && auto.out_color_name != 0 ? `${auto.out_color_name  } ` : ''}
               </Col>
             </Row>
 
@@ -100,20 +107,23 @@ export default class PrintPayment extends PrintThisComponent {
               <Col span={24}>备注：{project.remark}</Col>
             </Row>
 
-            <Row className={items.length > 0 ? 'border-bottom-ccc padding-tb-15 padding-l-10' : 'hide'}>
+            <Row className={items.length > 0
+              ? 'border-bottom-ccc padding-tb-15 padding-l-10'
+              : 'hide'}>
               <Col span={3}><span className="strong">维修内容：</span></Col>
               <Col span={21}>
                 <Row className="mb5">
                   <Col span={6}>项目</Col>
                   <Col span={6}>工时费(元)</Col>
                   <Col span={6}>维修人员</Col>
-                  <Col span={6}>质检人</Col>
                 </Row>
                 {items.map(item => this.renderItem(item))}
               </Col>
             </Row>
 
-            <Row className={parts.length > 0 ? 'border-bottom-ccc padding-tb-15 padding-l-10' : 'hide'}>
+            <Row className={parts.length > 0
+              ? 'border-bottom-ccc padding-tb-15 padding-l-10'
+              : 'hide'}>
               <Col span={3}><span className="strong">维修配件：</span></Col>
               <Col span={21}>
                 <Row className="mb5">
@@ -130,14 +140,15 @@ export default class PrintPayment extends PrintThisComponent {
               <Col span={3}><span className="strong">收费：</span></Col>
               <Col span={21}>
                 <Row className="mb5">
-                  <Col span={3}>材料费</Col>
-                  <Col span={3}>工时费</Col>
-                  <Col span={3}>优惠金额(元)</Col>
+                  <Col span={6}>配件费</Col>
+                  <Col span={6}>工时费</Col>
+                  <Col span={6}>优惠金额(元)</Col>
                 </Row>
                 <Row className="mb5">
-                  <Col span={3}>{materialFee && Number(materialFee).toFixed(2) || '0.00'}</Col>
-                  <Col span={3}>{timeFee && Number(timeFee).toFixed(2) || '0.00'}</Col>
-                  <Col span={3}>{project.discount && Number(project.discount).toFixed(2) || '0.00'}</Col>
+                  <Col span={6}>{materialFee && Number(materialFee).toFixed(2) || '0.00'}</Col>
+                  <Col span={6}>{timeFee && Number(timeFee).toFixed(2) || '0.00'}</Col>
+                  <Col span={6}>{project.discount && Number(project.discount).toFixed(2) ||
+                  '0.00'}</Col>
                 </Row>
               </Col>
             </Row>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import PrintPayment from './PrintPayment';
@@ -7,7 +7,7 @@ import PrintPayment from './PrintPayment';
 export default class PrintPaymentModal extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
   }
 
   render() {

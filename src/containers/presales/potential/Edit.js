@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button, Icon} from 'antd';
+import { Modal, Button, Icon } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import EditForm from './EditForm';
 
@@ -12,7 +12,7 @@ export default class Edit extends BaseModal {
   }
 
   render() {
-    let {size, disabled, customerId, intentionId, isSingle, onSuccess} = this.props;
+    const { size, disabled, customerId, intentionId, isSingle, onSuccess } = this.props;
 
     return (
       <span>

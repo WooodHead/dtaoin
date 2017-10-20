@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Input, Select, Button, Row, Col} from 'antd';
+import { message, Form, Input, Select, Button, Row, Col } from 'antd';
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
 import BaseModal from '../../../components/base/BaseModal';
@@ -24,30 +24,26 @@ class FormPart extends BaseModal {
       'getPaidAmount',
       'setformDataTypeRate',
       'setMaintainPartName',
-    ].map((method) => this[method] = this[method].bind(this));
+    ].map(method => this[method] = this[method].bind(this));
   }
-
-  /*componentWillReceiveProps(nextProps) {
-   console.log('nextProps', nextProps);
-   }*/
 
   componentWillMount() {
     if (this.props.maintain_part && parseInt(this.props.maintain_part.part_id) > 0) {
-      api.ajax({url: api.warehouse.part.detail(this.props.maintain_part.part_id)}, (data) => {
-        let {maintain_part} = this.state;
+      api.ajax({ url: api.warehouse.part.detail(this.props.maintain_part.part_id) }, data => {
+        const { maintain_part } = this.state;
         maintain_part.part_amount = Number(data.res.detail.amount) - Number(data.res.detail.freeze);
         if (maintain_part._id) {
           maintain_part.part_amount += Number(maintain_part.real_count);
         }
-        this.setState({maintain_part: maintain_part});
+        this.setState({ maintain_part });
       });
     }
   }
 
   handleMaterialFeeBaseChange(event) {
-    let materialFeeBase = event.target.value;
+    const materialFeeBase = event.target.value;
 
-    let {maintain_part} = this.state;
+    const { maintain_part } = this.state;
 
     if (maintain_part) {
       maintain_part.material_fee_base = materialFeeBase;
@@ -56,22 +52,21 @@ class FormPart extends BaseModal {
       this.setformDataTypeRate(maintain_part, this.state.memberDetailList);
       maintain_part.coupon_discount = this.getPreferentialAmount(maintain_part);
       maintain_part.paid_amount = this.getPaidAmount(maintain_part);
-
     }
 
     this.setState({
-      maintain_part: maintain_part,
+      maintain_part,
     });
-    let form = this.props.form;
+    const form = this.props.form;
     form.setFieldsValue({
       material_fee_base: maintain_part.material_fee_base,
     });
   }
 
   handleMaterialCountChange(event) {
-    let count = event.target.value;
+    const count = event.target.value;
 
-    let {maintain_part} = this.state;
+    const { maintain_part } = this.state;
     if (maintain_part) {
       maintain_part.count = count;
       maintain_part.material_fee = maintain_part.material_fee_base * count;
@@ -82,10 +77,10 @@ class FormPart extends BaseModal {
     }
 
     this.setState({
-      maintain_part: maintain_part,
+      maintain_part,
     });
 
-    let form = this.props.form;
+    const form = this.props.form;
     form.setFieldsValue({
       count: maintain_part.count,
     });
@@ -99,12 +94,12 @@ class FormPart extends BaseModal {
       return;
     }
 
-    let {maintain_part} = this.state;
+    const { maintain_part } = this.state;
     maintain_part.real_count = real_count;
     maintain_part.remain_count = Number(this.state.maintain_part.part_amount) - Number(real_count);
 
-    this.setState({maintain_part: maintain_part});
-    let form = this.props.form;
+    this.setState({ maintain_part });
+    const form = this.props.form;
     form.setFieldsValue({
       real_count: maintain_part.real_count,
     });
@@ -115,26 +110,26 @@ class FormPart extends BaseModal {
   }
 
   handleLevelSelect(value, option) {
-    let {maintain_part} = this.state;
+    const { maintain_part } = this.state;
 
-    let index = option.props.index;
-    let list = maintain_part.levels;
+    const index = option.props.index;
+    const list = maintain_part.levels;
 
     if (maintain_part) {
       maintain_part.material_fee_base = list[index].price;
       maintain_part.material_fee = maintain_part.count * list[index].price;
     }
 
-    this.setState({maintain_part: maintain_part});
-    let form = this.props.form;
+    this.setState({ maintain_part });
+    const form = this.props.form;
     form.setFieldsValue({
       material_fee_base: maintain_part.material_fee_base,
     });
   }
 
   handlePartSelect(data) {
-    let part = data.data;
-    let {maintain_part} = this.state;
+    const part = data.data;
+    const { maintain_part } = this.state;
 
     if (maintain_part) {
       maintain_part.part_id = part._id;
@@ -153,11 +148,11 @@ class FormPart extends BaseModal {
       maintain_part.remain_count = part.amount - part.freeze;
     }
 
-    this.setState({maintain_part: maintain_part});
+    this.setState({ maintain_part });
   }
 
   handlePartTypeSelect(optPart) {
-    let {maintain_part} = this.state;
+    const { maintain_part } = this.state;
 
     maintain_part._id = maintain_part._id ? maintain_part._id : 0;
 
@@ -167,9 +162,9 @@ class FormPart extends BaseModal {
     maintain_part.count = maintain_part.count ? maintain_part.count : 1;
     maintain_part.material_fee = maintain_part.material_fee ? maintain_part.material_fee : 0.00;
 
-    this.setState({maintain_part: maintain_part});
+    this.setState({ maintain_part });
 
-    let form = this.props.form;
+    const form = this.props.form;
     form.setFieldsValue({
       level_name: (maintain_part.levels.length == 0) ? '现场报价' : '',
       material_fee_base: 0,
@@ -184,22 +179,22 @@ class FormPart extends BaseModal {
 
   getPreferentialAmount(record) {
     switch (Number(record.type)) {
-      case 1:
-        if (Number(record.count) >= Number(record.coupon_part_count)) {
-          return Number(record.coupon_part_count) * Number(record.material_fee_base);
-        } else {
-          return Number(record.count) * Number(record.material_fee_base);
-        }
-      case 2:
-        if (Number(record.count) >= Number(record.coupon_part_count)) {
-          return Number(record.coupon_part_count * (1 - record.discount_rate) * record.material_fee_base).toFixed(2);
-        } else {
-          return Number(record.count * (1 - record.discount_rate) * record.material_fee_base).toFixed(2);
-        }
-      case 3:
-        return Number(record.discount_amount);
-      default:
-        return 0;
+    case 1:
+      if (Number(record.count) >= Number(record.coupon_part_count)) {
+        return Number(record.coupon_part_count) * (Number(record.material_fee_base) - Number(record.coupon_price || '0'));
+      } else {
+        return Number(record.count) * (Number(record.material_fee_base) - Number(record.coupon_price || '0'));
+      }
+    case 2:
+      if (Number(record.count) >= Number(record.coupon_part_count)) {
+        return Number(record.coupon_part_count * (1 - record.discount_rate) * record.material_fee_base).toFixed(2);
+      } else {
+        return Number(record.count * (1 - record.discount_rate) * record.material_fee_base).toFixed(2);
+      }
+    case 3:
+      return Number(record.discount_amount);
+    default:
+      return 0;
     }
   }
 
@@ -209,10 +204,23 @@ class FormPart extends BaseModal {
 
   setformDataTypeRate(formData, memberDetailList) {
     if (memberDetailList) {
-      memberDetailList.map((item) => {
+      memberDetailList.map(item => {
         if (Number(item._id) === Number(formData.customer_coupon_item_id)) {
           formData.type = item.coupon_item_info.type;
           formData.discount_rate = item.coupon_item_info.discount_rate;
+          if (formData.item_id) {
+            item.coupon_item_info.items.map(value => {
+              if (String(value._id) === String(formData.item_id)) {
+                formData.coupon_price = value.price || 0;
+              }
+            });
+          } else if (formData.part_type_id) {
+            item.coupon_item_info.part_types.map(value => {
+              if (String(value._id) === String(formData.part_type_id)) {
+                formData.coupon_price = value.price || 0;
+              }
+            });
+          }
         }
       });
     }
@@ -220,7 +228,7 @@ class FormPart extends BaseModal {
 
   setMaintainPartName(maintain_part, memberDetailList) {
     if (memberDetailList) {
-      memberDetailList.map((item) => {
+      memberDetailList.map(item => {
         if (Number(item._id) === Number(maintain_part.customer_coupon_item_id)) {
           maintain_part.type = item.coupon_item_info.type;
           maintain_part.discount_rate = item.coupon_item_info.discount_rate;
@@ -232,11 +240,11 @@ class FormPart extends BaseModal {
 
   handleCommit(e) {
     e.preventDefault();
-    let formData = this.props.form.getFieldsValue();
-    let {maintain_parts} = this.props;
+    const formData = this.props.form.getFieldsValue();
+    const { maintain_parts } = this.props;
 
     if (maintain_parts) {
-      for (let key of maintain_parts) {
+      for (const key of maintain_parts) {
         if (Number(key[0]) === Number(formData.part_type_id)) {
           message.warn('该项目已经添加,请重新选择');
           return;
@@ -269,11 +277,11 @@ class FormPart extends BaseModal {
 
   handleCommitNext(e) {
     e.preventDefault();
-    let formData = this.props.form.getFieldsValue();
-    let {maintain_parts} = this.props;
+    const formData = this.props.form.getFieldsValue();
+    const { maintain_parts } = this.props;
 
     if (maintain_parts) {
-      for (let key of maintain_parts) {
+      for (const key of maintain_parts) {
         if (Number(key[0]) === Number(formData.part_id)) {
           message.warn('该项目已经添加,请重新选择');
           return;
@@ -305,33 +313,33 @@ class FormPart extends BaseModal {
   }
 
   render() {
-    let {formItem8_15} = Layout;
-    let {getFieldDecorator} = this.props.form;
-    let {maintain_part} = this.state;
-    let part_type_data = maintain_part.part_type_id ? [{
-        _id: maintain_part.part_type_id,
-        name: maintain_part.part_type_name,
-      }] : [];
-    let part_data = maintain_part.part_id ? [{_id: maintain_part.part_id, name: maintain_part.part_name}] : [];
+    const { formItem8_15 } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { maintain_part } = this.state;
+    const part_type_data = maintain_part.part_type_id ? [{
+      _id: maintain_part.part_type_id,
+      name: maintain_part.part_type_name,
+    }] : [];
+    const part_data = maintain_part.part_id ? [{ _id: maintain_part.part_id, name: maintain_part.part_name }] : [];
 
     return (
       <Form>
-        {getFieldDecorator('_id', {initialValue: maintain_part._id})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_type_id', {initialValue: maintain_part.part_type_id})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_type_name', {initialValue: maintain_part.part_type_name})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_id', {initialValue: maintain_part.part_id})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_name', {initialValue: maintain_part.part_name})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_spec', {initialValue: maintain_part.part_spec})(<Input type="hidden"/>)}
-        {getFieldDecorator('part_unit', {initialValue: maintain_part.part_unit})(<Input type="hidden"/>)}
-        {getFieldDecorator('scope', {initialValue: maintain_part.scope})(<Input type="hidden"/>)}
-        {getFieldDecorator('maintain_type', {initialValue: maintain_part.maintain_type})(<Input type="hidden"/>)}
-        {getFieldDecorator('type', {initialValue: maintain_part.type})(<Input type="hidden"/>)}
-        {getFieldDecorator('discount_rate', {initialValue: maintain_part.discount_rate})(<Input type="hidden"/>)}
-        {getFieldDecorator('customer_coupon_item_id', {initialValue: maintain_part.customer_coupon_item_id})(<Input
+        {getFieldDecorator('_id', { initialValue: maintain_part._id })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_type_id', { initialValue: maintain_part.part_type_id })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_type_name', { initialValue: maintain_part.part_type_name })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_id', { initialValue: maintain_part.part_id })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_name', { initialValue: maintain_part.part_name })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_spec', { initialValue: maintain_part.part_spec })(<Input type="hidden"/>)}
+        {getFieldDecorator('part_unit', { initialValue: maintain_part.part_unit })(<Input type="hidden"/>)}
+        {getFieldDecorator('scope', { initialValue: maintain_part.scope })(<Input type="hidden"/>)}
+        {getFieldDecorator('maintain_type', { initialValue: maintain_part.maintain_type })(<Input type="hidden"/>)}
+        {getFieldDecorator('type', { initialValue: maintain_part.type })(<Input type="hidden"/>)}
+        {getFieldDecorator('discount_rate', { initialValue: maintain_part.discount_rate })(<Input type="hidden"/>)}
+        {getFieldDecorator('customer_coupon_item_id', { initialValue: maintain_part.customer_coupon_item_id })(<Input
           type="hidden"/>)}
-        {getFieldDecorator('maintain_type_name', {initialValue: maintain_part.maintain_type_name})(<Input
+        {getFieldDecorator('maintain_type_name', { initialValue: maintain_part.maintain_type_name })(<Input
           type="hidden"/>)}
-        {getFieldDecorator('coupon_discount', {initialValue: maintain_part.coupon_discount})(<Input type="hidden"/>)}
+        {getFieldDecorator('coupon_discount', { initialValue: maintain_part.coupon_discount })(<Input type="hidden"/>)}
 
         <Row>
           <Col span={12}>
@@ -340,14 +348,14 @@ class FormPart extends BaseModal {
                 value={maintain_part.part_type_name}
                 data={part_type_data}
                 select={this.handlePartTypeSelect.bind(this)}
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
                 disabled={this.props.projectDisabled}
               />
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="分类档次" {...formItem8_15}>
-              {getFieldDecorator('level_name', {initialValue: maintain_part.level_name})(
+              {getFieldDecorator('level_name', { initialValue: maintain_part.level_name })(
                 <Select
                   filterOption={false}
                   onSelect={this.handleLevelSelect.bind(this)}
@@ -366,7 +374,7 @@ class FormPart extends BaseModal {
           <Col span={12}>
             <FormItem label="配件名称" {...formItem8_15} required>
               <PartSearchBox
-                value={maintain_part.part_name ? maintain_part.part_name + ' ' + maintain_part.scope : ''}
+                value={maintain_part.part_name ? `${maintain_part.part_name  } ${  maintain_part.scope}` : ''}
                 data={part_data}
                 part_type_id={maintain_part.part_type_id}
                 select={this.handlePartSelect.bind(this)}
@@ -376,7 +384,7 @@ class FormPart extends BaseModal {
 
           <Col span={12}>
             <FormItem label="配件单价" {...formItem8_15}>
-              {getFieldDecorator('material_fee_base', {initialValue: maintain_part.material_fee_base})(
+              {getFieldDecorator('material_fee_base', { initialValue: maintain_part.material_fee_base })(
                 <Input
                   type="number"
                   disabled={maintain_part.levels && maintain_part.levels.length > 0}
@@ -396,7 +404,7 @@ class FormPart extends BaseModal {
         <Row>
           <Col span={12}>
             <FormItem label="计费数量" {...formItem8_15}>
-              {getFieldDecorator('count', {initialValue: maintain_part.part_type_id ? maintain_part.count : ''})(
+              {getFieldDecorator('count', { initialValue: maintain_part.part_type_id ? maintain_part.count : '' })(
                 <Input
                   type="number"
                   disabled={!!maintain_part._id}
@@ -411,7 +419,7 @@ class FormPart extends BaseModal {
 
           <Col span={12}>
             <FormItem label="领料数量" {...formItem8_15}>
-              {getFieldDecorator('real_count', {initialValue: maintain_part.real_count ? maintain_part.real_count : ''})(
+              {getFieldDecorator('real_count', { initialValue: maintain_part.real_count ? maintain_part.real_count : '' })(
                 <Input
                   type="number"
                   onChange={this.handleRealCountChange.bind(this)}
@@ -427,7 +435,7 @@ class FormPart extends BaseModal {
         <Row>
           <Col span={12}>
             <FormItem label="剩余库存" {...formItem8_15}>
-              {getFieldDecorator('remain_count', {initialValue: maintain_part.part_name ? (maintain_part.real_count ? maintain_part.part_amount - maintain_part.real_count : maintain_part.part_amount) : 0})(
+              {getFieldDecorator('remain_count', { initialValue: maintain_part.part_name ? (maintain_part.real_count ? maintain_part.part_amount - maintain_part.real_count : maintain_part.part_amount) : 0 })(
                 <Input type="number" disabled/>
               )}
             </FormItem>
@@ -438,15 +446,15 @@ class FormPart extends BaseModal {
 
         <Row>
           <Col span={12}>
-            <FormItem label="优惠名称" {...formItem8_15}>
-              {getFieldDecorator('coupon_item_name', {initialValue: maintain_part.name || ''})(
+            <FormItem label="优惠券名称" {...formItem8_15}>
+              {getFieldDecorator('coupon_item_name', { initialValue: maintain_part.name || '' })(
                 <Input disabled/>
               )}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem label="优惠数量" {...formItem8_15}>
-              {getFieldDecorator('coupon_part_count', {initialValue: maintain_part.coupon_part_count})(
+              {getFieldDecorator('coupon_part_count', { initialValue: maintain_part.coupon_part_count })(
                 <Input
                   type="number"
                   disabled min={1}
@@ -460,7 +468,7 @@ class FormPart extends BaseModal {
         <Row>
           <Col span={12}>
             <FormItem label="优惠金额" {...formItem8_15}>
-              {getFieldDecorator('coupon_discount', {initialValue: maintain_part.coupon_discount})(
+              {getFieldDecorator('coupon_discount', { initialValue: maintain_part.coupon_discount })(
                 <Input
                   type="number"
                   disabled min={0}
@@ -473,7 +481,7 @@ class FormPart extends BaseModal {
           </Col>
           <Col span={12}>
             <FormItem label="实收金额" className="no-margin-bottom"  {...formItem8_15}>
-              {getFieldDecorator('paid_amount', {initialValue: Number(maintain_part.material_fee - (maintain_part.coupon_discount || 0)).toFixed(2)})(
+              {getFieldDecorator('paid_amount', { initialValue: Number(maintain_part.material_fee - (maintain_part.coupon_discount || 0)).toFixed(2) })(
                 <Input
                   type="number"
                   disabled min={0} step={1} placeholder="实收金额"

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {message, Popover, Button, Icon} from 'antd';
+import { Link } from 'react-router-dom';
+import { message, Popover, Button, Icon } from 'antd';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
@@ -12,10 +12,12 @@ export default class AuthPopover extends React.Component {
     this.state = {
       visible: false,
       hasPermission: false,
+      updatePermission: false,
       detail: {},
     };
 
     this.handleAuthPrepare = this.handleAuthPrepare.bind(this);
+    this.handleCheckUpdate = this.handleCheckUpdate.bind(this);
   }
 
   static defaultProps = {
@@ -25,6 +27,13 @@ export default class AuthPopover extends React.Component {
 
   componentDidMount() {
     this.checkPermission(path.warehouse.stocktaking.auth);
+    this.handleCheckUpdate();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.updatePermission) {
+      this.setState({ updatePermission: nextProps.updatePermission });
+    }
   }
 
   handleAuthPrepare(visible) {
@@ -33,27 +42,40 @@ export default class AuthPopover extends React.Component {
     } else {
       clearInterval(this.interval);
     }
-    this.setState({visible});
+    this.setState({ visible });
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path);
+    this.setState({ hasPermission });
+  }
+
+  handleCheckUpdate() {
+    const { id } = this.props;
+    api.ajax({
+      url: api.warehouse.stocktaking.checkUpdateAllStockaking(),
+      type: 'POST',
+      data: { stocktaking_id: id },
+    }, () => {
+      this.setState({ updatePermission: true });
+    }, () => {
+      this.setState({ updatePermission: false });
+    });
   }
 
   getStocktakingDetail(id) {
     api.ajax({
       url: api.warehouse.stocktaking.detail(id),
-    }, (data) => {
-      let detail = data.res.detail;
+    }, data => {
+      const detail = data.res.detail;
 
-      this.setState({detail: detail});
+      this.setState({ detail });
 
       if (detail.authorize_user_id.toString() !== '0') {
         clearInterval(this.interval);
-        location.href = `/warehouse/stocktaking/auth?id=${id}`;
+        location.href = `/warehouse/stocktaking/auth/${id}`;
       }
-    }, (err) => {
+    }, err => {
       message.error(`获取详情失败[${err}]`);
       clearInterval(this.interval);
     });
@@ -64,9 +86,9 @@ export default class AuthPopover extends React.Component {
   }
 
   render() {
-    let {id, type, size, text} = this.props;
-    let {hasPermission, detail} = this.state;
-    let authorizeUserId = detail.authorize_user_id;
+    const { id, type, size, text } = this.props;
+    const { hasPermission, detail, updatePermission } = this.state;
+    const authorizeUserId = detail.authorize_user_id;
 
     const content = (
       <div className="center">
@@ -76,7 +98,7 @@ export default class AuthPopover extends React.Component {
             requestParams: {
               type: 'post',
               url: api.warehouse.stocktaking.auth(),
-              data: {stocktaking_id: id},
+              data: { stocktaking_id: id },
             },
           })}
           size={128}
@@ -95,11 +117,18 @@ export default class AuthPopover extends React.Component {
 
     return (
       hasPermission ?
-        <span>
+        updatePermission ?
+          <span>
+         {size === 'default' ?
+           <Button type="danger" size={size}><Link
+             to={{ pathname: `/warehouse/stocktaking/auth/${id}` }}>{text}</Link></Button> :
+           <Link to={{ pathname: `/warehouse/stocktaking/auth/${id}` }}>{text}</Link>
+         }
+         </span> :
+          <span>
           {size === 'default' ?
-            <Button type="danger" size={size}><Link
-              to={{pathname: '/warehouse/stocktaking/auth', query: {id}}}>{text}</Link></Button> :
-            <Link to={{pathname: '/warehouse/stocktaking/auth', query: {id}}}>{text}</Link>
+            <Button type="danger" size={size} onClick={() => message.warn('盘点单信息填写不完整')}>{text}</Button> :
+            <a href="javascript:;" onClick={() => message.warn('盘点单信息填写不完整')}>{text}</a>
           }
         </span> :
         <Popover

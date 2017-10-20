@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form} from 'antd';
+import { Row, Col, Form } from 'antd';
 
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
@@ -14,7 +14,7 @@ class Detail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: props.location.query.id,
+      id: props.match.params.id,
       page: 1,
       detail: {},
       list: [],
@@ -24,41 +24,41 @@ class Detail extends React.Component {
   }
 
   componentDidMount() {
-    let {id, page}= this.state;
+    const { id, page } = this.state;
 
     this.getRejectDetail(id);
     this.getRejectItems(id, page);
   }
 
   handlePageChange(page) {
-    this.setState({page});
+    this.setState({ page });
     this.getRejectItems(this.state.id, page);
   }
 
   getRejectDetail(id) {
-    api.ajax({url: api.warehouse.reject.detail(id)}, data => {
-      let {detail} = data.res;
-      this.setState({detail});
+    api.ajax({ url: api.warehouse.reject.detail(id) }, data => {
+      const { detail } = data.res;
+      this.setState({ detail });
     });
   }
 
   getRejectItems(id, page) {
-    api.ajax({url: api.warehouse.reject.items(id, page)}, data => {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
+    api.ajax({ url: api.warehouse.reject.items(id, page) }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total) });
     });
   }
 
   render() {
-    let {formItemThree, formItem12} = Layout;
-    let {
+    const { formItemThree, formItem12 } = Layout;
+    const {
       page,
       detail,
       list,
       total,
     } = this.state;
 
-    let columns = [
+    const columns = [
       {
         title: '序号',
         dataIndex: '_id',

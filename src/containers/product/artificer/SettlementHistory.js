@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal} from 'antd';
+import { Modal } from 'antd';
 
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
@@ -26,7 +26,7 @@ export default class SettlementHistory extends BaseModal {
 
 
   render() {
-    let {visible, page, customerId} = this.state;
+    const { visible, page, customerId } = this.state;
 
     return (
       <span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col} from 'antd';
+import { Row, Col } from 'antd';
 import formatter from '../../utils/DateFormatter';
 import api from '../../middleware/api';
 import CurrentDateRangeSelector from '../../components/widget/CurrentDateRangeSelector';
@@ -12,8 +12,8 @@ import PresalesIntentionLost from './PresalesIntentionLost';
 class PresalesStatistics extends React.Component {
   constructor(props) {
     super(props);
-    //昨天日期
-    let lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
+    // 昨天日期
+    const lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
     this.state = {
       startTime: formatter.day(new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate() + 1 - (lastDate.getDay() || 7))),
       endTime: formatter.day(lastDate),
@@ -41,7 +41,7 @@ class PresalesStatistics extends React.Component {
   }
 
   componentDidMount() {
-    let {startTime, endTime} = this.state;
+    const { startTime, endTime } = this.state;
 
     this.getPurchaseSummary(startTime, endTime);
     this.getNewPotentialAndIntentionDaysData(startTime, endTime);
@@ -54,14 +54,14 @@ class PresalesStatistics extends React.Component {
 
   handleDateChange(startTime, endTime) {
     this.setState({
-      startTime: startTime,
-      endTime: endTime,
+      startTime,
+      endTime,
     });
     this.refreshData(startTime, endTime);
   }
 
   handleChartData(method) {
-    let {startTime, endTime} = this.state;
+    const { startTime, endTime } = this.state;
     this[method](startTime, endTime);
   }
 
@@ -77,8 +77,8 @@ class PresalesStatistics extends React.Component {
   }
 
   getPurchaseSummary(startTime, endTime) {
-    api.ajax({url: api.statistics.getPurchaseSummary(startTime, endTime)}, function (data) {
-      let res = data.res;
+    api.ajax({ url: api.statistics.getPurchaseSummary(startTime, endTime) }, data => {
+      const res = data.res;
       this.setState({
         dealAutos: res.deal_summary.count || 0,
         purchaseIncomeTotal: res.deal_summary.total || 0,
@@ -87,20 +87,20 @@ class PresalesStatistics extends React.Component {
         failCustomerCount: res.fail_summary.customer_count || 0,
         failIntentionCount: res.fail_summary.intention_count || 0,
       });
-    }.bind(this));
+    });
   }
 
   getNewPotentialAndIntentionDaysData(startTime, endTime) {
-    api.ajax({url: api.statistics.getNewPotentialAndIntentionDaysData(startTime, endTime)}, function (data) {
-      let categories = [];
-      let chatDataCustomer = [];
-      let chatDataIntention = [];
+    api.ajax({ url: api.statistics.getNewPotentialAndIntentionDaysData(startTime, endTime) }, data => {
+      const categories = [];
+      const chatDataCustomer = [];
+      const chatDataIntention = [];
       data.res.list.map(item => {
         categories.push(item.date + text.week[new Date(item.date).getDay()]);
         chatDataCustomer.push(Number(item.content.customer_count));
         chatDataIntention.push(Number(item.content.intention_count));
       });
-      let series = [{
+      const series = [{
         name: '新增客户',
         data: chatDataCustomer,
       }, {
@@ -111,24 +111,24 @@ class PresalesStatistics extends React.Component {
       this.setState({
         chartTitle: '新增客户/意向',
         chartUnit: '用户(位)',
-        categories: categories,
-        series: series,
+        categories,
+        series,
       });
-    }.bind(this));
+    });
   }
 
 
   getPurchaseFailDays(startTime, endTime) {
-    api.ajax({url: api.statistics.getPurchaseFailDays(startTime, endTime)}, function (data) {
-      let categories = [];
-      let chatDataCustomer = [];
-      let chatDataIntention = [];
+    api.ajax({ url: api.statistics.getPurchaseFailDays(startTime, endTime) }, data => {
+      const categories = [];
+      const chatDataCustomer = [];
+      const chatDataIntention = [];
       data.res.list.map(item => {
         categories.push(item.date + text.week[new Date(item.date).getDay()]);
         chatDataCustomer.push(Number(item.content.customer_count));
         chatDataIntention.push(Number(item.content.intention_count));
       });
-      let series = [{
+      const series = [{
         name: '流失客户',
         data: chatDataCustomer,
       }, {
@@ -139,47 +139,45 @@ class PresalesStatistics extends React.Component {
       this.setState({
         chartTitle: '流失客户/意向',
         chartUnit: '用户(位)',
-        categories: categories,
-        series: series,
+        categories,
+        series,
       });
-    }.bind(this));
+    });
   }
 
 
   getNewDealDaysData(startTime, endTime) {
-    api.ajax({url: api.statistics.getNewDealDaysData(startTime, endTime)}, function (data) {
-
-      let categories = [];
-      let chatData = [];
+    api.ajax({ url: api.statistics.getNewDealDaysData(startTime, endTime) }, data => {
+      const categories = [];
+      const chatData = [];
       data.res.list.map(item => {
         categories.push(item.date + text.week[new Date(item.date).getDay()]);
         chatData.push(Number(item.content.count));
       });
 
-      let series = [{
+      const series = [{
         name: '成交台次',
         data: chatData,
       }];
       this.setState({
         chartTitle: '成交台次',
         chartUnit: '台次(台)',
-        categories: categories,
-        series: series,
+        categories,
+        series,
       });
-    }.bind(this));
+    });
   }
 
   getIncomesDaysData(startTime, endTime) {
-    api.ajax({url: api.statistics.getNewDealDaysData(startTime, endTime)}, function (data) {
-
-      let categories = [];
-      let chatData = [];
+    api.ajax({ url: api.statistics.getNewDealDaysData(startTime, endTime) }, data => {
+      const categories = [];
+      const chatData = [];
       data.res.list.map(item => {
         categories.push(item.date + text.week[new Date(item.date).getDay()]);
         chatData.push(Number(item.content.total));
       });
 
-      let series = [{
+      const series = [{
         name: '今日收入',
         data: chatData,
       }];
@@ -187,40 +185,40 @@ class PresalesStatistics extends React.Component {
       this.setState({
         chartTitle: '总收入',
         chartUnit: '收入(元)',
-        categories: categories,
-        series: series,
+        categories,
+        series,
       });
-    }.bind(this));
+    });
   }
 
   getIncomeInfo(startTime, endTime) {
-    api.ajax({url: api.statistics.getPurchaseIncomeInfo(startTime, endTime)}, function (data) {
-      this.setState({incomeInfo: data.res.income});
-    }.bind(this));
+    api.ajax({ url: api.statistics.getPurchaseIncomeInfo(startTime, endTime) }, data => {
+      this.setState({ incomeInfo: data.res.income });
+    });
   }
 
   getIntentionLost(startTime, endTime) {
-    api.ajax({url: api.statistics.getIntentionLostInfo(startTime, endTime)}, function (data) {
+    api.ajax({ url: api.statistics.getIntentionLostInfo(startTime, endTime) }, data => {
       this.setState({
         intentionLostInfo: data.res.fail_types,
         intentionLostSubInfo: data.res.fail_sub_types,
       });
-    }.bind(this));
+    });
   }
 
   getIntentionInfo(startTime, endTime) {
-    api.ajax({url: api.statistics.getIntentionInfo(startTime, endTime)}, function (data) {
-      let res = data.res;
+    api.ajax({ url: api.statistics.getIntentionInfo(startTime, endTime) }, data => {
+      const res = data.res;
       this.setState({
         levelList: res.level_list,
         budgetList: res.budget_list,
         mortgageList: res.mortgage_list,
       });
-    }.bind(this));
+    });
   }
 
   render() {
-    let {
+    const {
       dealAutos,
       purchaseIncomeTotal,
       chartTitle,

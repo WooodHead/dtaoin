@@ -1,15 +1,14 @@
 import React from 'react';
-import {message, Modal, Form, Row, Col, Button, InputNumber} from 'antd';
+import { message, Modal, Row, Col, Button, Input } from 'antd';
 
 import api from '../../../middleware/api';
-import Layout from '../../../utils/FormLayout';
 import NumberInput from '../../../components/widget/NumberInput';
 
 import BaseModal from '../../../components/base/BaseModal';
-import PartSearchBox from '../../../components/search/PartSearchBox';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
+import SearchDropDown from '../../../components/widget/SearchDropDown';
 
-const FormItem = Form.Item;
+const Search = Input.Search;
 
 export default class AddPart extends BaseModal {
   constructor(props) {
@@ -17,51 +16,66 @@ export default class AddPart extends BaseModal {
     this.state = {
       visible: false,
       supplierId: props.supplierId,
-      part: {},
       page: 1,
       list: [],
       total: 0,
       itemMap: new Map(),
+      partsInfo: '',
+      key: '',
     };
 
     [
       'showPartModal',
-      'handleSearchSelect',
       'handlePageChange',
       'handleComplete',
       'handleContinueAdd',
       'handleInPriceChange',
       'handleCountChange',
+      'handlePartsSearch',
+      'handTableRowClick',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
-    let {supplierId} = nextProps;
+    const { supplierId } = nextProps;
     if (this.props.supplierId !== supplierId) {
-      this.setState({supplierId});
+      this.setState({ supplierId });
     }
   }
 
   showPartModal() {
-    let {supplierId} = this.props;
+    const { supplierId } = this.props;
+    const { itemMap } = this.state;
     if (!supplierId) {
       message.warning('请选择供应商');
       return;
     }
+    itemMap.clear();
+    const list = [];
+    const key = '';
+    this.setState({ itemMap, list, key });
     this.showModal();
   }
 
-  handleSearchSelect(select) {
-    if (select.data && String(select.data._id) !== '-1') {
-      let part = select.data;
-
-      this.getPurchaseItemsBySupplierAndPart(part);
-      this.setState({part});
-    }
+  handlePageChange(page) {
+    this.setState({ page });
   }
 
-  handlePageChange(page) {
-    this.setState({page});
+  handlePartsSearch(e) {
+    const coordinate = api.getPosition(e);
+    const key = e.target.value;
+    this.setState({ key });
+    if (key.length >= 1) {
+      api.ajax({ url: api.warehouse.part.searchBySupplierId(key, this.state.supplierId) }, data => {
+        const list = data.res.list;
+        const partsInfo = {};
+        partsInfo.info = list;
+        partsInfo.coordinate = coordinate;
+        partsInfo.visible = true;
+        partsInfo.keyword = key;
+        this.setState({ partsInfo });
+      });
+    }
   }
 
   /**
@@ -71,16 +85,16 @@ export default class AddPart extends BaseModal {
    * @param e
    */
   handleItemChange(item, propName, changeValue) {
-
     if (String(changeValue).length === 0) {
       return false;
     }
 
-    let {itemMap} = this.state;
+    const { itemMap } = this.state;
 
-    if (parseInt(changeValue) > parseFloat(item[propName === 'reject_count' ? 'remain_amount' : 'in_price'])) {
+    if (parseInt(changeValue) >
+      parseFloat(item[propName === 'reject_count' ? 'remain_amount' : 'in_price'])) {
       if (itemMap.has(item.purchase_item_id)) {
-        let currentItem = itemMap.get(item.purchase_item_id);
+        const currentItem = itemMap.get(item.purchase_item_id);
         currentItem[propName] = '';
       }
       message.warning(propName === 'reject_count' ? '退货数量不能大于进货数量' : '退货单价不能大于进货价', 3);
@@ -88,11 +102,11 @@ export default class AddPart extends BaseModal {
     }
 
     if (itemMap.has(item.purchase_item_id)) {
-      let currentItem = itemMap.get(item.purchase_item_id);
+      const currentItem = itemMap.get(item.purchase_item_id);
       currentItem[propName] = changeValue;
     }
 
-    this.setState({itemMap});
+    this.setState({ itemMap });
     return true;
   }
 
@@ -100,7 +114,6 @@ export default class AddPart extends BaseModal {
     if (this.saveItems()) {
       this.setState({
         visible: false,
-        part: {},
         list: [],
       });
     }
@@ -108,30 +121,36 @@ export default class AddPart extends BaseModal {
 
   handleContinueAdd() {
     if (this.saveItems()) {
-      this.setState({
-        part: {},
-        list: [],
-      });
+      const { itemMap } = this.state;
+      itemMap.clear();
+      const list = [];
+      const key = '';
+      this.setState({ itemMap, list, key, total: 0 });
     }
   }
 
   handleInPriceChange(e) {
-    let price = e.target.value;
-    this.setState({price: price ? price : ''});
+    const price = e.target.value;
+    this.setState({ price: price ? price : '' });
   }
 
   handleCountChange(e) {
-    let count = e.target.value;
-    this.setState({count: count ? count : ''});
+    const count = e.target.value;
+    this.setState({ count: count ? count : '' });
+  }
+
+  handTableRowClick(value) {
+    this.getPurchaseItemsBySupplierAndPart(value);
   }
 
   saveItems() {
-    let {itemMap} = this.state;
+    const { itemMap } = this.state;
 
-    let willRejectItems = [];
+    const willRejectItems = [];
     itemMap.forEach(item => {
       if (item.reject_count && item.reject_price) {
-        if (parseInt(item.reject_count) <= parseInt(item.amount) || parseFloat(item.reject_price) <= parseFloat(item.in_price)) {
+        if (parseInt(item.reject_count) <= parseInt(item.amount) ||
+          parseFloat(item.reject_price) <= parseFloat(item.in_price)) {
           willRejectItems.push(item);
         }
       }
@@ -147,15 +166,15 @@ export default class AddPart extends BaseModal {
   }
 
   getPurchaseItemsBySupplierAndPart(part) {
-    let {supplierId, page} = this.state;
-    api.ajax({url: api.warehouse.purchase.itemsBySupplierAndPart(part._id, supplierId, page)}, data => {
-      let {list, total} = data.res;
+    const { supplierId, page } = this.state;
+    api.ajax({ url: api.warehouse.purchase.itemsBySupplierAndPart(part._id, supplierId, page) }, data => {
+      const { list, total } = data.res;
       if (list.length === 0) {
         message.warning('暂无该供应商的进货信息', 3);
         return;
       }
 
-      let itemMap = new Map();
+      const itemMap = new Map();
       list.map(item => {
         item.purchase_item_id = item._id;
         item.purchase_price = item.in_price;
@@ -180,18 +199,17 @@ export default class AddPart extends BaseModal {
   }
 
   render() {
-    const {formItemThree} = Layout;
-    let {
+    const {
       visible,
-      supplierId,
-      part,
       list,
       total,
       page,
       itemMap,
+      partsInfo,
+      key,
     } = this.state;
 
-    let self = this;
+    const self = this;
     const columns = [
       {
         title: '采购单号',
@@ -214,45 +232,62 @@ export default class AddPart extends BaseModal {
         dataIndex: 'purchase_item_id',
         key: 'reject_count',
         className: 'center',
-        render: (id, record) => {
-          return (
+        width: '100px',
+        render: (id, record) => (
             <NumberInput
-              style={{width: '120px'}}
+              style={{ margin: '-6px' }}
               id="reject_count"
               unitVisible={false}
               isInt={true}
               onChange={self.handleItemChange.bind(self, record, 'reject_count')}
             />
-
-          );
-        },
+          ),
       }, {
         title: '退货单价',
         dataIndex: 'purchase_item_id',
         key: 'reject_price',
         className: 'center',
-        render: (id, record) => {
-          return (
+        width: '100px',
+        render: (id, record) => (
             <NumberInput
-              style={{width: '120px'}}
+              style={{ margin: '-6px' }}
               id="reject_count"
               unitVisible={false}
               onChange={self.handleItemChange.bind(self, record, 'reject_price')}
             />
-          );
-        },
+          ),
       },
     ];
 
-    let modelFooter = (
+    const modelFooter = (
       <span>
-        <Button type="ghost" size="large" onClick={this.handleComplete} disabled={itemMap.size === 0}>完成</Button>
-        <Button type="primary" size="large" onClick={this.handleContinueAdd} disabled={itemMap.size === 0}>继续添加</Button>
+        <Button
+          type="ghost"
+          size="large"
+          onClick={this.handleComplete}
+          disabled={itemMap.size === 0}
+        >
+          完成
+        </Button>
+        <Button
+          type="primary"
+          size="large"
+          onClick={this.handleContinueAdd}
+          disabled={itemMap.size === 0}
+        >
+          继续添加
+        </Button>
       </span>
     );
 
     return (
-      <span>
+      <div>
+        <SearchDropDown
+          partsInfo={partsInfo}
+          onTableRowClick={this.handTableRowClick}
+          isInsertPart="false"
+        />
+
         <Button onClick={this.showPartModal}>添加配件</Button>
 
         <Modal
@@ -265,58 +300,14 @@ export default class AddPart extends BaseModal {
         >
           <Row className="mb10">
             <Col span={8}>
-              <FormItem label="搜索配件" {...formItemThree}>
-                <PartSearchBox
-                  api={api.warehouse.part.searchByTypeId}
-                  select={this.handleSearchSelect}
-                  style={{width: 210}}
-                  supplier_id={supplierId}
-                />
-              </FormItem>
-            </Col>
-          </Row>
-
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="配件名" {...formItemThree}>
-                <p>{part.name}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="配件号" {...formItemThree}>
-                <p>{part.part_no}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="适用车型" {...formItemThree}>
-                <p>{part.scope}</p>
-              </FormItem>
-            </Col>
-          </Row>
-
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="品牌" {...formItemThree}>
-                <p>{part.brand}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="规格" {...formItemThree}>
-                <p>{!!part.spec ? part.spec + part.unit : ''}</p>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label="配件分类" {...formItemThree}>
-                <p>{part.part_type_name}</p>
-              </FormItem>
-            </Col>
-
-          </Row>
-          <Row className="mb10">
-            <Col span={8}>
-              <FormItem label="库存/冻结数" {...formItemThree}>
-                <p>{part.amount}/{part.freeze} {part.unit}</p>
-              </FormItem>
+              <label className="label">搜索配件</label>
+              <Search
+                placeholder="用关键字或编号搜索配件"
+                style={{ width: 210 }}
+                onChange={this.handlePartsSearch}
+                size="large"
+                value={key}
+              />
             </Col>
           </Row>
 
@@ -329,7 +320,7 @@ export default class AddPart extends BaseModal {
             rowKey={record => record.purchase_item_id}
           />
         </Modal>
-      </span>
+      </div>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Row, Col, Button, Select} from 'antd';
-import {Link} from 'react-router';
+import { Row, Col, Button, Select } from 'antd';
+import { Link } from 'react-router-dom';
 
 import api from '../../../../middleware/api';
 
@@ -29,63 +29,70 @@ export default class List extends BaseList {
   }
 
   handleSelectChange(value) {
-    this.setState({status: value, page: 1});
+    this.setState({ status: value, page: 1 });
   }
 
   handleSearch(key, successHandle, failHandle) {
-    let {type, status} = this.state;
-    let condition = {key, type, status};
-    let url = api.coupon.getCouponList(condition);
-    api.ajax({url}, (data) => {
+    const { type, status } = this.state;
+    const condition = { key, type, status };
+    const url = api.coupon.getCouponList(condition);
+    api.ajax({ url }, data => {
       if (data.code === 0) {
-        this.setState({key: key});
+        this.setState({ key });
         successHandle(data.res.list);
       } else {
         failHandle(data.msg);
       }
-    }, (error) => {
+    }, error => {
       failHandle(error);
     });
   }
 
   handleSelectItem(selectedItem) {
-    this.setState({selectedItem});
+    this.setState({ selectedItem });
   }
 
   render() {
-    let {page, selectedItem} = this.state;
+    const { page, selectedItem } = this.state;
     return (
       <div>
         <Row className="head-action-bar-line mb20">
           <Col span={19}>
             <SearchSelectBox
-              style={{width: 250, float: 'left'}}
+              style={{ width: 250, float: 'left' }}
               placeholder={'请输入搜索名称'}
               onSearch={this.handleSearch}
               onSelectItem={this.handleSelectItem}
-              displayPattern={item => item.name + '  ' + item.remark}
+              displayPattern={item => `${item.name  }  ${  item.remark}`}
             />
             <label className="ml20">状态：</label>
-            <Select size="large" defaultValue="0" onSelect={this.handleSelectChange} style={{width: 200}}>
+            <Select
+              size="large"
+              defaultValue="0"
+              onSelect={this.handleSelectChange}
+              style={{ width: 200 }}
+            >
               <Option value="-1">全部</Option>
               <Option value="1">停用</Option>
               <Option value="0">启用</Option>
             </Select>
           </Col>
 
-          <Col span={5} className={api.getLoginUser().cooperationTypeName == 'TP顶级合伙店' ? 'hide' : ''}>
+          <Col span={5}>
             <div className="pull-right">
-              <Link to="/marketing/discount/new"><Button type="primary">创建折扣</Button></Link>
+              <Link to="/marketing/discount/new"><Button type="primary">创建优惠券</Button></Link>
             </div>
           </Col>
         </Row>
 
-        <Table
-          page={page}
-          source={api.coupon.getCouponList(this.state)}
-          updateState={this.updateState}
-          selectedItem={selectedItem}
-        />
+        <span className="marketing-discount">
+          <Table
+            page={page}
+            source={api.coupon.getCouponList(this.state)}
+            updateState={this.updateState}
+            selectedItem={selectedItem}
+          />
+        </span>
       </div>
     );
   }

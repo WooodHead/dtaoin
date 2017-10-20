@@ -1,11 +1,12 @@
 /**
  * authInitialState
  */
-const {Record} = require('immutable');
+const { Record } = require('immutable');
 
-let InitialState = Record({
+const InitialState = Record({
   isFetching: false,
   isLogin: false,
+  reload: false,
   error: null,
   currentUser: {},
   userPermissions: [],

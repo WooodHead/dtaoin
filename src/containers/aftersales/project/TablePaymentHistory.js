@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Table} from 'antd';
+import { Modal, Table } from 'antd';
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -21,7 +21,7 @@ export default class TablePaymentHistory extends BaseModal {
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
     this.getCustomerPayLog(this.state.customerId, this.state.id);
   }
 
@@ -29,8 +29,8 @@ export default class TablePaymentHistory extends BaseModal {
     api.ajax({
       url: api.customer.getCustomerPayLog(),
       type: 'POST',
-      data: {customer_id: customerId, _id: id},
-    }, (data) => {
+      data: { customer_id: customerId, _id: id },
+    }, data => {
       this.setState({
         paymentHistory: data.res.list,
       });
@@ -55,6 +55,7 @@ export default class TablePaymentHistory extends BaseModal {
         title: '剩余应还(元)',
         dataIndex: 'remain_unpay',
         key: 'remain_unpay',
+        render: value => !Number.isNaN(Number(value)) && Number(value).toFixed(2),
       },
     ];
 
@@ -65,7 +66,7 @@ export default class TablePaymentHistory extends BaseModal {
         <Modal
           title={<span>还款记录</span>}
           visible={this.state.visible}
-          width="960px"
+          width="720px"
           onCancel={this.hideModal}
           footer={null}
         >

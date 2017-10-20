@@ -12,13 +12,13 @@ var _getRequestAnimationFrame = require('./getRequestAnimationFrame');
 
 var _getRequestAnimationFrame2 = _interopRequireDefault(_getRequestAnimationFrame);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var reqAnimFrame = (0, _getRequestAnimationFrame2["default"])();
+var reqAnimFrame = (0, _getRequestAnimationFrame2['default'])();
 function animate(node, show, done) {
     var height = void 0;
     var requestAnimationFrameId = void 0;
-    return (0, _cssAnimation2["default"])(node, 'ant-motion-collapse', {
+    return (0, _cssAnimation2['default'])(node, 'ant-motion-collapse', {
         start: function start() {
             if (!show) {
                 node.style.height = node.offsetHeight + 'px';
@@ -59,5 +59,5 @@ var animation = {
         return animate(node, true, done);
     }
 };
-exports["default"] = animation;
+exports['default'] = animation;
 module.exports = exports['default'];

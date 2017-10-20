@@ -1,16 +1,20 @@
-declare var _default: {
+declare const _default: {
     locale: string;
     Pagination: any;
     DatePicker: {
         lang: any;
-        timePickerLocale: any;
+        timePickerLocale: {
+            placeholder: string;
+        };
     };
     TimePicker: {
         placeholder: string;
     };
     Calendar: {
         lang: any;
-        timePickerLocale: any;
+        timePickerLocale: {
+            placeholder: string;
+        };
     };
     Table: {
         filterTitle: string;

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Row, Col, Tabs} from 'antd';
+import React, { Component } from 'react';
+import { Row, Col, Tabs } from 'antd';
 
 import api from '../../middleware/api';
 import formatter from '../../utils/DateFormatter';
@@ -14,9 +14,10 @@ const TabPane = Tabs.TabPane;
 export default class Index extends Component {
   constructor(props) {
     super(props);
-    let lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
+    const lastDate = new Date(new Date().setDate(new Date().getDate() - 1));
     this.state = {
-      startTime: formatter.day(new Date(new Date(lastDate.getFullYear(), lastDate.getMonth() - 1, lastDate.getDate(), 0, 0, 0))),
+      startTime: formatter.day(new Date(new Date(lastDate.getFullYear(), lastDate.getMonth() -
+        1, lastDate.getDate(), 0, 0, 0))),
       endTime: formatter.day(lastDate),
       summaryDays: '',
       summaryToday: '',
@@ -31,8 +32,8 @@ export default class Index extends Component {
   }
 
   getMaintainSummaryDays() {
-    let userType = api.getLoginUser().userType;
-    let {startTime, endTime} = this.state;
+    const userType = api.getLoginUser().userType;
+    const { startTime, endTime } = this.state;
 
     let url = null;
     if (Number(userType) == 1) {
@@ -41,15 +42,15 @@ export default class Index extends Component {
       url = api.overview.statistics.getAllMaintainSummaryDays(startTime, endTime);
     }
 
-    let summaryDays = {};
+    const summaryDays = {};
     summaryDays.maintainCount = [];
     summaryDays.beautyCount = [];
     summaryDays.totalFee = [];
     summaryDays.totalProfit = [];
     summaryDays.memberNew = [];
 
-    api.ajax({url: url}, data => {
-      let list = data.res.list;
+    api.ajax({ url }, data => {
+      const list = data.res.list;
       list.map(item => {
         summaryDays.maintainCount.push(item.content.maintain_count);
         summaryDays.beautyCount.push(item.content.beauty_count);
@@ -58,12 +59,12 @@ export default class Index extends Component {
         summaryDays.memberNew.push(item.content.member_new);
       });
 
-      this.setState({summaryDays});
+      this.setState({ summaryDays });
     });
   }
 
   getMaintainTodaySummary() {
-    let userType = api.getLoginUser().userType;
+    const userType = api.getLoginUser().userType;
 
     let url = null;
     if (Number(userType) === 1) {
@@ -72,21 +73,21 @@ export default class Index extends Component {
       url = api.overview.statistics.getAllMaintainTodaySummary();
     }
 
-    let summaryToday = {};
-    api.ajax({url: url}, data => {
-      let list = data.res;
+    const summaryToday = {};
+    api.ajax({ url }, data => {
+      const list = data.res;
       summaryToday.maintainCount = list.maintain_count.count;
       summaryToday.beautyCount = list.maintain_count.beauty_count;
       summaryToday.totalFee = list.maintain_total_incomes.total_fee;
       summaryToday.totalProfit = list.maintain_total_incomes.total_profit;
       summaryToday.memberNew = list.member_summary.count;
 
-      this.setState({summaryToday});
+      this.setState({ summaryToday });
     });
   }
 
   render() {
-    let {summaryDays, summaryToday} = this.state;
+    const { summaryDays, summaryToday } = this.state;
 
     return (
       <div>
@@ -99,7 +100,7 @@ export default class Index extends Component {
             />
           </Col>
           <Col span={1}>
-            <div className="overview-vertical-line"></div>
+            <div className="overview-vertical-line" />
           </Col>
 
           <Col span={4}>
@@ -110,7 +111,7 @@ export default class Index extends Component {
             />
           </Col>
           <Col span={1}>
-            <div className="overview-vertical-line"></div>
+            <div className="overview-vertical-line" />
           </Col>
 
           <Col span={4}>
@@ -121,7 +122,7 @@ export default class Index extends Component {
             />
           </Col>
           <Col span={1}>
-            <div className="overview-vertical-line"></div>
+            <div className="overview-vertical-line" />
           </Col>
 
           <Col span={4}>
@@ -132,13 +133,13 @@ export default class Index extends Component {
             />
           </Col>
           <Col span={1}>
-            <div className="overview-vertical-line"></div>
+            <div className="overview-vertical-line" />
           </Col>
 
           <Col span={4}>
             <SparkingChart
               data={summaryDays && summaryDays.memberNew || []}
-              subtitle="今日新增会员"
+              subtitle="今日新增套餐卡"
               title={summaryToday && summaryToday.memberNew || 0}
             />
           </Col>

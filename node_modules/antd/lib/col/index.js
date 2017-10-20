@@ -6,5 +6,5 @@ Object.defineProperty(exports, "__esModule", {
 
 var _grid = require('../grid');
 
-exports["default"] = _grid.Col;
+exports['default'] = _grid.Col;
 module.exports = exports['default'];

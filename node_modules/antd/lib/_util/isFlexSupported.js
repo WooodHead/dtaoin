@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports["default"] = isFlexSupported;
+exports['default'] = isFlexSupported;
 function isFlexSupported() {
     if (typeof window !== 'undefined' && window.document && window.document.documentElement) {
         var documentElement = window.document.documentElement;

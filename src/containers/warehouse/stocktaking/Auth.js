@@ -1,17 +1,18 @@
 import React from 'react';
-import {Row, Col, Input, Badge} from 'antd';
+import { Row, Col, Input, Badge } from 'antd';
 
 import AuthImport from './AuthImport';
 
 import api from '../../../middleware/api';
 import path from '../../../config/path';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
+const TextArea = Input.TextArea;
 
 export default class Auth extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: props.location.query.id,
+      id: props.match.params.id || '',
       page: 1,
       detail: {},
       parts: [],
@@ -24,7 +25,7 @@ export default class Auth extends React.Component {
   }
 
   componentDidMount() {
-    let {id, page} = this.state;
+    const { id, page } = this.state;
 
     this.getStocktakingDetail(id);
     this.getStockTakingParts(id, page);
@@ -32,31 +33,31 @@ export default class Auth extends React.Component {
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path);
+    this.setState({ hasPermission });
   }
 
   handlePageChange(page) {
-    this.setState({page});
+    this.setState({ page });
     this.getStockTakingParts(this.state.id, page);
   }
 
   handleRemarkBlur(e) {
-    this.setState({remark: e.target.value});
+    this.setState({ remark: e.target.value });
   }
 
   getStocktakingDetail(id) {
     api.ajax({
       url: api.warehouse.stocktaking.detail(id),
-    }, (data) => {
-      this.setState({detail: data.res.detail});
+    }, data => {
+      this.setState({ detail: data.res.detail });
     });
   }
 
   getStockTakingParts(id, page) {
     api.ajax({
       url: api.warehouse.stocktaking.parts(id, page),
-    }, (data) => {
+    }, data => {
       this.setState({
         parts: data.res.list,
         total: parseInt(data.res.total),
@@ -65,9 +66,9 @@ export default class Auth extends React.Component {
   }
 
   render() {
-    let {page, total, parts, detail, remark, hasPermission} = this.state;
+    const { page, total, parts, detail, remark, hasPermission } = this.state;
 
-    let columns = [
+    const columns = [
       {
         title: '序号',
         dataIndex: '_id',
@@ -192,12 +193,11 @@ export default class Auth extends React.Component {
 
         <Row>
           <Col span={20}>
-            <span style={{display: 'inline-block', height: 46, width: 80, textAlign: 'right'}}>备注：</span>
-            {detail.status + '' === '0' ?
-              <Input
-                type="textarea"
+            <span style={{ display: 'inline-block', height: 46, width: 80, textAlign: 'right' }}>备注：</span>
+            {`${detail.status  }` === '0' ?
+              <TextArea
                 defaultValue={detail.remark}
-                style={{width: '50%'}}
+                style={{ width: '50%' }}
                 onBlur={this.handleRemarkBlur}
               />
               :

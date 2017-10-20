@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {message, Form, Input, Button, Row, Col} from 'antd';
+import React, { Component } from 'react';
+import { message, Form, Input, Button, Row, Col } from 'antd';
 import api from '../middleware/api';
 import BrandInfo from '../config/brand';
 
@@ -7,8 +7,8 @@ require('../styles/login.less');
 
 import validator from '../utils/validator';
 
-let logo = require('../images/login/daotian_logo.png');
-let topLogo = require('../images/login/top_logo.png');
+const logo = require('../images/login/daotian_logo.png');
+const topLogo = require('../images/login/top_logo.png');
 
 class Login extends Component {
   constructor(props) {
@@ -52,7 +52,7 @@ class Login extends Component {
       permission: 'no-login',
     }, data => {
       const user = data.res.user;
-      let userSession = {
+      const userSession = {
         brand_name: BrandInfo.brand_name,
         brand_logo: BrandInfo.brand_logo,
         uid: user._id,
@@ -80,22 +80,22 @@ class Login extends Component {
   }
 
   getVerifyCode() {
-    let phone = this.props.form.getFieldValue('phone');
+    const phone = this.props.form.getFieldValue('phone');
     if (!phone) {
       message.error('请输入电话号码');
       return false;
     }
 
     let num = 10;
-    this.setState({is_disabled: 'disable', opacity: 0.5});
+    this.setState({ is_disabled: 'disable', opacity: 0.5 });
 
-    let btn_value = num + 's';
-    this.setState({btn_value: btn_value});
+    let btn_value = `${num  }s`;
+    this.setState({ btn_value });
 
     let time = setInterval(() => {
       num--;
-      btn_value = num + 's';
-      this.setState({btn_value: btn_value});
+      btn_value = `${num  }s`;
+      this.setState({ btn_value });
 
       if (num == 0) {
         this.setState({
@@ -111,34 +111,27 @@ class Login extends Component {
     api.ajax({
       url: api.system.getVerifyCode(),
       type: 'POST',
-      data: {phone: phone},
+      data: { phone },
       permission: 'no-login',
-    }, (data) => {
+    }, data => {
       message.info('验证码已发送', 3);
-      this.setState({code_id: data.res.sms._id});
+      this.setState({ code_id: data.res.sms._id });
     });
   }
 
   render() {
-    let {
+    const {
       btn_value,
       is_disabled,
     } = this.state;
-    // const formItemLayout = {
-    //   labelCol: {span: 5},
-    //   wrapperCol: {span: 19},
-    // };
-    // const buttonLayout = {
-    //   wrapperCol: {span: 19, offset: 5},
-    // };
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <div>
         <div className="content">
           <header>
             <div className="logo">
-              <img src={logo} alt=""/>
+              <img src={logo} alt="" />
             </div>
             <div className="phone">
               <span>寻求帮助: </span>
@@ -146,17 +139,17 @@ class Login extends Component {
             </div>
             <div className="top-logo">
               <span>系统支持: </span>
-              <img src={topLogo} alt=""/>
+              <img src={topLogo} alt="" />
             </div>
           </header>
 
-          <section style={{height: document.body.clientHeight - 165}}>
+          <section style={{ height: document.body.clientHeight - 165, minHeight: '550px' }}>
             <div className="section-content">
               <div className="word">
-                <div className="name">稻田汽车服务管理系统</div>
-                <div className="line"></div>
-                <div className="slogan-one">创造行业机遇 加速梦想脚步</div>
-                <div className="slogan-two">坚持耕耘持续进化的门店服务系统</div>
+                <div className="name">稻田智能门店管家</div>
+                <div className="line" />
+                <div className="slogan-one">上千家门店正在使用稻田智能门店管家向新型汽车服务门店进化</div>
+                {/* <div className="slogan-two">坚持耕耘持续进化的门店服务系统</div>*/}
               </div>
 
               <div className="sign-in">
@@ -164,14 +157,14 @@ class Login extends Component {
                   <p>账号登录</p>
                 </div>
                 <Form onSubmit={this.handleSubmit}>
-                  {getFieldDecorator('code_id', {initialValue: this.state.code_id})(
-                    <Input type="hidden"/>
+                  {getFieldDecorator('code_id', { initialValue: this.state.code_id })(
+                    <Input type="hidden" />,
                   )}
 
                   <Row>
                     <Col span={15}>
                       {getFieldDecorator('phone')(
-                        <Input className="input-phone input" size="large" placeholder="请输入手机号"/>
+                        <Input className="input-phone input" size="large" placeholder="请输入手机号" />,
                       )}
                     </Col>
                     <Col span={8}>
@@ -187,7 +180,8 @@ class Login extends Component {
                   <Row>
                     <Col span={24}>
                       {getFieldDecorator('code')(
-                        <Input className="input-password input" onPressEnter={this.handleSubmit} placeholder="请输入验证码"/>
+                        <Input className="input-password input" onPressEnter={this.handleSubmit}
+                               placeholder="请输入验证码" />,
                       )}
                     </Col>
                   </Row>
@@ -202,7 +196,8 @@ class Login extends Component {
           </section>
 
           <footer>
-            <p>您正在使用稻田汽车服务管理系统 关于稻田 | 联系我们 | Copyright © 2012-2016 北京稻成科技有限公司. All Rights Reserved</p>
+            <p>您正在使用稻田汽车服务管理系统 关于稻田 | 联系我们 | Copyright © 2012-2016 北京稻成科技有限公司. All Rights
+              Reserved</p>
           </footer>
         </div>
       </div>

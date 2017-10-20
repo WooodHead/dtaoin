@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>分享领券</title>
+
+  <link href="https://cdn.bootcss.com/normalize/7.0.0/normalize.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+
+<body>
+<div id="app" class="page-container">
+  <div class="top-banner -top-banner">
+    <img src="" alt="">
+  </div>
+
+  <div class="content">
+    <div class="content-head">
+      <h3 class="content-head-title -activity-title"></h3>
+      <p class="content-head-desc -activity-desc"></p>
+      <p class="red-packet -activity-packet-count"></p>
+    </div>
+
+    <div class="content-body">
+      <div class="coupon-card-list -coupon-card-list">
+
+        <div class="coupon-card-item">
+          <p class="card-left"><span class="rmb">￥</span> 9.9</p>
+
+          <div class="card-right">
+            <h3 class="card-title">5折打蜡折扣券</h3>
+            <p class="card-time -activity-expire-date">有效期至2017-03-04</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form">
+        <div class="action">
+          <div class="action-tip">快快！叫上朋友一起抢</div>
+          <button type="button" class="btn btn-share -btn-share">分享即可领券</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mask hide -share-tip-modal">
+  <div class="share-tip center -share-tip-container">
+    <p>点击右上角
+      <img src="./img/tip_icon_share.png" style="width: 27px;height: 19px;" alt="">，分享到朋友圈或者</p>
+    <p>好友群即可和好友一同获取限量红包</p>
+  </div>
+</div>
+
+<div id="toast" class="weui_mast hide">
+  <div class="weui-mask_transparent"></div>
+  <div class="weui-toast">
+    <p class="weui-toast__content" id="toast_msg">已完成</p>
+  </div>
+</div>
+
+<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script src="/dist/baseUrl.js"></script>
+<script src="./js/base.js?v=4"></script>
+<script src="js/redirect.js?v=4"></script>
+</body>
+</html>

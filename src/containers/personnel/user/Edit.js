@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon, Button, Tabs} from 'antd';
+import { Modal, Icon, Button, Tabs } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import EditUserForm from './EditUserForm';
@@ -26,13 +26,13 @@ export default class EditUserModal extends BaseModal {
   }
 
   render() {
-    const {size, user = {}} = this.props;
-    const {visible} = this.state;
+    const { size, user = {} } = this.props;
+    const { visible } = this.state;
 
-    let formProps = {
+    const formProps = {
       roleId: this.state.roleId,
       userId: user._id,
-      user: user,
+      user,
       onSuccess: this.props.onSuccess,
       cancelModal: this.hideModal,
       updateState: this.updateState,

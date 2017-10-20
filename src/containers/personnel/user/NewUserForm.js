@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Row, Col, Input, Select, Radio, Button, Collapse} from 'antd';
+import { message, Form, Row, Col, Input, Select, Radio, Button, Collapse } from 'antd';
 import UploadComponent from '../../../components/base/BaseUpload';
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
@@ -51,6 +51,12 @@ class NewUserForm extends UploadComponent {
     ].map(method => this[method] = this[method].bind(this));
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.visible) {
+      this.props.form.resetFields();
+    }
+  }
+
   handleSubmit(e) {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((errors, values) => {
@@ -65,17 +71,18 @@ class NewUserForm extends UploadComponent {
         url: this.state.isNew ? api.user.add() : api.user.edit(),
         type: 'POST',
         data: values,
-      }, (data) => {
+      }, data => {
         message.success(this.state.isNew ? '员工信息添加成功!' : '员工信息修改成功!');
-        this.props.updateState({userId: data.res.user_id});
+        this.props.updateState({ userId: data.res.user_id });
         this.props.onSuccess();
+        // this.props.form.resetFields();
       });
     });
   }
 
   assembleCertificates(formData) {
-    let certificates = [];
-    let keys = formData.keys;
+    const certificates = [];
+    const keys = formData.keys;
     for (let i = 0; i < keys.length; i++) {
       let
         caDeleteProp = `user_ca_hide_${i}`,
@@ -88,7 +95,7 @@ class NewUserForm extends UploadComponent {
         continue;
       }
 
-      let caObj = {
+      const caObj = {
         _id: this.state[caIdProp] || 0,
         name: formData[caNameProp],
         user_certificate_pic: this.state[caPicKeyProp],
@@ -104,11 +111,11 @@ class NewUserForm extends UploadComponent {
   addCertificate() {
     certificateIndex++;
 
-    const {form} = this.props;
+    const { form } = this.props;
 
     let keys = form.getFieldValue('keys');
     keys = keys.concat(certificateIndex);
-    form.setFieldsValue({keys});
+    form.setFieldsValue({ keys });
 
     let keyProps = `user_certificate_pic_${certificateIndex}_key`,
       filesProps = `user_certificate_pic_${certificateIndex}_files`,
@@ -132,7 +139,7 @@ class NewUserForm extends UploadComponent {
     let hideProp = `user_ca_hide_${k}`,
       caIdProp = `user_ca_id_${k}`;
 
-    this.setState({[hideProp]: true});
+    this.setState({ [hideProp]: true });
     if (!this.state.isNew) {
       this.deleteUserCa(this.state.userId, this.state[caIdProp]);
     }
@@ -141,7 +148,7 @@ class NewUserForm extends UploadComponent {
   deleteUserCa(userId, userCaId) {
     api.ajax({
       url: api.user.deleteUserCertificate(userId, userCaId),
-    }, function () {
+    }, () => {
       message.success('资格证书删除成功');
     });
   }
@@ -151,16 +158,16 @@ class NewUserForm extends UploadComponent {
     const Option = Select.Option;
     const RadioGroup = Radio.Group;
     const Panel = Collapse.Panel;
-    const {formItemFour, selectStyle, formItemLayout_1014} = Layout;
+    const { formItemFour, selectStyle, formItemLayout_1014 } = Layout;
 
-    const {getFieldDecorator, getFieldValue} = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
     getFieldDecorator('keys', {
       initialValue: [0],
     });
 
-    let {userId} = this.state;
+    const { userId } = this.state;
 
-    const certificateItems = getFieldValue('keys').map((k) => {
+    const certificateItems = getFieldValue('keys').map(k => {
       let userCaIdProp = `user_ca_id_${k}`,
         hideProp = `user_ca_hide_${k}`;
       return (
@@ -189,7 +196,7 @@ class NewUserForm extends UploadComponent {
             <FormItem {...formItemFour}>
               {k === 0 ?
                 <div>
-                  {/*<Button size="small" type="ghost" icon="minus" className="mr15" onClick={() => this.removeFirstCertificate(k)}>删除</Button>*/}
+                  {/* <Button size="small" type="ghost" icon="minus" className="mr15" onClick={() => this.removeFirstCertificate(k)}>删除</Button>*/}
                   <Button size="small" type="primary" icon="plus" onClick={() => this.addCertificate(k)}>添加</Button>
                 </div>
                 :
@@ -203,7 +210,7 @@ class NewUserForm extends UploadComponent {
 
     return (
       <Form className="form-collapse">
-        {getFieldDecorator('_id', {initialValue: userId})(
+        {getFieldDecorator('_id', { initialValue: userId })(
           <Input type="hidden"/>
         )}
 
@@ -272,7 +279,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={12}>
-                <FormItem label="通讯地址" labelCol={{span: 5}} wrapperCol={{span: 19}}>
+                <FormItem label="通讯地址" labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
                   {getFieldDecorator('address')(
                     <Input placeholder="请输入其他介绍人"/>
                   )}
@@ -283,11 +290,11 @@ class NewUserForm extends UploadComponent {
             <Row type="flex">
               <Col span={6}>
                 <FormItem label="学历" {...formItemLayout_1014}>
-                  {getFieldDecorator('degree', {initialValue: '本科'})(
+                  {getFieldDecorator('degree', { initialValue: '本科' })(
                     <Select
                       {...selectStyle}>
                       {['小学', '初中', '高中', '专科', '本科', '硕士', '硕士', '博士']
-                        .map((item) => <Option key={item}>{item}</Option>)}
+                        .map(item => <Option key={item}>{item}</Option>)}
                     </Select>
                   )}
                 </FormItem>
@@ -343,7 +350,7 @@ class NewUserForm extends UploadComponent {
           <Panel header="上传登记信息" key="3">
             <Row>
               <Col span={8}>
-                <FormItem label="身份证正面" {...formItemFour}>
+                <FormItem label="身份证正面" {...formItemLayout_1014}>
                   {getFieldDecorator('id_card_front_pic')(
                     <Input type="hidden"/>
                   )}
@@ -359,7 +366,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem label="身份证背面" {...formItemFour}>
+                <FormItem label="身份证背面" {...formItemLayout_1014}>
                   {getFieldDecorator('id_card_back_pic')(
                     <Input type="hidden"/>
                   )}
@@ -378,7 +385,7 @@ class NewUserForm extends UploadComponent {
 
             <Row>
               <Col span={8}>
-                <FormItem label="个人信息登记表" {...formItemFour}>
+                <FormItem label="个人信息登记表" {...formItemLayout_1014}>
                   {getFieldDecorator('registry_form_pic')(
                     <Input type="hidden"/>
                   )}
@@ -394,7 +401,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem label="一寸证件照" {...formItemFour}>
+                <FormItem label="一寸证件照" {...formItemLayout_1014}>
                   {getFieldDecorator('id_photo_pic')(
                     <Input type="hidden"/>
                   )}
@@ -410,7 +417,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem label="体检表" {...formItemFour}>
+                <FormItem label="体检表" {...formItemLayout_1014}>
                   {getFieldDecorator('health_form_pic')(
                     <Input type="hidden"/>
                   )}
@@ -429,7 +436,7 @@ class NewUserForm extends UploadComponent {
 
             <Row>
               <Col span={8}>
-                <FormItem label="劳动合同" {...formItemFour}>
+                <FormItem label="劳动合同" {...formItemLayout_1014}>
                   {getFieldDecorator('labor_contract_pic')(
                     <Input type="hidden"/>
                   )}
@@ -445,7 +452,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem label="原单位离职证明" {...formItemFour}>
+                <FormItem label="原单位离职证明" {...formItemLayout_1014}>
                   {getFieldDecorator('leaving_certificate_pic')(
                     <Input type="hidden"/>
                   )}
@@ -461,7 +468,7 @@ class NewUserForm extends UploadComponent {
                 </FormItem>
               </Col>
               <Col span={8}>
-                <FormItem label="工资卡" {...formItemFour}>
+                <FormItem label="工资卡" {...formItemLayout_1014}>
                   {getFieldDecorator('pay_card_pic')(
                     <Input type="hidden"/>
                   )}

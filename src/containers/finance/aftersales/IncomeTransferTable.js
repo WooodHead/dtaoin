@@ -24,18 +24,18 @@ export default class IncomeTransferTable extends React.Component {
   }
 
   handlePageChange(page) {
-    this.props.updateState({page});
+    this.props.updateState({ page });
   }
 
   getList(props) {
-    api.ajax({url: props.source}, function (data) {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
-    }.bind(this));
+    api.ajax({ url: props.source }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total) });
+    });
   }
 
   render() {
-    let {list, total} = this.state;
+    const { list, total } = this.state;
 
     const columns = [
       {

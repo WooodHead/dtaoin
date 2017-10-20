@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePicker} from 'antd';
+import { message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePicker } from 'antd';
 
 import UploadComponent from '../../components/base/BaseUpload';
 import Qiniu from '../../components/widget/UploadQiniu';
@@ -12,8 +12,9 @@ import FormValidator from '../../utils/FormValidator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const TextArea = Input.TextArea;
 const RadioGroup = Radio.Group;
-const {formItem12, formItemThree, selectStyle} = Layout;
+const { formItem12, formItemThree, selectStyle } = Layout;
 
 let introducePicIndex = 0;
 
@@ -42,17 +43,17 @@ class EditForm extends UploadComponent {
   }
 
   componentWillMount() {
-    let {company} = this.props;
-    this.setState({checkedMaintainTypeValues: company.maintain_types.split(',')});
+    const { company } = this.props;
+    this.setState({ checkedMaintainTypeValues: company.maintain_types.split(',') });
     this.getProvinces();
     this.getCities(company.province);
     this.getCountries(company.province, company.city);
   }
 
   componentDidMount() {
-    let {company} = this.props;
-    this.setState({icon_pic_key: company.icon_pic, checkedMaintainTypeValues: company.maintain_types.split(',')});
-    this.props.form.setFieldsValue({icon_pic: company.icon_pic});
+    const { company } = this.props;
+    this.setState({ icon_pic_key: company.icon_pic, checkedMaintainTypeValues: company.maintain_types.split(',') });
+    this.props.form.setFieldsValue({ icon_pic: company.icon_pic });
 
     if (!!company.icon_pic) {
       this.getImageUrl(api.system.getPublicPicUrl(company.icon_pic), 'icon_pic');
@@ -64,7 +65,7 @@ class EditForm extends UploadComponent {
   }
 
   onMaintainTypesChange(checkedValues) {
-    this.setState({checkedMaintainTypeValues: checkedValues});
+    this.setState({ checkedMaintainTypeValues: checkedValues });
   }
 
   disabledMinutes() {
@@ -97,17 +98,17 @@ class EditForm extends UploadComponent {
         url: api.company.edit(),
         type: 'POST',
         data: values,
-      }, function () {
+      }, () => {
         message.success('编辑成功');
         this.props.onSuccess();
         this.props.cancelModal();
-      }.bind(this));
+      });
     });
   }
 
   assembleIntroducePics(formData) {
-    let pictures = [];
-    let keys = formData.keys;
+    const pictures = [];
+    const keys = formData.keys;
     for (let i = 0; i < keys.length; i++) {
       let
         deleteProp = `introduce_pics_hide_${i}`,
@@ -133,32 +134,32 @@ class EditForm extends UploadComponent {
   }
 
   getProvinces() {
-    api.ajax({url: api.system.getProvinces()}, (data) => {
-      this.setState({provinces: data.res.province_list});
+    api.ajax({ url: api.system.getProvinces() }, data => {
+      this.setState({ provinces: data.res.province_list });
     });
   }
 
   getCities(province) {
-    api.ajax({url: api.system.getCities(province)}, (data) => {
+    api.ajax({ url: api.system.getCities(province) }, data => {
       this.setState({
-        province: province,
+        province,
         cities: data.res.city_list,
       });
     });
   }
 
   getCountries(province, city) {
-    api.ajax({url: api.system.getCountries(province, city)}, (data) => {
-      this.setState({countries: data.res.country_list});
+    api.ajax({ url: api.system.getCountries(province, city) }, data => {
+      this.setState({ countries: data.res.country_list });
     });
   }
 
   getIntroducePics(introducePicIds) {
     let keys = [], stateObj = {};
 
-    let ids = introducePicIds.split(',');
+    const ids = introducePicIds.split(',');
 
-    //删除ids中''元素 否则会报错
+    // 删除ids中''元素 否则会报错
     while ((ids.indexOf('') >= 0)) {
       ids.splice(ids.indexOf(''), 1);
     }
@@ -182,17 +183,17 @@ class EditForm extends UploadComponent {
       });
     }
 
-    this.setState({keys});
+    this.setState({ keys });
   }
 
   addIntroducePics() {
     introducePicIndex++;
 
-    const {form} = this.props;
+    const { form } = this.props;
 
     let keys = form.getFieldValue('keys');
     keys = keys.concat(introducePicIndex);
-    form.setFieldsValue({keys});
+    form.setFieldsValue({ keys });
 
     let keyProps = `introduce_pics_${introducePicIndex}_key`,
       filesProps = `introduce_pics_${introducePicIndex}_files`,
@@ -205,15 +206,15 @@ class EditForm extends UploadComponent {
   }
 
   removeIntroducePics(k) {
-    let hideProp = `introduce_pics_hide_${k}`;
-    this.setState({[hideProp]: true});
+    const hideProp = `introduce_pics_hide_${k}`;
+    this.setState({ [hideProp]: true });
   }
 
   render() {
-    const {getFieldDecorator, getFieldValue} = this.props.form;
-    const {company} = this.props;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { company } = this.props;
 
-    let {
+    const {
       provinces,
       cities,
       countries,
@@ -224,14 +225,14 @@ class EditForm extends UploadComponent {
       rules: [{
         required: true,
         message: validator.required.notNull,
-      }, {validator: FormValidator.notNull}],
+      }, { validator: FormValidator.notNull }],
       validateTrigger: 'onBlur',
     };
 
-    getFieldDecorator('keys', {initialValue: keys});
+    getFieldDecorator('keys', { initialValue: keys });
 
-    const introducePics = getFieldValue('keys').map((k) => {
-      let hideProp = `introduce_pics_hide_${k}`;
+    const introducePics = getFieldValue('keys').map(k => {
+      const hideProp = `introduce_pics_hide_${k}`;
 
       return (
         <Row className={this.state[hideProp] ? 'hide' : ''} key={k}>
@@ -272,7 +273,7 @@ class EditForm extends UploadComponent {
         label: '保养',
         value: '2',
       }, {
-        label: '机修',
+        label: '维修',
         value: '3',
       }, {
         label: '钣金',
@@ -291,7 +292,7 @@ class EditForm extends UploadComponent {
 
     return (
       <Form>
-        {getFieldDecorator('company_id', {initialValue: company._id})(
+        {getFieldDecorator('company_id', { initialValue: company._id })(
           <Input type="hidden"/>
         )}
 
@@ -413,7 +414,7 @@ class EditForm extends UploadComponent {
         <Row type="flex">
           <Col span={8}>
             <FormItem label="其他联系人" {...formItemThree}>
-              {getFieldDecorator('other_name', {initialValue: company.other_name})(
+              {getFieldDecorator('other_name', { initialValue: company.other_name })(
                 <Input placeholder="请输入其他联系人"/>
               )}
             </FormItem>
@@ -445,7 +446,7 @@ class EditForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="营业时间" {...formItemThree}>
-              {getFieldDecorator('service_start_time', {initialValue: company.service_start_time ? formatter.getMomentHHmm(company.service_start_time) : formatter.getMomentHHmm('07:30')})(
+              {getFieldDecorator('service_start_time', { initialValue: company.service_start_time ? formatter.getMomentHHmm(company.service_start_time) : formatter.getMomentHHmm('07:30') })(
                 <TimePicker
                   disabledMinutes={this.disabledMinutes.bind(this)}
                   hideDisabledOptions
@@ -453,7 +454,7 @@ class EditForm extends UploadComponent {
                 />
               )}
               -
-              {getFieldDecorator('service_end_time', {initialValue: company.service_end_time ? formatter.getMomentHHmm(company.service_end_time) : formatter.getMomentHHmm('17:30')})(
+              {getFieldDecorator('service_end_time', { initialValue: company.service_end_time ? formatter.getMomentHHmm(company.service_end_time) : formatter.getMomentHHmm('17:30') })(
                 <TimePicker
                   disabledMinutes={this.disabledMinutes.bind(this)}
                   hideDisabledOptions
@@ -464,7 +465,7 @@ class EditForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="在App展示" {...formItemThree}>
-              {getFieldDecorator('is_show_on_app', {initialValue: Number(company.is_show_on_app)})(
+              {getFieldDecorator('is_show_on_app', { initialValue: Number(company.is_show_on_app) })(
                 <RadioGroup>
                   <Radio value={0}>否</Radio>
                   <Radio value={1}>是</Radio>
@@ -496,7 +497,7 @@ class EditForm extends UploadComponent {
         <Row type="flex">
           <Col span={16}>
             <FormItem label="开户银行" {...formItem12}>
-              {getFieldDecorator('bank_name', {initialValue: company.bank_name})(
+              {getFieldDecorator('bank_name', { initialValue: company.bank_name })(
                 <Input placeholder="请输入门店开户银行及支行信息"/>
               )}
             </FormItem>
@@ -506,14 +507,14 @@ class EditForm extends UploadComponent {
         <Row type="flex">
           <Col span={8}>
             <FormItem label="银行卡户主" {...formItemThree}>
-              {getFieldDecorator('bank_account_name', {initialValue: company.bank_account_name})(
+              {getFieldDecorator('bank_account_name', { initialValue: company.bank_account_name })(
                 <Input placeholder="请输入银行卡户主"/>
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label="银行卡卡号" {...formItemThree}>
-              {getFieldDecorator('bank_account_number', {initialValue: company.bank_account_number})(
+              {getFieldDecorator('bank_account_number', { initialValue: company.bank_account_number })(
                 <Input placeholder="请输入银行卡卡号"/>
               )}
             </FormItem>
@@ -523,8 +524,8 @@ class EditForm extends UploadComponent {
         <Row type="flex">
           <Col span={16}>
             <FormItem label="备注" {...formItem12}>
-              {getFieldDecorator('remark', {initialValue: company.remark})(
-                <Input type="textarea" placeholder="备注"/>
+              {getFieldDecorator('remark', { initialValue: company.remark })(
+                <TextArea placeholder="备注"/>
               )}
             </FormItem>
           </Col>

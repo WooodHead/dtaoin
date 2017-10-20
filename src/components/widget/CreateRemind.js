@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, Select, DatePicker, Input, message, Form, Icon} from 'antd';
+import { Button, Modal, Select, DatePicker, Input, message, Form, Icon } from 'antd';
 
 import api from '../../middleware/api';
 import formatter from '../../utils/DateFormatter';
@@ -10,7 +10,11 @@ import NewRemindType from './CreateRemindType';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
+const TextArea = Input.TextArea;
 
+/**
+ * 创建提醒
+ */
 export default class CreateRemind extends BaseModal {
   constructor(props) {
     super(props);
@@ -24,31 +28,24 @@ export default class CreateRemind extends BaseModal {
 
     [
       'getNextDay',
-      'saveNewRemindType',
       'handleDateChange',
       'handleChangeType',
-      'saveNewRemindType',
       'createCustomerTask',
       'handleRemark',
       'handleSubmit',
-      'getCommonTaskTypeList',
-      'createCommonTaskType',
     ].map(method => this[method] = this[method].bind(this));
   }
 
   componentDidMount() {
-    this.setState({
-      remindDate: this.getNextDay(),
-    });
+    this.setState({ remindDate: this.getNextDay() });
   }
 
   showModal() {
-    this.setState({visible: true});
-    this.getCommonTaskTypeList();
+    this.setState({ visible: true });
   }
 
   handleDateChange(value) {
-    let date = formatter.day(value);
+    const date = formatter.day(value);
     this.setState({
       remindDate: date,
     });
@@ -67,13 +64,11 @@ export default class CreateRemind extends BaseModal {
   }
 
   handleSubmit() {
-    if (!this.state.type) {
-      message.warning('请填写类型');
-      return;
-    } else if (!this.state.remark) {
+    if (!this.state.remark) {
       message.warning('请填写任务描述');
       return;
     }
+
     this.createCustomerTask();
     this.hideModal();
   }
@@ -84,7 +79,7 @@ export default class CreateRemind extends BaseModal {
       type: 'POST',
       data: {
         customer_id: this.props.customer_id,
-        type: this.state.type,
+        type: 1,
         remind_date: this.state.remindDate || this.getNextDay(),
         remark: this.state.remark,
       },
@@ -96,65 +91,72 @@ export default class CreateRemind extends BaseModal {
   }
 
   getNextDay() {
-    let date = new Date();
+    const date = new Date();
     date.setDate(date.getDate() + 1);
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    return year + '-' + month + '-' + day;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year  }-${  month  }-${  day}`;
   }
 
-  saveNewRemindType(newItem) {
-    this.createCommonTaskType(newItem);
+  disabledStartDate(current) {
+    return current && current.valueOf() < new Date(new Date().setDate(new Date().getDate() - 1));
   }
 
-  //获取顾客任务类型
-  getCommonTaskTypeList(newItemId) {
-    api.ajax({
-      url: api.task.commonTaskTypeList(),
-    }, (data) => {
-      this.setState({
-        typeList: data.res.list,
-      });
-      if (newItemId) {
-        this.setState({
-          type: String(newItemId),
-        });
-      }
-    }, () => {
-      message.error('保存数据失败');
-    });
+  hideModal() {
+    this.setState({ visible: false, remark: '' });
   }
 
-  //创建顾客任务类型
-  createCommonTaskType(newItem) {
-    api.ajax({
-      url: api.task.createCommonTaskType(),
-      type: 'POST',
-      data: {
-        name: newItem,
-      },
-    }, (data) => {
-      message.success('创建任务类型成功');
-      this.getCommonTaskTypeList(data.res.detail._id);
-    }, () => {
-      message.error('创建任务类型失败');
-    });
-  }
+  // saveNewRemindType(newItem) {
+  //   this.createCommonTaskType(newItem);
+  // }
+
+  // 获取顾客任务类型
+  // getCommonTaskTypeList(newItemId) {
+  //   api.ajax({
+  //     url: api.task.commonTaskTypeList(),
+  //   }, (data) => {
+  //     this.setState({
+  //       typeList: data.res.list,
+  //     });
+  //     if (newItemId) {
+  //       this.setState({
+  //         type: String(newItemId),
+  //       });
+  //     }
+  //   }, () => {
+  //     message.error('保存数据失败');
+  //   });
+  // }
+
+  // 创建顾客任务类型
+  // createCommonTaskType(newItem) {
+  //   api.ajax({
+  //     url: api.task.createCommonTaskType(),
+  //     type: 'POST',
+  //     data: {
+  //       name: newItem,
+  //     },
+  //   }, (data) => {
+  //     message.success('创建任务类型成功');
+  //     this.getCommonTaskTypeList(data.res.detail._id);
+  //   }, () => {
+  //     message.error('创建任务类型失败');
+  //   });
+  // }
 
   render() {
-    const {formItemLayout} = FormLayout;
-    let {size} = this.props;
+    const { formItemLayout } = FormLayout;
+    const { size } = this.props;
 
     return (
       <span>
-        {size === 'small' ?
-          <a href="javascript:;" onClick={this.showModal}>创建提醒</a> :
-          <Button type="primary" onClick={this.showModal}>创建提醒</Button>
+        {size === 'small' ? <a href="javascript:;" onClick={this.showModal}>提醒</a> :
+          <Button type="primary" onClick={this.showModal}>回访提醒</Button>
         }
 
         <Modal
-          title={<span><Icon type="clock-circle-o"/> 创建提醒</span>}
+          title={<span><Icon type="clock-circle-o" /> 回访提醒</span>}
           visible={this.state.visible}
           width={720}
           onCancel={this.hideModal}
@@ -167,30 +169,16 @@ export default class CreateRemind extends BaseModal {
                 format={formatter.pattern.day}
                 onChange={this.handleDateChange}
                 allowClear={false}
+                disabledDate={this.disabledStartDate}
               />
             </FormItem>
 
-            <FormItem label="类型" {...formItemLayout}>
-              <Select
-                size="large"
-                onSelect={this.handleChangeType}
-                style={{width: 142}}
-                value={this.state.type}
-                className="mr10"
-              >
-                {this.state.typeList.map((item, index) =>
-                  <Option value={`${item._id}`} key={index}>{item.name}</Option>
-                )}
-              </Select>
-              <NewRemindType save={this.saveNewRemindType}/>
-            </FormItem>
-
             <FormItem label="任务描述" {...formItemLayout}>
-              <Input
-                type="textarea"
-                style={{width: 430}}
+              <TextArea
+                style={{ width: 430 }}
                 onChange={this.handleRemark}
                 placeholder="添加任务描述"
+                value={this.state.remark}
               />
             </FormItem>
           </Form>

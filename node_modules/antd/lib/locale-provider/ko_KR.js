@@ -24,15 +24,15 @@ var _ko_KR7 = require('../calendar/locale/ko_KR');
 
 var _ko_KR8 = _interopRequireDefault(_ko_KR7);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_moment2["default"].locale('ko');
-exports["default"] = {
+_moment2['default'].locale('ko');
+exports['default'] = {
     locale: 'ko',
-    Pagination: _ko_KR2["default"],
-    DatePicker: _ko_KR4["default"],
-    TimePicker: _ko_KR6["default"],
-    Calendar: _ko_KR8["default"],
+    Pagination: _ko_KR2['default'],
+    DatePicker: _ko_KR4['default'],
+    TimePicker: _ko_KR6['default'],
+    Calendar: _ko_KR8['default'],
     Table: {
         filterTitle: '필터 메뉴',
         filterConfirm: '확인',

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
-import {Button} from 'antd';
+import { Link } from 'react-router-dom';
+import { Button } from 'antd';
 import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 import api from '../../../middleware/api';
@@ -26,25 +26,25 @@ export default class IncomeTable extends React.Component {
 
   handleSearchChange(data) {
     if (data.key) {
-      this.setState({list: data.list});
+      this.setState({ list: data.list });
     } else {
       this.getList(this.props);
     }
   }
 
   handlePageChange(page) {
-    this.props.updateState({page});
+    this.props.updateState({ page });
   }
 
   getList(props) {
-    api.ajax({url: props.source}, function (data) {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
-    }.bind(this));
+    api.ajax({ url: props.source }, data => {
+      const { list, total } = data.res;
+      this.setState({ list, total: parseInt(total) });
+    });
   }
 
   render() {
-    let {list, total} = this.state;
+    const { list, total } = this.state;
     const columns = [
       {
         title: '交易时间',
@@ -83,26 +83,15 @@ export default class IncomeTable extends React.Component {
           if (record.from_type == 1) {
             return (
               <Link
-                to={{
-                  pathname: '/aftersales/project/new',
-                  query: {
-                    id: record.from_id,
-                    customer_id: record.customer_id,
-                    auto_id: record.auto_id,
-                  },
-                }} target="_blank">
+                to={{ pathname: `/aftersales/project/edit/${record.from_id}/${record.customer_id}/${record.auto_id}` }}
+                target="_blank">
                 <Button type="primary" size="small">查看工单</Button>
               </Link>
             );
           } else {
             return (
               <Link
-                to={{
-                  pathname: '/customer/detail',
-                  query: {
-                    customerId: record.customer_id,
-                  },
-                }} target="_blank">
+                to={{ pathname: `/customer/detail/${record.customer_id}` }} target="_blank">
                 <Button type="primary" size="small">查看详情</Button>
               </Link>
             );

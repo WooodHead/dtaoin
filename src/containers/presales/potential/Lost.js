@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button, Icon} from 'antd';
+import { Modal, Button, Icon } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -8,11 +8,11 @@ import LostForm from './LostForm';
 export default class Lost extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
   }
 
   render() {
-    const {size, disabled} = this.props;
+    const { size, disabled } = this.props;
 
     return (
       <span>

@@ -1,70 +1,49 @@
 import React from 'react';
-
-import api from '../../../middleware/api';
-
 import BaseTable from '../../../components/base/BaseTable';
 
-import Edit from './Edit';
+import TableWithPagination from '../../../components/widget/TableWithPagination';
 
 export default class Table extends BaseTable {
+
+  renderTable(columns) {
+    const { isFetching, list, total } = this.state;
+
+    return (
+      <TableWithPagination
+        isLoading={isFetching}
+        columns={columns}
+        dataSource={list}
+        total={total}
+        currentPage={this.props.page}
+        onPageChange={this.handlePageChange}
+        pageSize={30}
+        bordered={false}
+        scroll={{ y: 795 }}
+      />
+    );
+  }
+
   render() {
-    let self = this;
     const columns = [
       {
         title: '序号',
-        dataIndex: 'order',
-        key: 'order',
+        dataIndex: 'index',
+        key: 'index',
+        width: '20%',
+        className: 'center',
+        render: (value, record, index) => index + 1,
       }, {
-        title: '配件分类名称',
+        title: '二级分类',
         dataIndex: 'name',
         key: 'name',
+        width: '20%',
+        className: 'center',
       }, {
-        title: '配件档次',
-        dataIndex: 'levels',
-        key: 'level',
-        render (value) {
-          let ele = [];
-          if (value.length > 0) {
-            let levels = JSON.parse(value);
-            levels.map(function (item, index) {
-              ele.push(
-                <div className="in-table-line" key={index}>
-                  {item.name}
-                </div>
-              );
-            });
-          }
-          return ele;
-        },
-      }, {
-        title: '单价(元)',
-        dataIndex: 'levels',
-        key: 'price',
-        render (value) {
-          let ele = [];
-          if (value.length > 0) {
-            let levels = JSON.parse(value);
-            levels.map(function (item, index) {
-              ele.push(
-                <div className="in-table-line column-money" key={index}>
-                  {Number(item.price).toFixed(2)}
-                </div>);
-            });
-          }
-          return ele;
-        },
-      }, {
-        title: '操作',
-        dataIndex: '_id',
-        key: 'operation',
-        className: 'center width-80',
-        render: (item, record) => (
-          <Edit
-            category={record}
-            onSuccess={self.props.onSuccess}
-            disabled={api.getLoginUser().companyId != record.company_id}
-          />
-        ),
+        title: '产值类型',
+        dataIndex: 'maintain_type_name',
+        key: 'maintain_type_name',
+        width: '20%',
+        className: 'center',
       },
     ];
 

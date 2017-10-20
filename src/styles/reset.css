@@ -1,0 +1,243 @@
+/**
+ * 定义需要覆盖已有样式的样式，主要是覆盖antd的样式
+ * @desc 放在页面最末尾，尽量减少使用important
+ */
+
+body {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+body > a {
+    display: none;
+}
+
+.ant-table {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-breadcrumb {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+label {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-select-dropdown-menu-item {
+    color: #333333 !important;
+}
+
+.ant-radio-button-wrapper {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-radio-button-checked {
+    color: #108ee9 !important;
+}
+
+.ant-radio-button-wrapper-checked {
+    color: #108ee9 !important;
+}
+
+.ant-select-dropdown {
+    font-size: 14px !important;
+}
+
+.ant-select {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-input {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-card-head-title {
+    font-size: 16px !important;
+}
+
+.ant-badge-status-text {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-form-item {
+    font-size: 14px !important;
+    color: #333333 !important;
+}
+
+.ant-btn {
+    font-size: 14px;
+}
+
+.ant-input-group-addon {
+    font-size: 14px !important;
+}
+
+/*导航icon动画*/
+
+.ant-menu-submenu-title .anticon {
+    -webkit-transition: null !important;
+    transition: null !important;
+}
+
+.ant-menu-root {
+    font-size: 15px !important;
+}
+
+.ant-menu-item {
+    font-size: 14px !important;
+}
+
+.ant-menu-item a {
+    font-size: 14px !important;
+}
+
+.ant-menu-item:first-child,
+.ant-menu-item:last-child {
+    border-radius: 0 0 0 0 !important;
+}
+
+.ant-timeline-item-content {
+    font-size: 14px !important;
+}
+
+/* todo 影响了部分样式 */
+.ant-dropdown-menu-item {
+    /*padding: 7px 2px !important;*/
+    font-size: 14px;
+}
+
+.ant-select-selection-selected-value {
+    width: 100%;
+}
+
+.ant-popover-message-title {
+    font-size: 14px !important;
+    color: white;
+    text-align: left;
+    margin-left: -18px;
+}
+
+.ant-popover-inner-content {
+    background-color: #404040 !important;
+    border-radius: 6px;
+}
+
+.ant-popover-message > .anticon {
+    display: none;
+}
+
+.ant-popover-placement-top > .ant-popover-content > .ant-popover-arrow:after,
+.ant-popover-placement-topLeft > .ant-popover-content > .ant-popover-arrow:after,
+.ant-popover-placement-topRight > .ant-popover-content > .ant-popover-arrow:after {
+    border-top-color: #404040 !important;
+}
+
+.ant-popover-placement-bottom > .ant-popover-content > .ant-popover-arrow:after,
+.ant-popover-placement-bottomLeft > .ant-popover-content > .ant-popover-arrow:after,
+.ant-popover-placement-bottomRight > .ant-popover-content > .ant-popover-arrow:after {
+    border-bottom-color: #404040 !important;
+}
+
+.ant-popover-inner {
+    background-color: #404040 !important;
+}
+
+.white > .ant-popover-content > .ant-popover-arrow:after,
+.white > .ant-popover-content > .ant-popover-arrow:after,
+.white > .ant-popover-content > .ant-popover-arrow:after {
+    border-top-color: white !important;
+}
+
+.white > .ant-popover-content > .ant-popover-arrow:after,
+.white > .ant-popover-content > .ant-popover-arrow:after,
+.white > .ant-popover-content > .ant-popover-arrow:after {
+    border-bottom-color: white !important;
+}
+
+.white .ant-popover-inner {
+    background-color: white !important;
+}
+
+.white .ant-popover-message-title {
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.white .ant-popover-inner-content {
+    background-color: white !important;
+    border-radius: 6px;
+}
+
+.ant-input-number-input {
+    font-size: 14px;
+}
+
+.ant-alert-description,
+.ant-select-tree {
+    font-size: 14px !important;
+}
+
+.ant-alert-description,
+.ant-calendar-input,
+.ant-calendar-date,
+.ant-calendar-ym-select,
+.ant-cascader-menu,
+.ant-cascader-picker-label {
+    font-size: 14px;
+}
+
+.ant-table-small .ant-table-header table {
+    border-bottom: none !important;
+}
+
+.ant-calendar-month-panel-body {
+    line-height: 3 !important;
+}
+
+.ant-alert {
+    font-size: 14px !important;
+}
+
+/*.ant-menu.ant-menu-dark .ant-menu-item-selected {*/
+/*background-color: transparent;*/
+/*}*/
+
+.ant-btn-lg {
+    height: 30px;
+}
+
+textarea.ant-input {
+    max-width: none !important;
+}
+
+.ant-table-middle .ant-table-thead > tr > th:not(.ant-table-selection-column),
+.ant-table-middle .ant-table-tbody > tr > td {
+    padding: 2px 8px;
+    height: 39px;
+}
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td {
+    padding: 2px 8px;
+    height: 39px;
+}
+
+.ant-input-group-wrapper {
+    width: 100%;
+}
+
+/**
+* Modal
+**/
+
+/*模态框和表单的操作按钮居中显示*/
+.ant-modal-footer {
+    text-align: center;
+}

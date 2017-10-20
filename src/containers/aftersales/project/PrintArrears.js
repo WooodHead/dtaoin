@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Form, Button, Row, Col} from 'antd';
+import { Form, Button, Row, Col } from 'antd';
 
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
@@ -10,33 +10,28 @@ export default class PrintArrears extends PrintThisComponent {
   constructor(props) {
     super(props);
     this.state = {
-      project: this.props.project ? this.props.project : {},
-      customer: this.props.customer ? this.props.customer : {},
-      auto: this.props.auto ? this.props.auto : {},
-      items: this.props.items ? this.props.items : [],
-      parts: this.props.parts ? this.props.parts : [],
       timeFee: 0,
       totalFee: 0,
     };
   }
 
   handlePrint() {
-    let userInfo = api.getLoginUser();
-    let printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
+    const userInfo = api.getLoginUser();
+    const printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
 
     this.printThis({
       element: $(printInfo),
-      debug: false,                //show the iframe for debugging
-      importCSS: true,             //import page CSS
-      importStyle: true,          //import style tags
-      printContainer: false,        //grab outer container as well as the contents of the selector
-      loadCSS: '/dist/print.css',   //path to additional css file - us an array [] for multiple
-      pageTitle: '水稻汽车-' + userInfo.companyName + '-挂账单',               //add title to print page
-      removeInline: false,         //remove all inline styles from print elements
+      debug: false,                // show the iframe for debugging
+      importCSS: true,             // import page CSS
+      importStyle: true,          // import style tags
+      printContainer: false,        // grab outer container as well as the contents of the selector
+      loadCSS: '/dist/print.css',   // path to additional css file - us an array [] for multiple
+      pageTitle: `${userInfo.companyName  }-挂账单`,               // add title to print page
+      removeInline: false,         // remove all inline styles from print elements
       printDelay: 333,            // variable print delay
-      header: '<p class="print-header">水稻汽车-' + userInfo.companyName + '-挂账单</p>',               // prefix to body
+      header: `<p class="print-header">水稻汽车-${  userInfo.companyName  }-挂账单</p>`,               // prefix to body
       footer: null,               // suffix to body
-      formValues: true,             //preserve input/form values
+      formValues: true,             // preserve input/form values
     });
   }
 
@@ -62,21 +57,23 @@ export default class PrintArrears extends PrintThisComponent {
   }
 
   render() {
-    const {project, customer, auto} = this.state;
+    const { project = {}, customer = {}, auto = {} } = this.props;
+    const itemsMap = this.props.items || [];
+    const partsMap = this.props.parts || [];
 
-    let userInfo = api.getLoginUser();
-    let items = [];
-    for (let value of this.state.items.values()) {
+    const userInfo = api.getLoginUser();
+    const items = [];
+    for (const value of itemsMap.values()) {
       items.push(value);
     }
-    let parts = [];
-    for (let value of this.state.parts.values()) {
+    const parts = [];
+    for (const value of partsMap.values()) {
       parts.push(value);
     }
 
     return (
       <div>
-        <h3 className="center">水稻汽车-{userInfo.companyName}-挂账单</h3>
+        <h3 className="center">{userInfo.companyName}-挂账单</h3>
         <Form ref="printProjectOrder" className="mt15">
           <div className="border-ccc">
             <Row className="padding-tb-15 padding-l-10">
@@ -87,24 +84,32 @@ export default class PrintArrears extends PrintThisComponent {
             </Row>
 
             <Row
-              className={project.is_accident === '1' ? 'padding-bottom-15 padding-l-10' : 'border-bottom-ccc padding-bottom-15 padding-l-10'}>
+              className={project.is_accident === '1'
+                ? 'padding-bottom-15 padding-l-10'
+                : 'border-bottom-ccc padding-bottom-15 padding-l-10'}>
               <Col span={5}>车牌号：{auto.plate_num}</Col>
               <Col span={5}>接待顾问：{userInfo.name}</Col>
               <Col span={5}>进场时间：{project.start_time}</Col>
-              <Col span={5}>出厂时间：{project.end_time}</Col>
+              <Col span={5}>出厂时间：{project.scheduled_end_time}</Col>
             </Row>
 
             <Row className="border-bottom-ccc padding-tb-15 padding-bottom-15 padding-l-10">
               <Col span="24">
                 车型：
-                {auto.auto_brand_name && auto.auto_brand_name != 0 ? auto.auto_brand_name + ' ' : ''}
-                {auto.auto_series_name && auto.auto_series_name != 0 ? auto.auto_series_name + ' ' : ''}
-                {auto.auto_type_name && auto.auto_type_name != 0 ? auto.auto_type_name + ' ' : ''}
-                {auto.out_color_name && auto.out_color_name != 0 ? auto.out_color_name + ' ' : ''}
+                {auto.auto_brand_name && auto.auto_brand_name != 0
+                  ? `${auto.auto_brand_name  } `
+                  : ''}
+                {auto.auto_series_name && auto.auto_series_name != 0
+                  ? `${auto.auto_series_name  } `
+                  : ''}
+                {auto.auto_type_name && auto.auto_type_name != 0 ? `${auto.auto_type_name  } ` : ''}
+                {auto.out_color_name && auto.out_color_name != 0 ? `${auto.out_color_name  } ` : ''}
               </Col>
             </Row>
 
-            <Row className={items.length > 0 ? 'border-bottom-ccc padding-tb-15 padding-l-10' : 'hide'}>
+            <Row className={items.length > 0
+              ? 'border-bottom-ccc padding-tb-15 padding-l-10'
+              : 'hide'}>
               <Col span={3}><span className="strong">维修内容：</span></Col>
               <Col span={21}>
                 <Row className="mb5">
@@ -116,7 +121,9 @@ export default class PrintArrears extends PrintThisComponent {
               </Col>
             </Row>
 
-            <Row className={parts.length > 0 ? 'border-bottom-ccc padding-tb-15 padding-l-10' : 'hide'}>
+            <Row className={parts.length > 0
+              ? 'border-bottom-ccc padding-tb-15 padding-l-10'
+              : 'hide'}>
               <Col span={3}><span className="strong">维修配件：</span></Col>
               <Col span={21}>
                 <Row className="mb5">
@@ -134,7 +141,7 @@ export default class PrintArrears extends PrintThisComponent {
               <Col span={21}>
                 <Row className="mb5">
                   <Col span={3}>工时费</Col>
-                  <Col span={3}>材料费</Col>
+                  <Col span={3}>配件费</Col>
                   <Col span={3}>优惠金额(元)</Col>
                   <Col span={3}>应付金额(元)</Col>
                   <Col span={3}>实付金额(元)</Col>
@@ -146,8 +153,11 @@ export default class PrintArrears extends PrintThisComponent {
                   <Col span={3}>{Number(this.props.materialFee).toFixed(2)}</Col>
                   <Col span={3}>{Number(project.discount).toFixed(2)}</Col>
                   <Col span={3}>{Number(project.total_fee).toFixed(2)}</Col>
-                  <Col span={3}>{(Number(project.total_fee) - Number(project.unpay_amount)).toFixed(2)}</Col>
-                  <Col span={3} className="strong">{Number(project.unpay_amount).toFixed(2)}</Col>
+                  <Col
+                    span={3}>{(Number(project.total_fee) -
+                  (this.props.bets || Number(project.unpay_amount))).toFixed(2)}</Col>
+                  <Col span={3} className="strong">{(this.props.bets ||
+                  Number(project.unpay_amount)).toFixed(2)}</Col>
                   <Col span={3} className="strong">{project.next_pay_date}</Col>
                 </Row>
               </Col>

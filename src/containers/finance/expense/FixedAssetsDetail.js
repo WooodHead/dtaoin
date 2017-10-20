@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button} from 'antd';
+import { Row, Col, Modal, Icon, Button } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -16,15 +16,15 @@ class EditStatus extends BaseModal {
   }
 
   showModal() {
-    this.setState({visible: true});
-    api.ajax({url: api.finance.fixedAssets.listById(this.state.id)}, function (data) {
-      this.setState({detail: data.res.detail});
-    }.bind(this));
+    this.setState({ visible: true });
+    api.ajax({ url: api.finance.fixedAssets.listById(this.state.id) }, data => {
+      this.setState({ detail: data.res.detail });
+    });
   }
 
   render() {
-    let {visible} = this.state;
-    let {detail} = this.state;
+    const { visible } = this.state;
+    const { detail } = this.state;
 
     return (
       <span>

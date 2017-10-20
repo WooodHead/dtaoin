@@ -1,5 +1,5 @@
 import React from 'react';
-import {Radio} from 'antd';
+import { Radio } from 'antd';
 import department from '../../config/department';
 
 export default class DepartmentFilter extends React.Component {
@@ -12,13 +12,18 @@ export default class DepartmentFilter extends React.Component {
     const RadioButton = Radio.Button;
 
     return (
-      <div className="mb15">
-        <label className="mr26">部门:</label>
-        <RadioGroup defaultValue="0" size="large" onChange={this.props.filterAction.bind(this, 'department')}>
+      <span className="mb15">
+        <label className="label">部门</label>
+        <RadioGroup
+          defaultValue="0"
+          size="large"
+          onChange={this.props.filterAction.bind(this, 'department')}
+        >
           <RadioButton value="0" key="0">全部</RadioButton>
-          {department.map((dept) => <RadioButton value={dept.id} key={dept.id}>{dept.name}</RadioButton>)}
+          {department.map(dept => <RadioButton value={dept.id}
+                                               key={dept.id}>{dept.name}</RadioButton>)}
         </RadioGroup>
-      </div>
+      </span>
     );
   }
 }

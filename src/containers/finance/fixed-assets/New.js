@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, message, Modal, Icon, Button, Form, Input, Select, DatePicker} from 'antd';
+import { Row, Col, message, Modal, Icon, Button, Form, Input, Select, DatePicker } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 
 import api from '../../../middleware/api';
@@ -52,15 +52,15 @@ class New extends BaseModal {
   }
 
   getUsers() {
-    api.ajax({url: api.user.getUsers()}, data => {
-      this.setState({users: data.res.user_list});
+    api.ajax({ url: api.user.getUsers() }, data => {
+      this.setState({ users: data.res.user_list });
     });
   }
 
   render() {
-    const {getFieldDecorator} = this.props.form;
-    const {visible, users} = this.state;
-    const {formItemThree, selectStyle} = FormLayout;
+    const { getFieldDecorator } = this.props.form;
+    const { visible, users } = this.state;
+    const { formItemThree, selectStyle } = FormLayout;
 
     return (
       <span>
@@ -73,7 +73,7 @@ class New extends BaseModal {
         </Button>
 
         <Modal
-          title={<span><Icon type="plus" className="mr10"/>添加固定资产</span>}
+          title={<span><Icon type="plus" className="mr10" />添加固定资产</span>}
           visible={visible}
           width={960}
           onOk={this.handleSubmit}
@@ -88,14 +88,14 @@ class New extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入资产名称"/>
+                    <Input placeholder="请输入资产名称" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                 <FormItem label="品牌型号" {...formItemThree}>
                   {getFieldDecorator('brand')(
-                    <Input placeholder="请输入品牌型号"/>
+                    <Input placeholder="请输入品牌型号" />,
                   )}
                 </FormItem>
               </Col>
@@ -108,7 +108,7 @@ class New extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input type="number" addonBefore="¥" placeholder="请输入金额"/>
+                    <Input type="number" addonBefore="¥" placeholder="请输入金额" />,
                   )}
                 </FormItem>
               </Col>
@@ -118,7 +118,7 @@ class New extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input type="number" placeholder="请输入购买数量"/>
+                    <Input type="number" placeholder="请输入购买数量" />,
                   )}
                 </FormItem>
               </Col>
@@ -127,7 +127,7 @@ class New extends BaseModal {
                   {getFieldDecorator('buy_date', {
                     initialValue: DateFormatter.getMomentDate(),
                   })(
-                    <DatePicker placeholder="请选择购入日期" allowClear={false}/>
+                    <DatePicker placeholder="请选择购入日期" allowClear={false} />,
                   )}
                 </FormItem>
               </Col>
@@ -140,7 +140,7 @@ class New extends BaseModal {
                     rules: FormValidator.getRuleNotNull(),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入存放地点"/>
+                    <Input placeholder="请输入存放地点" />,
                   )}
                 </FormItem>
               </Col>
@@ -149,7 +149,7 @@ class New extends BaseModal {
                   {getFieldDecorator('incharge_user_id')(
                     <Select showSearch {...selectStyle} placeholder="请选择负责人">
                       {users.map(user => <Option key={user._id}>{user.name}</Option>)}
-                    </Select>
+                    </Select>,
                   )}
                 </FormItem>
               </Col>
@@ -158,14 +158,14 @@ class New extends BaseModal {
               <Col span={8}>
                 <FormItem label="供应商" {...formItemThree}>
                   {getFieldDecorator('supplier_company')(
-                    <Input placeholder="请选择购供应商"/>
+                    <Input placeholder="请选择购供应商" />,
                   )}
                 </FormItem>
               </Col>
               <Col span={8}>
                  <FormItem label="联系人" {...formItemThree}>
                     {getFieldDecorator('supplier_name')(
-                      <Input placeholder="请选择购联系人"/>
+                      <Input placeholder="请选择购联系人" />,
                     )}
                   </FormItem>
               </Col>
@@ -175,7 +175,7 @@ class New extends BaseModal {
                     rules: FormValidator.getRulePhoneNumber(false),
                     validateTrigger: 'onBlur',
                   })(
-                    <Input placeholder="请输入联系电话"/>
+                    <Input placeholder="请输入联系电话" style={{ width: '162px' }} />,
                   )}
                 </FormItem>
               </Col>

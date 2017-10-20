@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Tabs} from 'antd';
+import { Row, Col, Tabs } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -15,12 +15,12 @@ import AuthPopover from './AuthPopover';
 export default class New extends React.Component {
   constructor(props) {
     super(props);
-    let {customerId, autoId, intentionId, autoDealId} = props.location.query;
+    const { customerId, autoId, intentionId, autoDealId } = props.match.params;
     this.state = {
-      customerId: customerId,
-      autoId: autoId,
-      intentionId: intentionId,
-      autoDealId: autoDealId,
+      customerId: customerId || '',
+      autoId: autoId || '',
+      intentionId: intentionId || '',
+      autoDealId: autoDealId || '',
       dealInfo: {},
     };
     [
@@ -30,7 +30,7 @@ export default class New extends React.Component {
   }
 
   componentDidMount() {
-    let {customerId, autoId} = this.state;
+    const { customerId, autoId } = this.state;
     if (customerId && autoId) {
       this.getAutoDealId(customerId, autoId);
     }
@@ -38,42 +38,41 @@ export default class New extends React.Component {
 
   handleAutoDealIdChange(info, active) {
     if (active == 'autoDealId') {
-      this.setState({autoDealId: info});
+      this.setState({ autoDealId: info });
     } else if (active == 'dealInfo') {
-      this.setState({dealInfo: info});
+      this.setState({ dealInfo: info });
     }
   }
 
   handleAutoIdChange(autoId) {
-    this.setState({autoId: autoId});
+    this.setState({ autoId });
   }
 
   getAutoDealId(customerId, autoId) {
     if (!!autoId) {
-      api.ajax({url: api.presales.deal.getAutoDealDetailByAutoId(customerId, autoId)}, function (data) {
-        let dealInfo = data.res.detail;
+      api.ajax({ url: api.presales.deal.getAutoDealDetailByAutoId(customerId, autoId) }, data => {
+        const dealInfo = data.res.detail;
         this.setState({
           dealInfo: dealInfo || {},
           autoDealId: dealInfo._id,
           intentionId: dealInfo.intention_id || 0,
         });
-      }.bind(this));
+      });
     }
   }
 
-
   render() {
-    let {customerId, autoId, intentionId, autoDealId, dealInfo} = this.state;
+    const { customerId, autoId, intentionId, autoDealId, dealInfo } = this.state;
     const TabPane = Tabs.TabPane;
 
-    let formProps = {
-      customerId: customerId,
-      autoId: autoId,
-      intentionId: intentionId,
-      autoDealId: autoDealId,
+    const formProps = {
+      customerId,
+      autoId,
+      intentionId,
+      autoDealId,
     };
 
-    let tabPanes = [
+    const tabPanes = [
       <TabPane tab={'交易信息'} key={'1'}>
         <InfoDeal {...formProps} dealInfo={dealInfo} onSuccess={this.handleAutoDealIdChange}/>
       </TabPane>,
@@ -82,18 +81,40 @@ export default class New extends React.Component {
         <InfoAuto {...formProps} onSuccess={this.handleAutoIdChange}/>
       </TabPane>,
 
-      <TabPane disabled={!autoDealId || !autoId} tab={'保险信息'} key={'3'}>
+      <TabPane disabled={!autoDealId || !Number(autoId)} tab={'保险信息'} key={'3'}>
         <InfoInsurance {...formProps}/>
       </TabPane>,
 
-      <TabPane disabled={!autoDealId || !autoId || Number(dealInfo.pay_type) === 0} tab={'按揭信息'} key={'4'}>
+      <TabPane disabled={!autoDealId || !Number(autoId) || Number(dealInfo.pay_type) === 0} tab={'按揭信息'} key={'4'}>
         <InfoLoan {...formProps}/>
       </TabPane>,
 
-      <TabPane disabled={!autoDealId || !autoId} tab={'加装信息'} key={'5'}>
+      <TabPane disabled={!autoDealId || !Number(autoId)} tab={'加装信息'} key={'5'}>
         <InfoDecoration {...formProps}/>
       </TabPane>,
     ];
+
+    /* let tabPanes = [
+      <TabPane tab={'交易信息'} key={'1'}>
+        <InfoDeal {...formProps} dealInfo={dealInfo} onSuccess={this.handleAutoDealIdChange} />
+      </TabPane>,
+
+      <TabPane tab={'车辆信息'} key={'2'}>
+        <InfoAuto {...formProps} onSuccess={this.handleAutoIdChange} />
+      </TabPane>,
+
+      <TabPane tab={'保险信息'} key={'3'}>
+        <InfoInsurance {...formProps} />
+      </TabPane>,
+
+      <TabPane tab={'按揭信息'} key={'4'}>
+        <InfoLoan {...formProps} />
+      </TabPane>,
+
+      <TabPane tab={'加装信息'} key={'5'}>
+        <InfoDecoration {...formProps} />
+      </TabPane>,
+    ];*/
 
     return (
       <div className="render-content">
@@ -105,14 +126,14 @@ export default class New extends React.Component {
 
             <Col span={12}>
               <span className={autoDealId ? 'pull-right' : 'hide'}>
-                <AuthPopover detail={this.state.dealInfo || {}}/>
+                <AuthPopover detail={this.state.dealInfo || {}} />
               </span>
             </Col>
           </Row>
 
-          <CustomerInfo customerId={customerId}/>
+          <CustomerInfo customerId={customerId} />
 
-          <InfoIntention customerId={customerId} intentionId={intentionId} autoId={autoId}/>
+          <InfoIntention customerId={customerId} intentionId={intentionId} autoId={autoId} />
         </div>
         <Tabs type="card" defaultActiveKey="1">{tabPanes}</Tabs>
       </div>

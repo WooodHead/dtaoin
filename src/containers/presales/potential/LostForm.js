@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {message, Form, Checkbox, Input, Button} from 'antd';
+import React, { Component } from 'react';
+import { message, Form, Checkbox, Input, Button } from 'antd';
 
 import api from '../../../middleware/api';
 import Layout from '../../../utils/FormLayout';
@@ -20,57 +20,57 @@ class LostForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let formData = this.props.form.getFieldsValue();
+    const formData = this.props.form.getFieldsValue();
     formData.fail_types = Array.from(this.state.checkedTypes).toString();
 
-    this.setState({isFetching: true});
+    this.setState({ isFetching: true });
     api.ajax({
       url: api.presales.intention.lost(),
       type: 'POST',
       data: formData,
     }, () => {
       message.success('提交成功');
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
       location.reload();
       this.props.cancelModal();
-    }, (err) => {
+    }, err => {
       message.error(`提交失败[${err}]`);
-      this.setState({isFetching: false});
+      this.setState({ isFetching: false });
     });
   }
 
   handleChange(e) {
-    let checkedTypeSet = this.state.checkedTypes;
+    const checkedTypeSet = this.state.checkedTypes;
     if (e.target.checked) {
       checkedTypeSet.add(e.target.value);
     } else {
       checkedTypeSet.delete(e.target.value);
     }
-    this.setState({checkedTypes: checkedTypeSet});
+    this.setState({ checkedTypes: checkedTypeSet });
   }
 
   getFailTypes() {
-    api.ajax({url: api.presales.intention.getFailTypes()}, data => {
-      this.setState({failTypes: data.res.types});
+    api.ajax({ url: api.presales.intention.getFailTypes() }, data => {
+      this.setState({ failTypes: data.res.types });
     });
   }
 
   render() {
     const FormItem = Form.Item;
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
-    let {intentionId, customerId, cancelModal} = this.props;
-    let {isFetching} = this.state;
+    const { intentionId, customerId, cancelModal } = this.props;
+    const { isFetching } = this.state;
 
     return (
       <Form>
-        {getFieldDecorator('_id', {initialValue: intentionId})(<Input type="hidden"/>)}
-        {getFieldDecorator('customer_id', {initialValue: customerId})(<Input type="hidden"/>)}
+        {getFieldDecorator('_id', { initialValue: intentionId })(<Input type="hidden"/>)}
+        {getFieldDecorator('customer_id', { initialValue: customerId })(<Input type="hidden"/>)}
 
         {this.state.failTypes.map((failType, index) =>
           <FormItem label={`${failType.name}`} {...formItemLayout} key={index}>
-            {failType.sub_types.map((type) =>
+            {failType.sub_types.map(type =>
               <label className="ant-checkbox-inline" key={type.id}>
                 <Checkbox value={type.id} onChange={this.handleChange.bind(this)}/> {type.name}
               </label>

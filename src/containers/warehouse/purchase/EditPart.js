@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Form, Row, Col, Input} from 'antd';
+import { Modal, Form, Row, Col, Input } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 import Layout from '../../../utils/FormLayout';
@@ -24,17 +24,17 @@ export default class AddPart extends BaseModal {
   }
 
   handleInPriceChange(e) {
-    let price = e.target.value;
-    this.setState({price: price ? price : 0});
+    const price = e.target.value;
+    this.setState({ price: price ? price : 0 });
   }
 
   handleCountChange(e) {
-    let count = e.target.value;
-    this.setState({count: count ? count : 0});
+    const count = e.target.value;
+    this.setState({ count: count ? count : 0 });
   }
 
   handleSubmit() {
-    let {part, price, count} = this.state;
+    const { part, price, count } = this.state;
 
     if (Object.keys(part).length > 0) {
       part.amount = count;
@@ -60,11 +60,10 @@ export default class AddPart extends BaseModal {
   }
 
   render() {
-    const {formItemThree} = Layout;
+    const { formItemThree } = Layout;
 
-    let {visible, price, count}=this.state;
-    let {part} = this.props;
-    console.log('part', part);
+    const { visible, price, count } = this.state;
+    const { part } = this.props;
 
     return (
       <span>

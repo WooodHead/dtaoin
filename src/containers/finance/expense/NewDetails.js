@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Modal, Icon, Button} from 'antd';
+import { Row, Col, Modal, Icon, Button } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -12,12 +12,12 @@ class NewDetails extends BaseModal {
   }
 
   render() {
-    let {visible} = this.state;
-    let {detail} = this.props;
+    const { visible } = this.state;
+    const { detail } = this.props;
 
-    let title = `${detail.type_name}详情` || '详情';
-    let payer = detail.type == 0 ? '付款方:' : '收款方:';
-    let project = detail.type == 0 ? '收入项目:' : '支出项目:';
+    const title = `${detail.type_name}详情` || '详情';
+    const payer = detail.type == 0 ? '付款方:' : '收款方:';
+    const project = detail.type == 0 ? '收入项目:' : '支出项目:';
     return (
       <span>
         <a

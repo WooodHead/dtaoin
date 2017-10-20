@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Button} from 'antd';
+import { Modal, Button } from 'antd';
 import BaseModal from '../base/BaseModal';
 import api from '../../middleware/api';
 
@@ -17,13 +17,13 @@ export default class ImagePreviewModal extends BaseModal {
     [
       'getImgUrl',
       'handleImgError',
-    ].map((method) => this[method] = this[method].bind(this));
+    ].map(method => this[method] = this[method].bind(this));
   }
 
   getImgUrl() {
-    let {images} = this.props;
+    const { images } = this.props;
     images.map((img, index) => {
-      api.ajax({url: img.url}, (data) => {
+      api.ajax({ url: img.url }, data => {
         this.setState({
           [`url${index}`]: data.res.url,
         });
@@ -33,8 +33,8 @@ export default class ImagePreviewModal extends BaseModal {
   }
 
   handleImgError(e) {
-    //获取当前是第几张图片
-    let key = e.target.title;
+    // 获取当前是第几张图片
+    const key = e.target.title;
     e.target.src = imgLoadingFailed;
     e.target.style.width = '60px';
     e.target.style.height = '40px';
@@ -45,7 +45,7 @@ export default class ImagePreviewModal extends BaseModal {
   }
 
   render() {
-    let {title, disabled, images} = this.props;
+    const { title, disabled, images } = this.props;
     return (
       <span className="ml20">
         <Button
@@ -62,8 +62,8 @@ export default class ImagePreviewModal extends BaseModal {
           onCancel={this.hideModal}
           footer={null}>
           {images.map((img, index) => {
-            let imgUrl = this.state[`url${index}`];
-            let loadImgDisabled = this.state[`loadImgDisabled${index}`] || false;
+            const imgUrl = this.state[`url${index}`];
+            const loadImgDisabled = this.state[`loadImgDisabled${index}`] || false;
             return (
               <div key={index}>
                 <figure>

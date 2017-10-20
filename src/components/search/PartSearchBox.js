@@ -1,11 +1,12 @@
 import React from 'react';
-import {Input, Select, Button, Icon} from 'antd';
+import { Input, Select, Button, Icon } from 'antd';
 import classNames from 'classnames';
 import api from '../../middleware/api';
+import createReactClass from 'create-react-class';
 
 const Option = Select.Option;
 
-const PartSearchBox = React.createClass({
+const PartSearchBox = createReactClass({
   getInitialState() {
     return {
       data: this.props.data ? this.props.data : [],
@@ -16,42 +17,42 @@ const PartSearchBox = React.createClass({
     };
   },
 
-  componentDidMount(){
-    let {value, part_type_id, supplier_id} = this.props;
+  componentDidMount() {
+    const { value, part_type_id, supplier_id } = this.props;
 
     if (value) {
-      this.setState({value});
+      this.setState({ value });
     }
 
     if (part_type_id) {
       this.searchParts('', part_type_id, supplier_id);
-      this.setState({part_type_id});
+      this.setState({ part_type_id });
     }
 
     // 退货开单，查询该供货商的配件
     if (supplier_id) {
-      this.setState({supplier_id});
+      this.setState({ supplier_id });
     }
   },
 
   componentWillReceiveProps(nextProps) {
-    let {part_type_id, supplier_id} = nextProps;
+    const { part_type_id, supplier_id } = nextProps;
 
     if (part_type_id != this.props.part_type_id) {
-      this.setState({value: ''});
+      this.setState({ value: '' });
 
       this.searchParts('', part_type_id);
-      this.setState({part_type_id});
+      this.setState({ part_type_id });
     }
     if (supplier_id !== this.props.supplier_id) {
-      this.setState({supplier_id});
+      this.setState({ supplier_id });
     }
   },
 
-  searchParts(key, part_type_id) {
-    api.ajax({url: api.warehouse.part.searchByTypeId(key, Number(part_type_id), this.state.supplier_id)}, (data) => {
-      let list = data.res.list;
-      this.setState({data: list});
+  searchParts(key) {
+    api.ajax({ url: api.warehouse.part.searchBySupplierId(key, this.state.supplier_id) }, data => {
+      const list = data.res.list;
+      this.setState({ data: list });
 
       if (list.length > 0) {
 
@@ -62,15 +63,15 @@ const PartSearchBox = React.createClass({
   },
 
   handleSelect(value, option) {
-    let index = option.props.index;
-    let list = this.state.data;
-    this.setState({value: option.props.children});
+    const index = option.props.index;
+    const list = this.state.data;
+    this.setState({ value: option.props.children });
 
-    this.props.select({data: list[index]});
+    this.props.select({ data: list[index] });
   },
 
   handleSearch(key) {
-    this.setState({value: key});
+    this.setState({ value: key });
     if (!!key) {
       this.searchParts(key, this.props.part_type_id);
     } else {
@@ -79,16 +80,16 @@ const PartSearchBox = React.createClass({
   },
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   },
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   },
 
   render() {
-    let {value, data, focus} = this.state;
-    let {style, placeholder, showNewAction} = this.props;
+    const { value, data, focus } = this.state;
+    const { style, placeholder, showNewAction } = this.props;
 
     const btnCls = classNames({
       'ant-search-btn': true,
@@ -104,7 +105,7 @@ const PartSearchBox = React.createClass({
       <Input.Group className={searchCls} style={style}>
         <Select
           size="large"
-          combobox
+          mode="combobox"
           value={value}
           placeholder={placeholder}
           notFoundContent="未找到配件"
@@ -117,14 +118,14 @@ const PartSearchBox = React.createClass({
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         >
-          {data.map((item) =>
-            <Option key={item._id + ''}>{item.name} {item.scope} {!!item.spec ? item.spec + item.unit : ''}</Option>)}
+          {data.map(item =>
+            <Option key={`${item._id  }`}>{item.name} {item.scope} {!!item.spec ? item.spec + item.unit : ''}</Option>)}
         </Select>
 
         <div className="ant-input-group-wrap">
           {showNewAction && (data.length === 0 && value.length > 0) ?
             <Button
-              style={{position: 'relative', left: '100px'}}
+              style={{ position: 'relative', left: '100px' }}
               size="large"
               onClick={() => this.props.onAdd(value)}
               type="primary"

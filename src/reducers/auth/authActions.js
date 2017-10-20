@@ -32,7 +32,7 @@ const {
   // SET_LOGIN,
   // SET_IS_FIRST_LOGIN,
 
-} = require('../../config/constants').default;
+} = require('../constants').default;
 
 import server from '../../middleware/server';
 import api from '../../middleware/api';
@@ -64,13 +64,13 @@ export function getVerificationCode(phone) {
   return dispatch => {
     dispatch(getVerificationCodeRequest());
 
-    server.post(api.system.getVerifyCode(), {phone: phone})
+    server.post(api.system.getVerifyCode(), { phone })
 
       .then(data => {
         dispatch(getVerificationCodeSuccess(data.res));
       })
 
-      .catch((error) => {
+      .catch(error => {
         dispatch(getVerificationCodeFailure(error));
       });
   };
@@ -108,20 +108,20 @@ export function login(phone, code, codeId) {
     dispatch(loginRequest());
 
     server.post(api.system.login(), {
-      phone: phone,
-      code: code,
+      phone,
+      code,
       code_id: codeId,
     })
-      .then(function (data) {
+      .then(data => {
         if (data.code === 0) {
-          let loginInfo = data.res.info;
+          const loginInfo = data.res.info;
 
           dispatch(loginSuccess(loginInfo));
         } else {
           dispatch(loginFailure(data.msg));
         }
       })
-      .catch((error) => {
+      .catch(error => {
         dispatch(loginFailure(error));
       });
   };

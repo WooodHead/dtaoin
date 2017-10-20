@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePicker} from 'antd';
+import { message, Form, Row, Col, Input, Select, Button, Checkbox, Radio, TimePicker } from 'antd';
 import UploadComponent from '../../components/base/BaseUpload';
 import Layout from '../../utils/FormLayout';
 import api from '../../middleware/api';
@@ -11,7 +11,8 @@ import FormValidator from '../../utils/FormValidator';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-const {formItem12, formItemThree, selectStyle} = Layout;
+const TextArea = Input.TextArea;
+const { formItem12, formItemThree, selectStyle } = Layout;
 
 let introducePicIndex = 0;
 
@@ -44,7 +45,7 @@ class NewForm extends UploadComponent {
   }
 
   onMaintainTypesChange(checkedValues) {
-    this.setState({checkedMaintainTypeValues: checkedValues});
+    this.setState({ checkedMaintainTypeValues: checkedValues });
   }
 
   disabledMinutes() {
@@ -85,8 +86,8 @@ class NewForm extends UploadComponent {
   }
 
   assembleIntroducePics(formData) {
-    let pictures = [];
-    let keys = formData.keys;
+    const pictures = [];
+    const keys = formData.keys;
     for (let i = 0; i < keys.length; i++) {
       let
         deleteProp = `introduce_pics_hide_${i}`,
@@ -112,34 +113,34 @@ class NewForm extends UploadComponent {
   }
 
   getProvinces() {
-    api.ajax({url: api.system.getProvinces()}, (data) => {
-      this.setState({provinces: data.res.province_list});
+    api.ajax({ url: api.system.getProvinces() }, data => {
+      this.setState({ provinces: data.res.province_list });
     });
   }
 
   getCities(province) {
-    api.ajax({url: api.system.getCities(province)}, (data) => {
+    api.ajax({ url: api.system.getCities(province) }, data => {
       this.setState({
-        province: province,
+        province,
         cities: data.res.city_list,
       });
     });
   }
 
   getCountries(province, city) {
-    api.ajax({url: api.system.getCountries(province, city)}, (data) => {
-      this.setState({countries: data.res.country_list});
+    api.ajax({ url: api.system.getCountries(province, city) }, data => {
+      this.setState({ countries: data.res.country_list });
     });
   }
 
   addIntroducePics() {
     introducePicIndex++;
 
-    const {form} = this.props;
+    const { form } = this.props;
 
     let keys = form.getFieldValue('keys');
     keys = keys.concat(introducePicIndex);
-    form.setFieldsValue({keys});
+    form.setFieldsValue({ keys });
 
     let keyProps = `introduce_pics_${introducePicIndex}_key`,
       filesProps = `introduce_pics_${introducePicIndex}_files`,
@@ -152,13 +153,13 @@ class NewForm extends UploadComponent {
   }
 
   removeIntroducePics(k) {
-    let hideProp = `introduce_pics_hide_${k}`;
-    this.setState({[hideProp]: true});
+    const hideProp = `introduce_pics_hide_${k}`;
+    this.setState({ [hideProp]: true });
   }
 
   render() {
-    const {getFieldDecorator, getFieldValue} = this.props.form;
-    let {
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const {
       provinces,
       cities,
       countries,
@@ -169,13 +170,13 @@ class NewForm extends UploadComponent {
       rules: [{
         required: true,
         message: validator.required.notNull,
-      }, {validator: FormValidator.notNull}],
+      }, { validator: FormValidator.notNull }],
       validateTrigger: 'onBlur',
     };
 
-    getFieldDecorator('keys', {initialValue: keys});
-    const introducePics = getFieldValue('keys').map((k) => {
-      let hideProp = `introduce_pics_hide_${k}`;
+    getFieldDecorator('keys', { initialValue: keys });
+    const introducePics = getFieldValue('keys').map(k => {
+      const hideProp = `introduce_pics_hide_${k}`;
 
       return (
         <Row className={this.state[hideProp] ? 'hide' : ''} key={k}>
@@ -214,7 +215,7 @@ class NewForm extends UploadComponent {
         label: '保养',
         value: '2',
       }, {
-        label: '机修',
+        label: '维修',
         value: '3',
       }, {
         label: '钣金',
@@ -236,7 +237,7 @@ class NewForm extends UploadComponent {
         <Row type="flex">
           <Col span={16}>
             <FormItem label="门店名称" {...formItem12}>
-              {getFieldDecorator('company_name', {...notNullValidator})(
+              {getFieldDecorator('company_name', { ...notNullValidator })(
                 <Input placeholder="请输入门店名称"/>
               )}
             </FormItem>
@@ -246,7 +247,7 @@ class NewForm extends UploadComponent {
         <Row type="flex">
           <Col span={8}>
             <FormItem label="省份" {...formItemThree}>
-              {getFieldDecorator('province', {...notNullValidator})(
+              {getFieldDecorator('province', { ...notNullValidator })(
                 <Select
                   onSelect={this.handleProvinceChange}
                   placeholder="请选择省份"
@@ -259,7 +260,7 @@ class NewForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="城市" {...formItemThree}>
-              {getFieldDecorator('city', {...notNullValidator})(
+              {getFieldDecorator('city', { ...notNullValidator })(
                 <Select
                   onSelect={this.handleCityChange}
                   placeholder="请选择城市"
@@ -272,7 +273,7 @@ class NewForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="区县" {...formItemThree}>
-              {getFieldDecorator('country', {...notNullValidator})(
+              {getFieldDecorator('country', { ...notNullValidator })(
                 <Select {...selectStyle} placeholder="请选择区县">
                   {countries.map(country => <Option key={country.name}>{country.name}</Option>)}
                 </Select>
@@ -284,7 +285,7 @@ class NewForm extends UploadComponent {
         <Row type="flex">
           <Col span={16}>
             <FormItem label="门店地址" {...formItem12}>
-              {getFieldDecorator('address', {...notNullValidator})(
+              {getFieldDecorator('address', { ...notNullValidator })(
                 <Input placeholder="请输入门店地址"/>
               )}
             </FormItem>
@@ -306,7 +307,7 @@ class NewForm extends UploadComponent {
         <Row type="flex">
           <Col span={8}>
             <FormItem label="店总负责人" {...formItemThree}>
-              {getFieldDecorator('admin_name', {...notNullValidator})(
+              {getFieldDecorator('admin_name', { ...notNullValidator })(
                 <Input placeholder="请输入店总负责人"/>
               )}
             </FormItem>
@@ -356,18 +357,18 @@ class NewForm extends UploadComponent {
           </Col>
           <Col span={8}>
             <FormItem label="营业时间" {...formItemThree}>
-              {getFieldDecorator('service_start_time', {initialValue: formatter.getMomentHHmm('07:30')})(
+              {getFieldDecorator('service_start_time', { initialValue: formatter.getMomentHHmm('07:30') })(
                 <TimePicker disabledMinutes={this.disabledMinutes.bind(this)} hideDisabledOptions format="HH:mm"/>
               )}
               -
-              {getFieldDecorator('service_end_time', {initialValue: formatter.getMomentHHmm('17:30')})(
+              {getFieldDecorator('service_end_time', { initialValue: formatter.getMomentHHmm('17:30') })(
                 <TimePicker disabledMinutes={this.disabledMinutes.bind(this)} hideDisabledOptions format="HH:mm"/>
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label="在App展示" {...formItemThree}>
-              {getFieldDecorator('is_show_on_app', {initialValue: 0})(
+              {getFieldDecorator('is_show_on_app', { initialValue: 0 })(
                 <RadioGroup>
                   <Radio value={0}>否</Radio>
                   <Radio value={1}>是</Radio>
@@ -427,7 +428,7 @@ class NewForm extends UploadComponent {
           <Col span={16}>
             <FormItem label="备注" {...formItem12}>
               {getFieldDecorator('remark')(
-                <Input type="textarea" placeholder="备注"/>
+                <TextArea placeholder="备注"/>
               )}
             </FormItem>
           </Col>

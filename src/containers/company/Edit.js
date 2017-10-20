@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon} from 'antd';
+import { Modal, Icon } from 'antd';
 
 import BaseModal from '../../components/base/BaseModal';
 
@@ -19,7 +19,7 @@ export default class Edit extends BaseModal {
         <a href="javascript:" onClick={this.showModal}>编辑</a>
 
         <Modal
-          title={<span><Icon type="edit"/> 编辑门店</span>}
+          title={<span><Icon type="edit" /> 编辑门店</span>}
           visible={this.state.visible}
           width="960px"
           onCancel={this.hideModal}

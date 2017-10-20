@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, DatePicker, Input, message, Form, Icon} from 'antd';
+import { Button, Modal, DatePicker, Input, message, Form, Icon } from 'antd';
 
 import api from '../../middleware/api';
 import formatter from '../../utils/DateFormatter';
@@ -34,11 +34,11 @@ export default class AutoTaskReminder extends BaseModal {
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
   }
 
   handleDateChange(value) {
-    let date = formatter.day(value);
+    const date = formatter.day(value);
     this.setState({
       remindDate: date,
     });
@@ -51,14 +51,14 @@ export default class AutoTaskReminder extends BaseModal {
   }
 
   handleSubmit() {
-    let {auto} = this.props;
+    const { auto } = this.props;
 
     if (!this.state.remark) {
       message.warning('请填写任务描述');
       return false;
     }
 
-    this.setState({disabled: true});
+    this.setState({ disabled: true });
 
     api.ajax({
       url: api.task.createMaintainTask(),
@@ -80,28 +80,27 @@ export default class AutoTaskReminder extends BaseModal {
   }
 
   getNextDay() {
-    let date = new Date();
+    const date = new Date();
     date.setDate(date.getDate() + 1);
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    return year + '-' + month + '-' + day;
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year  }-${  month  }-${  day}`;
   }
 
   render() {
-    const {formItemLayout} = FormLayout;
-    let {size, auto} = this.props;
-    let {disabled} = this.state;
+    const { formItemLayout } = FormLayout;
+    const { size, auto } = this.props;
+    const { disabled } = this.state;
 
     return (
       <span>
-        {size === 'small' ?
-          <a href="javascript:;" onClick={this.showModal}>提醒保养</a> :
+        {size === 'small' ? <a href="javascript:;" onClick={this.showModal}>提醒保养</a> :
           <Button type="primary" onClick={this.showModal} disabled={disabled}>提醒保养</Button>
         }
 
         <Modal
-          title={<span><Icon type="clock-circle-o"/> 创建保险提醒</span>}
+          title={<span><Icon type="clock-circle-o" /> 创建保养提醒</span>}
           visible={this.state.visible}
           width={720}
           onCancel={this.hideModal}
@@ -125,7 +124,7 @@ export default class AutoTaskReminder extends BaseModal {
             <FormItem label="任务描述" {...formItemLayout}>
               <Input
                 type="textarea"
-                style={{width: 430}}
+                style={{ width: 430 }}
                 onChange={this.handleRemark}
                 placeholder="添加任务描述"
               />

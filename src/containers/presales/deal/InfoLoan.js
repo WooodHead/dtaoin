@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {message, Form, Input, Button, Radio, DatePicker, Row, Col} from 'antd';
+import React, { Component } from 'react';
+import { message, Form, Input, Button, Radio, DatePicker, Row, Col } from 'antd';
 import className from 'classnames';
 
 import Layout from '../../../utils/FormLayout';
@@ -27,16 +27,15 @@ class NewLoanForm extends Component {
   }
 
   componentDidMount() {
-    let {customerId, autoDealId, autoId} = this.props;
+    const { customerId, autoDealId, autoId } = this.props;
     this.getMortgageInfo(customerId, autoDealId);
     if (!!autoId || !!autoDealId) {
-      this.setState({isEdit: false});
+      this.setState({ isEdit: false });
     }
   }
 
-
   handleIsEdit() {
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
@@ -44,8 +43,8 @@ class NewLoanForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let {isNew} = this.state;
-    let {autoDealId, customerId} = this.props;
+    const { isNew } = this.state;
+    const { autoDealId, customerId } = this.props;
 
     if (!autoDealId) {
       message.error('请先填写交易信息并保存');
@@ -63,7 +62,7 @@ class NewLoanForm extends Component {
         url: isNew ? api.presales.deal.addLoan() : api.presales.deal.editLoan(),
         type: 'POST',
         data: values,
-      }, function (data) {
+      }, data => {
         message.success(this.state.isNew ? '按揭信息添加成功' : '按揭信息修改成功');
         this.getMortgageInfo(customerId, autoDealId);
         this.handleIsEdit();
@@ -71,12 +70,12 @@ class NewLoanForm extends Component {
           isNew: false,
           loan_log_id: data.res.loan_log_id,
         });
-      }.bind(this));
+      });
     });
   }
 
   getMortgageInfo(customerId, autoDealId) {
-    api.ajax({url: api.presales.deal.getLoanDetail(customerId, autoDealId)}, data => {
+    api.ajax({ url: api.presales.deal.getLoanDetail(customerId, autoDealId) }, data => {
       this.setState({
         mortgageInfo: data.res.detail || {},
         isNew: !(data.res.detail),
@@ -91,74 +90,77 @@ class NewLoanForm extends Component {
   }
 
   render() {
-    const {formItemLayout} = Layout;
-    const {getFieldDecorator} = this.props.form;
-    let {isEdit, mortgageInfo} = this.state;
-    let {customerId, autoId, autoDealId} = this.props;
+    const { formItemLayout, formItemLayout_1014, formItem9_15, formItem_618 } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { isEdit, mortgageInfo } = this.state;
+    const { customerId, autoId, autoDealId } = this.props;
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('_id', {initialValue: mortgageInfo._id})(
-            <Input type="hidden"/>
+          {getFieldDecorator('_id', { initialValue: mortgageInfo._id })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('customer_id', {initialValue: customerId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('customer_id', { initialValue: customerId })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('seller_user_id', {initialValue: this.props.seller_user_id})(
-            <Input type="hidden"/>
+          {getFieldDecorator('seller_user_id', { initialValue: this.props.seller_user_id })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('auto_id', {initialValue: autoId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('auto_id', { initialValue: autoId })(
+            <Input type="hidden" />,
           )}
-          {getFieldDecorator('auto_deal_id', {initialValue: autoDealId})(
-            <Input type="hidden"/>
+          {getFieldDecorator('auto_deal_id', { initialValue: autoDealId })(
+            <Input type="hidden" />,
           )}
           <Row>
             <Col span={6}>
-              <FormItem label="年限" {...formItemLayout}>
-                {getFieldDecorator('loan_years', {initialValue: mortgageInfo.loan_years || '1'})(
+              <FormItem label="年限" {...formItem_618}>
+                {getFieldDecorator('loan_years', { initialValue: mortgageInfo.loan_years || '1' })(
                   <RadioGroup>
                     <Radio key="1" value="1">一年</Radio>
                     <Radio key="2" value="2">两年</Radio>
                     <Radio key="3" value="3">三年</Radio>
-                  </RadioGroup>
+                  </RadioGroup>,
                 )}
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="按揭银行" {...formItemLayout}>
+              <FormItem label="按揭银行" {...formItemLayout_1014}>
                 {getFieldDecorator('bank', {
                   initialValue: mortgageInfo.bank,
                 })(
-                  <Input placeholder="请输入按揭银行"/>
+                  <Input placeholder="请输入按揭银行" />,
                 )}
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="担保公司" {...formItemLayout}>
+              <FormItem label="担保公司" {...formItem9_15}>
                 {getFieldDecorator('guarantee_company', {
                   initialValue: mortgageInfo.guarantee_company || '',
                   rules: FormValidator.getRuleNotNull(),
                   validateTrigger: 'onBlur',
                 })(
-                  <Input placeholder="请输入担保公司"/>
+                  <Input placeholder="请输入担保公司" />,
                 )}
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="签单日期" {...formItemLayout}>
-                {getFieldDecorator('sign_date', {initialValue: formatter.getMomentDate(mortgageInfo.sign_date) || formatter.getMomentDate()})(
-                  <DatePicker placeholder="请选择签单日期" allowClear={false}/>
+              <FormItem label="签单日期" {...formItem9_15}>
+                {getFieldDecorator('sign_date', {
+                  initialValue: formatter.getMomentDate(mortgageInfo.sign_date) ||
+                  formatter.getMomentDate(),
+                })(
+                  <DatePicker placeholder="请选择签单日期" allowClear={false} />,
                 )}
               </FormItem>
             </Col>
@@ -167,19 +169,19 @@ class NewLoanForm extends Component {
           <Row>
             <Col span={6}>
               <FormItem label="担保人" {...formItemLayout}>
-                {getFieldDecorator('guarantee_user', {initialValue: mortgageInfo.guarantee_user})(
-                  <Input placeholder="请输入担保人"/>
+                {getFieldDecorator('guarantee_user', { initialValue: mortgageInfo.guarantee_user })(
+                  <Input placeholder="请输入担保人" />,
                 )}
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="担保人电话" {...formItemLayout}>
+              <FormItem label="担保人电话" {...formItemLayout_1014}>
                 {getFieldDecorator('guarantee_phone', {
                   rules: FormValidator.getRulePhoneOrTelNumber(),
                   validateTrigger: 'onBlur',
                   initialValue: mortgageInfo.guarantee_user,
                 })(
-                  <Input placeholder="担保人电话"/>
+                  <Input placeholder="担保人电话" />,
                 )}
               </FormItem>
             </Col>
@@ -189,7 +191,8 @@ class NewLoanForm extends Component {
             <Col span={6}>
               <NumberInput
                 label="首付款"
-                defaultValue={(mortgageInfo.pre_payment && Number(mortgageInfo.pre_payment).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.pre_payment &&
+                  Number(mortgageInfo.pre_payment).toFixed(2)) || ''}
                 id="pre_payment"
                 self={this}
                 layout={formItemLayout}
@@ -199,30 +202,33 @@ class NewLoanForm extends Component {
             <Col span={6}>
               <NumberInput
                 label="贷款金额"
-                defaultValue={(mortgageInfo.bank_loan && Number(mortgageInfo.bank_loan).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.bank_loan &&
+                  Number(mortgageInfo.bank_loan).toFixed(2)) || ''}
                 id="bank_loan"
                 self={this}
-                layout={formItemLayout}
+                layout={formItemLayout_1014}
                 placeholder="请输入贷款金额"
               />
             </Col>
             <Col span={6}>
               <NumberInput
                 label="每月金额"
-                defaultValue={(mortgageInfo.month_pay && Number(mortgageInfo.month_pay).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.month_pay &&
+                  Number(mortgageInfo.month_pay).toFixed(2)) || ''}
                 id="month_pay"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入每月还款"
               />
             </Col>
             <Col span={6}>
               <NumberInput
                 label="资料费"
-                defaultValue={(mortgageInfo.material_fee && Number(mortgageInfo.material_fee).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.material_fee &&
+                  Number(mortgageInfo.material_fee).toFixed(2)) || ''}
                 id="material_fee"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入资料费"
               />
             </Col>
@@ -232,7 +238,8 @@ class NewLoanForm extends Component {
             <Col span={6}>
               <NumberInput
                 label="公证费"
-                defaultValue={(mortgageInfo.notary_fee_in && Number(mortgageInfo.notary_fee_in).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.notary_fee_in &&
+                  Number(mortgageInfo.notary_fee_in).toFixed(2)) || ''}
                 id="notary_fee_in"
                 self={this}
                 layout={formItemLayout}
@@ -242,20 +249,22 @@ class NewLoanForm extends Component {
             <Col span={6}>
               <NumberInput
                 label="担保费"
-                defaultValue={(mortgageInfo.guarantee_fee_in && Number(mortgageInfo.guarantee_fee_in).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.guarantee_fee_in &&
+                  Number(mortgageInfo.guarantee_fee_in).toFixed(2)) || ''}
                 id="guarantee_fee_in"
                 self={this}
-                layout={formItemLayout}
+                layout={formItemLayout_1014}
                 placeholder="请输入担保费"
               />
             </Col>
             <Col span={6}>
               <NumberInput
                 label="银行保证金"
-                defaultValue={(mortgageInfo.bank_deposit_in && Number(mortgageInfo.bank_deposit_in).toFixed(2)) || ''}
+                defaultValue={(mortgageInfo.bank_deposit_in &&
+                  Number(mortgageInfo.bank_deposit_in).toFixed(2)) || ''}
                 id="bank_deposit_in"
                 self={this}
-                layout={formItemLayout}
+                layout={formItem9_15}
                 placeholder="请输入银行保证金"
               />
             </Col>
@@ -279,22 +288,22 @@ class NewLoanForm extends Component {
         <Form className={show}>
           <Row>
             <Col span={6}>
-              <FormItem label="年限" {...formItemLayout}>
+              <FormItem label="年限" {...formItem9_15}>
                 <span>{mortgageInfo.loan_years || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="按揭银行" {...formItemLayout}>
+              <FormItem label="按揭银行" {...formItem9_15}>
                 <span>{mortgageInfo.bank}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="担保公司" {...formItemLayout}>
+              <FormItem label="担保公司" {...formItem9_15}>
                 <span>{mortgageInfo.guarantee_company}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="签单日期" {...formItemLayout}>
+              <FormItem label="签单日期" {...formItem9_15}>
                 <span>{mortgageInfo.sign_date}</span>
               </FormItem>
             </Col>
@@ -302,12 +311,12 @@ class NewLoanForm extends Component {
 
           <Row>
             <Col span={6}>
-              <FormItem label="担保人" {...formItemLayout}>
+              <FormItem label="担保人" {...formItem9_15}>
                 <span>{mortgageInfo.guarantee_user}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="担保人电话" {...formItemLayout}>
+              <FormItem label="担保人电话" {...formItem9_15}>
                 <span>{mortgageInfo.guarantee_phone}</span>
               </FormItem>
             </Col>
@@ -315,41 +324,48 @@ class NewLoanForm extends Component {
 
           <Row>
             <Col span={6}>
-              <FormItem label="首付款" {...formItemLayout}>
-                <span>{(mortgageInfo.pre_payment && Number(mortgageInfo.pre_payment).toFixed(2)) || ''}</span>
+              <FormItem label="首付款" {...formItem9_15}>
+                <span>{(mortgageInfo.pre_payment && Number(mortgageInfo.pre_payment).toFixed(2)) ||
+                ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="贷款金额" {...formItemLayout}>
-                <span>{(mortgageInfo.bank_loan && Number(mortgageInfo.bank_loan).toFixed(2)) || ''}</span>
+              <FormItem label="贷款金额" {...formItem9_15}>
+                <span>{(mortgageInfo.bank_loan && Number(mortgageInfo.bank_loan).toFixed(2)) ||
+                ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="每月金额" {...formItemLayout}>
-                <span>{(mortgageInfo.month_pay && Number(mortgageInfo.month_pay).toFixed(2)) || ''}</span>
+              <FormItem label="每月金额" {...formItem9_15}>
+                <span>{(mortgageInfo.month_pay && Number(mortgageInfo.month_pay).toFixed(2)) ||
+                ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="资料费" {...formItemLayout}>
-                <span>{(mortgageInfo.material_fee && Number(mortgageInfo.material_fee).toFixed(2)) || ''}</span>
+              <FormItem label="资料费" {...formItem9_15}>
+                <span>{(mortgageInfo.material_fee &&
+                  Number(mortgageInfo.material_fee).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
           </Row>
 
           <Row>
             <Col span={6}>
-              <FormItem label="公证费" {...formItemLayout}>
-                <span>{(mortgageInfo.notary_fee_in && Number(mortgageInfo.notary_fee_in).toFixed(2)) || ''}</span>
+              <FormItem label="公证费" {...formItem9_15}>
+                <span>{(mortgageInfo.notary_fee_in &&
+                  Number(mortgageInfo.notary_fee_in).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="担保费" {...formItemLayout}>
-                <span>{(mortgageInfo.guarantee_fee_in && Number(mortgageInfo.guarantee_fee_in).toFixed(2)) || ''}</span>
+              <FormItem label="担保费" {...formItem9_15}>
+                <span>{(mortgageInfo.guarantee_fee_in &&
+                  Number(mortgageInfo.guarantee_fee_in).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="银行保证金" {...formItemLayout}>
-                <span>{(mortgageInfo.bank_deposit_in && Number(mortgageInfo.bank_deposit_in).toFixed(2)) || ''}</span>
+              <FormItem label="银行保证金" {...formItem9_15}>
+                <span>{(mortgageInfo.bank_deposit_in &&
+                  Number(mortgageInfo.bank_deposit_in).toFixed(2)) || ''}</span>
               </FormItem>
             </Col>
           </Row>

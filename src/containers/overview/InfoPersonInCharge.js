@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Row, Col, Form, Input, Button, message} from 'antd';
+import React, { Component } from 'react';
+import { Row, Col, Form, Input, Button, message } from 'antd';
 
 import className from 'classnames';
 import api from '../../middleware/api';
@@ -24,7 +24,7 @@ class InfoPersonInCharge extends Component {
   }
 
   handleIsEdit() {
-    let {isEdit} = this.state;
+    const { isEdit } = this.state;
     this.setState({
       isEdit: !isEdit,
     });
@@ -49,25 +49,25 @@ class InfoPersonInCharge extends Component {
 
 
   render() {
-    let {getFieldDecorator} = this.props.form;
-    const {formItemThree} = Layout;
-    let companyInfo = this.props.companyInfo || {};
-    let {isEdit} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    const { formItemThree } = Layout;
+    const companyInfo = this.props.companyInfo || {};
+    const { isEdit } = this.state;
 
     const show = className({
       '': !isEdit,
-      'hide': isEdit,
+      hide: isEdit,
     });
 
     const inputShow = className({
-      'hide': !isEdit,
+      hide: !isEdit,
       '': isEdit,
     });
 
     return (
       <div>
         <Form className={inputShow}>
-          {getFieldDecorator('company_id', {initialValue: companyInfo._id})(
+          {getFieldDecorator('company_id', { initialValue: companyInfo._id })(
             <Input type="hidden"/>
           )}
 
@@ -79,7 +79,7 @@ class InfoPersonInCharge extends Component {
                   rules: [{
                     required: true,
                     message: validator.required.notNull,
-                  }, {validator: FormValidator.notNull}],
+                  }, { validator: FormValidator.notNull }],
                   validateTrigger: 'onBlur',
                 })(
                   <Input placeholder="请输入"/>

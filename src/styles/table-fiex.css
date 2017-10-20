@@ -1,0 +1,506 @@
+/*工单列表*/
+.aftersales-index .ant-table table {
+    table-layout: fixed;
+}
+
+.aftersales-index .ant-table td, .aftersales .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*配件销售明细*/
+.part-sale-mingxi .ant-table table {
+    table-layout: fixed;
+}
+
+.part-sale-mingxi .ant-table td, .part-sale-mingxi .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*配件销售单管理*/
+.part-sale-index .ant-table table {
+    table-layout: fixed;
+}
+
+.part-sale-index .ant-table td, .part-sale-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*客户管理*/
+.customer-index .ant-table table {
+    table-layout: fixed;
+}
+
+.customer-index .ant-table td, .customer-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*耗材领用*/
+.consumptive-index .ant-table table {
+    table-layout: fixed;
+}
+
+.consumptive-index .ant-table td, .consumptive-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*采购开单*/
+.purchase-new .ant-table table {
+    table-layout: fixed;
+}
+
+.purchase-new .ant-table td, .purchase-new .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*退货开单*/
+.purchase-reject .ant-table table {
+    table-layout: fixed;
+}
+
+.purchase-reject .ant-table td, .purchase-reject .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*盘点开单*/
+.stocktaking-new .ant-table table {
+    table-layout: fixed;
+}
+
+.stocktaking-new .ant-table td, .stocktaking-new .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*采购单管理*/
+.purchase-index .ant-table table {
+    table-layout: fixed;
+}
+
+.purchase-index .ant-table td, .purchase-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*退货单管理*/
+.purchase-reject-index .ant-table table {
+    table-layout: fixed;
+}
+
+.purchase-reject-index .ant-table td, .purchase-reject-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*盘点单管理*/
+.stocktaking-index .ant-table table {
+    table-layout: fixed;
+}
+
+.stocktaking-index .ant-table td, .stocktaking-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*配件管理*/
+.part-list .ant-table table {
+    table-layout: fixed;
+}
+
+.part-list .ant-table td, .part-list .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*供应商管理*/
+.supplier-index .ant-table table {
+    table-layout: fixed;
+}
+
+.supplier-index .ant-table td, .supplier-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*出入库管理*/
+.log-index .ant-table table {
+    table-layout: fixed;
+}
+
+.log-index .ant-table td, .log-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*维修项目列表*/
+.maintain-item-index .ant-table table {
+    table-layout: fixed;
+}
+
+.maintain-item-index .ant-table td, .maintain-item-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*意向客户*/
+.potential-index .ant-table table {
+    table-layout: fixed;
+}
+
+.potential-index .ant-table td, .potential-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*成交单列表*/
+.presales-deal-index .ant-table table {
+    table-layout: fixed;
+}
+
+.presales-deal-index .ant-table td, .presales-deal-index .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车收入列表*/
+.income-list .ant-table table {
+    table-layout: fixed;
+}
+
+.income-list .ant-table td, .income-list .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*收支管理*/
+.expense-list .ant-table table {
+    table-layout: fixed;
+}
+
+.expense-list .ant-table td, .expense-list .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*固定资产*/
+.fixed-assets-list .ant-table table {
+    table-layout: fixed;
+}
+
+.fixed-assets-list .ant-table td, .fixed-assets-list .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*员工管理*/
+.user-list .ant-table table {
+    table-layout: fixed;
+}
+
+.user-list .ant-table td, .user-list .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*意向客户*/
+.potential-index .ant-table table {
+    table-layout: fixed;
+}
+
+.potential-index .ant-table td div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*续保提醒*/
+.remind-renewal .ant-table table {
+    table-layout: fixed;
+}
+
+.remind-renewal .ant-table td, .remind-renewal .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*保养提醒*/
+.remind-maintain .ant-table table {
+    table-layout: fixed;
+}
+
+.remind-maintain .ant-table td, .remind-maintain .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*年检提醒*/
+.remind-yearly-inspection .ant-table table {
+    table-layout: fixed;
+}
+
+.remind-yearly-inspection .ant-table td, .remind-yearly-inspection .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*催收提醒*/
+.remind-debt .ant-table table {
+    table-layout: fixed;
+}
+
+.remind-debt .ant-table td, .remind-debt .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*其他回访*/
+.remind-common .ant-table table {
+    table-layout: fixed;
+}
+
+.remind-common .ant-table td, .remind-common .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*计次卷*/
+.marketing-discount .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-discount .ant-table td, .marketing-discount .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*折扣卷*/
+.marketing-times .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-times .ant-table td, .marketing-times .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*套餐卡管理*/
+.marketing-member-card .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-member-card .ant-table td, .marketing-member-card .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*套餐卡购买记录*/
+.marketing-salelogs .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-salelogs .ant-table td, .marketing-salelogs .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*营销 短信推送*/
+.marketing-sms-recharge .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-sms-recharge .ant-table td, .marketing-sms-recharge .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*营销 数据统计*/
+
+.marketing-statistics-count .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-statistics-count .ant-table td, .marketing-statistics-count .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*营销 助力砍价*/
+.marketing-bargain .ant-table table {
+    table-layout: fixed;
+}
+
+.marketing-bargain .ant-table td, .marketing-bargain .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*评价管理*/
+.aftersales-score .ant-table table {
+    table-layout: fixed;
+}
+
+.aftersales-score .ant-table td, .aftersales-score .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*库存预警*/
+.aftersales-inventory-warn .ant-table table {
+    table-layout: fixed;
+}
+
+.aftersales-inventory-warn .ant-table td, .aftersales-inventory-warn .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*提成管理*/
+.personnel-commission .ant-table table {
+    table-layout: fixed;
+}
+
+.personnel-commission .ant-table td, .personnel-commission .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*配件 维修使用记录列表*/
+.warehouse-part-maintenance .ant-table table {
+    table-layout: fixed;
+}
+
+.warehouse-part-maintenance .ant-table td, .warehouse-part-maintenance .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*总公司 评价管理*/
+.product-comment .ant-table table {
+    table-layout: fixed;
+}
+
+.product-comment .ant-table td, .product-comment .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*领券活动 管理*/
+.coupon-activity-manage .ant-table table {
+    table-layout: fixed;
+}
+
+.coupon-activity-manage .ant-table td, .coupon-activity-manage .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 订单管理*/
+.new-car-order-table .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-order-table .ant-table td, .new-car-order-table .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 意向管理*/
+.new-car-intention-table .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-intention-table .ant-table td, .new-car-intention-table .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 问答管理*/
+.new-car-qa .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-qa .ant-table td, .new-car-qa .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 banner管理*/
+.new-car-banner .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-banner .ant-table td, .new-car-banner .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 资源方管理*/
+.new-car-resource .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-resource .ant-table td, .new-car-resource .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/*新车 收益记录*/
+.new-car-earnings-record .ant-table table {
+    table-layout: fixed;
+}
+
+.new-car-earnings-record .ant-table td, .new-car-earnings-record .ant-table th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

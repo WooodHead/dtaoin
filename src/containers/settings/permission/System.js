@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Row, Col, Button, Radio, Checkbox} from 'antd';
+import { message, Row, Col, Button, Radio, Checkbox } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -55,13 +55,13 @@ export default class System extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    let {typeId, permissionMap} = this.state;
+    const { typeId, permissionMap } = this.state;
     if (!typeId) {
       message.warning('请先选择系统版本');
       return false;
     }
 
-    let checkedIds = this.assembleCheckedIds(permissionMap);
+    const checkedIds = this.assembleCheckedIds(permissionMap);
 
     api.ajax({
       url: api.admin.permission.updateBySystem(),
@@ -72,35 +72,35 @@ export default class System extends React.Component {
       },
     }, () => {
       message.success('设置成功');
-    }, (error) => {
+    }, error => {
       message.error(`设置失败[${error}]`);
     });
   }
 
   handleRadioChange(e) {
-    let typeId = e.target.value;
-    this.setState({typeId});
+    const typeId = e.target.value;
+    this.setState({ typeId });
     this.getSystemPermissions(typeId);
   }
 
   handleCheckboxChange(item, e) {
-    let checked = e.target.checked;
-    let {permissionMap} = this.state;
+    const checked = e.target.checked;
+    const { permissionMap } = this.state;
 
-    let parentItem = permissionMap.get(item.parent_id);
-    let items = parentItem.items;
+    const parentItem = permissionMap.get(item.parent_id);
+    const items = parentItem.items;
     item.checked = checked;
     items.set(item._id, item);
     parentItem.items = items;
     permissionMap.set(item.parent_id, parentItem);
 
-    this.setState({permissionMap});
+    this.setState({ permissionMap });
   }
 
   assembleCheckedIds(permissionMap) {
-    let ids = [];
+    const ids = [];
     permissionMap.forEach(rule => {
-      let items = rule.items;
+      const items = rule.items;
       if (items && items.size > 0) {
         items.forEach(item => item.checked && ids.push(item._id));
       }
@@ -110,13 +110,13 @@ export default class System extends React.Component {
   }
 
   getSystemPermissions(typeId) {
-    api.ajax({url: api.admin.permission.getBySystem(typeId)}, (data) => {
-      let {list} = data.res;
+    api.ajax({ url: api.admin.permission.getBySystem(typeId) }, data => {
+      const { list } = data.res;
 
-      let {permissionMap} = this.state;
+      const { permissionMap } = this.state;
 
       permissionMap.forEach(permission => {
-        let itemsMap = permission.items;
+        const itemsMap = permission.items;
         if (itemsMap && itemsMap.size > 0) {
           // 1. set all to false
           itemsMap.forEach(subItem => {
@@ -126,7 +126,7 @@ export default class System extends React.Component {
 
           // 2. set checked to true
           list.map(item => {
-            let checkedItem = itemsMap.get(item.item_id);
+            const checkedItem = itemsMap.get(item.item_id);
             if (checkedItem) {
               checkedItem.checked = true;
               itemsMap.set(checkedItem._id, checkedItem);
@@ -138,15 +138,15 @@ export default class System extends React.Component {
         permissionMap.set(permission._id, permission);
       });
 
-      this.setState({permissionMap});
+      this.setState({ permissionMap });
     });
   }
 
   getPermissions(parentId) {
-    api.ajax({url: api.admin.permission.list(parentId)}, data => {
-      let {list} = data.res;
+    api.ajax({ url: api.admin.permission.list(parentId) }, data => {
+      const { list } = data.res;
 
-      let {permissionMap} = this.state;
+      const { permissionMap } = this.state;
 
       if (list.length > 0) {
         if (String(parentId) === '0') {// 一级节点
@@ -158,9 +158,9 @@ export default class System extends React.Component {
         } else {
           permissionMap.forEach(mapItem => {
             if (mapItem._id === parentId) {
-              let currentMapItem = permissionMap.get(parentId);
+              const currentMapItem = permissionMap.get(parentId);
 
-              let subMap = new Map();
+              const subMap = new Map();
               list.forEach(item => {
                 item.checked = false; // 是否选中
                 subMap.set(item._id, item);
@@ -172,13 +172,13 @@ export default class System extends React.Component {
           });
         }
 
-        this.setState({permissionMap});
+        this.setState({ permissionMap });
       }
     });
   }
 
   renderPermission(permissionMap) {
-    let htmls = [];
+    const htmls = [];
 
     if (permissionMap.size === 0) {
       return null;
@@ -189,8 +189,7 @@ export default class System extends React.Component {
         <div className="mb15" key={rule._id}>
           <h4 className="mt10 mb10">{rule.name}</h4>
           <Row>
-            {rule.items && rule.items.size > 0 && Array.from(rule.items.values()).map(item => {
-              return (
+            {rule.items && rule.items.size > 0 && Array.from(rule.items.values()).map(item => (
                 <Col span={4}>
                   <Checkbox
                     checked={item.checked}
@@ -200,8 +199,7 @@ export default class System extends React.Component {
                     {item.name}
                   </Checkbox>
                 </Col>
-              );
-            })}
+              ))}
           </Row>
         </div>
       );
@@ -211,7 +209,7 @@ export default class System extends React.Component {
   }
 
   render() {
-    let {systemTypes, permissionMap} = this.state;
+    const { systemTypes, permissionMap } = this.state;
 
     const radioStyle = {
       display: 'block',
@@ -237,11 +235,9 @@ export default class System extends React.Component {
 
         <Row>
           <Col span={4}>
-            <div style={{minWidth: 200}}>
+            <div style={{ minWidth: 200 }}>
               <RadioGroup onChange={this.handleRadioChange}>
-                {systemTypes.map(item => {
-                  return <Radio value={item._id} style={radioStyle} key={item._id}>{item.name}</Radio>;
-                })}
+                {systemTypes.map(item => <Radio value={item._id} style={radioStyle} key={item._id}>{item.name}</Radio>)}
               </RadioGroup>
             </div>
           </Col>

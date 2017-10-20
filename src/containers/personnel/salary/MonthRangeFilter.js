@@ -1,5 +1,5 @@
 import React from 'react';
-import {DatePicker} from 'antd';
+import { DatePicker } from 'antd';
 import DateFormatter from '../../../utils/DateFormatter';
 
 export default class MonthRangeFilter extends React.Component {
@@ -18,7 +18,7 @@ export default class MonthRangeFilter extends React.Component {
 
   render() {
     const MonthPicker = DatePicker.MonthPicker;
-    let {
+    const {
       startMonth,
       endMonth,
       filterAction,

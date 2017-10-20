@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Popover, Button, Icon, Popconfirm} from 'antd';
+import { message, Popover, Button, Icon, Popconfirm } from 'antd';
 import QRCode from 'qrcode.react';
 
 import api from '../../../middleware/api';
@@ -27,13 +27,13 @@ export default class AuthExport extends React.Component {
   }
 
   handleAuthPrepare(visible) {
-    let {id} = this.props;
+    const { id } = this.props;
     if (visible) {
       this.interval = setInterval(this.getPurchaseDetail.bind(this, id), 2000);
     } else {
       clearInterval(this.interval);
     }
-    this.setState({visible});
+    this.setState({ visible });
   }
 
   handleSubmit(e) {
@@ -42,48 +42,48 @@ export default class AuthExport extends React.Component {
     api.ajax({
       url: api.warehouse.reject.export(),
       type: 'post',
-      data: {reject_id: this.props.id},
-    }, (data) => {
-      let {detail} = data.res;
+      data: { reject_id: this.props.id },
+    }, data => {
+      const { detail } = data.res;
       if (String(detail.export_user_id) !== '0') {
         message.success('出库成功');
         setTimeout(() => {
           location.href = '/warehouse/purchase-reject/index';
         }, 500);
       }
-    }, (error) => {
+    }, error => {
       message.error(`出库失败[${error}]`);
     });
   }
 
   async checkPermission(path) {
-    let hasPermission = await api.checkPermission(path);
-    this.setState({hasPermission});
+    const hasPermission = await api.checkPermission(path);
+    this.setState({ hasPermission });
   }
 
   getPurchaseDetail(id) {
     api.ajax({
       url: api.warehouse.reject.detail(id),
-    }, (data) => {
-      let {detail} = data.res;
+    }, data => {
+      const { detail } = data.res;
 
-      this.setState({detail});
+      this.setState({ detail });
 
       if (String(detail.export_user_id) !== '0') {
         message.success('出库成功');
         clearInterval(this.interval);
         location.href = '/warehouse/purchase-reject/index';
       }
-    }, (err) => {
+    }, err => {
       message.error(`出库失败[${err}]`);
       clearInterval(this.interval);
     });
   }
 
   render() {
-    let {id, disabled} = this.props;
-    let {hasPermission, detail} = this.state;
-    let exportUserId = detail.export_user_id;
+    const { id, disabled } = this.props;
+    const { hasPermission, detail } = this.state;
+    const exportUserId = detail.export_user_id;
 
     const content = (
       <div className="center">
@@ -93,7 +93,7 @@ export default class AuthExport extends React.Component {
             requestParams: {
               type: 'post',
               url: api.warehouse.reject.export(),
-              data: {reject_id: id},
+              data: { reject_id: id },
             },
           })}
           size={128}

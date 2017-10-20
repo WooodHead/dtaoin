@@ -1,8 +1,9 @@
 import React from 'react';
-import {Row, Col, Popover, Button, Icon, Checkbox} from 'antd';
+import { Row, Col, Popover, Button, Icon, Checkbox } from 'antd';
 import text from '../../../config/text';
+import createReactClass from 'create-react-class';
 
-const InsuranceSelector = React.createClass({
+const InsuranceSelector = createReactClass({
   getInitialState() {
     return {
       visible: false,
@@ -23,7 +24,7 @@ const InsuranceSelector = React.createClass({
     };
   },
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     if (nextProps.value) {
       this.handleSelectedValues(nextProps.value);
     }
@@ -35,67 +36,66 @@ const InsuranceSelector = React.createClass({
     });
   },
 
-  handleSelectedValues(values){
-    let checkedValues = [];
-    let names = values.split('/');
+  handleSelectedValues(values) {
+    const checkedValues = [];
+    const names = values.split('/');
     names.forEach(name => {
       if (name.indexOf('-') > -1) {
-        let nameAndNod = name.split('-');
-        let isuName = nameAndNod[0];
-        let isuNodDisabled = `${text.insuranceValue[isuName]}_nod_disabled`;
+        const nameAndNod = name.split('-');
+        const isuName = nameAndNod[0];
+        const isuNodDisabled = `${text.insuranceValue[isuName]}_nod_disabled`;
         checkedValues.push(text.insuranceValue[isuName]);
         checkedValues.push(`${text.insuranceValue[isuName]}_nod`);
-        this.setState({[isuNodDisabled]: false});
+        this.setState({ [isuNodDisabled]: false });
       } else if (!text.insuranceValue[name]) {
-        this.setState({ciOther: name});
+        this.setState({ ciOther: name });
       } else {
         checkedValues.push(text.insuranceValue[name]);
       }
     });
-    this.setState({checkedValues: checkedValues});
+    this.setState({ checkedValues });
   },
 
   handleVisibleChange(visible) {
-    this.setState({visible});
+    this.setState({ visible });
   },
 
   onChange(checkedValues) {
-    for (let key in this.state) {
+    for (const key in this.state) {
       if (this.state.hasOwnProperty(key)) {
-        if(key.indexOf('ci_') > -1) {
-          this.setState({[key]: true});
+        if (key.indexOf('ci_') > -1) {
+          this.setState({ [key]: true });
         }
       }
     }
 
-    let realCheckedValues = [];
+    const realCheckedValues = [];
     checkedValues.map(value => {
-      let nodIndex = value.indexOf('_nod');
-      let disabledProp = value + '_nod_disabled';
+      const nodIndex = value.indexOf('_nod');
+      const disabledProp = `${value  }_nod_disabled`;
       if (nodIndex === -1) {
-        this.setState({[disabledProp]: false});
+        this.setState({ [disabledProp]: false });
       }
 
-      if(nodIndex === -1) {
+      if (nodIndex === -1) {
         realCheckedValues.push(value);
-      }else {
-        if(checkedValues.indexOf(value.slice(0, -4)) > -1) {
+      } else {
+        if (checkedValues.indexOf(value.slice(0, -4)) > -1) {
           realCheckedValues.push(value);
         }
       }
-
     });
-    this.setState({checkedValues: realCheckedValues});
+    this.setState({ checkedValues: realCheckedValues });
   },
 
-  confirm(){
-    let {checkedValues} = this.state;
-    let ciOhter = this.refs.ciOther.value;
-    let names = [];
+  confirm() {
+    const { checkedValues } = this.state;
+    const ciOhter = this.refs.ciOther.value;
+    const names = [];
     checkedValues.forEach(item => {
       if (item.indexOf('_nod') === -1) {
-        if (checkedValues.indexOf(item + '_nod') > -1) {
-          names.push(`${text.insuranceName[item]}-${text.insuranceName[item + '_nod']}`);
+        if (checkedValues.indexOf(`${item  }_nod`) > -1) {
+          names.push(`${text.insuranceName[item]}-${text.insuranceName[`${item  }_nod`]}`);
         } else {
           names.push(`${text.insuranceName[item]}`);
         }
@@ -109,7 +109,7 @@ const InsuranceSelector = React.createClass({
   },
 
   render() {
-    let {checkedValues} = this.state;
+    const { checkedValues } = this.state;
     const CheckboxGroup = Checkbox.Group;
 
     const options = [
@@ -246,16 +246,19 @@ const InsuranceSelector = React.createClass({
     );
 
     return (
-      <Popover
-        content={content}
-        title={<span><Icon type="plus"/> 全部商业险</span>}
-        trigger="click"
-        visible={this.state.visible}
-        overlayStyle={{width: '350px', zIndex: '9999'}}
-        onVisibleChange={this.handleVisibleChange}
-      >
-        <a href="javascript:;">选择商业保险</a>
-      </Popover>
+      <span className="white-b">
+        <Popover
+          content={content}
+          title={<span className="font-size-14"><Icon type="plus" /> 全部商业险</span>}
+          trigger="click"
+          visible={this.state.visible}
+          overlayStyle={{ width: '350px', zIndex: '9999' }}
+          onVisibleChange={this.handleVisibleChange}
+          overlayClassName="white"
+        >
+          <a href="javascript:;">选择商业保险</a>
+        </Popover>
+      </span>
     );
   },
 });

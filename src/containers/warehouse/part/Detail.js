@@ -1,93 +1,56 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Tabs } from 'antd';
 
-import TableWithPagination from '../../../components/widget/TableWithPagination';
 import PartBasicInfo from './BasicInfo';
+import OutStorageRecord from './OutStorageRecord';
+import MaintenanceRecord from './MaintenanceRecord';
 
 import api from '../../../middleware/api';
+const TabPane = Tabs.TabPane;
 
 export default class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: props.location.query.id,
+      id: props.match.params.id || '',
       detail: {},
-      list: [],
-      page: 1,
-      total: 0,
     };
+    this.handleStatusChange = this.handleStatusChange.bind(this);
   }
 
   componentDidMount() {
-    let {id, page} = this.state;
+    const { id } = this.state;
     this.getPartDetail(id);
-    this.getStockLogs(id, page);
   }
 
-  handlePageChange(page) {
-    this.setState({page});
-    this.getStockLogs(this.state.id, page);
+  handleStatusChange() {
+    this.getPartDetail(this.state.id);
   }
 
   getPartDetail(id) {
-    api.ajax({url: api.warehouse.part.detail(id)}, (data) => {
-      this.setState({detail: data.res.detail});
-    });
-  }
-
-  getStockLogs(id, page) {
-    api.ajax({url: api.warehouse.part.stockLogs(id, page)}, (data) => {
-      let {list, total} = data.res;
-      this.setState({list, total: parseInt(total)});
+    api.ajax({ url: api.warehouse.part.detail(id) }, data => {
+      this.setState({ detail: data.res.detail });
     });
   }
 
   render() {
-    let {detail, list, total, page}=this.state;
-
-    const columns = [
-      {
-        title: '单据',
-        dataIndex: 'from_type_desc',
-        key: 'from_type_desc',
-      }, {
-        title: '类型',
-        dataIndex: 'type_desc',
-        key: 'type_desc',
-      }, {
-        title: '数量',
-        dataIndex: 'amount',
-        key: 'amount',
-      }, {
-        title: '单价',
-        dataIndex: 'unit_price',
-        key: 'unit_price',
-        className: 'text-right',
-      }, {
-        title: '金额',
-        dataIndex: 'total_price',
-        key: 'total_price',
-        className: 'text-right',
-      }, {
-        title: '出入库时间',
-        dataIndex: 'mtime',
-        key: 'mtime',
-        className: 'center',
-      },
-    ];
+    const { detail, id } = this.state;
 
     return (
       <div>
-        <PartBasicInfo detail={detail}/>
+        <PartBasicInfo detail={detail} onStatusChange={this.handleStatusChange}/>
 
-        <h3 className="mt15 mb10">出入库记录</h3>
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="维修使用记录" key="1">
+            <MaintenanceRecord id={id}/>
+          </TabPane>
 
-        <TableWithPagination
-          columns={columns}
-          dataSource={list}
-          total={total}
-          currentPage={page}
-          onPageChange={this.handlePageChange}
-        />
+          <TabPane tab="出入库记录" key="2">
+            <OutStorageRecord id={id}/>
+          </TabPane>
+        </Tabs>
+
+
       </div>
     );
   }

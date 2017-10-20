@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, Table} from 'antd';
+import { Button, Modal, Table } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -14,7 +14,7 @@ export default class TablePaymentHistory extends BaseModal {
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
     this.getCustomerPayLog(this.props.customerInfo);
   }
 
@@ -22,8 +22,8 @@ export default class TablePaymentHistory extends BaseModal {
     api.ajax({
       url: api.aftersales.partSellPayLog(),
       type: 'POST',
-      data: {order_id: customerInfo._id, customer_id: customerInfo.customer_id},
-    }, (data) => {
+      data: { order_id: customerInfo._id, customer_id: customerInfo.customer_id },
+    }, data => {
       this.setState({
         paymentHistory: data.res.list,
       });
@@ -31,7 +31,7 @@ export default class TablePaymentHistory extends BaseModal {
   }
 
   render() {
-    let {size} = this.props;
+    const { size } = this.props;
     const columns = [
       {
         title: '支付时间',

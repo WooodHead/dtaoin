@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Input, Select} from 'antd';
+import { Row, Col, Input, Select } from 'antd';
 
 import api from '../../../middleware/api';
 
@@ -25,12 +25,12 @@ export default class List extends BaseList {
   }
 
   handleSearchChange(e) {
-    let value = e.target.value;
-    this.setState({key: value});
+    const value = e.target.value;
+    this.setState({ key: value });
   }
 
   handleUserTypeChange(userType) {
-    this.setState({userType});
+    this.setState({ userType });
   }
 
   render() {
@@ -40,7 +40,7 @@ export default class List extends BaseList {
           <Col span={12}>
             <Search
               size="large"
-              style={{width: 220}}
+              style={{ width: 220 }}
               onChange={this.handleSearchChange}
               placeholder="请输入姓名搜索"
             />
@@ -48,7 +48,7 @@ export default class List extends BaseList {
             <label className="label ml20">账号类型</label>
             <Select
               size="large"
-              style={{width: 220}}
+              style={{ width: 220 }}
               defaultValue="-1"
               onChange={this.handleUserTypeChange}
             >

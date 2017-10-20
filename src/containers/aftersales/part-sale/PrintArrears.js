@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Form, Button, Row, Col} from 'antd';
+import { Form, Button, Row, Col } from 'antd';
 
 import api from '../../../middleware/api';
 import formatter from '../../../utils/DateFormatter';
@@ -14,22 +14,22 @@ export default class PrintArrears extends PrintThisComponent {
 
   handlePrint(e) {
     e.preventDefault();
-    let userInfo = api.getLoginUser();
-    let printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
+    const userInfo = api.getLoginUser();
+    const printInfo = ReactDOM.findDOMNode(this.refs.printProjectOrder);
 
     this.printThis({
       element: $(printInfo),
-      debug: false,                //show the iframe for debugging
-      importCSS: true,             //import page CSS
-      importStyle: true,          //import style tags
-      printContainer: false,        //grab outer container as well as the contents of the selector
-      loadCSS: '/dist/print.css',   //path to additional css file - us an array [] for multiple
-      pageTitle: '水稻汽车-' + userInfo.companyName + '-挂账单',               //add title to print page
-      removeInline: false,         //remove all inline styles from print elements
+      debug: false,                // show the iframe for debugging
+      importCSS: true,             // import page CSS
+      importStyle: true,          // import style tags
+      printContainer: false,        // grab outer container as well as the contents of the selector
+      loadCSS: '/dist/print.css',   // path to additional css file - us an array [] for multiple
+      pageTitle: `水稻汽车-${  userInfo.companyName  }-挂账单`,               // add title to print page
+      removeInline: false,         // remove all inline styles from print elements
       printDelay: 333,            // variable print delay
-      header: '<p class="print-header">水稻汽车-' + userInfo.companyName + '-挂账单</p>',               // prefix to body
+      header: `<p class="print-header">水稻汽车-${  userInfo.companyName  }-挂账单</p>`,               // prefix to body
       footer: null,               // suffix to body
-      formValues: true,             //preserve input/form values
+      formValues: true,             // preserve input/form values
     });
   }
 
@@ -48,8 +48,8 @@ export default class PrintArrears extends PrintThisComponent {
   }
 
   render() {
-    const {customerInfo, partsDetail} = this.props;
-    let userInfo = api.getLoginUser();
+    const { customerInfo, partsDetail } = this.props;
+    const userInfo = api.getLoginUser();
 
     return (
       <div>

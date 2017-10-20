@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Form, Icon, Button, Input, DatePicker} from 'antd';
+import { Modal, Form, Icon, Button, Input, DatePicker } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 import Layout from '../../../utils/FormLayout';
 import api from '../../../middleware/api';
@@ -8,12 +8,12 @@ import formatter from '../../../utils/DateFormatter';
 class FireUserModal extends BaseModal {
   constructor(props) {
     super(props);
-    this.state = {visible: false};
+    this.state = { visible: false };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit() {
-    let formData = this.props.form.getFieldsValue();
+    const formData = this.props.form.getFieldsValue();
     formData.fire_date = formatter.day(formData.fire_date);
     api.ajax({
       url: api.user.fire(),
@@ -27,9 +27,9 @@ class FireUserModal extends BaseModal {
 
   render() {
     const FormItem = Form.Item;
-    let {formItemLayout} = Layout;
-    let {getFieldDecorator} = this.props.form;
-    let {user, size, disabled} = this.props;
+    const { formItemLayout } = Layout;
+    const { getFieldDecorator } = this.props.form;
+    const { user, size, disabled } = this.props;
 
     return (
       <span>
@@ -47,19 +47,19 @@ class FireUserModal extends BaseModal {
 
           <Form>
             <FormItem label="姓名" {...formItemLayout}>
-              {getFieldDecorator('name', {initialValue: user.name})(
+              {getFieldDecorator('name', { initialValue: user.name })(
                 <Input placeholder="请输入姓名" disabled/>
               )}
             </FormItem>
 
             <FormItem label="员工编号" {...formItemLayout}>
-              {getFieldDecorator('_id', {initialValue: user._id})(
+              {getFieldDecorator('_id', { initialValue: user._id })(
                 <Input placeholder="请输入员工编号" disabled/>
               )}
             </FormItem>
 
             <FormItem label="离职时间" {...formItemLayout}>
-              {getFieldDecorator('fire_date', {initialValue: formatter.getMomentDate()})(
+              {getFieldDecorator('fire_date', { initialValue: formatter.getMomentDate() })(
                 <DatePicker allowClear={false}/>
               )}
             </FormItem>

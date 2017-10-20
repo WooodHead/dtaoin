@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Form, Input, Select, Cascader} from 'antd';
+import { Row, Col, Form, Input, Select, Cascader } from 'antd';
 
 import className from 'classnames';
 import api from '../../middleware/api';
@@ -47,15 +47,15 @@ class Store extends BaseList {
   }
 
   handleSearchCompanyChange(e) {
-    this.setState({key: e.target.value});
+    this.setState({ key: e.target.value });
   }
 
   handleCooperationTypeChange(value) {
-    this.setState({cooperationType: value});
+    this.setState({ cooperationType: value });
   }
 
   handleCompanyTypeChange(value) {
-    this.setState({companyType: value});
+    this.setState({ companyType: value });
   }
 
   handleRegionChange(value) {
@@ -67,31 +67,31 @@ class Store extends BaseList {
   }
 
   handleHideFilter() {
-    this.setState({advancedFilterVisible: !this.state.advancedFilterVisible});
+    this.setState({ advancedFilterVisible: !this.state.advancedFilterVisible });
   }
 
   handleCreateStoreSuccess() {
-    this.setState({reload: true});
+    this.setState({ reload: true });
   }
 
   getProvinces() {
-    api.ajax({url: api.system.getProvinces()}, data => {
-      let provinces = data.res.province_list.map(item => {
+    api.ajax({ url: api.system.getProvinces() }, data => {
+      const provinces = data.res.province_list.map(item => {
         item.value = item.name;
         item.label = item.name;
         item.isLeaf = false;
         return item;
       });
-      this.setState({options: provinces});
+      this.setState({ options: provinces });
     });
   }
 
   getRegin(selectedOptions) {
     const targetOption = selectedOptions[selectedOptions.length - 1];
     targetOption.loading = true;
-    if (selectedOptions.length == 2) {
-      //获取县
-      api.ajax({url: api.system.getCountries(selectedOptions[0].name, selectedOptions[1].name)}, data => {
+    if (Number(selectedOptions.length) === 2) {
+      // 获取县
+      api.ajax({ url: api.system.getCountries(selectedOptions[0].name, selectedOptions[1].name) }, data => {
         targetOption.loading = false;
         targetOption.children = [];
         data.res.country_list.map(item => {
@@ -105,8 +105,8 @@ class Store extends BaseList {
         });
       });
     } else {
-      //获取市
-      api.ajax({url: api.system.getCities(targetOption.name)}, data => {
+      // 获取市
+      api.ajax({ url: api.system.getCities(targetOption.name) }, data => {
         targetOption.loading = false;
         targetOption.children = [];
         data.res.city_list.map(item => {
@@ -114,7 +114,6 @@ class Store extends BaseList {
           item.label = item.name;
           item.isLeaf = false;
           targetOption.children.push(item);
-
         });
         this.setState({
           options: [...this.state.options],
@@ -124,15 +123,15 @@ class Store extends BaseList {
   }
 
   render() {
-    let {options, page, advancedFilterVisible, reload} = this.state;
+    const { options, page, advancedFilterVisible, reload } = this.state;
 
     const advancedFilter = className({
-      'mb20': advancedFilterVisible,
-      'hide': !advancedFilterVisible,
+      mb20: advancedFilterVisible,
+      hide: !advancedFilterVisible,
     });
 
     const triangle = className({
-      'triangle': advancedFilterVisible,
+      triangle: advancedFilterVisible,
       'triangle-handstand': !advancedFilterVisible,
     });
 
@@ -144,19 +143,19 @@ class Store extends BaseList {
             <Search
               onChange={this.handleSearchCompanyChange}
               size="large"
-              style={{width: 220}}
+              style={{ width: 220 }}
               placeholder="请输入门店名称"
             />
             <span className={api.isSuperAdministrator() ? 'ml20' : 'hide'} onClick={this.handleHideFilter}>
               <a href="javascript:;">{advancedFilterVisible ? '隐藏' : '显示'}高级筛选</a>
-              <div className={triangle}></div>
+              <div className={triangle} />
             </span>
           </Col>
 
           <Col span={14}>
-              <span className={api.isSuperAdministrator() ? 'pull-right' : 'hide'}>
-                <CreateStore onSuccess={this.handleCreateStoreSuccess}/>
-              </span>
+            <span className={api.isSuperAdministrator() ? 'pull-right' : 'hide'}>
+              <CreateStore onSuccess={this.handleCreateStoreSuccess} />
+            </span>
           </Col>
         </Row>
         <span className={api.isSuperAdministrator() ? '' : 'hide'}>
@@ -168,12 +167,18 @@ class Store extends BaseList {
                 loadData={this.getRegin}
                 onChange={this.handleRegionChange}
                 changeOnSelect
-                style={{width: 220}}
+                style={{ width: 220 }}
                 placeholder="请选择地区"
+                size="large"
               />
 
               <span className="label ml10">门店类型</span>
-              <Select defaultValue="0" style={{width: 150}} onChange={this.handleCompanyTypeChange}>
+              <Select
+                defaultValue="0"
+                style={{ width: 150 }}
+                size="large"
+                onChange={this.handleCompanyTypeChange.bind(this)}
+              >
                 <Option value="0">全部类型</Option>
                 <Option value="1">社区店</Option>
                 <Option value="2">综合售后店</Option>
@@ -182,7 +187,12 @@ class Store extends BaseList {
               </Select>
 
               <span className="label ml10">合作类型</span>
-              <Select defaultValue="0" style={{width: 150}} onChange={this.handleCooperationTypeChange}>
+              <Select
+                defaultValue="0"
+                size="large"
+                style={{ width: 150 }}
+                onChange={this.handleCooperationTypeChange}
+              >
                 <Option value="0">全部类型</Option>
                 <Option value="1">FC友情合作店</Option>
                 <Option value="2">MC重要合作店</Option>
@@ -198,6 +208,7 @@ class Store extends BaseList {
           source={api.overview.companyList(this.state)}
           updateState={this.updateState}
           reload={reload}
+          onSuccess={this.handleCreateStoreSuccess}
         />
       </Form>
     );

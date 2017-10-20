@@ -2,49 +2,50 @@
 
 let path = require('path');
 let webpack = require('webpack');
-let _ = require('lodash');
-
+let webpackMerge = require('webpack-merge');
 let baseConfig = require('./base');
+//css单独打包
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-let config = _.merge({
-  entry: [
-    './src/index', 'webpack/hot/dev-server', 'webpack-dev-server/client?http://localhost:9999/'
-  ],
-  output: {
-    path: path.join(__dirname, "dist/"),
-    publicPath: "http://localhost:9999/dist/",
-    filename: "app.min.js"
-  },
-  devServer: {
-    historyApiFallback: true,
-    contentBase: "./",
-    quiet: false, //控制台中不输出打包的信息
-    noInfo: false,
-    hot: true,
-    inline: true,
-    lazy: false,
-    progress: true, //显示打包的进度
-    watchOptions: {
-      aggregateTimeout: 300
+module.exports = function() {
+  return webpackMerge(baseConfig(), {
+    entry: {
+      // main: path.join(__dirname, '../src/index'),
+      main: [path.join(__dirname, '../src/index')],
     },
-    port: '9999'
-  },
-  cache: true,
-  devtool: 'eval',
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
-  ]
-}, baseConfig);
+    output: {
+      path: path.join(__dirname, './assets/'),
+      publicPath: '/assets/',
+      filename: '[name].bundle.js',
+    },
 
-// Add needed loaders
-config.module.loaders.push({
-  test: /\.jsx?$/,
-  loader: 'react-hot!babel-loader',
-  include: [].concat(
-    config.additionalPaths,
-    [path.join(__dirname, '/../src')]
-  )
-});
+    devServer: {
+      contentBase: './',
+      historyApiFallback: true,
+      publicPath: '/assets/',
+      hot: true,
+      hotOnly: true,
+      noInfo: false,
+      port: '9999',
+      quiet: true, //控制台中不输出打包的信息
+      inline: true,
+      lazy: false,
+      stats: 'minimal',
+      disableHostCheck: true,
+      watchOptions: {
+        aggregateTimeout: 300,
+      },
+    },
+    cache: true,
+    devtool: 'eval',
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"dev"', // process.env.NODE_ENV 不加双引号则会返回dev变量
+      }),
+      new ExtractTextPlugin('styles.css'),
+      new webpack.HotModuleReplacementPlugin(),
+    ],
+  });
 
-module.exports = config;
+};
+

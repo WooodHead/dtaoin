@@ -1,5 +1,5 @@
 import React from 'react';
-import {message, Modal, Icon, Row, Col, Form, Input} from 'antd';
+import { message, Modal, Icon, Row, Col, Form, Input } from 'antd';
 
 import BaseModal from '../../../components/base/BaseModal';
 
@@ -46,10 +46,10 @@ class Edit extends BaseModal {
   }
 
   render() {
-    const {visible}=this.state;
-    const {formItemLayout} = Layout;
-    const {supplier, form} = this.props;
-    const {getFieldDecorator} = form;
+    const { visible } = this.state;
+    const { formItemLayout } = Layout;
+    const { supplier, form } = this.props;
+    const { getFieldDecorator } = form;
 
     return (
       <span>
@@ -62,7 +62,7 @@ class Edit extends BaseModal {
           onOk={this.handleSubmit}
         >
           <Form>
-            {getFieldDecorator('_id', {initialValue: supplier._id})(
+            {getFieldDecorator('_id', { initialValue: supplier._id })(
               <Input type="hidden"/>
             )}
 
@@ -111,7 +111,7 @@ class Edit extends BaseModal {
             </FormItem>
 
             <FormItem label="单位地址" {...formItemLayout}>
-              {getFieldDecorator('address', {initialValue: supplier.address})(
+              {getFieldDecorator('address', { initialValue: supplier.address })(
                 <Input placeholder="请输入单位地址"/>
               )}
             </FormItem>
@@ -123,19 +123,19 @@ class Edit extends BaseModal {
             </Row>
 
             <FormItem label="单位税号" {...formItemLayout}>
-              {getFieldDecorator('tax', {initialValue: supplier.tax})(
+              {getFieldDecorator('tax', { initialValue: supplier.tax })(
                 <Input placeholder="请输入单位税号"/>
               )}
             </FormItem>
 
             <FormItem label="开户行" {...formItemLayout}>
-              {getFieldDecorator('bank', {initialValue: supplier.bank})(
+              {getFieldDecorator('bank', { initialValue: supplier.bank })(
                 <Input placeholder="请输入开户行"/>
               )}
             </FormItem>
 
             <FormItem label="银行账号" {...formItemLayout}>
-              {getFieldDecorator('bank_account', {initialValue: supplier.bank_account})(
+              {getFieldDecorator('bank_account', { initialValue: supplier.bank_account })(
                 <Input placeholder="请输入银行账号"/>
               )}
             </FormItem>

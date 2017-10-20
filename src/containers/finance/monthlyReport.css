@@ -1,0 +1,43 @@
+.card {
+    text-align: center;
+    height: 103px;
+}
+
+.img-report {
+    width: 55px;
+    height: 55px;
+}
+
+.explain-word {
+    font-size: 14px;
+    color: #666;
+}
+
+.number {
+    font-size: 27px;
+    color: #333;
+}
+
+.small-number {
+    font-size: 18px;
+    color: #333;
+    margin-top: 5px;
+}
+
+.first-div {
+    padding-left: 40px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.vertical-line {
+    width: 0;
+    height: 60px;
+    border-right: 1px solid #ccc;
+    position: absolute;
+    left: 25%;
+}
+
+.monthly-report .ant-card-body {
+    padding: 24px 0;
+}

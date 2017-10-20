@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Row, Col} from 'antd';
+import { Modal, Row, Col } from 'antd';
 import BaseModal from '../../../components/base/BaseModal';
 
 export default class SocialSecurityDetailModal extends BaseModal {
@@ -11,7 +11,7 @@ export default class SocialSecurityDetailModal extends BaseModal {
   }
 
   render() {
-    let {linkText, detail} = this.props,
+    let { linkText, detail } = this.props,
       person = detail ? detail.person_detail : {},
       company = detail ? detail.company_detail : {};
     if (!detail) {

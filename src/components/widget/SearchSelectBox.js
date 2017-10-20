@@ -1,35 +1,34 @@
-import React, {Component, PropTypes} from 'react';
-import {Input, Select, Button, message} from 'antd';
+import React, { Component } from 'react';
+import { Input, Select, Icon, message } from 'antd';
 import classNames from 'classnames';
 const Option = Select.Option;
 
-//属性类型
+import PropTypes from 'prop-types';
+// 属性类型
 const propTypes = {
-  placeholder: PropTypes.string,          //关键词输入的占位符
-  defaultKey: PropTypes.string,           //默认的搜索关键词
-  keyValidator: PropTypes.func,           //搜索关键词的验证
-  validateFailMsg: PropTypes.string,      //验证未通过时的报错信息
-  displayPattern: PropTypes.func,         //显示数据生成函数
-  onSearch: PropTypes.func.isRequired,    //当进行搜索时, 在对请求的数据进行处理后, 请务必执行回调设置data数据
-  autoSearchLength: PropTypes.number,     //自动搜索长度
-  onSelectItem: PropTypes.func, //当选中一个项目时, 这里会传入一个包装好的对象: {xxx: 'xxx'}
+  placeholder: PropTypes.string,          // 关键词输入的占位符
+  defaultKey: PropTypes.string,           // 默认的搜索关键词
+  keyValidator: PropTypes.func,           // 搜索关键词的验证
+  validateFailMsg: PropTypes.string,      // 验证未通过时的报错信息
+  displayPattern: PropTypes.func,         // 显示数据生成函数
+  onSearch: PropTypes.func.isRequired,    // 当进行搜索时, 在对请求的数据进行处理后, 请务必执行回调设置data数据
+  autoSearchLength: PropTypes.number,     // 自动搜索长度
+  onSelectItem: PropTypes.func, // 当选中一个项目时, 这里会传入一个包装好的对象: {xxx: 'xxx'}
   onSelectKey: PropTypes.func,
   dataEmpty: PropTypes.bool,
 };
 
-//默认属性
+// 默认属性
 const defaultProps = {
   placeholder: '请输入关键词',
   defaultKey: '',
   keyValidator: null,
   validateFailMsg: '输入验证未通过！',
-  displayPattern: (item) => {
-    return item.name || item.id || '';
-  },
+  displayPattern: item => item.name || item.id || '',
   onSearch: (key, callback) => {
     callback([]);
   },
-  autoSearchLength: 0,        //默认自动搜索
+  autoSearchLength: 0,        // 默认自动搜索
   onSelectItem: () => {
   },
   onSelectKey: () => {
@@ -38,24 +37,23 @@ const defaultProps = {
   dataEmpty: true,
   disabled: false,
   searchDisabled: false,
-  style: {width: '300px'},
+  style: { width: '300px' },
   // onSelectItem: (selectInfo) => {},
 };
 
-
-//组件
+// 组件
 class SearchSelectBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      key: props.defaultKey || '',    //搜索关键词
-      data: [],                       //搜索结果
-      selectedIndex: '',              //选中项的下标
-      focus: false,                   //焦点
-      searching: false,               //搜索状态
+      key: props.defaultKey || '',    // 搜索关键词
+      data: [],                       // 搜索结果
+      selectedIndex: '',              // 选中项的下标
+      focus: false,                   // 焦点
+      searching: false,               // 搜索状态
     };
     this.optionPerfix = 'option_';
-    //自动绑定
+    // 自动绑定
     [
       'onKeyChange',
       'handleFocus',
@@ -63,7 +61,7 @@ class SearchSelectBox extends Component {
       'onSearch',
       '_onSearchSuccess',
       '_onSearchFail',
-    ].forEach((method) => this[method] = this[method].bind(this));
+    ].forEach(method => this[method] = this[method].bind(this));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -83,11 +81,20 @@ class SearchSelectBox extends Component {
   }
 
   _onSearchSuccess(data = []) {
-    this.setState({
-      data: data,
-      selectedIndex: '',
-      searching: false,
-    });
+    if (!this.state.hasMove && !!this.props.defaultIndex) {
+      this.setState({
+        data,
+        selectedIndex: '0',
+        searching: false,
+        hasMove: true,
+      });
+    } else {
+      this.setState({
+        data,
+        selectedIndex: '',
+        searching: false,
+      });
+    }
   }
 
   _onSearchFail(error) {
@@ -101,16 +108,16 @@ class SearchSelectBox extends Component {
 
   search(key) {
     key = key.trim();
-    let keyValidator = this.props.keyValidator;
+    const keyValidator = this.props.keyValidator;
     if (typeof(keyValidator) == 'function' && !keyValidator(key)) {
       this.setState({
-        key: key,
+        key,
         selectedIndex: '',
       });
       message.error(this.props.validateFailMsg);
     } else {
       this.setState({
-        key: key,
+        key,
         selectedIndex: '',
         searching: true,
       });
@@ -119,10 +126,10 @@ class SearchSelectBox extends Component {
   }
 
   onKeyChange(newKey) {
-    //判断是输入变化，还是选择变化
+    // 判断是输入变化，还是选择变化
     if (newKey.indexOf(this.optionPerfix) == -1) {
-      //输入变化
-      //是否自动搜索
+      // 输入变化
+      // 是否自动搜索
       if (newKey.length >= this.props.autoSearchLength) {
         this.search(newKey);
       } else if (newKey.length == 0) {
@@ -140,12 +147,12 @@ class SearchSelectBox extends Component {
         });
       }
     } else {
-      //选择变化
+      // 选择变化
       const data = this.state.data;
       const selectedIndex = newKey.substr(7);
       const selectedItem = data[selectedIndex];
       this.setState({
-        selectedIndex: selectedIndex,
+        selectedIndex,
       });
       this.props.onSelectItem(selectedItem);
       this.props.onSelectKey(selectedIndex);
@@ -153,11 +160,11 @@ class SearchSelectBox extends Component {
   }
 
   handleFocus() {
-    this.setState({focus: true});
+    this.setState({ focus: true });
   }
 
   handleBlur() {
-    this.setState({focus: false});
+    this.setState({ focus: false });
   }
 
   onSearch() {
@@ -165,8 +172,8 @@ class SearchSelectBox extends Component {
   }
 
   render() {
-    const {placeholder, displayPattern} = this.props;
-    const {key, data, selectedIndex, searching, focus} = this.state;
+    const { placeholder, displayPattern } = this.props;
+    const { key, data, selectedIndex, searching, focus } = this.state;
 
     const btnCls = classNames({
       'ant-search-btn': true,
@@ -177,12 +184,13 @@ class SearchSelectBox extends Component {
       'ant-search-input-focus': focus,
     });
 
-    const displayValue = selectedIndex === '' ? key : data[selectedIndex].name || data[selectedIndex].customer_name || data[selectedIndex].company_name;
+    const displayValue = selectedIndex === '' ? key : (data.length > 0) ? data[selectedIndex].name ||
+      data[selectedIndex].customer_name || data[selectedIndex].company_name : '';
 
     return (
       <Input.Group className={searchCls} style={this.props.style}>
         <Select
-          combobox
+          mode="combobox"
           value={displayValue}
           size="large"
           notFoundContent="暂无信息"
@@ -192,24 +200,15 @@ class SearchSelectBox extends Component {
           onChange={this.onKeyChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          dropdownStyle={{maxHeight: '200px'}}
           disabled={this.props.searchDisabled}
           placeholder={placeholder}
         >
           {data.map((item, index) =>
-            <Option key={'option_' + index}>{displayPattern(item)}</Option>
+            <Option key={`option_${  index}`}>{displayPattern(item)}</Option>,
           )}
         </Select>
         <div className="ant-input-group-wrap">
-          <Button
-            style={{minWidth: 28}}
-            icon="search"
-            className={btnCls}
-            size="large"
-            loading={searching}
-            disabled={this.props.disabled}
-            onClick={this.onSearch}
-          />
+          <Icon type="search" style={{ position: 'relative', right: '10px', top: '8px' }} />
         </div>
       </Input.Group>
     );
@@ -220,7 +219,6 @@ SearchSelectBox.propTypes = propTypes;
 SearchSelectBox.defaultProps = defaultProps;
 
 export default SearchSelectBox;
-
 
 // usage 用法示例
 /*
@@ -257,7 +255,6 @@ export default SearchSelectBox;
  };
 
  let onSelectItem = function (selectInfo) {
- console.log('selectInfo--------\n', JSON.stringify(selectInfo));
  };
 
 

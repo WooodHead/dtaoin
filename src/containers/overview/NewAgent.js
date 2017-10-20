@@ -1,7 +1,8 @@
 import React from 'react';
-import {Row, Col, Popover, Button, Icon} from 'antd';
+import { Row, Col, Popover, Button, Icon } from 'antd';
+import createReactClass from 'create-react-class';
 
-const NewAgent = React.createClass({
+const NewAgent = createReactClass({
   getInitialState() {
     return {
       visible: false,
@@ -15,12 +16,12 @@ const NewAgent = React.createClass({
   },
 
   handleVisibleChange(visible) {
-    this.setState({visible});
+    this.setState({ visible });
   },
 
-  addAgent(){
-    let name = this.refs.name.value;
-    let phone = this.refs.phone.value;
+  addAgent() {
+    const name = this.refs.name.value;
+    const phone = this.refs.phone.value;
     if (name) {
       this.props.addAgent(name, phone);
       this.hide();
@@ -32,10 +33,10 @@ const NewAgent = React.createClass({
       <div>
         <Row>
           <Col span={8}>
-          <label className="input-label">代理名称：</label>
-        </Col>
+            <label className="input-label">代理名称：</label>
+          </Col>
           <Col span={16}>
-            <input className="ant-input ant-input-lg" ref="name" placeholder="请输入"/>
+            <input className="ant-input ant-input-lg" ref="name" placeholder="请输入" />
           </Col>
         </Row>
 
@@ -44,7 +45,7 @@ const NewAgent = React.createClass({
             <label className="input-label">联系电话：</label>
           </Col>
           <Col span={16}>
-            <input className="ant-input ant-input-lg" ref="phone" placeholder="请输入"/>
+            <input className="ant-input ant-input-lg" ref="phone" placeholder="请输入" />
           </Col>
         </Row>
 
@@ -58,12 +59,13 @@ const NewAgent = React.createClass({
     return (
       <Popover
         content={content}
-        title={<span><Icon type="plus"/> 创建代理</span>}
+        title={<span><Icon type="plus" /> 创建代理</span>}
         trigger="click"
         visible={this.state.visible}
         onVisibleChange={this.handleVisibleChange}
+        overlayClassName="white"
       >
-        <a href="javascript:" style={{lineHeight: '28px'}}>创建</a>
+        <a href="javascript:" className="font-size-14" style={{ lineHeight: '28px' }}>创建</a>
       </Popover>
     );
   },

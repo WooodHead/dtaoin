@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Select, Radio, Input} from 'antd';
+import { Row, Col, Select, Radio, Input } from 'antd';
 
 import api from '../../../middleware/api';
 import validator from '../../../utils/validator';
@@ -46,52 +46,53 @@ export default class PotentialCustomerList extends BaseList {
   }
 
   handleLevelChange(e) {
-    let level = e.target.value;
-    this.setState({intention_level: level === '-1' ? '' : level, page: 1});
+    const level = e.target.value;
+    this.setState({ intention_level: level === '-1' ? '' : level, page: 1 });
   }
 
   handleDaysChange(e) {
-    this.setState({create_day: e.target.value, page: 1});
+    this.setState({ create_day: e.target.value, page: 1 });
   }
 
   handleMortgageChange(e) {
-    this.setState({is_mortgage: e.target.value, page: 1});
+    this.setState({ is_mortgage: e.target.value, page: 1 });
   }
 
   handleSearchChange(e) {
-    let key = e.target.value;
+    const key = e.target.value;
     if (!key) {
-      this.setState({key: '', page: 1});
+      this.setState({ key: '', page: 1 });
     } else if (validator.number(key) && key.length > 3) {
-      this.setState({key, page: 1});
+      this.setState({ key, page: 1 });
     } else if (validator.cnString(key) && key.length >= 2) {
-      this.setState({key, page: 1});
+      this.setState({ key, page: 1 });
     }
   }
 
   handleBrandChange(value) {
-    this.setState({intention_brand: value, page: 1});
+    this.setState({ intention_brand: value, page: 1 });
   }
 
   handleBudgetLevelChange(value) {
-    this.setState({budget_level: value, page: 1});
+    this.setState({ budget_level: value, page: 1 });
   }
 
   getBrands() {
-    api.ajax({url: api.auto.getBrands()}, (data) => {
-        this.setState({brands: data.res.auto_brand_list});
-      }
+    api.ajax({ url: api.auto.getBrands() }, data => {
+      this.setState({ brands: data.res.auto_brand_list });
+    },
     );
   }
 
   getBudgetLevels() {
-    api.ajax({url: api.presales.intention.getBudgetLevels()}, data => {
-      this.setState({budgetLevels: data.res.budget_levels});
+    api.ajax({ url: api.presales.intention.getBudgetLevels() }, data => {
+      this.setState({ budgetLevels: data.res.budget_levels });
     });
   }
 
   render() {
-    let {page, reload, brands, budgetLevels} = this.state;
+    const { page, reload, brands, budgetLevels } = this.state;
+    const padding = { padding: '0 12px' };
 
     return (
       <div>
@@ -100,30 +101,30 @@ export default class PotentialCustomerList extends BaseList {
             <Col span={24}>
               <label className="label">意向级别</label>
               <RadioGroup defaultValue="-1" size="large" onChange={this.handleLevelChange}>
-                <RadioButton value="-1">全部</RadioButton>
-                <RadioButton value="H">H</RadioButton>
-                <RadioButton value="A">A</RadioButton>
-                <RadioButton value="B">B</RadioButton>
-                <RadioButton value="C">C</RadioButton>
-                <RadioButton value="D">D</RadioButton>
-                <RadioButton value="E">E</RadioButton>
+                <RadioButton value="-1" style={padding}>全部</RadioButton>
+                <RadioButton value="H" style={padding}>H</RadioButton>
+                <RadioButton value="A" style={padding}>A</RadioButton>
+                <RadioButton value="B" style={padding}>B</RadioButton>
+                <RadioButton value="C" style={padding}>C</RadioButton>
+                <RadioButton value="D" style={padding}>D</RadioButton>
+                <RadioButton value="E" style={padding}>E</RadioButton>
               </RadioGroup>
 
               <label className="label ml20">创建时间</label>
               <RadioGroup defaultValue="0" size="large" onChange={this.handleDaysChange}>
-                <RadioButton value="0">全部</RadioButton>
-                <RadioButton value="3">3天</RadioButton>
-                <RadioButton value="7">7天</RadioButton>
-                <RadioButton value="15">15天</RadioButton>
-                <RadioButton value="30">30天</RadioButton>
-                <RadioButton value="60">2个月</RadioButton>
+                <RadioButton value="0" style={padding}>全部</RadioButton>
+                <RadioButton value="3" style={padding}>3天</RadioButton>
+                <RadioButton value="7" style={padding}>7天</RadioButton>
+                <RadioButton value="15" style={padding}>15天</RadioButton>
+                <RadioButton value="30" style={padding}>30天</RadioButton>
+                <RadioButton value="60" style={padding}>2个月</RadioButton>
               </RadioGroup>
 
               <label className="label ml20">按揭意愿</label>
               <RadioGroup defaultValue="-1" size="large" onChange={this.handleMortgageChange}>
-                <RadioButton value="-1">全部</RadioButton>
-                <RadioButton value="1">按揭</RadioButton>
-                <RadioButton value="0">全款</RadioButton>
+                <RadioButton value="-1" style={{ padding: '0 10px' }}>全部</RadioButton>
+                <RadioButton value="1" style={{ padding: '0 10px' }}>按揭</RadioButton>
+                <RadioButton value="0" style={{ padding: '0 10px' }}>全款</RadioButton>
               </RadioGroup>
             </Col>
           </Row>
@@ -132,7 +133,7 @@ export default class PotentialCustomerList extends BaseList {
             <Col span={20}>
               <Search
                 size="large"
-                style={{width: 220}}
+                style={{ width: 220 }}
                 onChange={this.handleSearchChange}
                 placeholder="请输入手机号、姓名搜索"
               />
@@ -140,19 +141,19 @@ export default class PotentialCustomerList extends BaseList {
               <label className="label ml20">意向品牌</label>
               <Select
                 size="large"
-                style={{width: 200}}
+                style={{ width: 200 }}
                 defaultValue="0"
                 onChange={this.handleBrandChange}
               >
                 <Option key="0">全部</Option>
-                {brands.map((item) => <Option key={item._id}>{item.name}</Option>)}
+                {brands.map(item => <Option key={item._id}>{item.name}</Option>)}
               </Select>
 
               <label className="label ml20">购买预算</label>
               <Select
                 defaultValue={this.budgetLevel || '-1'}
                 size="large"
-                style={{width: 200}}
+                style={{ width: 200 }}
                 onChange={this.handleBudgetLevelChange}
               >
                 <Option key="-1">全部</Option>
@@ -161,19 +162,21 @@ export default class PotentialCustomerList extends BaseList {
             </Col>
             <Col span={4}>
               <div className="pull-right">
-                <NewCustomerAndIntention onSuccess={this.handleSuccess}/>
+                <NewCustomerAndIntention onSuccess={this.handleSuccess} />
               </div>
             </Col>
           </Row>
         </div>
 
-        <Table
-          source={api.presales.intention.list(this.state)}
-          page={page}
-          reload={reload}
-          updateState={this.updateState}
-          onSuccess={this.handleSuccess}
-        />
+        <span className="potential-index">
+          <Table
+            source={api.presales.intention.list(this.state)}
+            page={page}
+            reload={reload}
+            updateState={this.updateState}
+            onSuccess={this.handleSuccess}
+          />
+        </span>
       </div>
     );
   }

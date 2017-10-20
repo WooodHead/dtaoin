@@ -1,6 +1,6 @@
 import brandInfoData from './brand.info.js';
 
-let BrandInfo = {
+const BrandInfo = {
   brand_name: '水稻汽车',
   brand_logo: 'brand.logo.png',
 };

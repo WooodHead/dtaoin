@@ -1,0 +1,210 @@
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question-info {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  border-bottom: 1px solid #e5e5e5;
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #e5e5e5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .question-desc {
+    margin-left: 10px;
+  }
+}
+
+.dialog-container {
+  .header {
+    padding: 10px 0;
+  }
+
+  .dialog {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+
+  .dialog-list {
+    width: 260px;
+    min-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #e5e5e5;
+
+    .dialog-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 71px;
+      border-top: 1px solid #e5e5e5;
+      cursor: pointer;
+      position: relative;
+
+      &:last-child {
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      &:hover {
+        background: #e7f2fc;
+      }
+      &.active {
+        background: #e7f2fc;
+      }
+      &.delete::after {
+        content: '已屏蔽';
+        color: #999;
+        font-size: 12px;
+        position: absolute;
+        right: 10px;
+      }
+
+      .avatar {
+        margin: 5px;
+      }
+
+      .dialog-item-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 158px;
+
+        p:last-child {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  .dialog-view {
+    width: 600px;
+    min-height: 450px;
+    max-height: 720px;
+    border: 1px solid #e5e5e5;
+    background: #e7f2fc;
+    overflow: hidden;
+
+    .dialog-view-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      text-align: center;
+      border-bottom: 1px solid #e5e5e5;
+      background: #fff;
+      position: relative;
+
+      .dialog-view-header-extra {
+        position: absolute;
+        right: 15px;
+      }
+    }
+
+    .dialog-view-content {
+      padding: 20px;
+      min-height: 450px;
+      max-height: 600px;
+      overflow-y: auto;
+
+      .dialog-item {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 18px;
+
+        .dialog-msg-container {
+          p {
+            font-size: 12px;
+            color: #999;
+          }
+        }
+
+        .dialog-msg-box {
+          border: 1px solid #e5e5e5;
+          border-radius: 4px;
+          background: #fff;
+          padding: 5px;
+          min-height: 35px;
+          min-width: 120px;
+          display: inherit;
+          align-items: center;
+        }
+
+        &.left {
+          .dialog-msg-container {
+            p {
+              margin-left: 5px;
+            }
+          }
+
+          .dialog-msg-box {
+            margin-left: 5px;
+          }
+        }
+        &.center {
+          justify-content: center;
+
+          .dialog-item-msg {
+            width: 180px;
+            background: rgba(0, 0, 0, 0.28);
+            color: #ffffff;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 6px;
+          }
+        }
+        &.right {
+          flex-direction: row-reverse;
+
+          .dialog-msg-container {
+            p {
+              margin-right: 5px;
+            }
+          }
+
+          .dialog-msg-box {
+            margin-right: 5px;
+            justify-content: flex-end;
+          }
+        }
+        &.is-adopt {
+          .dialog-msg-box {
+            background: #f5deb5;
+            color: #FF9900;
+          }
+        }
+      }
+    }
+  }
+}
+
+.image-preview {
+  max-width: 100%;
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+
+  img {
+    align-self: flex-start;
+    margin-right: 5px;
+  }
+
+  .profile-content {
+
+  }
+}

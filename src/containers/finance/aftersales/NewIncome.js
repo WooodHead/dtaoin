@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Icon, Button, Form, Row, Col, message} from 'antd';
+import { Modal, Icon, Button, Form, Row, Col, message } from 'antd';
 import api from '../../../middleware/api';
 import BaseModal from '../../../components/base/BaseModal';
 import Layout from '../../../utils/FormLayout';
@@ -18,31 +18,31 @@ class FNewIncomingModal extends BaseModal {
   }
 
   componentDidMount() {
-    api.ajax({url: api.finance.newIncomeStatement()}, function (data) {
+    api.ajax({ url: api.finance.newIncomeStatement() }, data => {
       if (data.code === 0) {
         const statement = data.res.check_sheet;
-        this.setState({statement, id: statement._id});
+        this.setState({ statement, id: statement._id });
       }
-    }.bind(this));
+    });
   }
 
-  //refresh income statement every 2 seconds to get confirmed sa/finance id
+  // refresh income statement every 2 seconds to get confirmed sa/finance id
   getLatestStatementInfo() {
-    api.ajax({url: api.finance.getIncomeStatementDetail(this.state.id)}, function (data) {
+    api.ajax({ url: api.finance.getIncomeStatementDetail(this.state.id) }, data => {
       if (data.code === 0) {
         const statement = data.res.check_sheet;
-        this.setState({statement});
+        this.setState({ statement });
       }
-    }.bind(this));
+    });
   }
 
   showModal() {
-    this.setState({visible: true});
+    this.setState({ visible: true });
     this.interval = setInterval(this.getLatestStatementInfo.bind(this), 2000);
   }
 
   hideModal() {
-    this.setState({visible: false});
+    this.setState({ visible: false });
     clearInterval(this.interval);
   }
 
@@ -52,7 +52,7 @@ class FNewIncomingModal extends BaseModal {
       url: api.finance.confirmIncomeStatement(),
       type: 'POST',
       data: formData,
-    }, function (data) {
+    }, data => {
       if (data.code === 0) {
         message.info('对账单已经双方确认成功！');
         this.hideModal();
@@ -61,7 +61,7 @@ class FNewIncomingModal extends BaseModal {
         message.info(data.msg);
         this.hideModal();
       }
-    }.bind(this));
+    });
   }
 
   componentWillUnmount() {
@@ -84,9 +84,9 @@ class FNewIncomingModal extends BaseModal {
   }
 
   render() {
-    const {visible, statement}=this.state;
-    const {formItemLayout_1014} = Layout;
-    const {getFieldDecorator} = this.props.form;
+    const { visible, statement } = this.state;
+    const { formItemLayout_1014 } = Layout;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <span>
@@ -105,10 +105,10 @@ class FNewIncomingModal extends BaseModal {
           onCancel={this.hideModal}
         >
           <Form>
-            {getFieldDecorator('_id', {initialValue: statement._id})(
+            {getFieldDecorator('_id', { initialValue: statement._id })(
               <input type="hidden"/>
             )}
-            {getFieldDecorator('admin_user_id', {initialValue: statement.admin_user_id})(
+            {getFieldDecorator('admin_user_id', { initialValue: statement.admin_user_id })(
               <input type="hidden"/>
             )}
 
@@ -130,7 +130,7 @@ class FNewIncomingModal extends BaseModal {
                   <span>{statement.total_due}</span>
                 </FormItem>
               </Col>
-              <Col span={10} className="center" style={{marginTop: '50px'}}>
+              <Col span={10} className="center" style={{ marginTop: '50px' }}>
                 <span className="canvas no-print">
                   <QRCode
                     value={JSON.stringify({

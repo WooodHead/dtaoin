@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, Input, Form, Select} from 'antd';
+import { Button, Modal, Input, Form, Select } from 'antd';
 
 import BaseModal from '../../components/base/BaseModal';
 import Layout from '../../utils/FormLayout';
@@ -22,7 +22,7 @@ class Edit extends BaseModal {
   }
 
   handleEdit() {
-    let formData = this.props.form.getFieldsValue();
+    const formData = this.props.form.getFieldsValue();
 
     api.ajax({
       url: this.props.isNew ? api.authority.create() : api.authority.edit(),
@@ -35,12 +35,12 @@ class Edit extends BaseModal {
   }
 
   render() {
-    let {visible} = this.state;
-    let {value, isNew, type} = this.props;
-    const {getFieldDecorator} = this.props.form;
-    const {formItemLayout, selectStyle} = Layout;
+    const { visible } = this.state;
+    const { value, isNew, type } = this.props;
+    const { getFieldDecorator } = this.props.form;
+    const { formItemLayout, selectStyle } = Layout;
 
-    let title = isNew ? '添加' : '编辑';
+    const title = isNew ? '添加' : '编辑';
 
     return (
       <span>
@@ -57,10 +57,10 @@ class Edit extends BaseModal {
           width="720px"
         >
           <Form>
-            {getFieldDecorator('auth_item_id', {initialValue: value._id})(
+            {getFieldDecorator('auth_item_id', { initialValue: value._id })(
               <Input type="hidden"/>
             )}
-            {getFieldDecorator('parent_id', {initialValue: value.parent_id})(
+            {getFieldDecorator('parent_id', { initialValue: value.parent_id })(
               <Input type="hidden"/>
             )}
 

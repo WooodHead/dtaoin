@@ -12,8 +12,8 @@ var _Dragger = require('./Dragger');
 
 var _Dragger2 = _interopRequireDefault(_Dragger);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_Upload2["default"].Dragger = _Dragger2["default"];
-exports["default"] = _Upload2["default"];
+_Upload2['default'].Dragger = _Dragger2['default'];
+exports['default'] = _Upload2['default'];
 module.exports = exports['default'];

@@ -12,8 +12,8 @@ var _Group = require('./Group');
 
 var _Group2 = _interopRequireDefault(_Group);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-_Checkbox2["default"].Group = _Group2["default"];
-exports["default"] = _Checkbox2["default"];
+_Checkbox2['default'].Group = _Group2['default'];
+exports['default'] = _Checkbox2['default'];
 module.exports = exports['default'];
